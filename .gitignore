@@ -1,0 +1,10 @@
+# Elm
+elm-stuff/
+build/
+dist/
+# Node / tools (if you later add npm scripts)
+node_modules/
+# macOS / IDE cruft
+.DS_Store
+.idea/
+.vscode/
