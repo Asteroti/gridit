@@ -2,7 +2,7 @@
 elm-stuff/
 build/
 dist/
-# Node / tools (if you later add npm scripts)
+# Node
 node_modules/
 # macOS / IDE cruft
 .DS_Store
