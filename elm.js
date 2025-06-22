@@ -5337,7 +5337,8 @@ var $elm$core$Task$perform = F2(
 				A2($elm$core$Task$map, toMessage, task)));
 	});
 var $elm$browser$Browser$element = _Browser_element;
-var $author$project$Main$init = {gridColor: '#80ED99', gridOpacity: 0.5, gridSize: 10, gridThickness: 1, imageHeight: $elm$core$Maybe$Nothing, imageWidth: $elm$core$Maybe$Nothing, niceCounter: 0, uploadedImage: $elm$core$Maybe$Nothing};
+var $author$project$I18n$Spanish = {$: 'Spanish'};
+var $author$project$Main$init = {gridColor: '#80ED99', gridOpacity: 0.5, gridSize: 10, gridThickness: 1, imageHeight: $elm$core$Maybe$Nothing, imageWidth: $elm$core$Maybe$Nothing, language: $author$project$I18n$Spanish, niceCounter: 0, uploadedImage: $elm$core$Maybe$Nothing};
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
 var $author$project$Main$GriddedReady = function (a) {
@@ -5498,6 +5499,13 @@ var $author$project$Main$update = F2(
 							imageWidth: $elm$core$Maybe$Just(width)
 						}),
 					$elm$core$Platform$Cmd$none);
+			case 'LanguageChanged':
+				var newLanguage = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{language: newLanguage}),
+					$elm$core$Platform$Cmd$none);
 			case 'DownloadClicked':
 				var _v1 = _Utils_Tuple3(model.uploadedImage, model.imageWidth, model.imageHeight);
 				if (((_v1.a.$ === 'Just') && (_v1.b.$ === 'Just')) && (_v1.c.$ === 'Just')) {
@@ -5537,21 +5545,34 @@ var $author$project$Main$update = F2(
 							])));
 		}
 	});
+var $author$project$I18n$AppTitle = {$: 'AppTitle'};
+var $author$project$I18n$CustomizeIt = {$: 'CustomizeIt'};
 var $author$project$Main$DownloadClicked = {$: 'DownloadClicked'};
+var $author$project$I18n$DownloadGriddedImage = {$: 'DownloadGriddedImage'};
+var $author$project$I18n$GridColor = {$: 'GridColor'};
 var $author$project$Main$GridColorChanged = function (a) {
 	return {$: 'GridColorChanged', a: a};
 };
+var $author$project$I18n$GridOpacity = {$: 'GridOpacity'};
 var $author$project$Main$GridOpacityChanged = function (a) {
 	return {$: 'GridOpacityChanged', a: a};
 };
+var $author$project$I18n$GridSize = {$: 'GridSize'};
 var $author$project$Main$GridSizeChanged = function (a) {
 	return {$: 'GridSizeChanged', a: a};
 };
+var $author$project$I18n$GridThickness = {$: 'GridThickness'};
 var $author$project$Main$GridThicknessChanged = function (a) {
 	return {$: 'GridThicknessChanged', a: a};
 };
+var $author$project$I18n$GriddedImage = {$: 'GriddedImage'};
+var $author$project$I18n$Nice = {$: 'Nice'};
 var $author$project$Main$NiceButtonClicked = {$: 'NiceButtonClicked'};
+var $author$project$I18n$NiceCounter = {$: 'NiceCounter'};
+var $author$project$I18n$OriginalImage = {$: 'OriginalImage'};
 var $author$project$Main$PickImage = {$: 'PickImage'};
+var $author$project$I18n$Rectangles = {$: 'Rectangles'};
+var $author$project$I18n$UploadImage = {$: 'UploadImage'};
 var $elm$html$Html$button = _VirtualDom_node('button');
 var $elm$core$Basics$composeR = F3(
 	function (f, g, x) {
@@ -5639,8 +5660,378 @@ var $elm$html$Html$Attributes$style = $elm$virtual_dom$VirtualDom$style;
 var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
 var $elm$core$String$toFloat = _String_toFloat;
+var $author$project$I18n$asturianoTranslations = function (key) {
+	switch (key.$) {
+		case 'AppTitle':
+			return 'Gridit! 🐸';
+		case 'UploadImage':
+			return 'Xubir Imaxe';
+		case 'CustomizeIt':
+			return '¡Personalízalu!';
+		case 'GridSize':
+			return 'Tamañu de la Cuadrícula: ';
+		case 'Rectangles':
+			return ' rectángulos.';
+		case 'GridColor':
+			return 'Color de la Cuadrícula: ';
+		case 'GridThickness':
+			return 'Grosor de la Cuadrícula: ';
+		case 'GridOpacity':
+			return 'Opacidá de la Cuadrícula: ';
+		case 'OriginalImage':
+			return 'Imaxe Orixinal';
+		case 'GriddedImage':
+			return 'Imaxe con Cuadrícula';
+		case 'DownloadGriddedImage':
+			return '¡Descarga la to Imaxe con Cuadrícula!';
+		case 'Nice':
+			return '¡Guapu! ';
+		case 'NiceCounter':
+			return 'Contador Guapu: ';
+		case 'NoImageYet':
+			return '¡Entá nun hai imaxe! ¡Fai clic en Xubir Imaxe pa entamar!';
+		default:
+			return 'Llingua:';
+	}
+};
+var $author$project$I18n$englishTranslations = function (key) {
+	switch (key.$) {
+		case 'AppTitle':
+			return 'Gridit! 🐸';
+		case 'UploadImage':
+			return 'Upload Image';
+		case 'CustomizeIt':
+			return 'Customize it!';
+		case 'GridSize':
+			return 'Grid Size: ';
+		case 'Rectangles':
+			return ' rectangles.';
+		case 'GridColor':
+			return 'Grid Color: ';
+		case 'GridThickness':
+			return 'Grid Thickness: ';
+		case 'GridOpacity':
+			return 'Grid Opacity: ';
+		case 'OriginalImage':
+			return 'Original Image';
+		case 'GriddedImage':
+			return 'Gridded Image';
+		case 'DownloadGriddedImage':
+			return 'Download your Gridded Image!!!';
+		case 'Nice':
+			return 'Nice! ';
+		case 'NiceCounter':
+			return 'Nice Counter: ';
+		case 'NoImageYet':
+			return 'No image yet! Click Upload Image to begin! (｀_´)ゞ Come on!!!';
+		default:
+			return 'Language:';
+	}
+};
+var $author$project$I18n$euskaraTranslations = function (key) {
+	switch (key.$) {
+		case 'AppTitle':
+			return 'Gridit! 🐸';
+		case 'UploadImage':
+			return 'Irudia Igo';
+		case 'CustomizeIt':
+			return 'Pertsonalizatu!';
+		case 'GridSize':
+			return 'Sareta Tamaina: ';
+		case 'Rectangles':
+			return ' laukizuzenak.';
+		case 'GridColor':
+			return 'Sareta Kolorea: ';
+		case 'GridThickness':
+			return 'Sareta Lodiera: ';
+		case 'GridOpacity':
+			return 'Sareta Opakutasuna: ';
+		case 'OriginalImage':
+			return 'Jatorrizko Irudia';
+		case 'GriddedImage':
+			return 'Saretadun Irudia';
+		case 'DownloadGriddedImage':
+			return 'Zure Saretadun Irudia Deskargatu!';
+		case 'Nice':
+			return 'Bikain! ';
+		case 'NiceCounter':
+			return 'Bikain Kontagailua: ';
+		case 'NoImageYet':
+			return 'Oraindik ez dago irudirik! Egin klik Irudia Igo botoian hasteko!';
+		default:
+			return 'Hizkuntza:';
+	}
+};
+var $author$project$I18n$frenchTranslations = function (key) {
+	switch (key.$) {
+		case 'AppTitle':
+			return 'Gridit! 🐸';
+		case 'UploadImage':
+			return 'Télécharger une Image';
+		case 'CustomizeIt':
+			return 'Personnalisez-le!';
+		case 'GridSize':
+			return 'Taille de la Grille: ';
+		case 'Rectangles':
+			return ' rectangles.';
+		case 'GridColor':
+			return 'Couleur de la Grille: ';
+		case 'GridThickness':
+			return 'Épaisseur de la Grille: ';
+		case 'GridOpacity':
+			return 'Opacité de la Grille: ';
+		case 'OriginalImage':
+			return 'Image Originale';
+		case 'GriddedImage':
+			return 'Image avec Grille';
+		case 'DownloadGriddedImage':
+			return 'Téléchargez votre Image avec Grille!';
+		case 'Nice':
+			return 'Sympa! ';
+		case 'NiceCounter':
+			return 'Compteur Sympa: ';
+		case 'NoImageYet':
+			return 'Pas encore d\'image! Cliquez sur Télécharger une Image pour commencer!';
+		default:
+			return 'Langue:';
+	}
+};
+var $author$project$I18n$gaelicTranslations = function (key) {
+	switch (key.$) {
+		case 'AppTitle':
+			return 'Gridit! 🐸';
+		case 'UploadImage':
+			return 'Luchdaich Dealbh';
+		case 'CustomizeIt':
+			return 'Gnàthaich e!';
+		case 'GridSize':
+			return 'Meud a\' Ghriod: ';
+		case 'Rectangles':
+			return ' ceart-chearnagan.';
+		case 'GridColor':
+			return 'Dath a\' Ghriod: ';
+		case 'GridThickness':
+			return 'Tiughad a\' Ghriod: ';
+		case 'GridOpacity':
+			return 'Dorchadas a\' Ghriod: ';
+		case 'OriginalImage':
+			return 'Dealbh Tùsail';
+		case 'GriddedImage':
+			return 'Dealbh le Griod';
+		case 'DownloadGriddedImage':
+			return 'Luchdaich sìos do Dhealbh le Griod!';
+		case 'Nice':
+			return 'Sgoinneil! ';
+		case 'NiceCounter':
+			return 'Cunntair Sgoinneil: ';
+		case 'NoImageYet':
+			return 'Chan eil dealbh ann fhathast! Cliog air Luchdaich Dealbh gus tòiseachadh!';
+		default:
+			return 'Cànan:';
+	}
+};
+var $author$project$I18n$italianTranslations = function (key) {
+	switch (key.$) {
+		case 'AppTitle':
+			return 'Gridit! 🐸';
+		case 'UploadImage':
+			return 'Carica Immagine';
+		case 'CustomizeIt':
+			return 'Personalizzalo!';
+		case 'GridSize':
+			return 'Dimensione Griglia: ';
+		case 'Rectangles':
+			return ' rettangoli.';
+		case 'GridColor':
+			return 'Colore Griglia: ';
+		case 'GridThickness':
+			return 'Spessore Griglia: ';
+		case 'GridOpacity':
+			return 'Opacità Griglia: ';
+		case 'OriginalImage':
+			return 'Immagine Originale';
+		case 'GriddedImage':
+			return 'Immagine con Griglia';
+		case 'DownloadGriddedImage':
+			return 'Scarica la tua Immagine con Griglia!';
+		case 'Nice':
+			return 'Bello! ';
+		case 'NiceCounter':
+			return 'Contatore Bello: ';
+		case 'NoImageYet':
+			return 'Nessuna immagine ancora! Clicca su Carica Immagine per iniziare!';
+		default:
+			return 'Lingua:';
+	}
+};
+var $author$project$I18n$japaneseTranslations = function (key) {
+	switch (key.$) {
+		case 'AppTitle':
+			return 'Gridit! 🐸';
+		case 'UploadImage':
+			return '画像をアップロード';
+		case 'CustomizeIt':
+			return 'カスタマイズしよう！';
+		case 'GridSize':
+			return '格子サイズ: ';
+		case 'Rectangles':
+			return ' 長方形';
+		case 'GridColor':
+			return '格子の色: ';
+		case 'GridThickness':
+			return '格子の太さ: ';
+		case 'GridOpacity':
+			return '格子の透明度: ';
+		case 'OriginalImage':
+			return '元の画像';
+		case 'GriddedImage':
+			return '格子付き画像';
+		case 'DownloadGriddedImage':
+			return '格子付き画像をダウンロード！';
+		case 'Nice':
+			return '素晴らしい！ ';
+		case 'NiceCounter':
+			return '素晴らしいカウンター: ';
+		case 'NoImageYet':
+			return 'まだ画像がありません！画像をアップロードボタンをクリックして始めましょう！';
+		default:
+			return '言語:';
+	}
+};
+var $author$project$I18n$latinTranslations = function (key) {
+	switch (key.$) {
+		case 'AppTitle':
+			return 'Gridit! 🐸';
+		case 'UploadImage':
+			return 'Imago Mittere';
+		case 'CustomizeIt':
+			return 'Personaliza!';
+		case 'GridSize':
+			return 'Magnitudinem Retis: ';
+		case 'Rectangles':
+			return ' rectangula.';
+		case 'GridColor':
+			return 'Color Retis: ';
+		case 'GridThickness':
+			return 'Crassitudo Retis: ';
+		case 'GridOpacity':
+			return 'Opacitas Retis: ';
+		case 'OriginalImage':
+			return 'Imago Originalis';
+		case 'GriddedImage':
+			return 'Imago cum Rete';
+		case 'DownloadGriddedImage':
+			return 'Imago cum Rete Descende!';
+		case 'Nice':
+			return 'Bellus! ';
+		case 'NiceCounter':
+			return 'Numerator Bellus: ';
+		case 'NoImageYet':
+			return 'Nulla imago adhuc! Preme Imago Mittere ad incipiendum!';
+		default:
+			return 'Lingua:';
+	}
+};
+var $author$project$I18n$portugueseTranslations = function (key) {
+	switch (key.$) {
+		case 'AppTitle':
+			return 'Gridit! 🐸';
+		case 'UploadImage':
+			return 'Carregar Imagem';
+		case 'CustomizeIt':
+			return 'Personalize!';
+		case 'GridSize':
+			return 'Tamanho da Grade: ';
+		case 'Rectangles':
+			return ' retângulos.';
+		case 'GridColor':
+			return 'Cor da Grade: ';
+		case 'GridThickness':
+			return 'Espessura da Grade: ';
+		case 'GridOpacity':
+			return 'Opacidade da Grade: ';
+		case 'OriginalImage':
+			return 'Imagem Original';
+		case 'GriddedImage':
+			return 'Imagem com Grade';
+		case 'DownloadGriddedImage':
+			return 'Baixe sua Imagem com Grade!';
+		case 'Nice':
+			return 'Legal! ';
+		case 'NiceCounter':
+			return 'Contador Legal: ';
+		case 'NoImageYet':
+			return 'Ainda não há imagem! Clique em Carregar Imagem para começar!';
+		default:
+			return 'Lingua:';
+	}
+};
+var $author$project$I18n$spanishTranslations = function (key) {
+	switch (key.$) {
+		case 'AppTitle':
+			return 'Gridit! 🐸';
+		case 'UploadImage':
+			return 'Subir una Imagen';
+		case 'CustomizeIt':
+			return 'Personaliza la grilla';
+		case 'GridSize':
+			return 'Tamaño de la grilla: ';
+		case 'Rectangles':
+			return ' rectángulos.';
+		case 'GridColor':
+			return 'Color de la grilla: ';
+		case 'GridThickness':
+			return 'Grosor de las líneas de la grilla: ';
+		case 'GridOpacity':
+			return 'Opacidad de la grilla: ';
+		case 'OriginalImage':
+			return 'Imagen Original';
+		case 'GriddedImage':
+			return 'Imagen con Grilla';
+		case 'DownloadGriddedImage':
+			return 'Descargá la imagen grillada!';
+		case 'Nice':
+			return 'Magnífico';
+		case 'NiceCounter':
+			return 'Contador de Magníficos: ';
+		case 'NoImageYet':
+			return 'Todavía no hay nada! Click en subir una Imagen para empezar!';
+		default:
+			return 'Idioma:';
+	}
+};
+var $author$project$I18n$translations = F2(
+	function (language, key) {
+		switch (language.$) {
+			case 'English':
+				return $author$project$I18n$englishTranslations(key);
+			case 'Spanish':
+				return $author$project$I18n$spanishTranslations(key);
+			case 'Latin':
+				return $author$project$I18n$latinTranslations(key);
+			case 'Italian':
+				return $author$project$I18n$italianTranslations(key);
+			case 'Portuguese':
+				return $author$project$I18n$portugueseTranslations(key);
+			case 'French':
+				return $author$project$I18n$frenchTranslations(key);
+			case 'Asturiano':
+				return $author$project$I18n$asturianoTranslations(key);
+			case 'Gaelic':
+				return $author$project$I18n$gaelicTranslations(key);
+			case 'Euskara':
+				return $author$project$I18n$euskaraTranslations(key);
+			default:
+				return $author$project$I18n$japaneseTranslations(key);
+		}
+	});
+var $author$project$I18n$translate = F2(
+	function (language, key) {
+		return A2($author$project$I18n$translations, language, key);
+	});
 var $elm$html$Html$Attributes$type_ = $elm$html$Html$Attributes$stringProperty('type');
 var $elm$html$Html$Attributes$value = $elm$html$Html$Attributes$stringProperty('value');
+var $author$project$I18n$NoImageYet = {$: 'NoImageYet'};
 var $elm$svg$Svg$Attributes$height = _VirtualDom_attribute('height');
 var $elm$html$Html$img = _VirtualDom_node('img');
 var $elm$svg$Svg$trustedNode = _VirtualDom_nodeNS('http://www.w3.org/2000/svg');
@@ -5755,8 +6146,147 @@ var $author$project$Main$viewGriddedImage = function (model) {
 					_Utils_ap(verticalLines, horizontalLines))
 				]));
 	} else {
-		return $elm$html$Html$text('No image uploaded yet!');
+		return $elm$html$Html$text(
+			A2($author$project$I18n$translate, model.language, $author$project$I18n$NoImageYet));
 	}
+};
+var $author$project$I18n$Asturiano = {$: 'Asturiano'};
+var $author$project$I18n$English = {$: 'English'};
+var $author$project$I18n$Euskara = {$: 'Euskara'};
+var $author$project$I18n$French = {$: 'French'};
+var $author$project$I18n$Gaelic = {$: 'Gaelic'};
+var $author$project$I18n$Italian = {$: 'Italian'};
+var $author$project$I18n$Japanese = {$: 'Japanese'};
+var $author$project$Main$LanguageChanged = function (a) {
+	return {$: 'LanguageChanged', a: a};
+};
+var $author$project$I18n$LanguageLabel = {$: 'LanguageLabel'};
+var $author$project$I18n$Latin = {$: 'Latin'};
+var $author$project$I18n$Portuguese = {$: 'Portuguese'};
+var $elm$html$Html$option = _VirtualDom_node('option');
+var $elm$html$Html$select = _VirtualDom_node('select');
+var $elm$html$Html$Attributes$selected = $elm$html$Html$Attributes$boolProperty('selected');
+var $elm$html$Html$span = _VirtualDom_node('span');
+var $author$project$Main$viewLanguageSelector = function (currentLanguage) {
+	var languageToString = function (language) {
+		switch (language.$) {
+			case 'English':
+				return 'english';
+			case 'Spanish':
+				return 'spanish';
+			case 'Latin':
+				return 'latin';
+			case 'Italian':
+				return 'italian';
+			case 'Portuguese':
+				return 'portuguese';
+			case 'French':
+				return 'french';
+			case 'Asturiano':
+				return 'asturiano';
+			case 'Gaelic':
+				return 'gaelic';
+			case 'Euskara':
+				return 'euskara';
+			default:
+				return 'japanese';
+		}
+	};
+	var languageOption = F2(
+		function (language, displayName) {
+			return A2(
+				$elm$html$Html$option,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$value(
+						languageToString(language)),
+						$elm$html$Html$Attributes$selected(
+						_Utils_eq(currentLanguage, language))
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text(displayName)
+					]));
+		});
+	var handleLanguageChange = function (value) {
+		switch (value) {
+			case 'english':
+				return $author$project$Main$LanguageChanged($author$project$I18n$English);
+			case 'spanish':
+				return $author$project$Main$LanguageChanged($author$project$I18n$Spanish);
+			case 'latin':
+				return $author$project$Main$LanguageChanged($author$project$I18n$Latin);
+			case 'italian':
+				return $author$project$Main$LanguageChanged($author$project$I18n$Italian);
+			case 'portuguese':
+				return $author$project$Main$LanguageChanged($author$project$I18n$Portuguese);
+			case 'french':
+				return $author$project$Main$LanguageChanged($author$project$I18n$French);
+			case 'asturiano':
+				return $author$project$Main$LanguageChanged($author$project$I18n$Asturiano);
+			case 'gaelic':
+				return $author$project$Main$LanguageChanged($author$project$I18n$Gaelic);
+			case 'euskara':
+				return $author$project$Main$LanguageChanged($author$project$I18n$Euskara);
+			case 'japanese':
+				return $author$project$Main$LanguageChanged($author$project$I18n$Japanese);
+			default:
+				return $author$project$Main$LanguageChanged($author$project$I18n$English);
+		}
+	};
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				A2($elm$html$Html$Attributes$style, 'display', 'flex'),
+				A2($elm$html$Html$Attributes$style, 'align-items', 'center'),
+				A2($elm$html$Html$Attributes$style, 'gap', '10px')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$span,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text(
+						A2($author$project$I18n$translate, currentLanguage, $author$project$I18n$LanguageLabel) + ' ')
+					])),
+				A2(
+				$elm$html$Html$select,
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$Events$on,
+						'change',
+						A2(
+							$elm$json$Json$Decode$map,
+							handleLanguageChange,
+							A2(
+								$elm$json$Json$Decode$at,
+								_List_fromArray(
+									['target', 'value']),
+								$elm$json$Json$Decode$string))),
+						A2($elm$html$Html$Attributes$style, 'padding', '5px'),
+						A2($elm$html$Html$Attributes$style, 'border-radius', '4px'),
+						A2($elm$html$Html$Attributes$style, 'border', '1px solid #ccc'),
+						A2($elm$html$Html$Attributes$style, 'background-color', '#f8f8f8'),
+						A2($elm$html$Html$Attributes$style, 'cursor', 'pointer')
+					]),
+				_List_fromArray(
+					[
+						A2(languageOption, $author$project$I18n$English, 'English'),
+						A2(languageOption, $author$project$I18n$Spanish, 'Español'),
+						A2(languageOption, $author$project$I18n$Latin, 'Latin'),
+						A2(languageOption, $author$project$I18n$Italian, 'Italiano'),
+						A2(languageOption, $author$project$I18n$Portuguese, 'Português'),
+						A2(languageOption, $author$project$I18n$French, 'Français'),
+						A2(languageOption, $author$project$I18n$Asturiano, 'Asturianu'),
+						A2(languageOption, $author$project$I18n$Gaelic, 'Gàidhlig'),
+						A2(languageOption, $author$project$I18n$Euskara, 'Euskara'),
+						A2(languageOption, $author$project$I18n$Japanese, '日本語')
+					]))
+			]));
 };
 var $author$project$Main$ImageSizeLoaded = F2(
 	function (a, b) {
@@ -5778,26 +6308,28 @@ var $author$project$Main$decodeImageSize = function (tagger) {
 				['target', 'naturalHeight']),
 			$elm$json$Json$Decode$int));
 };
-var $author$project$Main$viewPreview = function (maybeUrl) {
-	if (maybeUrl.$ === 'Just') {
-		var url = maybeUrl.a;
-		return A2(
-			$elm$html$Html$img,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$src(url),
-					A2($elm$html$Html$Attributes$style, 'max-width', '500px'),
-					A2($elm$html$Html$Attributes$style, 'margin-top', '20px'),
-					A2(
-					$elm$html$Html$Events$on,
-					'load',
-					$author$project$Main$decodeImageSize($author$project$Main$ImageSizeLoaded))
-				]),
-			_List_Nil);
-	} else {
-		return $elm$html$Html$text('No image yet! Click Upload Image to begin! (｀_´)ゞ Come on!!!');
-	}
-};
+var $author$project$Main$viewPreview = F2(
+	function (maybeUrl, language) {
+		if (maybeUrl.$ === 'Just') {
+			var url = maybeUrl.a;
+			return A2(
+				$elm$html$Html$img,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$src(url),
+						A2($elm$html$Html$Attributes$style, 'max-width', '500px'),
+						A2($elm$html$Html$Attributes$style, 'margin-top', '20px'),
+						A2(
+						$elm$html$Html$Events$on,
+						'load',
+						$author$project$Main$decodeImageSize($author$project$Main$ImageSizeLoaded))
+					]),
+				_List_Nil);
+		} else {
+			return $elm$html$Html$text(
+				A2($author$project$I18n$translate, language, $author$project$I18n$NoImageYet));
+		}
+	});
 var $elm$core$Maybe$withDefault = F2(
 	function (_default, maybe) {
 		if (maybe.$ === 'Just') {
@@ -5818,14 +6350,27 @@ var $author$project$Main$view = function (model) {
 		_List_fromArray(
 			[
 				A2(
-				$elm$html$Html$h1,
+				$elm$html$Html$div,
 				_List_fromArray(
 					[
-						A2($elm$html$Html$Attributes$style, 'color', 'green')
+						A2($elm$html$Html$Attributes$style, 'display', 'flex'),
+						A2($elm$html$Html$Attributes$style, 'justify-content', 'space-between'),
+						A2($elm$html$Html$Attributes$style, 'align-items', 'center')
 					]),
 				_List_fromArray(
 					[
-						$elm$html$Html$text('Gridit! 🐸')
+						A2(
+						$elm$html$Html$h1,
+						_List_fromArray(
+							[
+								A2($elm$html$Html$Attributes$style, 'color', 'green')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text(
+								A2($author$project$I18n$translate, model.language, $author$project$I18n$AppTitle))
+							])),
+						$author$project$Main$viewLanguageSelector(model.language)
 					])),
 				A2(
 				$elm$html$Html$div,
@@ -5840,7 +6385,8 @@ var $author$project$Main$view = function (model) {
 							]),
 						_List_fromArray(
 							[
-								$elm$html$Html$text('Upload Image')
+								$elm$html$Html$text(
+								A2($author$project$I18n$translate, model.language, $author$project$I18n$UploadImage))
 							]))
 					])),
 				A2(
@@ -5859,7 +6405,8 @@ var $author$project$Main$view = function (model) {
 						_List_Nil,
 						_List_fromArray(
 							[
-								$elm$html$Html$text('Customize it!')
+								$elm$html$Html$text(
+								A2($author$project$I18n$translate, model.language, $author$project$I18n$CustomizeIt))
 							])),
 						A2(
 						$elm$html$Html$div,
@@ -5869,7 +6416,8 @@ var $author$project$Main$view = function (model) {
 							]),
 						_List_fromArray(
 							[
-								$elm$html$Html$text('Grid Size: '),
+								$elm$html$Html$text(
+								A2($author$project$I18n$translate, model.language, $author$project$I18n$GridSize)),
 								A2(
 								$elm$html$Html$input,
 								_List_fromArray(
@@ -5890,7 +6438,7 @@ var $author$project$Main$view = function (model) {
 									]),
 								_List_Nil),
 								$elm$html$Html$text(
-								' ' + ($elm$core$String$fromInt(model.gridSize) + ' squares.'))
+								' ' + ($elm$core$String$fromInt(model.gridSize) + A2($author$project$I18n$translate, model.language, $author$project$I18n$Rectangles)))
 							])),
 						A2(
 						$elm$html$Html$div,
@@ -5900,7 +6448,8 @@ var $author$project$Main$view = function (model) {
 							]),
 						_List_fromArray(
 							[
-								$elm$html$Html$text('Grid Color: '),
+								$elm$html$Html$text(
+								A2($author$project$I18n$translate, model.language, $author$project$I18n$GridColor)),
 								A2(
 								$elm$html$Html$input,
 								_List_fromArray(
@@ -5923,7 +6472,8 @@ var $author$project$Main$view = function (model) {
 							]),
 						_List_fromArray(
 							[
-								$elm$html$Html$text('Grid Thickness: '),
+								$elm$html$Html$text(
+								A2($author$project$I18n$translate, model.language, $author$project$I18n$GridThickness)),
 								A2(
 								$elm$html$Html$input,
 								_List_fromArray(
@@ -5954,7 +6504,8 @@ var $author$project$Main$view = function (model) {
 							]),
 						_List_fromArray(
 							[
-								$elm$html$Html$text('Grid Opacity: '),
+								$elm$html$Html$text(
+								A2($author$project$I18n$translate, model.language, $author$project$I18n$GridOpacity)),
 								A2(
 								$elm$html$Html$input,
 								_List_fromArray(
@@ -6005,9 +6556,10 @@ var $author$project$Main$view = function (model) {
 								_List_Nil,
 								_List_fromArray(
 									[
-										$elm$html$Html$text('Original Image')
+										$elm$html$Html$text(
+										A2($author$project$I18n$translate, model.language, $author$project$I18n$OriginalImage))
 									])),
-								$author$project$Main$viewPreview(model.uploadedImage)
+								A2($author$project$Main$viewPreview, model.uploadedImage, model.language)
 							])),
 						A2(
 						$elm$html$Html$div,
@@ -6023,7 +6575,8 @@ var $author$project$Main$view = function (model) {
 								_List_Nil,
 								_List_fromArray(
 									[
-										$elm$html$Html$text('Gridded Image')
+										$elm$html$Html$text(
+										A2($author$project$I18n$translate, model.language, $author$project$I18n$GriddedImage))
 									])),
 								$author$project$Main$viewGriddedImage(model),
 								A2(
@@ -6036,7 +6589,8 @@ var $author$project$Main$view = function (model) {
 									]),
 								_List_fromArray(
 									[
-										$elm$html$Html$text('Download your Gridded Image!!!')
+										$elm$html$Html$text(
+										A2($author$project$I18n$translate, model.language, $author$project$I18n$DownloadGriddedImage))
 									]))
 							]))
 					])),
@@ -6053,7 +6607,8 @@ var $author$project$Main$view = function (model) {
 							]),
 						_List_fromArray(
 							[
-								$elm$html$Html$text('Nice! ')
+								$elm$html$Html$text(
+								A2($author$project$I18n$translate, model.language, $author$project$I18n$Nice))
 							]))
 					])),
 				A2(
@@ -6065,7 +6620,9 @@ var $author$project$Main$view = function (model) {
 				_List_fromArray(
 					[
 						$elm$html$Html$text(
-						'Nice Counter: ' + $elm$core$String$fromInt(model.niceCounter))
+						_Utils_ap(
+							A2($author$project$I18n$translate, model.language, $author$project$I18n$NiceCounter),
+							$elm$core$String$fromInt(model.niceCounter)))
 					]))
 			]));
 };

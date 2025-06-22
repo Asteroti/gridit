@@ -20,3 +20,32 @@ It's a really old method that still lives!
 ![Screenshot 2025-05-05 at 12 44 24 AM](https://github.com/user-attachments/assets/f0f51ce6-09ed-4b75-b014-73e7826fd0db)
 
 Check the Project to see current tasks in progress! More coming soon!
+
+## Multilingual Support
+
+Gridit now supports multiple languages! Users can switch between languages using the dropdown menu in the top-right corner of the application.
+
+### Currently Supported Languages
+
+- English
+- Spanish (Español)
+- Latin
+- Italian (Italiano)
+- Portuguese (Português)
+- French (Français)
+- Asturiano (Asturianu)
+- Gaelic (Gàidhlig)
+- Euskara
+- Japanese (日本語)
+
+### Adding New Languages
+
+To add a new language to Gridit:
+
+1. Open `src/I18n.elm`
+2. Add your new language to the `Language` type
+3. Create a translation function for your language (follow the pattern of existing translations)
+4. Add your language to the `translations` function
+5. Update the language selector in `src/Main.elm` to include your new language
+
+Each translation function maps translation keys to localized strings. Make sure to translate all keys to maintain a consistent user experience across languages.
