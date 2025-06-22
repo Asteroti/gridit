@@ -8,9 +8,10 @@ import Bytes.Encode as BE
 import File exposing (File)
 import File.Download
 import File.Select as Select
-import Html exposing (..)
-import Html.Attributes exposing (..)
-import Html.Events exposing (..)
+import Html exposing (Html, button, div, h1, h2, h3, img, input, label, option, p, select, span, text)
+import Html.Attributes exposing (disabled, for, id, max, min, placeholder, selected, src, step, style, type_, value)
+import Html.Events exposing (on, onClick, onInput)
+import I18n exposing (Language(..), TranslationKey(..), translate)
 import Json.Decode
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
@@ -30,6 +31,7 @@ type alias Model =
     , gridColor : String
     , gridThickness : Int
     , gridOpacity : Float
+    , language : Language
     }
 
 
@@ -49,6 +51,7 @@ type Msg
     | GridColorChanged String
     | GridThicknessChanged Int
     | GridOpacityChanged Float
+    | LanguageChanged Language
 
 
 
@@ -81,6 +84,7 @@ init =
     , gridColor = "#80ED99"
     , gridThickness = 1
     , gridOpacity = 0.5
+    , language = Spanish
     }
 
 
@@ -117,6 +121,9 @@ update msg model =
 
         ImageSizeLoaded width height ->
             ( { model | imageWidth = Just width, imageHeight = Just height }, Cmd.none )
+            
+        LanguageChanged newLanguage ->
+            ( { model | language = newLanguage }, Cmd.none )
 
         DownloadClicked ->
             case ( model.uploadedImage, model.imageWidth, model.imageHeight ) of
@@ -160,16 +167,19 @@ subscriptions _ =
 view : Model -> Html Msg
 view model =
     div [ style "padding" "20px", style "background-color" "#ffcc99" ]
-        [ h1 [ style "color" "green" ]
-            [ text "Gridit! 🐸" ]
+        [ div [ style "display" "flex", style "justify-content" "space-between", style "align-items" "center" ]
+            [ h1 [ style "color" "green" ]
+                [ text (translate model.language AppTitle) ]
+            , viewLanguageSelector model.language
+            ]
         , div []
-            [ button [ onClick PickImage ] [ text "Upload Image" ] ]
+            [ button [ onClick PickImage ] [ text (translate model.language UploadImage) ] ]
 
         -- GRID user customization section
         , div [ style "margin-top" "20px", style "padding" "15px", style "border" "2px solid #4a4a4a", style "border-radius" "8px" ]
-            [ h3 [] [ text "Customize it!" ]
+            [ h3 [] [ text (translate model.language CustomizeIt) ]
             , div [ style "margin-bottom" "15px" ]
-                [ text "Grid Size: "
+                [ text (translate model.language GridSize)
                 , input
                     [ type_ "range"
                     , Html.Attributes.min "2"
@@ -178,10 +188,10 @@ view model =
                     , onInput (String.toInt >> Maybe.withDefault 10 >> GridSizeChanged)
                     ]
                     []
-                , text (" " ++ String.fromInt model.gridSize ++ " squares.")
+                , text (" " ++ String.fromInt model.gridSize ++ translate model.language Rectangles)
                 ]
             , div [ style "margin-bottom" "15px" ]
-                [ text "Grid Color: "
+                [ text (translate model.language GridColor)
                 , input
                     [ type_ "color"
                     , value model.gridColor
@@ -194,7 +204,7 @@ view model =
                 , text (" " ++ model.gridColor)
                 ]
             , div [ style "margin-bottom" "15px" ]
-                [ text "Grid Thickness: "
+                [ text (translate model.language GridThickness)
                 , input
                     [ type_ "range"
                     , Html.Attributes.min "1"
@@ -206,7 +216,7 @@ view model =
                 , text (" " ++ String.fromInt model.gridThickness ++ "px")
                 ]
             , div [ style "margin-bottom" "15px" ]
-                [ text "Grid Opacity: "
+                [ text (translate model.language GridOpacity)
                 , input
                     [ type_ "range"
                     , Html.Attributes.min "0"
@@ -221,19 +231,19 @@ view model =
             ]
         , div [ style "display" "flex", style "flex-wrap" "wrap", style "gap" "20px", style "margin-top" "20px" ]
             [ div [ style "flex" "1", style "min-width" "300px" ]
-                [ h3 [] [ text "Original Image" ]
-                , viewPreview model.uploadedImage
+                [ h3 [] [ text (translate model.language OriginalImage) ]
+                , viewPreview model.uploadedImage model.language
                 ]
             , div [ style "flex" "1", style "min-width" "300px" ]
-                [ h3 [] [ text "Gridded Image" ]
+                [ h3 [] [ text (translate model.language GriddedImage) ]
                 , viewGriddedImage model
-                , button [ onClick DownloadClicked, disabled (model.uploadedImage == Nothing) ] [ text "Download your Gridded Image!!!" ]
+                , button [ onClick DownloadClicked, disabled (model.uploadedImage == Nothing) ] [ text (translate model.language DownloadGriddedImage) ]
                 ]
             ]
         , div []
-            [ button [ onClick NiceButtonClicked ] [ text "Nice! " ] ]
+            [ button [ onClick NiceButtonClicked ] [ text (translate model.language Nice) ] ]
         , div [ style "margin-top" "20px" ]
-            [ text ("Nice Counter: " ++ String.fromInt model.niceCounter) ]
+            [ text (translate model.language NiceCounter ++ String.fromInt model.niceCounter) ]
         ]
 
 
@@ -241,8 +251,69 @@ view model =
 -- HELPER FUNCTIONS
 
 
-viewPreview : Maybe String -> Html Msg
-viewPreview maybeUrl =
+viewLanguageSelector : Language -> Html Msg
+viewLanguageSelector currentLanguage =
+    let
+        languageOption language displayName =
+            option 
+                [ value (languageToString language)
+                , selected (currentLanguage == language)
+                ]
+                [ text displayName ]
+                
+        languageToString language =
+            case language of
+                English -> "english"
+                Spanish -> "spanish"
+                Latin -> "latin"
+                Italian -> "italian"
+                Portuguese -> "portuguese"
+                French -> "french"
+                Asturiano -> "asturiano"
+                Gaelic -> "gaelic"
+                Euskara -> "euskara"
+                Japanese -> "japanese"
+                
+        handleLanguageChange value =
+            case value of
+                "english" -> LanguageChanged English
+                "spanish" -> LanguageChanged Spanish
+                "latin" -> LanguageChanged Latin
+                "italian" -> LanguageChanged Italian
+                "portuguese" -> LanguageChanged Portuguese
+                "french" -> LanguageChanged French
+                "asturiano" -> LanguageChanged Asturiano
+                "gaelic" -> LanguageChanged Gaelic
+                "euskara" -> LanguageChanged Euskara
+                "japanese" -> LanguageChanged Japanese
+                _ -> LanguageChanged English
+    in
+    div [ style "display" "flex", style "align-items" "center", style "gap" "10px" ]
+        [ span [] [ text (translate currentLanguage LanguageLabel ++ " ") ]
+        , select 
+            [ on "change" (Json.Decode.map handleLanguageChange (Json.Decode.at ["target", "value"] Json.Decode.string))
+            , style "padding" "5px"
+            , style "border-radius" "4px"
+            , style "border" "1px solid #ccc"
+            , style "background-color" "#f8f8f8"
+            , style "cursor" "pointer"
+            ]
+            [ languageOption English "English"
+            , languageOption Spanish "Español"
+            , languageOption Latin "Latin"
+            , languageOption Italian "Italiano"
+            , languageOption Portuguese "Português"
+            , languageOption French "Français"
+            , languageOption Asturiano "Asturianu"
+            , languageOption Gaelic "Gàidhlig"
+            , languageOption Euskara "Euskara"
+            , languageOption Japanese "日本語"
+            ]
+        ]
+
+
+viewPreview : Maybe String -> Language -> Html Msg
+viewPreview maybeUrl language =
     case maybeUrl of
         Just url ->
             img
@@ -254,7 +325,7 @@ viewPreview maybeUrl =
                 []
 
         Nothing ->
-            text "No image yet! Click Upload Image to begin! (｀_´)ゞ Come on!!!"
+            text (translate language NoImageYet)
 
 
 viewGriddedImage : Model -> Html Msg
@@ -333,7 +404,7 @@ viewGriddedImage model =
                 ]
 
         _ ->
-            text "No image uploaded yet!"
+            text (translate model.language NoImageYet)
 
 
 dataUrlToBytes : String -> Maybe Bytes
