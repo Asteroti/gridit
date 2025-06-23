@@ -14,6 +14,8 @@ type Language
     | Gaelic
     | Euskara
     | Japanese
+    | Russian
+    | Tuvan
 
 
 
@@ -83,6 +85,12 @@ translations language key =
 
         Japanese ->
             japaneseTranslations key
+
+        Russian ->
+            russianTranslations key
+
+        Tuvan ->
+            tuvanTranslations key
 
 
 
@@ -823,6 +831,154 @@ japaneseTranslations key =
 
         StatusReady ->
             "Status: 準備完了"
+
+
+
+-- RUSSIAN TRANSLATIONS
+
+
+russianTranslations : TranslationKey -> String
+russianTranslations key =
+    case key of
+        AppTitle ->
+            "Gridit! 🐸"
+
+        UploadImage ->
+            "Загрузить изображение"
+
+        CustomizeIt ->
+            "Настроить!"
+
+        GridSize ->
+            "Размер"
+
+        Rectangles ->
+            " прямоугольников"
+
+        GridColor ->
+            "Цвет"
+
+        GridThickness ->
+            "Толщина"
+
+        GridOpacity ->
+            "Прозрачность"
+
+        OriginalImage ->
+            "Исходное изображение"
+
+        GriddedImage ->
+            "Изображение с сеткой"
+
+        DownloadGriddedImage ->
+            "Скачать изображение с сеткой!"
+
+        Nice ->
+            "Отлично! "
+
+        NiceCounter ->
+            "Счетчик отлично: "
+
+        NoImageYet ->
+            "Изображения пока нет! Нажмите Загрузить изображение, чтобы начать!"
+
+        LanguageLabel ->
+            "Язык:"
+
+        FileOperations ->
+            "Начните здесь"
+
+        GridParameters ->
+            "Настройте сетку, чтобы она хорошо отображалась на вашем изображении"
+
+        Actions ->
+            "🐸 🐸 🐸"
+
+        AppSubtitle ->
+            "Здравствуйте. Это поможет вам создать прямоугольную сетку поверх выбранного вами изображения"
+
+        GridPreviewPlaceholder ->
+            "Ваше изображение с сеткой появится здесь"
+
+        UploadPlaceholder ->
+            "Загрузите изображение, чтобы начать"
+
+        StatusReady ->
+            "Статус: Готово"
+
+
+
+-- TUVAN TRANSLATIONS
+
+
+tuvanTranslations : TranslationKey -> String
+tuvanTranslations key =
+    case key of
+        AppTitle ->
+            "Gridit! 🐸"
+
+        UploadImage ->
+            "Чурукту киирер"
+
+        CustomizeIt ->
+            "Таарыштырар!"
+
+        GridSize ->
+            "Хемчээл"
+
+        Rectangles ->
+            " дөрбелчиннер"
+
+        GridColor ->
+            "Өң"
+
+        GridThickness ->
+            "Кылын"
+
+        GridOpacity ->
+            "Көскүзү"
+
+        OriginalImage ->
+            "Баштайгы чурук"
+
+        GriddedImage ->
+            "Шыйыглыг чурук"
+
+        DownloadGriddedImage ->
+            "Шыйыглыг чурукту чүдүрүп алыр!"
+
+        Nice ->
+            "Эки! "
+
+        NiceCounter ->
+            "Эки саналга: "
+
+        NoImageYet ->
+            "Чурук чок! Эгелээр дээш Чурукту киирер деп базыңар!"
+
+        LanguageLabel ->
+            "Дыл:"
+
+        FileOperations ->
+            "Мындан эгелеңер"
+
+        GridParameters ->
+            "Шыйыгны чурукка эки көстүр кылдыр таарыштырыңар"
+
+        Actions ->
+            "🐸 🐸 🐸"
+
+        AppSubtitle ->
+            "Экии. Бо дээрге силерниң шилип алган чурууңарга дорт шыйыглар кылырынга дузалаар"
+
+        GridPreviewPlaceholder ->
+            "Силерниң шыйыглыг чурууңар мында көстүп кээр"
+
+        UploadPlaceholder ->
+            "Эгелээр дээш чурукту киириңер"
+
+        StatusReady ->
+            "Байдал: Белен"
 
 
 translate : Language -> TranslationKey -> String
