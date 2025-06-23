@@ -5338,7 +5338,7 @@ var $elm$core$Task$perform = F2(
 	});
 var $elm$browser$Browser$element = _Browser_element;
 var $author$project$I18n$Spanish = {$: 'Spanish'};
-var $author$project$Main$init = {gridColor: '#80ED99', gridOpacity: 0.5, gridSize: 10, gridThickness: 1, imageHeight: $elm$core$Maybe$Nothing, imageWidth: $elm$core$Maybe$Nothing, language: $author$project$I18n$Spanish, niceCounter: 0, uploadedImage: $elm$core$Maybe$Nothing};
+var $author$project$Main$init = {downloadSuccess: false, gridColor: '#80ED99', gridOpacity: 1, gridSize: 10, gridThickness: 1, imageHeight: $elm$core$Maybe$Nothing, imageWidth: $elm$core$Maybe$Nothing, language: $author$project$I18n$Spanish, niceCounter: 0, uploadedImage: $elm$core$Maybe$Nothing};
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
 var $author$project$Main$GriddedReady = function (a) {
@@ -5355,6 +5355,7 @@ var $author$project$Main$ImageLoaded = function (a) {
 var $author$project$Main$ImageSelected = function (a) {
 	return {$: 'ImageSelected', a: a};
 };
+var $author$project$Main$ResetDownloadSuccess = {$: 'ResetDownloadSuccess'};
 var $elm$json$Json$Encode$string = _Json_wrap;
 var $author$project$Main$debug = _Platform_outgoingPort('debug', $elm$json$Json$Encode$string);
 var $elm$json$Json$Encode$object = function (pairs) {
@@ -5423,6 +5424,7 @@ var $author$project$Main$requestPng = _Platform_outgoingPort(
 					$elm$json$Json$Encode$int($.width))
 				]));
 	});
+var $elm$core$Process$sleep = _Process_sleep;
 var $elm$file$File$toUrl = _File_toUrl;
 var $author$project$Main$update = F2(
 	function (msg, model) {
@@ -5506,6 +5508,12 @@ var $author$project$Main$update = F2(
 						model,
 						{language: newLanguage}),
 					$elm$core$Platform$Cmd$none);
+			case 'ResetDownloadSuccess':
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{downloadSuccess: false}),
+					$elm$core$Platform$Cmd$none);
 			case 'DownloadClicked':
 				var _v1 = _Utils_Tuple3(model.uploadedImage, model.imageWidth, model.imageHeight);
 				if (((_v1.a.$ === 'Just') && (_v1.b.$ === 'Just')) && (_v1.c.$ === 'Just')) {
@@ -5530,69 +5538,30 @@ var $author$project$Main$update = F2(
 				}
 			default:
 				var dataUrl = msg.a;
+				var updatedModel = _Utils_update(
+					model,
+					{downloadSuccess: true});
 				var _v3 = $author$project$Main$debug(
 					'Elm: GriddedReady received data URL of length: ' + $elm$core$String$fromInt(
 						$elm$core$String$length(dataUrl)));
 				var _v4 = $author$project$Main$debug('Elm: Triggering download via downloadImage port');
 				return _Utils_Tuple2(
-					model,
+					updatedModel,
 					$elm$core$Platform$Cmd$batch(
 						_List_fromArray(
 							[
 								$author$project$Main$debug('Elm: Starting download...'),
 								$author$project$Main$downloadImage(
-								{dataUrl: dataUrl})
+								{dataUrl: dataUrl}),
+								A2(
+								$elm$core$Task$perform,
+								function (_v5) {
+									return $author$project$Main$ResetDownloadSuccess;
+								},
+								$elm$core$Process$sleep(2000))
 							])));
 		}
 	});
-var $author$project$I18n$AppTitle = {$: 'AppTitle'};
-var $author$project$I18n$CustomizeIt = {$: 'CustomizeIt'};
-var $author$project$Main$DownloadClicked = {$: 'DownloadClicked'};
-var $author$project$I18n$DownloadGriddedImage = {$: 'DownloadGriddedImage'};
-var $author$project$I18n$GridColor = {$: 'GridColor'};
-var $author$project$Main$GridColorChanged = function (a) {
-	return {$: 'GridColorChanged', a: a};
-};
-var $author$project$I18n$GridOpacity = {$: 'GridOpacity'};
-var $author$project$Main$GridOpacityChanged = function (a) {
-	return {$: 'GridOpacityChanged', a: a};
-};
-var $author$project$I18n$GridSize = {$: 'GridSize'};
-var $author$project$Main$GridSizeChanged = function (a) {
-	return {$: 'GridSizeChanged', a: a};
-};
-var $author$project$I18n$GridThickness = {$: 'GridThickness'};
-var $author$project$Main$GridThicknessChanged = function (a) {
-	return {$: 'GridThicknessChanged', a: a};
-};
-var $author$project$I18n$GriddedImage = {$: 'GriddedImage'};
-var $author$project$I18n$Nice = {$: 'Nice'};
-var $author$project$Main$NiceButtonClicked = {$: 'NiceButtonClicked'};
-var $author$project$I18n$NiceCounter = {$: 'NiceCounter'};
-var $author$project$I18n$OriginalImage = {$: 'OriginalImage'};
-var $author$project$Main$PickImage = {$: 'PickImage'};
-var $author$project$I18n$Rectangles = {$: 'Rectangles'};
-var $author$project$I18n$UploadImage = {$: 'UploadImage'};
-var $elm$html$Html$button = _VirtualDom_node('button');
-var $elm$core$Basics$composeR = F3(
-	function (f, g, x) {
-		return g(
-			f(x));
-	});
-var $elm$json$Json$Encode$bool = _Json_wrap;
-var $elm$html$Html$Attributes$boolProperty = F2(
-	function (key, bool) {
-		return A2(
-			_VirtualDom_property,
-			key,
-			$elm$json$Json$Encode$bool(bool));
-	});
-var $elm$html$Html$Attributes$disabled = $elm$html$Html$Attributes$boolProperty('disabled');
-var $elm$html$Html$div = _VirtualDom_node('div');
-var $elm$core$String$fromFloat = _String_fromNumber;
-var $elm$html$Html$h1 = _VirtualDom_node('h1');
-var $elm$html$Html$h3 = _VirtualDom_node('h3');
-var $elm$html$Html$input = _VirtualDom_node('input');
 var $elm$html$Html$Attributes$stringProperty = F2(
 	function (key, string) {
 		return A2(
@@ -5600,66 +5569,13 @@ var $elm$html$Html$Attributes$stringProperty = F2(
 			key,
 			$elm$json$Json$Encode$string(string));
 	});
-var $elm$html$Html$Attributes$max = $elm$html$Html$Attributes$stringProperty('max');
-var $elm$html$Html$Attributes$min = $elm$html$Html$Attributes$stringProperty('min');
-var $elm$virtual_dom$VirtualDom$Normal = function (a) {
-	return {$: 'Normal', a: a};
-};
-var $elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
-var $elm$html$Html$Events$on = F2(
-	function (event, decoder) {
-		return A2(
-			$elm$virtual_dom$VirtualDom$on,
-			event,
-			$elm$virtual_dom$VirtualDom$Normal(decoder));
-	});
-var $elm$html$Html$Events$onClick = function (msg) {
-	return A2(
-		$elm$html$Html$Events$on,
-		'click',
-		$elm$json$Json$Decode$succeed(msg));
-};
-var $elm$html$Html$Events$alwaysStop = function (x) {
-	return _Utils_Tuple2(x, true);
-};
-var $elm$virtual_dom$VirtualDom$MayStopPropagation = function (a) {
-	return {$: 'MayStopPropagation', a: a};
-};
-var $elm$html$Html$Events$stopPropagationOn = F2(
-	function (event, decoder) {
-		return A2(
-			$elm$virtual_dom$VirtualDom$on,
-			event,
-			$elm$virtual_dom$VirtualDom$MayStopPropagation(decoder));
-	});
-var $elm$json$Json$Decode$field = _Json_decodeField;
-var $elm$json$Json$Decode$at = F2(
-	function (fields, decoder) {
-		return A3($elm$core$List$foldr, $elm$json$Json$Decode$field, decoder, fields);
-	});
-var $elm$html$Html$Events$targetValue = A2(
-	$elm$json$Json$Decode$at,
-	_List_fromArray(
-		['target', 'value']),
-	$elm$json$Json$Decode$string);
-var $elm$html$Html$Events$onInput = function (tagger) {
-	return A2(
-		$elm$html$Html$Events$stopPropagationOn,
-		'input',
-		A2(
-			$elm$json$Json$Decode$map,
-			$elm$html$Html$Events$alwaysStop,
-			A2($elm$json$Json$Decode$map, tagger, $elm$html$Html$Events$targetValue)));
-};
-var $elm$core$Basics$round = _Basics_round;
-var $elm$html$Html$Attributes$step = function (n) {
-	return A2($elm$html$Html$Attributes$stringProperty, 'step', n);
-};
-var $elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
-var $elm$html$Html$Attributes$style = $elm$virtual_dom$VirtualDom$style;
+var $elm$html$Html$Attributes$class = $elm$html$Html$Attributes$stringProperty('className');
+var $elm$html$Html$div = _VirtualDom_node('div');
+var $author$project$I18n$GridPreviewPlaceholder = {$: 'GridPreviewPlaceholder'};
+var $author$project$I18n$GriddedImage = {$: 'GriddedImage'};
+var $elm$html$Html$span = _VirtualDom_node('span');
 var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
-var $elm$core$String$toFloat = _String_toFloat;
 var $author$project$I18n$asturianoTranslations = function (key) {
 	switch (key.$) {
 		case 'AppTitle':
@@ -5669,15 +5585,15 @@ var $author$project$I18n$asturianoTranslations = function (key) {
 		case 'CustomizeIt':
 			return '¡Personalízalu!';
 		case 'GridSize':
-			return 'Tamañu de la Cuadrícula: ';
+			return 'Tamañu';
 		case 'Rectangles':
 			return ' rectángulos.';
 		case 'GridColor':
-			return 'Color de la Cuadrícula: ';
+			return 'Color';
 		case 'GridThickness':
-			return 'Grosor de la Cuadrícula: ';
+			return 'Grosor';
 		case 'GridOpacity':
-			return 'Opacidá de la Cuadrícula: ';
+			return 'Opacidá';
 		case 'OriginalImage':
 			return 'Imaxe Orixinal';
 		case 'GriddedImage':
@@ -5690,8 +5606,22 @@ var $author$project$I18n$asturianoTranslations = function (key) {
 			return 'Contador Guapu: ';
 		case 'NoImageYet':
 			return '¡Entá nun hai imaxe! ¡Fai clic en Xubir Imaxe pa entamar!';
-		default:
+		case 'LanguageLabel':
 			return 'Llingua:';
+		case 'FileOperations':
+			return 'Empieza equí';
+		case 'GridParameters':
+			return 'Personaliza la cuadrícula pa vela correutamente sobro la to imaxen';
+		case 'Actions':
+			return '🐸 🐸 🐸';
+		case 'AppSubtitle':
+			return 'Hola. Esto ayúdate a crear una cuadrícula retilínia sobro una imaxen de la to eleición';
+		case 'GridPreviewPlaceholder':
+			return 'La to imaxe con cuadrícula apaecerá equí';
+		case 'UploadPlaceholder':
+			return 'Xube una imaxe pa entamar';
+		default:
+			return 'Status: Llistu';
 	}
 };
 var $author$project$I18n$englishTranslations = function (key) {
@@ -5703,15 +5633,15 @@ var $author$project$I18n$englishTranslations = function (key) {
 		case 'CustomizeIt':
 			return 'Customize it!';
 		case 'GridSize':
-			return 'Grid Size: ';
+			return 'Size';
 		case 'Rectangles':
 			return ' rectangles.';
 		case 'GridColor':
-			return 'Grid Color: ';
+			return 'Color';
 		case 'GridThickness':
-			return 'Grid Thickness: ';
+			return 'Thickness';
 		case 'GridOpacity':
-			return 'Grid Opacity: ';
+			return 'Opacity';
 		case 'OriginalImage':
 			return 'Original Image';
 		case 'GriddedImage':
@@ -5723,9 +5653,23 @@ var $author$project$I18n$englishTranslations = function (key) {
 		case 'NiceCounter':
 			return 'Nice Counter: ';
 		case 'NoImageYet':
-			return 'No image yet! Click Upload Image to begin! (｀_´)ゞ Come on!!!';
-		default:
+			return 'No image yet! Click Upload Image to begin!';
+		case 'LanguageLabel':
 			return 'Language:';
+		case 'FileOperations':
+			return 'Start here';
+		case 'GridParameters':
+			return 'Customize the grid so you can see it properly over your image';
+		case 'Actions':
+			return '🐸 🐸 🐸';
+		case 'AppSubtitle':
+			return 'Hello there. This helps you create a rectilinear grid over an image of your choosing';
+		case 'GridPreviewPlaceholder':
+			return 'Your gridded image will appear here';
+		case 'UploadPlaceholder':
+			return 'Upload an image to begin';
+		default:
+			return 'Status: Ready';
 	}
 };
 var $author$project$I18n$euskaraTranslations = function (key) {
@@ -5737,15 +5681,15 @@ var $author$project$I18n$euskaraTranslations = function (key) {
 		case 'CustomizeIt':
 			return 'Pertsonalizatu!';
 		case 'GridSize':
-			return 'Sareta Tamaina: ';
+			return 'Tamaina';
 		case 'Rectangles':
 			return ' laukizuzenak.';
 		case 'GridColor':
-			return 'Sareta Kolorea: ';
+			return 'Kolorea';
 		case 'GridThickness':
-			return 'Sareta Lodiera: ';
+			return 'Lodiera';
 		case 'GridOpacity':
-			return 'Sareta Opakutasuna: ';
+			return 'Opakutasuna';
 		case 'OriginalImage':
 			return 'Jatorrizko Irudia';
 		case 'GriddedImage':
@@ -5758,8 +5702,22 @@ var $author$project$I18n$euskaraTranslations = function (key) {
 			return 'Bikain Kontagailua: ';
 		case 'NoImageYet':
 			return 'Oraindik ez dago irudirik! Egin klik Irudia Igo botoian hasteko!';
-		default:
+		case 'LanguageLabel':
 			return 'Hizkuntza:';
+		case 'FileOperations':
+			return 'Hasi hemen';
+		case 'GridParameters':
+			return 'Pertsonalizatu sareta zure irudian behar bezala ikusteko';
+		case 'Actions':
+			return '🐸 🐸 🐸';
+		case 'AppSubtitle':
+			return 'Kaixo. Honek hautatutako irudi baten gainean sareta zuzen bat sortzen laguntzen dizu';
+		case 'GridPreviewPlaceholder':
+			return 'Zure saretadun irudia hemen agertuko da';
+		case 'UploadPlaceholder':
+			return 'Igo irudi bat hasteko';
+		default:
+			return 'Status: Prest';
 	}
 };
 var $author$project$I18n$frenchTranslations = function (key) {
@@ -5771,15 +5729,15 @@ var $author$project$I18n$frenchTranslations = function (key) {
 		case 'CustomizeIt':
 			return 'Personnalisez-le!';
 		case 'GridSize':
-			return 'Taille de la Grille: ';
+			return 'Taille';
 		case 'Rectangles':
 			return ' rectangles.';
 		case 'GridColor':
-			return 'Couleur de la Grille: ';
+			return 'Couleur';
 		case 'GridThickness':
-			return 'Épaisseur de la Grille: ';
+			return 'Épaisseur';
 		case 'GridOpacity':
-			return 'Opacité de la Grille: ';
+			return 'Opacité';
 		case 'OriginalImage':
 			return 'Image Originale';
 		case 'GriddedImage':
@@ -5792,8 +5750,22 @@ var $author$project$I18n$frenchTranslations = function (key) {
 			return 'Compteur Sympa: ';
 		case 'NoImageYet':
 			return 'Pas encore d\'image! Cliquez sur Télécharger une Image pour commencer!';
-		default:
+		case 'LanguageLabel':
 			return 'Langue:';
+		case 'FileOperations':
+			return 'Commencez ici';
+		case 'GridParameters':
+			return 'Personnalisez la grille pour la voir correctement sur votre image';
+		case 'Actions':
+			return '🐸 🐸 🐸';
+		case 'AppSubtitle':
+			return 'Bonjour. Ceci vous aide à créer une grille rectiligne sur une image de votre choix';
+		case 'GridPreviewPlaceholder':
+			return 'Votre image avec grille apparaîtra ici';
+		case 'UploadPlaceholder':
+			return 'Téléchargez une image pour commencer';
+		default:
+			return 'Status: Prêt';
 	}
 };
 var $author$project$I18n$gaelicTranslations = function (key) {
@@ -5805,15 +5777,15 @@ var $author$project$I18n$gaelicTranslations = function (key) {
 		case 'CustomizeIt':
 			return 'Gnàthaich e!';
 		case 'GridSize':
-			return 'Meud a\' Ghriod: ';
+			return 'Meud';
 		case 'Rectangles':
 			return ' ceart-chearnagan.';
 		case 'GridColor':
-			return 'Dath a\' Ghriod: ';
+			return 'Dath';
 		case 'GridThickness':
-			return 'Tiughad a\' Ghriod: ';
+			return 'Tiughad';
 		case 'GridOpacity':
-			return 'Dorchadas a\' Ghriod: ';
+			return 'Dorchadas';
 		case 'OriginalImage':
 			return 'Dealbh Tùsail';
 		case 'GriddedImage':
@@ -5826,8 +5798,22 @@ var $author$project$I18n$gaelicTranslations = function (key) {
 			return 'Cunntair Sgoinneil: ';
 		case 'NoImageYet':
 			return 'Chan eil dealbh ann fhathast! Cliog air Luchdaich Dealbh gus tòiseachadh!';
-		default:
+		case 'LanguageLabel':
 			return 'Cànan:';
+		case 'FileOperations':
+			return 'Tòisich an seo';
+		case 'GridParameters':
+			return 'Gnàthaich an griod gus am faic thu e gu ceart thar do dhealbh';
+		case 'Actions':
+			return '🐸 🐸 🐸';
+		case 'AppSubtitle':
+			return 'Halò. Bidh seo a\' cuideachadh thu le bhith a\' cruthachadh griod dìreach air ìomhaigh de do roghainn';
+		case 'GridPreviewPlaceholder':
+			return 'Nochdaidh do dhealbh le griod an seo';
+		case 'UploadPlaceholder':
+			return 'Luchdaich dealbh gus tòiseachadh';
+		default:
+			return 'Status: Deiseil';
 	}
 };
 var $author$project$I18n$italianTranslations = function (key) {
@@ -5839,15 +5825,15 @@ var $author$project$I18n$italianTranslations = function (key) {
 		case 'CustomizeIt':
 			return 'Personalizzalo!';
 		case 'GridSize':
-			return 'Dimensione Griglia: ';
+			return 'Dimensione';
 		case 'Rectangles':
 			return ' rettangoli.';
 		case 'GridColor':
-			return 'Colore Griglia: ';
+			return 'Colore';
 		case 'GridThickness':
-			return 'Spessore Griglia: ';
+			return 'Spessore';
 		case 'GridOpacity':
-			return 'Opacità Griglia: ';
+			return 'Opacità';
 		case 'OriginalImage':
 			return 'Immagine Originale';
 		case 'GriddedImage':
@@ -5860,8 +5846,22 @@ var $author$project$I18n$italianTranslations = function (key) {
 			return 'Contatore Bello: ';
 		case 'NoImageYet':
 			return 'Nessuna immagine ancora! Clicca su Carica Immagine per iniziare!';
-		default:
+		case 'LanguageLabel':
 			return 'Lingua:';
+		case 'FileOperations':
+			return 'Inizia qui';
+		case 'GridParameters':
+			return 'Personalizza la griglia in modo da vederla correttamente sulla tua immagine';
+		case 'Actions':
+			return '🐸 🐸 🐸';
+		case 'AppSubtitle':
+			return 'Ciao. Questo ti aiuta a creare una griglia rettilinea su un\'immagine di tua scelta';
+		case 'GridPreviewPlaceholder':
+			return 'La tua immagine con griglia apparirà qui';
+		case 'UploadPlaceholder':
+			return 'Carica un\'immagine per iniziare';
+		default:
+			return 'Status: Pronto';
 	}
 };
 var $author$project$I18n$japaneseTranslations = function (key) {
@@ -5873,29 +5873,43 @@ var $author$project$I18n$japaneseTranslations = function (key) {
 		case 'CustomizeIt':
 			return 'カスタマイズしよう！';
 		case 'GridSize':
-			return '格子サイズ: ';
+			return 'サイズ';
 		case 'Rectangles':
 			return ' 長方形';
 		case 'GridColor':
-			return '格子の色: ';
+			return '色';
 		case 'GridThickness':
-			return '格子の太さ: ';
+			return '太さ';
 		case 'GridOpacity':
-			return '格子の透明度: ';
+			return '不透明度';
 		case 'OriginalImage':
 			return '元の画像';
 		case 'GriddedImage':
-			return '格子付き画像';
+			return 'グリッド付き画像';
 		case 'DownloadGriddedImage':
-			return '格子付き画像をダウンロード！';
+			return 'グリッド付き画像をダウンロード！';
 		case 'Nice':
-			return '素晴らしい！ ';
+			return 'いいね！ ';
 		case 'NiceCounter':
-			return '素晴らしいカウンター: ';
+			return 'いいねカウンター: ';
 		case 'NoImageYet':
-			return 'まだ画像がありません！画像をアップロードボタンをクリックして始めましょう！';
-		default:
+			return 'まだ画像がありません！画像をアップロードをクリックして始めましょう！';
+		case 'LanguageLabel':
 			return '言語:';
+		case 'FileOperations':
+			return 'ここから始める';
+		case 'GridParameters':
+			return '画像上で適切に表示できるようにグリッドをカスタマイズする';
+		case 'Actions':
+			return '🐸 🐸 🐸';
+		case 'AppSubtitle':
+			return 'こんにちは。これはあなたが選んだ画像上に直線グリッドを作成するのに役立ちます';
+		case 'GridPreviewPlaceholder':
+			return 'グリッド付き画像がここに表示されます';
+		case 'UploadPlaceholder':
+			return '画像をアップロードして始めましょう';
+		default:
+			return 'Status: 準備完了';
 	}
 };
 var $author$project$I18n$latinTranslations = function (key) {
@@ -5903,33 +5917,47 @@ var $author$project$I18n$latinTranslations = function (key) {
 		case 'AppTitle':
 			return 'Gridit! 🐸';
 		case 'UploadImage':
-			return 'Imago Mittere';
+			return 'Imago Submittere';
 		case 'CustomizeIt':
 			return 'Personaliza!';
 		case 'GridSize':
-			return 'Magnitudinem Retis: ';
+			return 'Magnitudinem';
 		case 'Rectangles':
 			return ' rectangula.';
 		case 'GridColor':
-			return 'Color Retis: ';
+			return 'Color';
 		case 'GridThickness':
-			return 'Crassitudo Retis: ';
+			return 'Crassitudo';
 		case 'GridOpacity':
-			return 'Opacitas Retis: ';
+			return 'Opacitas';
 		case 'OriginalImage':
 			return 'Imago Originalis';
 		case 'GriddedImage':
-			return 'Imago cum Rete';
+			return 'Imago cum Craticula';
 		case 'DownloadGriddedImage':
-			return 'Imago cum Rete Descende!';
+			return 'Imago cum Craticula Discaricare!!!';
 		case 'Nice':
 			return 'Bellus! ';
 		case 'NiceCounter':
-			return 'Numerator Bellus: ';
+			return 'Bellus Numerator: ';
 		case 'NoImageYet':
-			return 'Nulla imago adhuc! Preme Imago Mittere ad incipiendum!';
-		default:
+			return 'Nondum imago! Imago Submittere preme ut incipias!';
+		case 'LanguageLabel':
 			return 'Lingua:';
+		case 'FileOperations':
+			return 'Incipe hic';
+		case 'GridParameters':
+			return 'Personaliza cratem ut videas eam recte super imaginem tuam';
+		case 'Actions':
+			return '🐸 🐸 🐸';
+		case 'AppSubtitle':
+			return 'Salve. Hoc te adiuvat creare reticulum rectilineare super imaginem tuam electam';
+		case 'GridPreviewPlaceholder':
+			return 'Imago tua cum craticula hic apparebit';
+		case 'UploadPlaceholder':
+			return 'Submitte imaginem ut incipias';
+		default:
+			return 'Status: Paratus';
 	}
 };
 var $author$project$I18n$portugueseTranslations = function (key) {
@@ -5941,15 +5969,15 @@ var $author$project$I18n$portugueseTranslations = function (key) {
 		case 'CustomizeIt':
 			return 'Personalize!';
 		case 'GridSize':
-			return 'Tamanho da Grade: ';
+			return 'Tamanho';
 		case 'Rectangles':
 			return ' retângulos.';
 		case 'GridColor':
-			return 'Cor da Grade: ';
+			return 'Cor';
 		case 'GridThickness':
-			return 'Espessura da Grade: ';
+			return 'Espessura: ';
 		case 'GridOpacity':
-			return 'Opacidade da Grade: ';
+			return 'Opacidade';
 		case 'OriginalImage':
 			return 'Imagem Original';
 		case 'GriddedImage':
@@ -5961,9 +5989,23 @@ var $author$project$I18n$portugueseTranslations = function (key) {
 		case 'NiceCounter':
 			return 'Contador Legal: ';
 		case 'NoImageYet':
-			return 'Ainda não há imagem! Clique em Carregar Imagem para começar!';
+			return 'Nenhuma imagem ainda! Clique em Carregar Imagem para começar!';
+		case 'LanguageLabel':
+			return 'Idioma:';
+		case 'FileOperations':
+			return 'Comece aqui';
+		case 'GridParameters':
+			return 'Personalize a grade para que você possa vê-la corretamente sobre sua imagem';
+		case 'Actions':
+			return '🐸 🐸 🐸';
+		case 'AppSubtitle':
+			return 'Olá. Isto ajuda-te a criar uma grelha retilínea sobre uma imagem à tua escolha';
+		case 'GridPreviewPlaceholder':
+			return 'Sua imagem com grade aparecerá aqui';
+		case 'UploadPlaceholder':
+			return 'Carregue uma imagem para começar';
 		default:
-			return 'Lingua:';
+			return 'Status: Pronto';
 	}
 };
 var $author$project$I18n$spanishTranslations = function (key) {
@@ -5973,31 +6015,45 @@ var $author$project$I18n$spanishTranslations = function (key) {
 		case 'UploadImage':
 			return 'Subir una Imagen';
 		case 'CustomizeIt':
-			return 'Personaliza la grilla';
+			return 'Personalizá la grilla';
 		case 'GridSize':
-			return 'Tamaño de la grilla: ';
+			return 'Tamaño';
 		case 'Rectangles':
-			return ' rectángulos.';
+			return ' rectángulos';
 		case 'GridColor':
-			return 'Color de la grilla: ';
+			return 'Color';
 		case 'GridThickness':
-			return 'Grosor de las líneas de la grilla: ';
+			return 'Grosor';
 		case 'GridOpacity':
-			return 'Opacidad de la grilla: ';
+			return 'Opacidad';
 		case 'OriginalImage':
 			return 'Imagen Original';
 		case 'GriddedImage':
 			return 'Imagen con Grilla';
 		case 'DownloadGriddedImage':
-			return 'Descargá la imagen grillada!';
+			return 'Descarga tu Imagen con Grilla!';
 		case 'Nice':
-			return 'Magnífico';
+			return 'Buenísimo! ';
 		case 'NiceCounter':
-			return 'Contador de Magníficos: ';
+			return 'Contador de Buenísimo: ';
 		case 'NoImageYet':
-			return 'Todavía no hay nada! Click en subir una Imagen para empezar!';
-		default:
+			return 'Hacé click en Subir Imagen para empezar!';
+		case 'LanguageLabel':
 			return 'Idioma:';
+		case 'FileOperations':
+			return 'Empezá acá';
+		case 'GridParameters':
+			return 'Customizá la grilla para verla bien sobre tu imagen';
+		case 'Actions':
+			return '🐸 🐸 🐸';
+		case 'AppSubtitle':
+			return 'Buenas. Agregale una grilla rectilinear a una imagen que elijas';
+		case 'GridPreviewPlaceholder':
+			return 'Tu imagen con grilla va a aparecer acá';
+		case 'UploadPlaceholder':
+			return 'Subí una imagen para empezar';
+		default:
+			return 'Status: Listo';
 	}
 };
 var $author$project$I18n$translations = F2(
@@ -6029,9 +6085,9 @@ var $author$project$I18n$translate = F2(
 	function (language, key) {
 		return A2($author$project$I18n$translations, language, key);
 	});
-var $elm$html$Html$Attributes$type_ = $elm$html$Html$Attributes$stringProperty('type');
-var $elm$html$Html$Attributes$value = $elm$html$Html$Attributes$stringProperty('value');
 var $author$project$I18n$NoImageYet = {$: 'NoImageYet'};
+var $elm$svg$Svg$Attributes$class = _VirtualDom_attribute('class');
+var $elm$core$String$fromFloat = _String_fromNumber;
 var $elm$svg$Svg$Attributes$height = _VirtualDom_attribute('height');
 var $elm$html$Html$img = _VirtualDom_node('img');
 var $elm$svg$Svg$trustedNode = _VirtualDom_nodeNS('http://www.w3.org/2000/svg');
@@ -6112,8 +6168,7 @@ var $author$project$Main$viewGriddedImage = function (model) {
 			$elm$html$Html$div,
 			_List_fromArray(
 				[
-					A2($elm$html$Html$Attributes$style, 'position', 'relative'),
-					A2($elm$html$Html$Attributes$style, 'display', 'inline-block')
+					$elm$html$Html$Attributes$class('gridded-image-container')
 				]),
 			_List_fromArray(
 				[
@@ -6122,8 +6177,7 @@ var $author$project$Main$viewGriddedImage = function (model) {
 					_List_fromArray(
 						[
 							$elm$html$Html$Attributes$src(url),
-							A2($elm$html$Html$Attributes$style, 'max-width', '500px'),
-							A2($elm$html$Html$Attributes$style, 'display', 'block')
+							$elm$html$Html$Attributes$class('gridded-base-image')
 						]),
 					_List_Nil),
 					A2(
@@ -6136,12 +6190,7 @@ var $author$project$Main$viewGriddedImage = function (model) {
 							$elm$core$String$fromInt(height)),
 							$elm$svg$Svg$Attributes$viewBox(
 							'0 0 ' + ($elm$core$String$fromInt(width) + (' ' + $elm$core$String$fromInt(height)))),
-							A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
-							A2($elm$html$Html$Attributes$style, 'top', '0'),
-							A2($elm$html$Html$Attributes$style, 'left', '0'),
-							A2($elm$html$Html$Attributes$style, 'width', '100%'),
-							A2($elm$html$Html$Attributes$style, 'height', '100%'),
-							A2($elm$html$Html$Attributes$style, 'pointer-events', 'none')
+							$elm$svg$Svg$Attributes$class('grid-overlay')
 						]),
 					_Utils_ap(verticalLines, horizontalLines))
 				]));
@@ -6149,6 +6198,879 @@ var $author$project$Main$viewGriddedImage = function (model) {
 		return $elm$html$Html$text(
 			A2($author$project$I18n$translate, model.language, $author$project$I18n$NoImageYet));
 	}
+};
+var $elm$html$Html$p = _VirtualDom_node('p');
+var $author$project$Main$viewPlaceholder = F3(
+	function (icon, title, subtitle) {
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('placeholder')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('placeholder-icon')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text(icon)
+						])),
+					A2(
+					$elm$html$Html$p,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('placeholder-title')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text(title)
+						])),
+					A2(
+					$elm$html$Html$p,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('placeholder-text')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text(subtitle)
+						]))
+				]));
+	});
+var $author$project$Main$viewGridPreviewWindow = function (model) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('preview-window')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('window-titlebar')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$span,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('window-title')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text(
+								A2($author$project$I18n$translate, model.language, $author$project$I18n$GriddedImage))
+							]))
+					])),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('window-content')
+					]),
+				_List_fromArray(
+					[
+						function () {
+						var _v0 = model.uploadedImage;
+						if (_v0.$ === 'Just') {
+							return $author$project$Main$viewGriddedImage(model);
+						} else {
+							return A3(
+								$author$project$Main$viewPlaceholder,
+								'#',
+								A2($author$project$I18n$translate, model.language, $author$project$I18n$GriddedImage),
+								A2($author$project$I18n$translate, model.language, $author$project$I18n$GridPreviewPlaceholder));
+						}
+					}()
+					]))
+			]));
+};
+var $author$project$Main$ImageSizeLoaded = F2(
+	function (a, b) {
+		return {$: 'ImageSizeLoaded', a: a, b: b};
+	});
+var $author$project$I18n$OriginalImage = {$: 'OriginalImage'};
+var $author$project$I18n$UploadPlaceholder = {$: 'UploadPlaceholder'};
+var $elm$json$Json$Decode$field = _Json_decodeField;
+var $elm$json$Json$Decode$at = F2(
+	function (fields, decoder) {
+		return A3($elm$core$List$foldr, $elm$json$Json$Decode$field, decoder, fields);
+	});
+var $elm$json$Json$Decode$int = _Json_decodeInt;
+var $author$project$Main$decodeImageSize = function (tagger) {
+	return A3(
+		$elm$json$Json$Decode$map2,
+		tagger,
+		A2(
+			$elm$json$Json$Decode$at,
+			_List_fromArray(
+				['target', 'naturalWidth']),
+			$elm$json$Json$Decode$int),
+		A2(
+			$elm$json$Json$Decode$at,
+			_List_fromArray(
+				['target', 'naturalHeight']),
+			$elm$json$Json$Decode$int));
+};
+var $elm$virtual_dom$VirtualDom$Normal = function (a) {
+	return {$: 'Normal', a: a};
+};
+var $elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
+var $elm$html$Html$Events$on = F2(
+	function (event, decoder) {
+		return A2(
+			$elm$virtual_dom$VirtualDom$on,
+			event,
+			$elm$virtual_dom$VirtualDom$Normal(decoder));
+	});
+var $author$project$Main$viewSourceImageWindow = function (model) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('preview-window')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('window-titlebar')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$span,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('window-title')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text(
+								A2($author$project$I18n$translate, model.language, $author$project$I18n$OriginalImage))
+							]))
+					])),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('window-content')
+					]),
+				_List_fromArray(
+					[
+						function () {
+						var _v0 = model.uploadedImage;
+						if (_v0.$ === 'Just') {
+							var url = _v0.a;
+							return A2(
+								$elm$html$Html$img,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$src(url),
+										$elm$html$Html$Attributes$class('preview-image'),
+										A2(
+										$elm$html$Html$Events$on,
+										'load',
+										$author$project$Main$decodeImageSize($author$project$Main$ImageSizeLoaded))
+									]),
+								_List_Nil);
+						} else {
+							return A3(
+								$author$project$Main$viewPlaceholder,
+								'↑',
+								A2($author$project$I18n$translate, model.language, $author$project$I18n$NoImageYet),
+								A2($author$project$I18n$translate, model.language, $author$project$I18n$UploadPlaceholder));
+						}
+					}()
+					]))
+			]));
+};
+var $author$project$Main$viewCanvasArea = function (model) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('canvas-area')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('preview-grid')
+					]),
+				_List_fromArray(
+					[
+						$author$project$Main$viewSourceImageWindow(model),
+						$author$project$Main$viewGridPreviewWindow(model)
+					]))
+			]));
+};
+var $author$project$I18n$Actions = {$: 'Actions'};
+var $author$project$Main$DownloadClicked = {$: 'DownloadClicked'};
+var $author$project$I18n$DownloadGriddedImage = {$: 'DownloadGriddedImage'};
+var $author$project$I18n$Nice = {$: 'Nice'};
+var $author$project$Main$NiceButtonClicked = {$: 'NiceButtonClicked'};
+var $elm$html$Html$button = _VirtualDom_node('button');
+var $elm$json$Json$Encode$bool = _Json_wrap;
+var $elm$html$Html$Attributes$boolProperty = F2(
+	function (key, bool) {
+		return A2(
+			_VirtualDom_property,
+			key,
+			$elm$json$Json$Encode$bool(bool));
+	});
+var $elm$html$Html$Attributes$disabled = $elm$html$Html$Attributes$boolProperty('disabled');
+var $elm$html$Html$Events$onClick = function (msg) {
+	return A2(
+		$elm$html$Html$Events$on,
+		'click',
+		$elm$json$Json$Decode$succeed(msg));
+};
+var $author$project$Main$viewActionsPanel = function (model) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('panel')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$span,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('panel-title')
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text(
+						A2($author$project$I18n$translate, model.language, $author$project$I18n$Actions))
+					])),
+				A2(
+				$elm$html$Html$div,
+				_List_Nil,
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$button,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('btn btn-primary'),
+								$elm$html$Html$Events$onClick($author$project$Main$DownloadClicked),
+								$elm$html$Html$Attributes$disabled(
+								_Utils_eq(model.uploadedImage, $elm$core$Maybe$Nothing))
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text(
+								A2($author$project$I18n$translate, model.language, $author$project$I18n$DownloadGriddedImage))
+							]))
+					])),
+				A2(
+				$elm$html$Html$div,
+				_List_Nil,
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$button,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('btn'),
+								$elm$html$Html$Events$onClick($author$project$Main$NiceButtonClicked)
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('🐸 '),
+								$elm$html$Html$text(
+								A2($author$project$I18n$translate, model.language, $author$project$I18n$Nice)),
+								$elm$html$Html$text(
+								' (' + ($elm$core$String$fromInt(model.niceCounter) + ')'))
+							]))
+					]))
+			]));
+};
+var $author$project$I18n$AppSubtitle = {$: 'AppSubtitle'};
+var $author$project$I18n$AppTitle = {$: 'AppTitle'};
+var $elm$html$Html$h1 = _VirtualDom_node('h1');
+var $author$project$Main$viewAppHeader = function (model) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('app-header')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$div,
+				_List_Nil,
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$h1,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('app-title')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text(
+								A2($author$project$I18n$translate, model.language, $author$project$I18n$AppTitle))
+							])),
+						A2(
+						$elm$html$Html$p,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('app-subtitle')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text(
+								A2($author$project$I18n$translate, model.language, $author$project$I18n$AppSubtitle))
+							]))
+					]))
+			]));
+};
+var $author$project$I18n$FileOperations = {$: 'FileOperations'};
+var $author$project$Main$PickImage = {$: 'PickImage'};
+var $author$project$I18n$UploadImage = {$: 'UploadImage'};
+var $author$project$Main$viewFileOperationsPanel = function (model) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('panel')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$span,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('panel-title')
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text(
+						A2($author$project$I18n$translate, model.language, $author$project$I18n$FileOperations))
+					])),
+				A2(
+				$elm$html$Html$button,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('btn'),
+						$elm$html$Html$Events$onClick($author$project$Main$PickImage)
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text(
+						A2($author$project$I18n$translate, model.language, $author$project$I18n$UploadImage))
+					]))
+			]));
+};
+var $author$project$I18n$GridColor = {$: 'GridColor'};
+var $author$project$Main$GridColorChanged = function (a) {
+	return {$: 'GridColorChanged', a: a};
+};
+var $author$project$I18n$GridOpacity = {$: 'GridOpacity'};
+var $author$project$Main$GridOpacityChanged = function (a) {
+	return {$: 'GridOpacityChanged', a: a};
+};
+var $author$project$I18n$GridParameters = {$: 'GridParameters'};
+var $author$project$I18n$GridSize = {$: 'GridSize'};
+var $author$project$Main$GridSizeChanged = function (a) {
+	return {$: 'GridSizeChanged', a: a};
+};
+var $author$project$I18n$GridThickness = {$: 'GridThickness'};
+var $author$project$Main$GridThicknessChanged = function (a) {
+	return {$: 'GridThicknessChanged', a: a};
+};
+var $elm$html$Html$input = _VirtualDom_node('input');
+var $elm$html$Html$label = _VirtualDom_node('label');
+var $elm$html$Html$Attributes$max = $elm$html$Html$Attributes$stringProperty('max');
+var $elm$html$Html$Attributes$min = $elm$html$Html$Attributes$stringProperty('min');
+var $elm$html$Html$Events$alwaysStop = function (x) {
+	return _Utils_Tuple2(x, true);
+};
+var $elm$virtual_dom$VirtualDom$MayStopPropagation = function (a) {
+	return {$: 'MayStopPropagation', a: a};
+};
+var $elm$html$Html$Events$stopPropagationOn = F2(
+	function (event, decoder) {
+		return A2(
+			$elm$virtual_dom$VirtualDom$on,
+			event,
+			$elm$virtual_dom$VirtualDom$MayStopPropagation(decoder));
+	});
+var $elm$html$Html$Events$targetValue = A2(
+	$elm$json$Json$Decode$at,
+	_List_fromArray(
+		['target', 'value']),
+	$elm$json$Json$Decode$string);
+var $elm$html$Html$Events$onInput = function (tagger) {
+	return A2(
+		$elm$html$Html$Events$stopPropagationOn,
+		'input',
+		A2(
+			$elm$json$Json$Decode$map,
+			$elm$html$Html$Events$alwaysStop,
+			A2($elm$json$Json$Decode$map, tagger, $elm$html$Html$Events$targetValue)));
+};
+var $elm$core$Basics$round = _Basics_round;
+var $elm$html$Html$Attributes$step = function (n) {
+	return A2($elm$html$Html$Attributes$stringProperty, 'step', n);
+};
+var $elm$core$String$toFloat = _String_toFloat;
+var $elm$html$Html$Attributes$type_ = $elm$html$Html$Attributes$stringProperty('type');
+var $elm$html$Html$Attributes$value = $elm$html$Html$Attributes$stringProperty('value');
+var $elm$core$Maybe$withDefault = F2(
+	function (_default, maybe) {
+		if (maybe.$ === 'Just') {
+			var value = maybe.a;
+			return value;
+		} else {
+			return _default;
+		}
+	});
+var $author$project$Main$viewGridParametersPanel = function (model) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('panel')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$span,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('panel-title')
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text(
+						A2($author$project$I18n$translate, model.language, $author$project$I18n$GridParameters))
+					])),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('form-group')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('form-row')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$label,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('form-label')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text(
+										A2($author$project$I18n$translate, model.language, $author$project$I18n$GridSize))
+									]))
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('input-with-text')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$input,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$type_('range'),
+										$elm$html$Html$Attributes$min('2'),
+										$elm$html$Html$Attributes$max('50'),
+										$elm$html$Html$Attributes$step('1'),
+										$elm$html$Html$Attributes$value(
+										$elm$core$String$fromInt(model.gridSize)),
+										$elm$html$Html$Events$onInput(
+										function (s) {
+											return $author$project$Main$GridSizeChanged(
+												A2(
+													$elm$core$Maybe$withDefault,
+													10,
+													$elm$core$String$toInt(s)));
+										}),
+										$elm$html$Html$Attributes$class('slider')
+									]),
+								_List_Nil),
+								A2(
+								$elm$html$Html$input,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$type_('number'),
+										$elm$html$Html$Attributes$min('2'),
+										$elm$html$Html$Attributes$max('50'),
+										$elm$html$Html$Attributes$value(
+										$elm$core$String$fromInt(model.gridSize)),
+										$elm$html$Html$Events$onInput(
+										function (s) {
+											return $author$project$Main$GridSizeChanged(
+												A2(
+													$elm$core$Maybe$withDefault,
+													10,
+													$elm$core$String$toInt(s)));
+										}),
+										$elm$html$Html$Attributes$class('numeric-input')
+									]),
+								_List_Nil),
+								A2(
+								$elm$html$Html$span,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('unit')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('px')
+									]))
+							]))
+					])),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('form-group')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('form-row')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$label,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('form-label')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text(
+										A2($author$project$I18n$translate, model.language, $author$project$I18n$GridColor))
+									]))
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('input-with-text')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$input,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$type_('color'),
+										$elm$html$Html$Attributes$value(model.gridColor),
+										$elm$html$Html$Events$onInput($author$project$Main$GridColorChanged),
+										$elm$html$Html$Attributes$class('color-picker')
+									]),
+								_List_Nil),
+								A2(
+								$elm$html$Html$input,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$type_('text'),
+										$elm$html$Html$Attributes$value(model.gridColor),
+										$elm$html$Html$Events$onInput($author$project$Main$GridColorChanged),
+										$elm$html$Html$Attributes$class('hex-input')
+									]),
+								_List_Nil)
+							]))
+					])),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('form-group')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('form-row')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$label,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('form-label')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text(
+										A2($author$project$I18n$translate, model.language, $author$project$I18n$GridThickness))
+									]))
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('input-with-text')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$input,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$type_('range'),
+										$elm$html$Html$Attributes$min('1'),
+										$elm$html$Html$Attributes$max('10'),
+										$elm$html$Html$Attributes$step('1'),
+										$elm$html$Html$Attributes$value(
+										$elm$core$String$fromInt(model.gridThickness)),
+										$elm$html$Html$Events$onInput(
+										function (s) {
+											return $author$project$Main$GridThicknessChanged(
+												A2(
+													$elm$core$Maybe$withDefault,
+													1,
+													$elm$core$String$toInt(s)));
+										}),
+										$elm$html$Html$Attributes$class('slider-input')
+									]),
+								_List_Nil),
+								A2(
+								$elm$html$Html$input,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$type_('number'),
+										$elm$html$Html$Attributes$min('1'),
+										$elm$html$Html$Attributes$max('10'),
+										$elm$html$Html$Attributes$value(
+										$elm$core$String$fromInt(model.gridThickness)),
+										$elm$html$Html$Events$onInput(
+										function (s) {
+											return $author$project$Main$GridThicknessChanged(
+												A2(
+													$elm$core$Maybe$withDefault,
+													1,
+													$elm$core$String$toInt(s)));
+										}),
+										$elm$html$Html$Attributes$class('numeric-input')
+									]),
+								_List_Nil),
+								A2(
+								$elm$html$Html$span,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('unit')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('px')
+									]))
+							]))
+					])),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('form-group')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('form-row')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$label,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('form-label')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text(
+										A2($author$project$I18n$translate, model.language, $author$project$I18n$GridOpacity))
+									]))
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('input-with-text')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$input,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$type_('range'),
+										$elm$html$Html$Attributes$min('0'),
+										$elm$html$Html$Attributes$max('1'),
+										$elm$html$Html$Attributes$step('0.1'),
+										$elm$html$Html$Attributes$value(
+										$elm$core$String$fromFloat(model.gridOpacity)),
+										$elm$html$Html$Events$onInput(
+										function (s) {
+											return $author$project$Main$GridOpacityChanged(
+												A2(
+													$elm$core$Maybe$withDefault,
+													0.5,
+													$elm$core$String$toFloat(s)));
+										}),
+										$elm$html$Html$Attributes$class('slider-input')
+									]),
+								_List_Nil),
+								A2(
+								$elm$html$Html$input,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$type_('number'),
+										$elm$html$Html$Attributes$min('0'),
+										$elm$html$Html$Attributes$max('100'),
+										$elm$html$Html$Attributes$value(
+										$elm$core$String$fromInt(
+											$elm$core$Basics$round(model.gridOpacity * 100))),
+										$elm$html$Html$Events$onInput(
+										function (s) {
+											return $author$project$Main$GridOpacityChanged(
+												A2(
+													$elm$core$Maybe$withDefault,
+													50,
+													$elm$core$String$toInt(s)) / 100);
+										}),
+										$elm$html$Html$Attributes$class('numeric-input')
+									]),
+								_List_Nil),
+								A2(
+								$elm$html$Html$span,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('unit')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('%')
+									]))
+							]))
+					]))
+			]));
+};
+var $author$project$Main$viewSidebar = function (model) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('sidebar')
+			]),
+		_List_fromArray(
+			[
+				$author$project$Main$viewAppHeader(model),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('sidebar-content')
+					]),
+				_List_fromArray(
+					[
+						$author$project$Main$viewFileOperationsPanel(model),
+						$author$project$Main$viewGridParametersPanel(model),
+						$author$project$Main$viewActionsPanel(model)
+					]))
+			]));
+};
+var $author$project$I18n$NiceCounter = {$: 'NiceCounter'};
+var $author$project$I18n$StatusReady = {$: 'StatusReady'};
+var $author$project$Main$viewStatusBar = function (model) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('status-bar')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$span,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text(
+						A2($author$project$I18n$translate, model.language, $author$project$I18n$StatusReady) + ' | Grid: '),
+						$elm$html$Html$text(
+						$elm$core$String$fromInt(model.gridSize)),
+						$elm$html$Html$text('×'),
+						$elm$html$Html$text(
+						$elm$core$String$fromInt(model.gridSize)),
+						$elm$html$Html$text(' | Opacity: '),
+						$elm$html$Html$text(
+						$elm$core$String$fromInt(
+							$elm$core$Basics$round(model.gridOpacity * 100))),
+						$elm$html$Html$text('%')
+					])),
+				A2(
+				$elm$html$Html$span,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('made-with')
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text('Made in  🇦🇷  with  ❤️  ᕦ(ò_óˇ)ᕤ')
+					])),
+				A2(
+				$elm$html$Html$span,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('nice-count')
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text(
+						A2($author$project$I18n$translate, model.language, $author$project$I18n$NiceCounter)),
+						$elm$html$Html$text(
+						$elm$core$String$fromInt(model.niceCounter)),
+						$elm$html$Html$text(' 🐸')
+					]))
+			]));
 };
 var $author$project$I18n$Asturiano = {$: 'Asturiano'};
 var $author$project$I18n$English = {$: 'English'};
@@ -6160,13 +7082,11 @@ var $author$project$I18n$Japanese = {$: 'Japanese'};
 var $author$project$Main$LanguageChanged = function (a) {
 	return {$: 'LanguageChanged', a: a};
 };
-var $author$project$I18n$LanguageLabel = {$: 'LanguageLabel'};
 var $author$project$I18n$Latin = {$: 'Latin'};
 var $author$project$I18n$Portuguese = {$: 'Portuguese'};
 var $elm$html$Html$option = _VirtualDom_node('option');
 var $elm$html$Html$select = _VirtualDom_node('select');
 var $elm$html$Html$Attributes$selected = $elm$html$Html$Attributes$boolProperty('selected');
-var $elm$html$Html$span = _VirtualDom_node('span');
 var $author$project$Main$viewLanguageSelector = function (currentLanguage) {
 	var languageToString = function (language) {
 		switch (language.$) {
@@ -6192,6 +7112,30 @@ var $author$project$Main$viewLanguageSelector = function (currentLanguage) {
 				return 'japanese';
 		}
 	};
+	var languageFlag = function (language) {
+		switch (language.$) {
+			case 'English':
+				return '🇬🇧 ';
+			case 'Spanish':
+				return '🇪🇸🇦🇷 ';
+			case 'Latin':
+				return '🇮🇹 ';
+			case 'Italian':
+				return '🇮🇹 ';
+			case 'Portuguese':
+				return '🇧🇷🇵🇹 ';
+			case 'French':
+				return '🇫🇷 ';
+			case 'Asturiano':
+				return '🇪🇸 ';
+			case 'Gaelic':
+				return '🇮🇪🏴\uDB40\uDC67\uDB40\uDC62\uDB40\uDC73\uDB40\uDC63\uDB40\uDC74\uDB40\uDC7F ';
+			case 'Euskara':
+				return '🇪🇸 ';
+			default:
+				return '🇯🇵 ';
+		}
+	};
 	var languageOption = F2(
 		function (language, displayName) {
 			return A2(
@@ -6205,7 +7149,8 @@ var $author$project$Main$viewLanguageSelector = function (currentLanguage) {
 					]),
 				_List_fromArray(
 					[
-						$elm$html$Html$text(displayName)
+						$elm$html$Html$text(
+						languageFlag(language) + (' ' + displayName))
 					]));
 		});
 	var handleLanguageChange = function (value) {
@@ -6238,20 +7183,10 @@ var $author$project$Main$viewLanguageSelector = function (currentLanguage) {
 		$elm$html$Html$div,
 		_List_fromArray(
 			[
-				A2($elm$html$Html$Attributes$style, 'display', 'flex'),
-				A2($elm$html$Html$Attributes$style, 'align-items', 'center'),
-				A2($elm$html$Html$Attributes$style, 'gap', '10px')
+				$elm$html$Html$Attributes$class('language-selector')
 			]),
 		_List_fromArray(
 			[
-				A2(
-				$elm$html$Html$span,
-				_List_Nil,
-				_List_fromArray(
-					[
-						$elm$html$Html$text(
-						A2($author$project$I18n$translate, currentLanguage, $author$project$I18n$LanguageLabel) + ' ')
-					])),
 				A2(
 				$elm$html$Html$select,
 				_List_fromArray(
@@ -6267,11 +7202,7 @@ var $author$project$Main$viewLanguageSelector = function (currentLanguage) {
 								_List_fromArray(
 									['target', 'value']),
 								$elm$json$Json$Decode$string))),
-						A2($elm$html$Html$Attributes$style, 'padding', '5px'),
-						A2($elm$html$Html$Attributes$style, 'border-radius', '4px'),
-						A2($elm$html$Html$Attributes$style, 'border', '1px solid #ccc'),
-						A2($elm$html$Html$Attributes$style, 'background-color', '#f8f8f8'),
-						A2($elm$html$Html$Attributes$style, 'cursor', 'pointer')
+						$elm$html$Html$Attributes$class('language-dropdown')
 					]),
 				_List_fromArray(
 					[
@@ -6288,342 +7219,50 @@ var $author$project$Main$viewLanguageSelector = function (currentLanguage) {
 					]))
 			]));
 };
-var $author$project$Main$ImageSizeLoaded = F2(
-	function (a, b) {
-		return {$: 'ImageSizeLoaded', a: a, b: b};
-	});
-var $elm$json$Json$Decode$int = _Json_decodeInt;
-var $author$project$Main$decodeImageSize = function (tagger) {
-	return A3(
-		$elm$json$Json$Decode$map2,
-		tagger,
-		A2(
-			$elm$json$Json$Decode$at,
-			_List_fromArray(
-				['target', 'naturalWidth']),
-			$elm$json$Json$Decode$int),
-		A2(
-			$elm$json$Json$Decode$at,
-			_List_fromArray(
-				['target', 'naturalHeight']),
-			$elm$json$Json$Decode$int));
-};
-var $author$project$Main$viewPreview = F2(
-	function (maybeUrl, language) {
-		if (maybeUrl.$ === 'Just') {
-			var url = maybeUrl.a;
-			return A2(
-				$elm$html$Html$img,
+var $author$project$Main$viewTitleBar = function (model) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('title-bar')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$span,
 				_List_fromArray(
 					[
-						$elm$html$Html$Attributes$src(url),
-						A2($elm$html$Html$Attributes$style, 'max-width', '500px'),
-						A2($elm$html$Html$Attributes$style, 'margin-top', '20px'),
-						A2(
-						$elm$html$Html$Events$on,
-						'load',
-						$author$project$Main$decodeImageSize($author$project$Main$ImageSizeLoaded))
+						$elm$html$Html$Attributes$class('title-text')
 					]),
-				_List_Nil);
-		} else {
-			return $elm$html$Html$text(
-				A2($author$project$I18n$translate, language, $author$project$I18n$NoImageYet));
-		}
-	});
-var $elm$core$Maybe$withDefault = F2(
-	function (_default, maybe) {
-		if (maybe.$ === 'Just') {
-			var value = maybe.a;
-			return value;
-		} else {
-			return _default;
-		}
-	});
+				_List_fromArray(
+					[
+						$elm$html$Html$text(' gridit gridit')
+					])),
+				$author$project$Main$viewLanguageSelector(model.language)
+			]));
+};
 var $author$project$Main$view = function (model) {
 	return A2(
 		$elm$html$Html$div,
 		_List_fromArray(
 			[
-				A2($elm$html$Html$Attributes$style, 'padding', '20px'),
-				A2($elm$html$Html$Attributes$style, 'background-color', '#ffcc99')
+				$elm$html$Html$Attributes$class('app-container')
 			]),
 		_List_fromArray(
 			[
+				$author$project$Main$viewTitleBar(model),
 				A2(
 				$elm$html$Html$div,
 				_List_fromArray(
 					[
-						A2($elm$html$Html$Attributes$style, 'display', 'flex'),
-						A2($elm$html$Html$Attributes$style, 'justify-content', 'space-between'),
-						A2($elm$html$Html$Attributes$style, 'align-items', 'center')
+						$elm$html$Html$Attributes$class('main-content')
 					]),
 				_List_fromArray(
 					[
-						A2(
-						$elm$html$Html$h1,
-						_List_fromArray(
-							[
-								A2($elm$html$Html$Attributes$style, 'color', 'green')
-							]),
-						_List_fromArray(
-							[
-								$elm$html$Html$text(
-								A2($author$project$I18n$translate, model.language, $author$project$I18n$AppTitle))
-							])),
-						$author$project$Main$viewLanguageSelector(model.language)
+						$author$project$Main$viewSidebar(model),
+						$author$project$Main$viewCanvasArea(model)
 					])),
-				A2(
-				$elm$html$Html$div,
-				_List_Nil,
-				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$button,
-						_List_fromArray(
-							[
-								$elm$html$Html$Events$onClick($author$project$Main$PickImage)
-							]),
-						_List_fromArray(
-							[
-								$elm$html$Html$text(
-								A2($author$project$I18n$translate, model.language, $author$project$I18n$UploadImage))
-							]))
-					])),
-				A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						A2($elm$html$Html$Attributes$style, 'margin-top', '20px'),
-						A2($elm$html$Html$Attributes$style, 'padding', '15px'),
-						A2($elm$html$Html$Attributes$style, 'border', '2px solid #4a4a4a'),
-						A2($elm$html$Html$Attributes$style, 'border-radius', '8px')
-					]),
-				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$h3,
-						_List_Nil,
-						_List_fromArray(
-							[
-								$elm$html$Html$text(
-								A2($author$project$I18n$translate, model.language, $author$project$I18n$CustomizeIt))
-							])),
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								A2($elm$html$Html$Attributes$style, 'margin-bottom', '15px')
-							]),
-						_List_fromArray(
-							[
-								$elm$html$Html$text(
-								A2($author$project$I18n$translate, model.language, $author$project$I18n$GridSize)),
-								A2(
-								$elm$html$Html$input,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$type_('range'),
-										$elm$html$Html$Attributes$min('2'),
-										$elm$html$Html$Attributes$max('50'),
-										$elm$html$Html$Attributes$value(
-										$elm$core$String$fromInt(model.gridSize)),
-										$elm$html$Html$Events$onInput(
-										A2(
-											$elm$core$Basics$composeR,
-											$elm$core$String$toInt,
-											A2(
-												$elm$core$Basics$composeR,
-												$elm$core$Maybe$withDefault(10),
-												$author$project$Main$GridSizeChanged)))
-									]),
-								_List_Nil),
-								$elm$html$Html$text(
-								' ' + ($elm$core$String$fromInt(model.gridSize) + A2($author$project$I18n$translate, model.language, $author$project$I18n$Rectangles)))
-							])),
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								A2($elm$html$Html$Attributes$style, 'margin-bottom', '15px')
-							]),
-						_List_fromArray(
-							[
-								$elm$html$Html$text(
-								A2($author$project$I18n$translate, model.language, $author$project$I18n$GridColor)),
-								A2(
-								$elm$html$Html$input,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$type_('color'),
-										$elm$html$Html$Attributes$value(model.gridColor),
-										$elm$html$Html$Events$onInput($author$project$Main$GridColorChanged),
-										A2($elm$html$Html$Attributes$style, 'margin-left', '10px'),
-										A2($elm$html$Html$Attributes$style, 'width', '50px'),
-										A2($elm$html$Html$Attributes$style, 'height', '30px')
-									]),
-								_List_Nil),
-								$elm$html$Html$text(' ' + model.gridColor)
-							])),
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								A2($elm$html$Html$Attributes$style, 'margin-bottom', '15px')
-							]),
-						_List_fromArray(
-							[
-								$elm$html$Html$text(
-								A2($author$project$I18n$translate, model.language, $author$project$I18n$GridThickness)),
-								A2(
-								$elm$html$Html$input,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$type_('range'),
-										$elm$html$Html$Attributes$min('1'),
-										$elm$html$Html$Attributes$max('10'),
-										$elm$html$Html$Attributes$value(
-										$elm$core$String$fromInt(model.gridThickness)),
-										$elm$html$Html$Events$onInput(
-										A2(
-											$elm$core$Basics$composeR,
-											$elm$core$String$toInt,
-											A2(
-												$elm$core$Basics$composeR,
-												$elm$core$Maybe$withDefault(1),
-												$author$project$Main$GridThicknessChanged)))
-									]),
-								_List_Nil),
-								$elm$html$Html$text(
-								' ' + ($elm$core$String$fromInt(model.gridThickness) + 'px'))
-							])),
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								A2($elm$html$Html$Attributes$style, 'margin-bottom', '15px')
-							]),
-						_List_fromArray(
-							[
-								$elm$html$Html$text(
-								A2($author$project$I18n$translate, model.language, $author$project$I18n$GridOpacity)),
-								A2(
-								$elm$html$Html$input,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$type_('range'),
-										$elm$html$Html$Attributes$min('0'),
-										$elm$html$Html$Attributes$max('1'),
-										$elm$html$Html$Attributes$step('0.1'),
-										$elm$html$Html$Attributes$value(
-										$elm$core$String$fromFloat(model.gridOpacity)),
-										$elm$html$Html$Events$onInput(
-										A2(
-											$elm$core$Basics$composeR,
-											$elm$core$String$toFloat,
-											A2(
-												$elm$core$Basics$composeR,
-												$elm$core$Maybe$withDefault(1),
-												$author$project$Main$GridOpacityChanged)))
-									]),
-								_List_Nil),
-								$elm$html$Html$text(
-								' ' + ($elm$core$String$fromInt(
-									$elm$core$Basics$round(model.gridOpacity * 100)) + '%'))
-							]))
-					])),
-				A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						A2($elm$html$Html$Attributes$style, 'display', 'flex'),
-						A2($elm$html$Html$Attributes$style, 'flex-wrap', 'wrap'),
-						A2($elm$html$Html$Attributes$style, 'gap', '20px'),
-						A2($elm$html$Html$Attributes$style, 'margin-top', '20px')
-					]),
-				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								A2($elm$html$Html$Attributes$style, 'flex', '1'),
-								A2($elm$html$Html$Attributes$style, 'min-width', '300px')
-							]),
-						_List_fromArray(
-							[
-								A2(
-								$elm$html$Html$h3,
-								_List_Nil,
-								_List_fromArray(
-									[
-										$elm$html$Html$text(
-										A2($author$project$I18n$translate, model.language, $author$project$I18n$OriginalImage))
-									])),
-								A2($author$project$Main$viewPreview, model.uploadedImage, model.language)
-							])),
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								A2($elm$html$Html$Attributes$style, 'flex', '1'),
-								A2($elm$html$Html$Attributes$style, 'min-width', '300px')
-							]),
-						_List_fromArray(
-							[
-								A2(
-								$elm$html$Html$h3,
-								_List_Nil,
-								_List_fromArray(
-									[
-										$elm$html$Html$text(
-										A2($author$project$I18n$translate, model.language, $author$project$I18n$GriddedImage))
-									])),
-								$author$project$Main$viewGriddedImage(model),
-								A2(
-								$elm$html$Html$button,
-								_List_fromArray(
-									[
-										$elm$html$Html$Events$onClick($author$project$Main$DownloadClicked),
-										$elm$html$Html$Attributes$disabled(
-										_Utils_eq(model.uploadedImage, $elm$core$Maybe$Nothing))
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text(
-										A2($author$project$I18n$translate, model.language, $author$project$I18n$DownloadGriddedImage))
-									]))
-							]))
-					])),
-				A2(
-				$elm$html$Html$div,
-				_List_Nil,
-				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$button,
-						_List_fromArray(
-							[
-								$elm$html$Html$Events$onClick($author$project$Main$NiceButtonClicked)
-							]),
-						_List_fromArray(
-							[
-								$elm$html$Html$text(
-								A2($author$project$I18n$translate, model.language, $author$project$I18n$Nice))
-							]))
-					])),
-				A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						A2($elm$html$Html$Attributes$style, 'margin-top', '20px')
-					]),
-				_List_fromArray(
-					[
-						$elm$html$Html$text(
-						_Utils_ap(
-							A2($author$project$I18n$translate, model.language, $author$project$I18n$NiceCounter),
-							$elm$core$String$fromInt(model.niceCounter)))
-					]))
+				$author$project$Main$viewStatusBar(model)
 			]));
 };
 var $author$project$Main$main = $elm$browser$Browser$element(

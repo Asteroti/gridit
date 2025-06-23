@@ -9,10 +9,11 @@ import File exposing (File)
 import File.Download
 import File.Select as Select
 import Html exposing (Html, button, div, h1, h2, h3, img, input, label, option, p, select, span, text)
-import Html.Attributes exposing (disabled, for, id, max, min, placeholder, selected, src, step, style, type_, value)
+import Html.Attributes exposing (class, disabled, for, id, max, min, placeholder, selected, src, step, style, type_, value)
 import Html.Events exposing (on, onClick, onInput)
 import I18n exposing (Language(..), TranslationKey(..), translate)
 import Json.Decode
+import Process
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
 import Task
@@ -32,6 +33,7 @@ type alias Model =
     , gridThickness : Int
     , gridOpacity : Float
     , language : Language
+    , downloadSuccess : Bool
     }
 
 
@@ -52,6 +54,7 @@ type Msg
     | GridThicknessChanged Int
     | GridOpacityChanged Float
     | LanguageChanged Language
+    | ResetDownloadSuccess
 
 
 
@@ -83,8 +86,9 @@ init =
     , imageHeight = Nothing
     , gridColor = "#80ED99"
     , gridThickness = 1
-    , gridOpacity = 0.5
+    , gridOpacity = 1
     , language = Spanish
+    , downloadSuccess = False
     }
 
 
@@ -121,9 +125,12 @@ update msg model =
 
         ImageSizeLoaded width height ->
             ( { model | imageWidth = Just width, imageHeight = Just height }, Cmd.none )
-            
+
         LanguageChanged newLanguage ->
             ( { model | language = newLanguage }, Cmd.none )
+
+        ResetDownloadSuccess ->
+            ( { model | downloadSuccess = False }, Cmd.none )
 
         DownloadClicked ->
             case ( model.uploadedImage, model.imageWidth, model.imageHeight ) of
@@ -148,8 +155,19 @@ update msg model =
 
                 _ =
                     debug "Elm: Triggering download via downloadImage port"
+
+                -- Set downloadSuccess to true to trigger animation
+                updatedModel =
+                    { model | downloadSuccess = True }
             in
-            ( model, Cmd.batch [ debug "Elm: Starting download...", downloadImage { dataUrl = dataUrl } ] )
+            ( updatedModel
+            , Cmd.batch
+                [ debug "Elm: Starting download..."
+                , downloadImage { dataUrl = dataUrl }
+                , -- Reset animation after 2 seconds
+                  Task.perform (\_ -> ResetDownloadSuccess) (Process.sleep 2000)
+                ]
+            )
 
 
 
@@ -166,137 +184,442 @@ subscriptions _ =
 
 view : Model -> Html Msg
 view model =
-    div [ style "padding" "20px", style "background-color" "#ffcc99" ]
-        [ div [ style "display" "flex", style "justify-content" "space-between", style "align-items" "center" ]
-            [ h1 [ style "color" "green" ]
-                [ text (translate model.language AppTitle) ]
-            , viewLanguageSelector model.language
+    div [ class "app-container" ]
+        [ viewTitleBar model
+        , div [ class "main-content" ]
+            [ viewSidebar model
+            , viewCanvasArea model
             ]
-        , div []
-            [ button [ onClick PickImage ] [ text (translate model.language UploadImage) ] ]
-
-        -- GRID user customization section
-        , div [ style "margin-top" "20px", style "padding" "15px", style "border" "2px solid #4a4a4a", style "border-radius" "8px" ]
-            [ h3 [] [ text (translate model.language CustomizeIt) ]
-            , div [ style "margin-bottom" "15px" ]
-                [ text (translate model.language GridSize)
-                , input
-                    [ type_ "range"
-                    , Html.Attributes.min "2"
-                    , Html.Attributes.max "50"
-                    , value (String.fromInt model.gridSize)
-                    , onInput (String.toInt >> Maybe.withDefault 10 >> GridSizeChanged)
-                    ]
-                    []
-                , text (" " ++ String.fromInt model.gridSize ++ translate model.language Rectangles)
-                ]
-            , div [ style "margin-bottom" "15px" ]
-                [ text (translate model.language GridColor)
-                , input
-                    [ type_ "color"
-                    , value model.gridColor
-                    , onInput GridColorChanged
-                    , style "margin-left" "10px"
-                    , style "width" "50px"
-                    , style "height" "30px"
-                    ]
-                    []
-                , text (" " ++ model.gridColor)
-                ]
-            , div [ style "margin-bottom" "15px" ]
-                [ text (translate model.language GridThickness)
-                , input
-                    [ type_ "range"
-                    , Html.Attributes.min "1"
-                    , Html.Attributes.max "10"
-                    , value (String.fromInt model.gridThickness)
-                    , onInput (String.toInt >> Maybe.withDefault 1 >> GridThicknessChanged)
-                    ]
-                    []
-                , text (" " ++ String.fromInt model.gridThickness ++ "px")
-                ]
-            , div [ style "margin-bottom" "15px" ]
-                [ text (translate model.language GridOpacity)
-                , input
-                    [ type_ "range"
-                    , Html.Attributes.min "0"
-                    , Html.Attributes.max "1"
-                    , Html.Attributes.step "0.1"
-                    , value (String.fromFloat model.gridOpacity)
-                    , onInput (String.toFloat >> Maybe.withDefault 1 >> GridOpacityChanged)
-                    ]
-                    []
-                , text (" " ++ String.fromInt (round (model.gridOpacity * 100)) ++ "%")
-                ]
-            ]
-        , div [ style "display" "flex", style "flex-wrap" "wrap", style "gap" "20px", style "margin-top" "20px" ]
-            [ div [ style "flex" "1", style "min-width" "300px" ]
-                [ h3 [] [ text (translate model.language OriginalImage) ]
-                , viewPreview model.uploadedImage model.language
-                ]
-            , div [ style "flex" "1", style "min-width" "300px" ]
-                [ h3 [] [ text (translate model.language GriddedImage) ]
-                , viewGriddedImage model
-                , button [ onClick DownloadClicked, disabled (model.uploadedImage == Nothing) ] [ text (translate model.language DownloadGriddedImage) ]
-                ]
-            ]
-        , div []
-            [ button [ onClick NiceButtonClicked ] [ text (translate model.language Nice) ] ]
-        , div [ style "margin-top" "20px" ]
-            [ text (translate model.language NiceCounter ++ String.fromInt model.niceCounter) ]
+        , viewStatusBar model
         ]
 
 
 
--- HELPER FUNCTIONS
+-- VIEW COMPONENTS
+
+
+viewTitleBar : Model -> Html Msg
+viewTitleBar model =
+    div [ class "title-bar" ]
+        [ span [ class "title-text" ] [ text " gridit gridit" ]
+        , viewLanguageSelector model.language
+        ]
+
+
+viewSidebar : Model -> Html Msg
+viewSidebar model =
+    div [ class "sidebar" ]
+        [ viewAppHeader model
+        , div [ class "sidebar-content" ]
+            [ viewFileOperationsPanel model
+            , viewGridParametersPanel model
+            , viewActionsPanel model
+            ]
+        ]
+
+
+viewAppHeader : Model -> Html Msg
+viewAppHeader model =
+    div [ class "app-header" ]
+        [ div []
+            [ h1 [ class "app-title" ] [ text (translate model.language AppTitle) ]
+            , p [ class "app-subtitle" ] [ text (translate model.language AppSubtitle) ]
+            ]
+        ]
+
+
+viewPixelFrog : Model -> Html Msg
+viewPixelFrog model =
+    Svg.svg [ SvgAttr.width "40", SvgAttr.height "40", SvgAttr.viewBox "0 0 16 16", SvgAttr.class "pixelated" ]
+        (if model.downloadSuccess then
+            -- Happy frog face (😄) when download is successful
+            [ -- Frog body - frog-green pixels
+              Svg.rect [ SvgAttr.x "4", SvgAttr.y "6", SvgAttr.width "8", SvgAttr.height "6", SvgAttr.fill "#00aa00" ] []
+            , Svg.rect [ SvgAttr.x "3", SvgAttr.y "7", SvgAttr.width "2", SvgAttr.height "4", SvgAttr.fill "#00aa00" ] []
+            , Svg.rect [ SvgAttr.x "11", SvgAttr.y "7", SvgAttr.width "2", SvgAttr.height "4", SvgAttr.fill "#00aa00" ] []
+            , -- Frog eyes - lighter green
+              Svg.rect [ SvgAttr.x "2", SvgAttr.y "4", SvgAttr.width "3", SvgAttr.height "3", SvgAttr.fill "#00cc00" ] []
+            , Svg.rect [ SvgAttr.x "11", SvgAttr.y "4", SvgAttr.width "3", SvgAttr.height "3", SvgAttr.fill "#00cc00" ] []
+            , -- Happy mouth - curved smile
+              Svg.rect [ SvgAttr.x "5", SvgAttr.y "9", SvgAttr.width "6", SvgAttr.height "1", SvgAttr.fill "#007700" ] []
+            , Svg.rect [ SvgAttr.x "4", SvgAttr.y "8", SvgAttr.width "1", SvgAttr.height "1", SvgAttr.fill "#007700" ] []
+            , Svg.rect [ SvgAttr.x "11", SvgAttr.y "8", SvgAttr.width "1", SvgAttr.height "1", SvgAttr.fill "#007700" ] []
+            , -- Frog legs
+              Svg.rect [ SvgAttr.x "1", SvgAttr.y "11", SvgAttr.width "3", SvgAttr.height "2", SvgAttr.fill "#00aa00" ] []
+            , Svg.rect [ SvgAttr.x "12", SvgAttr.y "11", SvgAttr.width "3", SvgAttr.height "2", SvgAttr.fill "#00aa00" ] []
+            , Svg.rect [ SvgAttr.x "0", SvgAttr.y "13", SvgAttr.width "2", SvgAttr.height "2", SvgAttr.fill "#00aa00" ] []
+            , Svg.rect [ SvgAttr.x "14", SvgAttr.y "13", SvgAttr.width "2", SvgAttr.height "2", SvgAttr.fill "#00aa00" ] []
+            , -- Green highlights
+              Svg.rect [ SvgAttr.x "5", SvgAttr.y "7", SvgAttr.width "1", SvgAttr.height "1", SvgAttr.fill "#00ff00" ] []
+            , Svg.rect [ SvgAttr.x "10", SvgAttr.y "7", SvgAttr.width "1", SvgAttr.height "1", SvgAttr.fill "#00ff00" ] []
+            ]
+
+         else
+            -- Normal frog face (🙂)
+            [ -- Frog body - frog-green pixels
+              Svg.rect [ SvgAttr.x "4", SvgAttr.y "6", SvgAttr.width "8", SvgAttr.height "6", SvgAttr.fill "#00aa00" ] []
+            , Svg.rect [ SvgAttr.x "3", SvgAttr.y "7", SvgAttr.width "2", SvgAttr.height "4", SvgAttr.fill "#00aa00" ] []
+            , Svg.rect [ SvgAttr.x "11", SvgAttr.y "7", SvgAttr.width "2", SvgAttr.height "4", SvgAttr.fill "#00aa00" ] []
+            , -- Frog eyes - lighter green
+              Svg.rect [ SvgAttr.x "2", SvgAttr.y "4", SvgAttr.width "3", SvgAttr.height "3", SvgAttr.fill "#00cc00" ] []
+            , Svg.rect [ SvgAttr.x "11", SvgAttr.y "4", SvgAttr.width "3", SvgAttr.height "3", SvgAttr.fill "#00cc00" ] []
+            , -- Normal mouth - straight line
+              Svg.rect [ SvgAttr.x "6", SvgAttr.y "9", SvgAttr.width "4", SvgAttr.height "1", SvgAttr.fill "#007700" ] []
+            , -- Frog legs
+              Svg.rect [ SvgAttr.x "1", SvgAttr.y "11", SvgAttr.width "3", SvgAttr.height "2", SvgAttr.fill "#00aa00" ] []
+            , Svg.rect [ SvgAttr.x "12", SvgAttr.y "11", SvgAttr.width "3", SvgAttr.height "2", SvgAttr.fill "#00aa00" ] []
+            , Svg.rect [ SvgAttr.x "0", SvgAttr.y "13", SvgAttr.width "2", SvgAttr.height "2", SvgAttr.fill "#00aa00" ] []
+            , Svg.rect [ SvgAttr.x "14", SvgAttr.y "13", SvgAttr.width "2", SvgAttr.height "2", SvgAttr.fill "#00aa00" ] []
+            , -- Green highlights
+              Svg.rect [ SvgAttr.x "5", SvgAttr.y "7", SvgAttr.width "1", SvgAttr.height "1", SvgAttr.fill "#00ff00" ] []
+            , Svg.rect [ SvgAttr.x "10", SvgAttr.y "7", SvgAttr.width "1", SvgAttr.height "1", SvgAttr.fill "#00ff00" ] []
+            ]
+        )
+
+
+viewFileOperationsPanel : Model -> Html Msg
+viewFileOperationsPanel model =
+    div [ class "panel" ]
+        [ span [ class "panel-title" ] [ text (translate model.language FileOperations) ]
+        , button
+            [ class "btn", onClick PickImage ]
+            [ text (translate model.language UploadImage) ]
+        ]
+
+
+viewGridParametersPanel : Model -> Html Msg
+viewGridParametersPanel model =
+    div [ class "panel" ]
+        [ span [ class "panel-title" ] [ text (translate model.language GridParameters) ]
+
+        -- Grid Size
+        , div [ class "form-group" ]
+            [ div [ class "form-row" ]
+                [ label [ class "form-label" ] [ text (translate model.language GridSize) ] ]
+            , div [ class "input-with-text" ]
+                [ input
+                    [ type_ "range"
+                    , Html.Attributes.min "2"
+                    , Html.Attributes.max "50"
+                    , step "1"
+                    , value (String.fromInt model.gridSize)
+                    , onInput (\s -> GridSizeChanged (Maybe.withDefault 10 (String.toInt s)))
+                    , class "slider"
+                    ]
+                    []
+                , input
+                    [ type_ "number"
+                    , Html.Attributes.min "2"
+                    , Html.Attributes.max "50"
+                    , value (String.fromInt model.gridSize)
+                    , onInput (\s -> GridSizeChanged (Maybe.withDefault 10 (String.toInt s)))
+                    , class "numeric-input"
+                    ]
+                    []
+                , span [ class "unit" ] [ text "px" ]
+                ]
+            ]
+
+        -- Grid Color
+        , div [ class "form-group" ]
+            [ div [ class "form-row" ]
+                [ label [ class "form-label" ] [ text (translate model.language GridColor) ]
+                ]
+            , div [ class "input-with-text" ]
+                [ input
+                    [ type_ "color"
+                    , value model.gridColor
+                    , onInput GridColorChanged
+                    , class "color-picker"
+                    ]
+                    []
+                , input
+                    [ type_ "text"
+                    , value model.gridColor
+                    , onInput GridColorChanged
+                    , class "hex-input"
+                    ]
+                    []
+                ]
+            ]
+
+        -- Grid Thickness
+        , div [ class "form-group" ]
+            [ div [ class "form-row" ]
+                [ label [ class "form-label" ] [ text (translate model.language GridThickness) ]
+                ]
+            , div [ class "input-with-text" ]
+                [ input
+                    [ type_ "range"
+                    , Html.Attributes.min "1"
+                    , Html.Attributes.max "10"
+                    , step "1"
+                    , value (String.fromInt model.gridThickness)
+                    , onInput (\s -> GridThicknessChanged (Maybe.withDefault 1 (String.toInt s)))
+                    , class "slider-input"
+                    ]
+                    []
+                , input
+                    [ type_ "number"
+                    , Html.Attributes.min "1"
+                    , Html.Attributes.max "10"
+                    , value (String.fromInt model.gridThickness)
+                    , onInput (\s -> GridThicknessChanged (Maybe.withDefault 1 (String.toInt s)))
+                    , class "numeric-input"
+                    ]
+                    []
+                , span [ class "unit" ] [ text "px" ]
+                ]
+            ]
+
+        -- Grid Opacity
+        , div [ class "form-group" ]
+            [ div [ class "form-row" ]
+                [ label [ class "form-label" ] [ text (translate model.language GridOpacity) ]
+                ]
+            , div [ class "input-with-text" ]
+                [ input
+                    [ type_ "range"
+                    , Html.Attributes.min "0"
+                    , Html.Attributes.max "1"
+                    , step "0.1"
+                    , value (String.fromFloat model.gridOpacity)
+                    , onInput (\s -> GridOpacityChanged (Maybe.withDefault 0.5 (String.toFloat s)))
+                    , class "slider-input"
+                    ]
+                    []
+                , input
+                    [ type_ "number"
+                    , Html.Attributes.min "0"
+                    , Html.Attributes.max "100"
+                    , value (String.fromInt (round (model.gridOpacity * 100)))
+                    , onInput (\s -> GridOpacityChanged (toFloat (Maybe.withDefault 50 (String.toInt s)) / 100))
+                    , class "numeric-input"
+                    ]
+                    []
+                , span [ class "unit" ] [ text "%" ]
+                ]
+            ]
+        ]
+
+
+viewActionsPanel : Model -> Html Msg
+viewActionsPanel model =
+    div [ class "panel" ]
+        [ span [ class "panel-title" ] [ text (translate model.language Actions) ]
+        , div []
+            [ button
+                [ class "btn btn-primary"
+                , onClick DownloadClicked
+                , disabled (model.uploadedImage == Nothing)
+                ]
+                [ text (translate model.language DownloadGriddedImage) ]
+            ]
+        , div []
+            [ button
+                [ class "btn", onClick NiceButtonClicked ]
+                [ text "🐸 "
+                , text (translate model.language Nice)
+                , text (" (" ++ String.fromInt model.niceCounter ++ ")")
+                ]
+            ]
+        ]
+
+
+viewCanvasArea : Model -> Html Msg
+viewCanvasArea model =
+    div [ class "canvas-area" ]
+        [ div [ class "preview-grid" ]
+            [ viewSourceImageWindow model
+            , viewGridPreviewWindow model
+            ]
+        ]
+
+
+viewSourceImageWindow : Model -> Html Msg
+viewSourceImageWindow model =
+    div [ class "preview-window" ]
+        [ div [ class "window-titlebar" ]
+            [ span [ class "window-title" ] [ text (translate model.language OriginalImage) ]
+            ]
+        , div [ class "window-content" ]
+            [ case model.uploadedImage of
+                Just url ->
+                    img
+                        [ src url
+                        , class "preview-image"
+                        , on "load" (decodeImageSize ImageSizeLoaded)
+                        ]
+                        []
+
+                Nothing ->
+                    viewPlaceholder "↑" (translate model.language NoImageYet) (translate model.language UploadPlaceholder)
+            ]
+        ]
+
+
+viewGridPreviewWindow : Model -> Html Msg
+viewGridPreviewWindow model =
+    div [ class "preview-window" ]
+        [ div [ class "window-titlebar" ]
+            [ span [ class "window-title" ] [ text (translate model.language GriddedImage) ]
+            ]
+        , div [ class "window-content" ]
+            [ case model.uploadedImage of
+                Just _ ->
+                    viewGriddedImage model
+
+                Nothing ->
+                    viewPlaceholder "#" (translate model.language GriddedImage) (translate model.language GridPreviewPlaceholder)
+            ]
+        ]
+
+
+viewPlaceholder : String -> String -> String -> Html Msg
+viewPlaceholder icon title subtitle =
+    div [ class "placeholder" ]
+        [ div [ class "placeholder-icon" ]
+            [ text icon ]
+        , p [ class "placeholder-title" ] [ text title ]
+        , p [ class "placeholder-text" ] [ text subtitle ]
+        ]
+
+
+viewStatusBar : Model -> Html Msg
+viewStatusBar model =
+    div [ class "status-bar" ]
+        [ span []
+            [ text (translate model.language StatusReady ++ " | Grid: ")
+            , text (String.fromInt model.gridSize)
+            , text "×"
+            , text (String.fromInt model.gridSize)
+            , text " | Opacity: "
+            , text (String.fromInt (round (model.gridOpacity * 100)))
+            , text "%"
+            ]
+        , span [ class "made-with" ]
+            [ text "Made in  🇦🇷  with  ❤️  ᕦ(ò_óˇ)ᕤ" ]
+        , span [ class "nice-count" ]
+            [ text (translate model.language NiceCounter)
+            , text (String.fromInt model.niceCounter)
+            , text " 🐸"
+            ]
+        ]
 
 
 viewLanguageSelector : Language -> Html Msg
 viewLanguageSelector currentLanguage =
     let
+        languageFlag language =
+            case language of
+                English ->
+                    "🇬🇧 "
+
+                Spanish ->
+                    "🇪🇸🇦🇷 "
+
+                Latin ->
+                    "🇮🇹 "
+
+                Italian ->
+                    "🇮🇹 "
+
+                Portuguese ->
+                    "🇧🇷🇵🇹 "
+
+                French ->
+                    "🇫🇷 "
+
+                Asturiano ->
+                    "🇪🇸 "
+
+                Gaelic ->
+                    "🇮🇪🏴\u{E0067}\u{E0062}\u{E0073}\u{E0063}\u{E0074}\u{E007F} "
+
+                Euskara ->
+                    "🇪🇸 "
+
+                Japanese ->
+                    "🇯🇵 "
+
         languageOption language displayName =
-            option 
+            option
                 [ value (languageToString language)
                 , selected (currentLanguage == language)
                 ]
-                [ text displayName ]
-                
+                [ text (languageFlag language ++ " " ++ displayName) ]
+
         languageToString language =
             case language of
-                English -> "english"
-                Spanish -> "spanish"
-                Latin -> "latin"
-                Italian -> "italian"
-                Portuguese -> "portuguese"
-                French -> "french"
-                Asturiano -> "asturiano"
-                Gaelic -> "gaelic"
-                Euskara -> "euskara"
-                Japanese -> "japanese"
-                
+                English ->
+                    "english"
+
+                Spanish ->
+                    "spanish"
+
+                Latin ->
+                    "latin"
+
+                Italian ->
+                    "italian"
+
+                Portuguese ->
+                    "portuguese"
+
+                French ->
+                    "french"
+
+                Asturiano ->
+                    "asturiano"
+
+                Gaelic ->
+                    "gaelic"
+
+                Euskara ->
+                    "euskara"
+
+                Japanese ->
+                    "japanese"
+
         handleLanguageChange value =
             case value of
-                "english" -> LanguageChanged English
-                "spanish" -> LanguageChanged Spanish
-                "latin" -> LanguageChanged Latin
-                "italian" -> LanguageChanged Italian
-                "portuguese" -> LanguageChanged Portuguese
-                "french" -> LanguageChanged French
-                "asturiano" -> LanguageChanged Asturiano
-                "gaelic" -> LanguageChanged Gaelic
-                "euskara" -> LanguageChanged Euskara
-                "japanese" -> LanguageChanged Japanese
-                _ -> LanguageChanged English
+                "english" ->
+                    LanguageChanged English
+
+                "spanish" ->
+                    LanguageChanged Spanish
+
+                "latin" ->
+                    LanguageChanged Latin
+
+                "italian" ->
+                    LanguageChanged Italian
+
+                "portuguese" ->
+                    LanguageChanged Portuguese
+
+                "french" ->
+                    LanguageChanged French
+
+                "asturiano" ->
+                    LanguageChanged Asturiano
+
+                "gaelic" ->
+                    LanguageChanged Gaelic
+
+                "euskara" ->
+                    LanguageChanged Euskara
+
+                "japanese" ->
+                    LanguageChanged Japanese
+
+                _ ->
+                    LanguageChanged English
     in
-    div [ style "display" "flex", style "align-items" "center", style "gap" "10px" ]
-        [ span [] [ text (translate currentLanguage LanguageLabel ++ " ") ]
-        , select 
-            [ on "change" (Json.Decode.map handleLanguageChange (Json.Decode.at ["target", "value"] Json.Decode.string))
-            , style "padding" "5px"
-            , style "border-radius" "4px"
-            , style "border" "1px solid #ccc"
-            , style "background-color" "#f8f8f8"
-            , style "cursor" "pointer"
+    div [ class "language-selector" ]
+        [ select
+            [ on "change" (Json.Decode.map handleLanguageChange (Json.Decode.at [ "target", "value" ] Json.Decode.string))
+            , class "language-dropdown"
             ]
             [ languageOption English "English"
             , languageOption Spanish "Español"
@@ -318,14 +641,13 @@ viewPreview maybeUrl language =
         Just url ->
             img
                 [ src url
-                , style "max-width" "500px"
-                , style "margin-top" "20px"
+                , class "preview-image"
                 , on "load" (decodeImageSize ImageSizeLoaded)
                 ]
                 []
 
         Nothing ->
-            text (translate language NoImageYet)
+            viewPlaceholder "↑" (translate language NoImageYet) (translate language UploadPlaceholder)
 
 
 viewGriddedImage : Model -> Html Msg
@@ -382,23 +704,17 @@ viewGriddedImage model =
                                     []
                             )
             in
-            div [ style "position" "relative", style "display" "inline-block" ]
+            div [ class "gridded-image-container" ]
                 [ img
                     [ src url
-                    , style "max-width" "500px"
-                    , style "display" "block"
+                    , class "gridded-base-image"
                     ]
                     []
                 , Svg.svg
                     [ SvgAttr.width (String.fromInt width)
                     , SvgAttr.height (String.fromInt height)
                     , SvgAttr.viewBox ("0 0 " ++ String.fromInt width ++ " " ++ String.fromInt height)
-                    , style "position" "absolute"
-                    , style "top" "0"
-                    , style "left" "0"
-                    , style "width" "100%"
-                    , style "height" "100%"
-                    , style "pointer-events" "none"
+                    , SvgAttr.class "grid-overlay"
                     ]
                     (verticalLines ++ horizontalLines)
                 ]
