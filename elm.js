@@ -6008,6 +6008,54 @@ var $author$project$I18n$portugueseTranslations = function (key) {
 			return 'Status: Pronto';
 	}
 };
+var $author$project$I18n$russianTranslations = function (key) {
+	switch (key.$) {
+		case 'AppTitle':
+			return 'Gridit! 🐸';
+		case 'UploadImage':
+			return 'Загрузить изображение';
+		case 'CustomizeIt':
+			return 'Настроить!';
+		case 'GridSize':
+			return 'Размер';
+		case 'Rectangles':
+			return ' прямоугольников';
+		case 'GridColor':
+			return 'Цвет';
+		case 'GridThickness':
+			return 'Толщина';
+		case 'GridOpacity':
+			return 'Прозрачность';
+		case 'OriginalImage':
+			return 'Исходное изображение';
+		case 'GriddedImage':
+			return 'Изображение с сеткой';
+		case 'DownloadGriddedImage':
+			return 'Скачать изображение с сеткой!';
+		case 'Nice':
+			return 'Отлично! ';
+		case 'NiceCounter':
+			return 'Счетчик отлично: ';
+		case 'NoImageYet':
+			return 'Изображения пока нет! Нажмите Загрузить изображение, чтобы начать!';
+		case 'LanguageLabel':
+			return 'Язык:';
+		case 'FileOperations':
+			return 'Начните здесь';
+		case 'GridParameters':
+			return 'Настройте сетку, чтобы она хорошо отображалась на вашем изображении';
+		case 'Actions':
+			return '🐸 🐸 🐸';
+		case 'AppSubtitle':
+			return 'Здравствуйте. Это поможет вам создать прямоугольную сетку поверх выбранного вами изображения';
+		case 'GridPreviewPlaceholder':
+			return 'Ваше изображение с сеткой появится здесь';
+		case 'UploadPlaceholder':
+			return 'Загрузите изображение, чтобы начать';
+		default:
+			return 'Статус: Готово';
+	}
+};
 var $author$project$I18n$spanishTranslations = function (key) {
 	switch (key.$) {
 		case 'AppTitle':
@@ -6056,6 +6104,54 @@ var $author$project$I18n$spanishTranslations = function (key) {
 			return 'Status: Listo';
 	}
 };
+var $author$project$I18n$tuvanTranslations = function (key) {
+	switch (key.$) {
+		case 'AppTitle':
+			return 'Gridit! 🐸';
+		case 'UploadImage':
+			return 'Чурукту киирер';
+		case 'CustomizeIt':
+			return 'Таарыштырар!';
+		case 'GridSize':
+			return 'Хемчээл';
+		case 'Rectangles':
+			return ' дөрбелчиннер';
+		case 'GridColor':
+			return 'Өң';
+		case 'GridThickness':
+			return 'Кылын';
+		case 'GridOpacity':
+			return 'Көскүзү';
+		case 'OriginalImage':
+			return 'Баштайгы чурук';
+		case 'GriddedImage':
+			return 'Шыйыглыг чурук';
+		case 'DownloadGriddedImage':
+			return 'Шыйыглыг чурукту чүдүрүп алыр!';
+		case 'Nice':
+			return 'Эки! ';
+		case 'NiceCounter':
+			return 'Эки саналга: ';
+		case 'NoImageYet':
+			return 'Чурук чок! Эгелээр дээш Чурукту киирер деп базыңар!';
+		case 'LanguageLabel':
+			return 'Дыл:';
+		case 'FileOperations':
+			return 'Мындан эгелеңер';
+		case 'GridParameters':
+			return 'Шыйыгны чурукка эки көстүр кылдыр таарыштырыңар';
+		case 'Actions':
+			return '🐸 🐸 🐸';
+		case 'AppSubtitle':
+			return 'Экии. Бо дээрге силерниң шилип алган чурууңарга дорт шыйыглар кылырынга дузалаар';
+		case 'GridPreviewPlaceholder':
+			return 'Силерниң шыйыглыг чурууңар мында көстүп кээр';
+		case 'UploadPlaceholder':
+			return 'Эгелээр дээш чурукту киириңер';
+		default:
+			return 'Байдал: Белен';
+	}
+};
 var $author$project$I18n$translations = F2(
 	function (language, key) {
 		switch (language.$) {
@@ -6077,8 +6173,12 @@ var $author$project$I18n$translations = F2(
 				return $author$project$I18n$gaelicTranslations(key);
 			case 'Euskara':
 				return $author$project$I18n$euskaraTranslations(key);
-			default:
+			case 'Japanese':
 				return $author$project$I18n$japaneseTranslations(key);
+			case 'Russian':
+				return $author$project$I18n$russianTranslations(key);
+			default:
+				return $author$project$I18n$tuvanTranslations(key);
 		}
 	});
 var $author$project$I18n$translate = F2(
@@ -7084,6 +7184,8 @@ var $author$project$Main$LanguageChanged = function (a) {
 };
 var $author$project$I18n$Latin = {$: 'Latin'};
 var $author$project$I18n$Portuguese = {$: 'Portuguese'};
+var $author$project$I18n$Russian = {$: 'Russian'};
+var $author$project$I18n$Tuvan = {$: 'Tuvan'};
 var $elm$html$Html$option = _VirtualDom_node('option');
 var $elm$html$Html$select = _VirtualDom_node('select');
 var $elm$html$Html$Attributes$selected = $elm$html$Html$Attributes$boolProperty('selected');
@@ -7108,8 +7210,12 @@ var $author$project$Main$viewLanguageSelector = function (currentLanguage) {
 				return 'gaelic';
 			case 'Euskara':
 				return 'euskara';
-			default:
+			case 'Japanese':
 				return 'japanese';
+			case 'Russian':
+				return 'russian';
+			default:
+				return 'tuvan';
 		}
 	};
 	var languageFlag = function (language) {
@@ -7132,8 +7238,12 @@ var $author$project$Main$viewLanguageSelector = function (currentLanguage) {
 				return '🇮🇪🏴\uDB40\uDC67\uDB40\uDC62\uDB40\uDC73\uDB40\uDC63\uDB40\uDC74\uDB40\uDC7F ';
 			case 'Euskara':
 				return '🇪🇸 ';
-			default:
+			case 'Japanese':
 				return '🇯🇵 ';
+			case 'Russian':
+				return '🇷🇺 ';
+			default:
+				return '🇷🇺 ';
 		}
 	};
 	var languageOption = F2(
@@ -7175,6 +7285,10 @@ var $author$project$Main$viewLanguageSelector = function (currentLanguage) {
 				return $author$project$Main$LanguageChanged($author$project$I18n$Euskara);
 			case 'japanese':
 				return $author$project$Main$LanguageChanged($author$project$I18n$Japanese);
+			case 'russian':
+				return $author$project$Main$LanguageChanged($author$project$I18n$Russian);
+			case 'tuvan':
+				return $author$project$Main$LanguageChanged($author$project$I18n$Tuvan);
 			default:
 				return $author$project$Main$LanguageChanged($author$project$I18n$English);
 		}
@@ -7215,7 +7329,9 @@ var $author$project$Main$viewLanguageSelector = function (currentLanguage) {
 						A2(languageOption, $author$project$I18n$Asturiano, 'Asturianu'),
 						A2(languageOption, $author$project$I18n$Gaelic, 'Gàidhlig'),
 						A2(languageOption, $author$project$I18n$Euskara, 'Euskara'),
-						A2(languageOption, $author$project$I18n$Japanese, '日本語')
+						A2(languageOption, $author$project$I18n$Japanese, '日本語'),
+						A2(languageOption, $author$project$I18n$Russian, 'Русский'),
+						A2(languageOption, $author$project$I18n$Tuvan, 'Тыва дыл')
 					]))
 			]));
 };

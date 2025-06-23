@@ -498,7 +498,7 @@ viewStatusBar model =
             , text "%"
             ]
         , span [ class "made-with" ]
-            [ text "Made in  🇦🇷  with  ❤️  ᕦ(ò_óˇ)ᕤ" ]
+            [ text "Made in  🇦🇷  with  ❤️ by me  ᕦ(ò_óˇ)ᕤ" ]
         , span [ class "nice-count" ]
             [ text (translate model.language NiceCounter)
             , text (String.fromInt model.niceCounter)
@@ -542,6 +542,12 @@ viewLanguageSelector currentLanguage =
                 Japanese ->
                     "🇯🇵 "
 
+                Russian ->
+                    "🇷🇺 "
+
+                Tuvan ->
+                    "🇷🇺 "
+
         languageOption language displayName =
             option
                 [ value (languageToString language)
@@ -581,6 +587,12 @@ viewLanguageSelector currentLanguage =
                 Japanese ->
                     "japanese"
 
+                Russian ->
+                    "russian"
+
+                Tuvan ->
+                    "tuvan"
+
         handleLanguageChange value =
             case value of
                 "english" ->
@@ -613,6 +625,12 @@ viewLanguageSelector currentLanguage =
                 "japanese" ->
                     LanguageChanged Japanese
 
+                "russian" ->
+                    LanguageChanged Russian
+
+                "tuvan" ->
+                    LanguageChanged Tuvan
+
                 _ ->
                     LanguageChanged English
     in
@@ -631,6 +649,8 @@ viewLanguageSelector currentLanguage =
             , languageOption Gaelic "Gàidhlig"
             , languageOption Euskara "Euskara"
             , languageOption Japanese "日本語"
+            , languageOption Russian "Русский"
+            , languageOption Tuvan "Тыва дыл"
             ]
         ]
 
