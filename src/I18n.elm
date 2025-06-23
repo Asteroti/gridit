@@ -37,6 +37,13 @@ type TranslationKey
     | NiceCounter
     | NoImageYet
     | LanguageLabel
+    | FileOperations
+    | GridParameters
+    | Actions
+    | AppSubtitle
+    | GridPreviewPlaceholder
+    | UploadPlaceholder
+    | StatusReady
 
 
 
@@ -95,19 +102,19 @@ englishTranslations key =
             "Customize it!"
 
         GridSize ->
-            "Grid Size: "
+            "Size"
 
         Rectangles ->
             " rectangles."
 
         GridColor ->
-            "Grid Color: "
+            "Color"
 
         GridThickness ->
-            "Grid Thickness: "
+            "Thickness"
 
         GridOpacity ->
-            "Grid Opacity: "
+            "Opacity"
 
         OriginalImage ->
             "Original Image"
@@ -130,6 +137,27 @@ englishTranslations key =
         LanguageLabel ->
             "Language:"
 
+        FileOperations ->
+            "Start here"
+
+        GridParameters ->
+            "Customize the grid so you can see it properly over your image"
+
+        Actions ->
+            "🐸 🐸 🐸"
+
+        AppSubtitle ->
+            "Hello there. This helps you create a rectilinear grid over an image of your choosing"
+
+        GridPreviewPlaceholder ->
+            "Your gridded image will appear here"
+
+        UploadPlaceholder ->
+            "Upload an image to begin"
+
+        StatusReady ->
+            "Status: Ready"
+
 
 
 -- SPANISH TRANSLATIONS
@@ -148,19 +176,19 @@ spanishTranslations key =
             "Personalizá la grilla"
 
         GridSize ->
-            "Tamaño de la grilla: "
+            "Tamaño"
 
         Rectangles ->
-            " rectángulos."
+            " rectángulos"
 
         GridColor ->
-            "Color de la grilla: "
+            "Color"
 
         GridThickness ->
-            "Grosor de las líneas de la grilla: "
+            "Grosor"
 
         GridOpacity ->
-            "Opacidad de la grilla: "
+            "Opacidad"
 
         OriginalImage ->
             "Imagen Original"
@@ -169,19 +197,40 @@ spanishTranslations key =
             "Imagen con Grilla"
 
         DownloadGriddedImage ->
-            "Descargá la imagen grillada!"
+            "Descarga tu Imagen con Grilla!"
 
         Nice ->
-            "Magnífico"
+            "Buenísimo! "
 
         NiceCounter ->
-            "Contador de Magníficos: "
+            "Contador de Buenísimo: "
 
         NoImageYet ->
-            "Todavía no hay nada! Click en subir una Imagen para empezar!"
+            "Hacé click en Subir Imagen para empezar!"
 
         LanguageLabel ->
             "Idioma:"
+
+        FileOperations ->
+            "Empezá acá"
+
+        GridParameters ->
+            "Customizá la grilla para verla bien sobre tu imagen"
+
+        Actions ->
+            "🐸 🐸 🐸"
+
+        AppSubtitle ->
+            "Buenas. Agregale una grilla rectilinear a una imagen que elijas"
+
+        GridPreviewPlaceholder ->
+            "Tu imagen con grilla va a aparecer acá"
+
+        UploadPlaceholder ->
+            "Subí una imagen para empezar"
+
+        StatusReady ->
+            "Status: Listo"
 
 
 
@@ -195,46 +244,67 @@ latinTranslations key =
             "Gridit! 🐸"
 
         UploadImage ->
-            "Imago Mittere"
+            "Imago Submittere"
 
         CustomizeIt ->
             "Personaliza!"
 
         GridSize ->
-            "Magnitudinem Retis: "
+            "Magnitudinem"
 
         Rectangles ->
             " rectangula."
 
         GridColor ->
-            "Color Retis: "
+            "Color"
 
         GridThickness ->
-            "Crassitudo Retis: "
+            "Crassitudo"
 
         GridOpacity ->
-            "Opacitas Retis: "
+            "Opacitas"
 
         OriginalImage ->
             "Imago Originalis"
 
         GriddedImage ->
-            "Imago cum Rete"
+            "Imago cum Craticula"
 
         DownloadGriddedImage ->
-            "Imago cum Rete Descende!"
+            "Imago cum Craticula Discaricare!!!"
 
         Nice ->
             "Bellus! "
 
         NiceCounter ->
-            "Numerator Bellus: "
+            "Bellus Numerator: "
 
         NoImageYet ->
-            "Nulla imago adhuc! Preme Imago Mittere ad incipiendum!"
+            "Nondum imago! Imago Submittere preme ut incipias!"
 
         LanguageLabel ->
             "Lingua:"
+
+        FileOperations ->
+            "Incipe hic"
+
+        GridParameters ->
+            "Personaliza cratem ut videas eam recte super imaginem tuam"
+
+        Actions ->
+            "🐸 🐸 🐸"
+
+        AppSubtitle ->
+            "Salve. Hoc te adiuvat creare reticulum rectilineare super imaginem tuam electam"
+
+        GridPreviewPlaceholder ->
+            "Imago tua cum craticula hic apparebit"
+
+        UploadPlaceholder ->
+            "Submitte imaginem ut incipias"
+
+        StatusReady ->
+            "Status: Paratus"
 
 
 
@@ -254,19 +324,19 @@ italianTranslations key =
             "Personalizzalo!"
 
         GridSize ->
-            "Dimensione Griglia: "
+            "Dimensione"
 
         Rectangles ->
             " rettangoli."
 
         GridColor ->
-            "Colore Griglia: "
+            "Colore"
 
         GridThickness ->
-            "Spessore Griglia: "
+            "Spessore"
 
         GridOpacity ->
-            "Opacità Griglia: "
+            "Opacità"
 
         OriginalImage ->
             "Immagine Originale"
@@ -289,6 +359,27 @@ italianTranslations key =
         LanguageLabel ->
             "Lingua:"
 
+        FileOperations ->
+            "Inizia qui"
+
+        GridParameters ->
+            "Personalizza la griglia in modo da vederla correttamente sulla tua immagine"
+
+        Actions ->
+            "🐸 🐸 🐸"
+
+        AppSubtitle ->
+            "Ciao. Questo ti aiuta a creare una griglia rettilinea su un'immagine di tua scelta"
+
+        GridPreviewPlaceholder ->
+            "La tua immagine con griglia apparirà qui"
+
+        UploadPlaceholder ->
+            "Carica un'immagine per iniziare"
+
+        StatusReady ->
+            "Status: Pronto"
+
 
 
 -- PORTUGUESE TRANSLATIONS
@@ -307,19 +398,19 @@ portugueseTranslations key =
             "Personalize!"
 
         GridSize ->
-            "Tamanho da Grade: "
+            "Tamanho"
 
         Rectangles ->
             " retângulos."
 
         GridColor ->
-            "Cor da Grade: "
+            "Cor"
 
         GridThickness ->
-            "Espessura da Grade: "
+            "Espessura: "
 
         GridOpacity ->
-            "Opacidade da Grade: "
+            "Opacidade"
 
         OriginalImage ->
             "Imagem Original"
@@ -337,10 +428,31 @@ portugueseTranslations key =
             "Contador Legal: "
 
         NoImageYet ->
-            "Ainda não há imagem! Clique em Carregar Imagem para começar!"
+            "Nenhuma imagem ainda! Clique em Carregar Imagem para começar!"
 
         LanguageLabel ->
-            "Lingua:"
+            "Idioma:"
+
+        FileOperations ->
+            "Comece aqui"
+
+        GridParameters ->
+            "Personalize a grade para que você possa vê-la corretamente sobre sua imagem"
+
+        Actions ->
+            "🐸 🐸 🐸"
+
+        AppSubtitle ->
+            "Olá. Isto ajuda-te a criar uma grelha retilínea sobre uma imagem à tua escolha"
+
+        GridPreviewPlaceholder ->
+            "Sua imagem com grade aparecerá aqui"
+
+        UploadPlaceholder ->
+            "Carregue uma imagem para começar"
+
+        StatusReady ->
+            "Status: Pronto"
 
 
 
@@ -360,19 +472,19 @@ frenchTranslations key =
             "Personnalisez-le!"
 
         GridSize ->
-            "Taille de la Grille: "
+            "Taille"
 
         Rectangles ->
             " rectangles."
 
         GridColor ->
-            "Couleur de la Grille: "
+            "Couleur"
 
         GridThickness ->
-            "Épaisseur de la Grille: "
+            "Épaisseur"
 
         GridOpacity ->
-            "Opacité de la Grille: "
+            "Opacité"
 
         OriginalImage ->
             "Image Originale"
@@ -395,6 +507,27 @@ frenchTranslations key =
         LanguageLabel ->
             "Langue:"
 
+        FileOperations ->
+            "Commencez ici"
+
+        GridParameters ->
+            "Personnalisez la grille pour la voir correctement sur votre image"
+
+        Actions ->
+            "🐸 🐸 🐸"
+
+        AppSubtitle ->
+            "Bonjour. Ceci vous aide à créer une grille rectiligne sur une image de votre choix"
+
+        GridPreviewPlaceholder ->
+            "Votre image avec grille apparaîtra ici"
+
+        UploadPlaceholder ->
+            "Téléchargez une image pour commencer"
+
+        StatusReady ->
+            "Status: Prêt"
+
 
 
 -- ASTURIANO TRANSLATIONS
@@ -413,19 +546,19 @@ asturianoTranslations key =
             "¡Personalízalu!"
 
         GridSize ->
-            "Tamañu de la Cuadrícula: "
+            "Tamañu"
 
         Rectangles ->
             " rectángulos."
 
         GridColor ->
-            "Color de la Cuadrícula: "
+            "Color"
 
         GridThickness ->
-            "Grosor de la Cuadrícula: "
+            "Grosor"
 
         GridOpacity ->
-            "Opacidá de la Cuadrícula: "
+            "Opacidá"
 
         OriginalImage ->
             "Imaxe Orixinal"
@@ -448,6 +581,27 @@ asturianoTranslations key =
         LanguageLabel ->
             "Llingua:"
 
+        FileOperations ->
+            "Empieza equí"
+
+        GridParameters ->
+            "Personaliza la cuadrícula pa vela correutamente sobro la to imaxen"
+
+        Actions ->
+            "🐸 🐸 🐸"
+
+        AppSubtitle ->
+            "Hola. Esto ayúdate a crear una cuadrícula retilínia sobro una imaxen de la to eleición"
+
+        GridPreviewPlaceholder ->
+            "La to imaxe con cuadrícula apaecerá equí"
+
+        UploadPlaceholder ->
+            "Xube una imaxe pa entamar"
+
+        StatusReady ->
+            "Status: Llistu"
+
 
 
 -- GAELIC TRANSLATIONS
@@ -466,19 +620,19 @@ gaelicTranslations key =
             "Gnàthaich e!"
 
         GridSize ->
-            "Meud a' Ghriod: "
+            "Meud"
 
         Rectangles ->
             " ceart-chearnagan."
 
         GridColor ->
-            "Dath a' Ghriod: "
+            "Dath"
 
         GridThickness ->
-            "Tiughad a' Ghriod: "
+            "Tiughad"
 
         GridOpacity ->
-            "Dorchadas a' Ghriod: "
+            "Dorchadas"
 
         OriginalImage ->
             "Dealbh Tùsail"
@@ -501,6 +655,27 @@ gaelicTranslations key =
         LanguageLabel ->
             "Cànan:"
 
+        FileOperations ->
+            "Tòisich an seo"
+
+        GridParameters ->
+            "Gnàthaich an griod gus am faic thu e gu ceart thar do dhealbh"
+
+        Actions ->
+            "🐸 🐸 🐸"
+
+        AppSubtitle ->
+            "Halò. Bidh seo a' cuideachadh thu le bhith a' cruthachadh griod dìreach air ìomhaigh de do roghainn"
+
+        GridPreviewPlaceholder ->
+            "Nochdaidh do dhealbh le griod an seo"
+
+        UploadPlaceholder ->
+            "Luchdaich dealbh gus tòiseachadh"
+
+        StatusReady ->
+            "Status: Deiseil"
+
 
 
 -- EUSKARA TRANSLATIONS
@@ -519,19 +694,19 @@ euskaraTranslations key =
             "Pertsonalizatu!"
 
         GridSize ->
-            "Sareta Tamaina: "
+            "Tamaina"
 
         Rectangles ->
             " laukizuzenak."
 
         GridColor ->
-            "Sareta Kolorea: "
+            "Kolorea"
 
         GridThickness ->
-            "Sareta Lodiera: "
+            "Lodiera"
 
         GridOpacity ->
-            "Sareta Opakutasuna: "
+            "Opakutasuna"
 
         OriginalImage ->
             "Jatorrizko Irudia"
@@ -554,6 +729,27 @@ euskaraTranslations key =
         LanguageLabel ->
             "Hizkuntza:"
 
+        FileOperations ->
+            "Hasi hemen"
+
+        GridParameters ->
+            "Pertsonalizatu sareta zure irudian behar bezala ikusteko"
+
+        Actions ->
+            "🐸 🐸 🐸"
+
+        AppSubtitle ->
+            "Kaixo. Honek hautatutako irudi baten gainean sareta zuzen bat sortzen laguntzen dizu"
+
+        GridPreviewPlaceholder ->
+            "Zure saretadun irudia hemen agertuko da"
+
+        UploadPlaceholder ->
+            "Igo irudi bat hasteko"
+
+        StatusReady ->
+            "Status: Prest"
+
 
 
 -- JAPANESE TRANSLATIONS
@@ -572,45 +768,61 @@ japaneseTranslations key =
             "カスタマイズしよう！"
 
         GridSize ->
-            "格子サイズ: "
+            "サイズ"
 
         Rectangles ->
             " 長方形"
 
         GridColor ->
-            "格子の色: "
+            "色"
 
         GridThickness ->
-            "格子の太さ: "
+            "太さ"
 
         GridOpacity ->
-            "格子の透明度: "
+            "不透明度"
 
         OriginalImage ->
             "元の画像"
 
         GriddedImage ->
-            "格子付き画像"
+            "グリッド付き画像"
 
         DownloadGriddedImage ->
-            "格子付き画像をダウンロード！"
+            "グリッド付き画像をダウンロード！"
 
         Nice ->
-            "素晴らしい！ "
+            "いいね！ "
 
         NiceCounter ->
-            "素晴らしいカウンター: "
+            "いいねカウンター: "
 
         NoImageYet ->
-            "まだ画像がありません！画像をアップロードボタンをクリックして始めましょう！"
+            "まだ画像がありません！画像をアップロードをクリックして始めましょう！"
 
         LanguageLabel ->
             "言語:"
 
+        FileOperations ->
+            "ここから始める"
 
+        GridParameters ->
+            "画像上で適切に表示できるようにグリッドをカスタマイズする"
 
--- TRANSLATE FUNCTION
--- Helper function to get a translation for the current language
+        Actions ->
+            "🐸 🐸 🐸"
+
+        AppSubtitle ->
+            "こんにちは。これはあなたが選んだ画像上に直線グリッドを作成するのに役立ちます"
+
+        GridPreviewPlaceholder ->
+            "グリッド付き画像がここに表示されます"
+
+        UploadPlaceholder ->
+            "画像をアップロードして始めましょう"
+
+        StatusReady ->
+            "Status: 準備完了"
 
 
 translate : Language -> TranslationKey -> String
