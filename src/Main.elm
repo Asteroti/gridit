@@ -201,7 +201,7 @@ view model =
 viewTitleBar : Model -> Html Msg
 viewTitleBar model =
     div [ class "title-bar" ]
-        [ span [ class "title-text" ] [ text " 🐸 🐸 🐸" ]
+        [ span [ class "title-text" ] [ text " gridit gridit" ]
         , viewLanguageSelector model.language
         ]
 

@@ -6461,10 +6461,7 @@ var $author$project$Main$viewActionsPanel = function (model) {
 					])),
 				A2(
 				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('form-group')
-					]),
+				_List_Nil,
 				_List_fromArray(
 					[
 						A2(
@@ -6478,26 +6475,13 @@ var $author$project$Main$viewActionsPanel = function (model) {
 							]),
 						_List_fromArray(
 							[
-								A2(
-								$elm$html$Html$span,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$class('icon')
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('↓')
-									])),
 								$elm$html$Html$text(
 								A2($author$project$I18n$translate, model.language, $author$project$I18n$DownloadGriddedImage))
 							]))
 					])),
 				A2(
 				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('form-group')
-					]),
+				_List_Nil,
 				_List_fromArray(
 					[
 						A2(
@@ -7386,7 +7370,7 @@ var $author$project$Main$viewStatusBar = function (model) {
 					]),
 				_List_fromArray(
 					[
-						$elm$html$Html$text('Made with ❤️ in 🇦🇷 ᕦ(ò_óˇ)ᕤ')
+						$elm$html$Html$text('Made in  🇦🇷  with  ❤️  ᕦ(ò_óˇ)ᕤ')
 					])),
 				A2(
 				$elm$html$Html$span,
@@ -7568,7 +7552,7 @@ var $author$project$Main$viewTitleBar = function (model) {
 					]),
 				_List_fromArray(
 					[
-						$elm$html$Html$text(' 🐸 🐸 🐸')
+						$elm$html$Html$text(' gridit gridit')
 					])),
 				$author$project$Main$viewLanguageSelector(model.language)
 			]));
