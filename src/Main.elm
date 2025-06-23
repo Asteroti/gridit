@@ -221,9 +221,7 @@ viewSidebar model =
 viewAppHeader : Model -> Html Msg
 viewAppHeader model =
     div [ class "app-header" ]
-        [ div [ class "logo-container" ]
-            [ viewPixelFrog model ]
-        , div []
+        [ div []
             [ h1 [ class "app-title" ] [ text (translate model.language AppTitle) ]
             , p [ class "app-subtitle" ] [ text (translate model.language AppSubtitle) ]
             ]
