@@ -47,6 +47,13 @@ function initializeElmApp() {
     node: document.getElementById('elm-app')
   });
   
+  if (app.ports.setHtmlLang) {
+    app.ports.setHtmlLang.subscribe(function(langCode) {
+      console.log("Changing language to: " + langCode);
+      document.documentElement.lang = langCode;
+    });
+  }
+  
   // Set up the debug port
   if (app.ports.debug) {
     app.ports.debug.subscribe(function(message) {

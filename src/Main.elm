@@ -73,6 +73,9 @@ port receivePng : (String -> msg) -> Sub msg
 port downloadImage : { dataUrl : String } -> Cmd msg
 
 
+port setHtmlLang : String -> Cmd msg
+
+
 
 -- INITIAL STATE
 
@@ -127,7 +130,46 @@ update msg model =
             ( { model | imageWidth = Just width, imageHeight = Just height }, Cmd.none )
 
         LanguageChanged newLanguage ->
-            ( { model | language = newLanguage }, Cmd.none )
+            let
+                langCode =
+                    case newLanguage of
+                        English ->
+                            "en"
+
+                        Spanish ->
+                            "es"
+
+                        Latin ->
+                            "la"
+
+                        Italian ->
+                            "it"
+
+                        Portuguese ->
+                            "pt"
+
+                        French ->
+                            "fr"
+
+                        Asturiano ->
+                            "ast"
+
+                        Gaelic ->
+                            "gd"
+
+                        Euskara ->
+                            "eu"
+
+                        Japanese ->
+                            "ja"
+
+                        Russian ->
+                            "ru"
+
+                        Tuvan ->
+                            "tyv"
+            in
+            ( { model | language = newLanguage }, setHtmlLang langCode )
 
         ResetDownloadSuccess ->
             ( { model | downloadSuccess = False }, Cmd.none )
@@ -279,11 +321,18 @@ viewPixelFrog model =
 
 viewFileOperationsPanel : Model -> Html Msg
 viewFileOperationsPanel model =
-    div [ class "panel" ]
-        [ span [ class "panel-title" ] [ text (translate model.language FileOperations) ]
+    div [ class "panel", Html.Attributes.attribute "role" "group", Html.Attributes.attribute "aria-labelledby" "file-operations-title" ]
+        [ span [ class "panel-title", id "file-operations-title" ] [ text (translate model.language FileOperations) ]
         , button
-            [ class "btn", onClick PickImage ]
-            [ text (translate model.language UploadImage) ]
+            [ class "btn"
+            , onClick PickImage
+            , Html.Attributes.attribute "aria-label" (translate model.language UploadImage)
+            , Html.Attributes.attribute "role" "button"
+            , id "upload-image-button"
+            ]
+            [ span [ class "icon" ] [ text "📁" ]
+            , text (translate model.language UploadImage)
+            ]
         ]
 
 
@@ -295,25 +344,37 @@ viewGridParametersPanel model =
         -- Grid Size
         , div [ class "form-group" ]
             [ div [ class "form-row" ]
-                [ label [ class "form-label" ] [ text (translate model.language GridSize) ] ]
+                [ label
+                    [ class "form-label"
+                    , for "grid-size-slider"
+                    ]
+                    [ text (translate model.language GridSize) ]
+                ]
             , div [ class "input-with-text" ]
                 [ input
                     [ type_ "range"
+                    , id "grid-size-slider"
                     , Html.Attributes.min "2"
                     , Html.Attributes.max "50"
                     , step "1"
                     , value (String.fromInt model.gridSize)
                     , onInput (\s -> GridSizeChanged (Maybe.withDefault 10 (String.toInt s)))
                     , class "slider"
+                    , Html.Attributes.attribute "aria-valuemin" "2"
+                    , Html.Attributes.attribute "aria-valuemax" "50"
+                    , Html.Attributes.attribute "aria-valuenow" (String.fromInt model.gridSize)
+                    , Html.Attributes.attribute "aria-labelledby" "grid-size-label"
                     ]
                     []
                 , input
                     [ type_ "number"
+                    , id "grid-size-number"
                     , Html.Attributes.min "2"
                     , Html.Attributes.max "50"
                     , value (String.fromInt model.gridSize)
                     , onInput (\s -> GridSizeChanged (Maybe.withDefault 10 (String.toInt s)))
                     , class "numeric-input"
+                    , Html.Attributes.attribute "aria-label" (translate model.language GridSize)
                     ]
                     []
                 , span [ class "unit" ] [ text "px" ]
@@ -323,21 +384,30 @@ viewGridParametersPanel model =
         -- Grid Color
         , div [ class "form-group" ]
             [ div [ class "form-row" ]
-                [ label [ class "form-label" ] [ text (translate model.language GridColor) ]
+                [ label
+                    [ class "form-label"
+                    , for "grid-color-picker"
+                    ]
+                    [ text (translate model.language GridColor) ]
                 ]
             , div [ class "input-with-text" ]
                 [ input
                     [ type_ "color"
+                    , id "grid-color-picker"
                     , value model.gridColor
                     , onInput GridColorChanged
                     , class "color-picker"
+                    , Html.Attributes.attribute "aria-label" (translate model.language GridColor)
                     ]
                     []
                 , input
                     [ type_ "text"
+                    , id "grid-color-hex"
                     , value model.gridColor
                     , onInput GridColorChanged
                     , class "hex-input"
+                    , Html.Attributes.attribute "aria-label" (translate model.language GridColor ++ " hex value")
+                    , placeholder "#RRGGBB"
                     ]
                     []
                 ]
@@ -346,26 +416,37 @@ viewGridParametersPanel model =
         -- Grid Thickness
         , div [ class "form-group" ]
             [ div [ class "form-row" ]
-                [ label [ class "form-label" ] [ text (translate model.language GridThickness) ]
+                [ label
+                    [ class "form-label"
+                    , for "grid-thickness-slider"
+                    ]
+                    [ text (translate model.language GridThickness) ]
                 ]
             , div [ class "input-with-text" ]
                 [ input
                     [ type_ "range"
+                    , id "grid-thickness-slider"
                     , Html.Attributes.min "1"
                     , Html.Attributes.max "10"
                     , step "1"
                     , value (String.fromInt model.gridThickness)
                     , onInput (\s -> GridThicknessChanged (Maybe.withDefault 1 (String.toInt s)))
                     , class "slider-input"
+                    , Html.Attributes.attribute "aria-valuemin" "1"
+                    , Html.Attributes.attribute "aria-valuemax" "10"
+                    , Html.Attributes.attribute "aria-valuenow" (String.fromInt model.gridThickness)
+                    , Html.Attributes.attribute "aria-labelledby" "grid-thickness-label"
                     ]
                     []
                 , input
                     [ type_ "number"
+                    , id "grid-thickness-number"
                     , Html.Attributes.min "1"
                     , Html.Attributes.max "10"
                     , value (String.fromInt model.gridThickness)
                     , onInput (\s -> GridThicknessChanged (Maybe.withDefault 1 (String.toInt s)))
                     , class "numeric-input"
+                    , Html.Attributes.attribute "aria-label" (translate model.language GridThickness)
                     ]
                     []
                 , span [ class "unit" ] [ text "px" ]
@@ -375,26 +456,37 @@ viewGridParametersPanel model =
         -- Grid Opacity
         , div [ class "form-group" ]
             [ div [ class "form-row" ]
-                [ label [ class "form-label" ] [ text (translate model.language GridOpacity) ]
+                [ label
+                    [ class "form-label"
+                    , for "grid-opacity-slider"
+                    ]
+                    [ text (translate model.language GridOpacity) ]
                 ]
             , div [ class "input-with-text" ]
                 [ input
                     [ type_ "range"
+                    , id "grid-opacity-slider"
                     , Html.Attributes.min "0"
                     , Html.Attributes.max "1"
-                    , step "0.1"
+                    , step "0.01"
                     , value (String.fromFloat model.gridOpacity)
                     , onInput (\s -> GridOpacityChanged (Maybe.withDefault 0.5 (String.toFloat s)))
                     , class "slider-input"
+                    , Html.Attributes.attribute "aria-valuemin" "0"
+                    , Html.Attributes.attribute "aria-valuemax" "1"
+                    , Html.Attributes.attribute "aria-valuenow" (String.fromFloat model.gridOpacity)
+                    , Html.Attributes.attribute "aria-labelledby" "grid-opacity-label"
                     ]
                     []
                 , input
                     [ type_ "number"
+                    , id "grid-opacity-number"
                     , Html.Attributes.min "0"
                     , Html.Attributes.max "100"
                     , value (String.fromInt (round (model.gridOpacity * 100)))
                     , onInput (\s -> GridOpacityChanged (toFloat (Maybe.withDefault 50 (String.toInt s)) / 100))
                     , class "numeric-input"
+                    , Html.Attributes.attribute "aria-label" (translate model.language GridOpacity)
                     ]
                     []
                 , span [ class "unit" ] [ text "%" ]
@@ -405,19 +497,36 @@ viewGridParametersPanel model =
 
 viewActionsPanel : Model -> Html Msg
 viewActionsPanel model =
-    div [ class "panel" ]
-        [ span [ class "panel-title" ] [ text (translate model.language Actions) ]
+    div [ class "panel", Html.Attributes.attribute "role" "group", Html.Attributes.attribute "aria-labelledby" "actions-title" ]
+        [ span [ class "panel-title", id "actions-title" ] [ text (translate model.language Actions) ]
         , div []
             [ button
                 [ class "btn btn-primary"
                 , onClick DownloadClicked
                 , disabled (model.uploadedImage == Nothing)
+                , Html.Attributes.attribute "aria-label" (translate model.language DownloadGriddedImage)
+                , Html.Attributes.attribute "role" "button"
+                , id "download-button"
+                , Html.Attributes.attribute "aria-disabled"
+                    (if model.uploadedImage == Nothing then
+                        "true"
+
+                     else
+                        "false"
+                    )
                 ]
-                [ text (translate model.language DownloadGriddedImage) ]
+                [ span [ class "icon" ] [ text "⬇️" ]
+                , text (translate model.language DownloadGriddedImage)
+                ]
             ]
         , div []
             [ button
-                [ class "btn", onClick NiceButtonClicked ]
+                [ class "btn"
+                , onClick NiceButtonClicked
+                , Html.Attributes.attribute "aria-label" "Nice Frog Button"
+                , Html.Attributes.attribute "role" "button"
+                , id "nice-button"
+                ]
                 [ text "🐸 "
                 , text (translate model.language Nice)
                 , text (" (" ++ String.fromInt model.niceCounter ++ ")")
@@ -552,8 +661,9 @@ viewLanguageSelector currentLanguage =
             option
                 [ value (languageToString language)
                 , selected (currentLanguage == language)
+                , Html.Attributes.attribute "aria-label" displayName
                 ]
-                [ text (languageFlag language ++ " " ++ displayName) ]
+                [ text (languageFlag language ++ displayName) ]
 
         languageToString language =
             case language of
@@ -592,6 +702,45 @@ viewLanguageSelector currentLanguage =
 
                 Tuvan ->
                     "tuvan"
+
+        -- Get language code for HTML lang attribute
+        languageCode =
+            case currentLanguage of
+                English ->
+                    "en"
+
+                Spanish ->
+                    "es"
+
+                Latin ->
+                    "la"
+
+                Italian ->
+                    "it"
+
+                Portuguese ->
+                    "pt"
+
+                French ->
+                    "fr"
+
+                Asturiano ->
+                    "ast"
+
+                Gaelic ->
+                    "gd"
+
+                Euskara ->
+                    "eu"
+
+                Japanese ->
+                    "ja"
+
+                Russian ->
+                    "ru"
+
+                Tuvan ->
+                    "tyv"
 
         handleLanguageChange value =
             case value of
@@ -633,11 +782,21 @@ viewLanguageSelector currentLanguage =
 
                 _ ->
                     LanguageChanged English
+
+        _ =
+            debug ("lang:" ++ languageCode)
     in
     div [ class "language-selector" ]
-        [ select
-            [ on "change" (Json.Decode.map handleLanguageChange (Json.Decode.at [ "target", "value" ] Json.Decode.string))
+        [ label
+            [ for "language-select"
+            , class "sr-only"
+            ]
+            [ text (translate currentLanguage LanguageLabel) ]
+        , select
+            [ id "language-select"
+            , on "change" (Json.Decode.map handleLanguageChange (Json.Decode.at [ "target", "value" ] Json.Decode.string))
             , class "language-dropdown"
+            , Html.Attributes.attribute "aria-label" (translate currentLanguage LanguageLabel)
             ]
             [ languageOption English "English"
             , languageOption Spanish "Español"

@@ -5424,6 +5424,7 @@ var $author$project$Main$requestPng = _Platform_outgoingPort(
 					$elm$json$Json$Encode$int($.width))
 				]));
 	});
+var $author$project$Main$setHtmlLang = _Platform_outgoingPort('setHtmlLang', $elm$json$Json$Encode$string);
 var $elm$core$Process$sleep = _Process_sleep;
 var $elm$file$File$toUrl = _File_toUrl;
 var $author$project$Main$update = F2(
@@ -5503,11 +5504,39 @@ var $author$project$Main$update = F2(
 					$elm$core$Platform$Cmd$none);
 			case 'LanguageChanged':
 				var newLanguage = msg.a;
+				var langCode = function () {
+					switch (newLanguage.$) {
+						case 'English':
+							return 'en';
+						case 'Spanish':
+							return 'es';
+						case 'Latin':
+							return 'la';
+						case 'Italian':
+							return 'it';
+						case 'Portuguese':
+							return 'pt';
+						case 'French':
+							return 'fr';
+						case 'Asturiano':
+							return 'ast';
+						case 'Gaelic':
+							return 'gd';
+						case 'Euskara':
+							return 'eu';
+						case 'Japanese':
+							return 'ja';
+						case 'Russian':
+							return 'ru';
+						default:
+							return 'tyv';
+					}
+				}();
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
 						{language: newLanguage}),
-					$elm$core$Platform$Cmd$none);
+					$author$project$Main$setHtmlLang(langCode));
 			case 'ResetDownloadSuccess':
 				return _Utils_Tuple2(
 					_Utils_update(
@@ -5515,13 +5544,13 @@ var $author$project$Main$update = F2(
 						{downloadSuccess: false}),
 					$elm$core$Platform$Cmd$none);
 			case 'DownloadClicked':
-				var _v1 = _Utils_Tuple3(model.uploadedImage, model.imageWidth, model.imageHeight);
-				if (((_v1.a.$ === 'Just') && (_v1.b.$ === 'Just')) && (_v1.c.$ === 'Just')) {
-					var url = _v1.a.a;
-					var w = _v1.b.a;
-					var h = _v1.c.a;
+				var _v2 = _Utils_Tuple3(model.uploadedImage, model.imageWidth, model.imageHeight);
+				if (((_v2.a.$ === 'Just') && (_v2.b.$ === 'Just')) && (_v2.c.$ === 'Just')) {
+					var url = _v2.a.a;
+					var w = _v2.b.a;
+					var h = _v2.c.a;
 					var requestParams = {color: model.gridColor, grid: model.gridSize, height: h, opacity: model.gridOpacity, thickness: model.gridThickness, url: url, width: w};
-					var _v2 = $author$project$Main$debug(
+					var _v3 = $author$project$Main$debug(
 						'Elm: DownloadClicked with valid image data. Width: ' + ($elm$core$String$fromInt(w) + (', Height: ' + $elm$core$String$fromInt(h))));
 					return _Utils_Tuple2(
 						model,
@@ -5541,10 +5570,10 @@ var $author$project$Main$update = F2(
 				var updatedModel = _Utils_update(
 					model,
 					{downloadSuccess: true});
-				var _v3 = $author$project$Main$debug(
+				var _v4 = $author$project$Main$debug(
 					'Elm: GriddedReady received data URL of length: ' + $elm$core$String$fromInt(
 						$elm$core$String$length(dataUrl)));
-				var _v4 = $author$project$Main$debug('Elm: Triggering download via downloadImage port');
+				var _v5 = $author$project$Main$debug('Elm: Triggering download via downloadImage port');
 				return _Utils_Tuple2(
 					updatedModel,
 					$elm$core$Platform$Cmd$batch(
@@ -5555,7 +5584,7 @@ var $author$project$Main$update = F2(
 								{dataUrl: dataUrl}),
 								A2(
 								$elm$core$Task$perform,
-								function (_v5) {
+								function (_v6) {
 									return $author$project$Main$ResetDownloadSuccess;
 								},
 								$elm$core$Process$sleep(2000))
@@ -6523,6 +6552,14 @@ var $author$project$Main$DownloadClicked = {$: 'DownloadClicked'};
 var $author$project$I18n$DownloadGriddedImage = {$: 'DownloadGriddedImage'};
 var $author$project$I18n$Nice = {$: 'Nice'};
 var $author$project$Main$NiceButtonClicked = {$: 'NiceButtonClicked'};
+var $elm$virtual_dom$VirtualDom$attribute = F2(
+	function (key, value) {
+		return A2(
+			_VirtualDom_attribute,
+			_VirtualDom_noOnOrFormAction(key),
+			_VirtualDom_noJavaScriptOrHtmlUri(value));
+	});
+var $elm$html$Html$Attributes$attribute = $elm$virtual_dom$VirtualDom$attribute;
 var $elm$html$Html$button = _VirtualDom_node('button');
 var $elm$json$Json$Encode$bool = _Json_wrap;
 var $elm$html$Html$Attributes$boolProperty = F2(
@@ -6533,6 +6570,7 @@ var $elm$html$Html$Attributes$boolProperty = F2(
 			$elm$json$Json$Encode$bool(bool));
 	});
 var $elm$html$Html$Attributes$disabled = $elm$html$Html$Attributes$boolProperty('disabled');
+var $elm$html$Html$Attributes$id = $elm$html$Html$Attributes$stringProperty('id');
 var $elm$html$Html$Events$onClick = function (msg) {
 	return A2(
 		$elm$html$Html$Events$on,
@@ -6544,7 +6582,9 @@ var $author$project$Main$viewActionsPanel = function (model) {
 		$elm$html$Html$div,
 		_List_fromArray(
 			[
-				$elm$html$Html$Attributes$class('panel')
+				$elm$html$Html$Attributes$class('panel'),
+				A2($elm$html$Html$Attributes$attribute, 'role', 'group'),
+				A2($elm$html$Html$Attributes$attribute, 'aria-labelledby', 'actions-title')
 			]),
 		_List_fromArray(
 			[
@@ -6552,7 +6592,8 @@ var $author$project$Main$viewActionsPanel = function (model) {
 				$elm$html$Html$span,
 				_List_fromArray(
 					[
-						$elm$html$Html$Attributes$class('panel-title')
+						$elm$html$Html$Attributes$class('panel-title'),
+						$elm$html$Html$Attributes$id('actions-title')
 					]),
 				_List_fromArray(
 					[
@@ -6571,10 +6612,30 @@ var $author$project$Main$viewActionsPanel = function (model) {
 								$elm$html$Html$Attributes$class('btn btn-primary'),
 								$elm$html$Html$Events$onClick($author$project$Main$DownloadClicked),
 								$elm$html$Html$Attributes$disabled(
-								_Utils_eq(model.uploadedImage, $elm$core$Maybe$Nothing))
+								_Utils_eq(model.uploadedImage, $elm$core$Maybe$Nothing)),
+								A2(
+								$elm$html$Html$Attributes$attribute,
+								'aria-label',
+								A2($author$project$I18n$translate, model.language, $author$project$I18n$DownloadGriddedImage)),
+								A2($elm$html$Html$Attributes$attribute, 'role', 'button'),
+								$elm$html$Html$Attributes$id('download-button'),
+								A2(
+								$elm$html$Html$Attributes$attribute,
+								'aria-disabled',
+								_Utils_eq(model.uploadedImage, $elm$core$Maybe$Nothing) ? 'true' : 'false')
 							]),
 						_List_fromArray(
 							[
+								A2(
+								$elm$html$Html$span,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('icon')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('⬇️')
+									])),
 								$elm$html$Html$text(
 								A2($author$project$I18n$translate, model.language, $author$project$I18n$DownloadGriddedImage))
 							]))
@@ -6589,7 +6650,10 @@ var $author$project$Main$viewActionsPanel = function (model) {
 						_List_fromArray(
 							[
 								$elm$html$Html$Attributes$class('btn'),
-								$elm$html$Html$Events$onClick($author$project$Main$NiceButtonClicked)
+								$elm$html$Html$Events$onClick($author$project$Main$NiceButtonClicked),
+								A2($elm$html$Html$Attributes$attribute, 'aria-label', 'Nice Frog Button'),
+								A2($elm$html$Html$Attributes$attribute, 'role', 'button'),
+								$elm$html$Html$Attributes$id('nice-button')
 							]),
 						_List_fromArray(
 							[
@@ -6652,7 +6716,9 @@ var $author$project$Main$viewFileOperationsPanel = function (model) {
 		$elm$html$Html$div,
 		_List_fromArray(
 			[
-				$elm$html$Html$Attributes$class('panel')
+				$elm$html$Html$Attributes$class('panel'),
+				A2($elm$html$Html$Attributes$attribute, 'role', 'group'),
+				A2($elm$html$Html$Attributes$attribute, 'aria-labelledby', 'file-operations-title')
 			]),
 		_List_fromArray(
 			[
@@ -6660,7 +6726,8 @@ var $author$project$Main$viewFileOperationsPanel = function (model) {
 				$elm$html$Html$span,
 				_List_fromArray(
 					[
-						$elm$html$Html$Attributes$class('panel-title')
+						$elm$html$Html$Attributes$class('panel-title'),
+						$elm$html$Html$Attributes$id('file-operations-title')
 					]),
 				_List_fromArray(
 					[
@@ -6672,10 +6739,26 @@ var $author$project$Main$viewFileOperationsPanel = function (model) {
 				_List_fromArray(
 					[
 						$elm$html$Html$Attributes$class('btn'),
-						$elm$html$Html$Events$onClick($author$project$Main$PickImage)
+						$elm$html$Html$Events$onClick($author$project$Main$PickImage),
+						A2(
+						$elm$html$Html$Attributes$attribute,
+						'aria-label',
+						A2($author$project$I18n$translate, model.language, $author$project$I18n$UploadImage)),
+						A2($elm$html$Html$Attributes$attribute, 'role', 'button'),
+						$elm$html$Html$Attributes$id('upload-image-button')
 					]),
 				_List_fromArray(
 					[
+						A2(
+						$elm$html$Html$span,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('icon')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('📁')
+							])),
 						$elm$html$Html$text(
 						A2($author$project$I18n$translate, model.language, $author$project$I18n$UploadImage))
 					]))
@@ -6698,6 +6781,7 @@ var $author$project$I18n$GridThickness = {$: 'GridThickness'};
 var $author$project$Main$GridThicknessChanged = function (a) {
 	return {$: 'GridThicknessChanged', a: a};
 };
+var $elm$html$Html$Attributes$for = $elm$html$Html$Attributes$stringProperty('htmlFor');
 var $elm$html$Html$input = _VirtualDom_node('input');
 var $elm$html$Html$label = _VirtualDom_node('label');
 var $elm$html$Html$Attributes$max = $elm$html$Html$Attributes$stringProperty('max');
@@ -6729,6 +6813,7 @@ var $elm$html$Html$Events$onInput = function (tagger) {
 			$elm$html$Html$Events$alwaysStop,
 			A2($elm$json$Json$Decode$map, tagger, $elm$html$Html$Events$targetValue)));
 };
+var $elm$html$Html$Attributes$placeholder = $elm$html$Html$Attributes$stringProperty('placeholder');
 var $elm$core$Basics$round = _Basics_round;
 var $elm$html$Html$Attributes$step = function (n) {
 	return A2($elm$html$Html$Attributes$stringProperty, 'step', n);
@@ -6785,7 +6870,8 @@ var $author$project$Main$viewGridParametersPanel = function (model) {
 								$elm$html$Html$label,
 								_List_fromArray(
 									[
-										$elm$html$Html$Attributes$class('form-label')
+										$elm$html$Html$Attributes$class('form-label'),
+										$elm$html$Html$Attributes$for('grid-size-slider')
 									]),
 								_List_fromArray(
 									[
@@ -6806,6 +6892,7 @@ var $author$project$Main$viewGridParametersPanel = function (model) {
 								_List_fromArray(
 									[
 										$elm$html$Html$Attributes$type_('range'),
+										$elm$html$Html$Attributes$id('grid-size-slider'),
 										$elm$html$Html$Attributes$min('2'),
 										$elm$html$Html$Attributes$max('50'),
 										$elm$html$Html$Attributes$step('1'),
@@ -6819,7 +6906,14 @@ var $author$project$Main$viewGridParametersPanel = function (model) {
 													10,
 													$elm$core$String$toInt(s)));
 										}),
-										$elm$html$Html$Attributes$class('slider')
+										$elm$html$Html$Attributes$class('slider'),
+										A2($elm$html$Html$Attributes$attribute, 'aria-valuemin', '2'),
+										A2($elm$html$Html$Attributes$attribute, 'aria-valuemax', '50'),
+										A2(
+										$elm$html$Html$Attributes$attribute,
+										'aria-valuenow',
+										$elm$core$String$fromInt(model.gridSize)),
+										A2($elm$html$Html$Attributes$attribute, 'aria-labelledby', 'grid-size-label')
 									]),
 								_List_Nil),
 								A2(
@@ -6827,6 +6921,7 @@ var $author$project$Main$viewGridParametersPanel = function (model) {
 								_List_fromArray(
 									[
 										$elm$html$Html$Attributes$type_('number'),
+										$elm$html$Html$Attributes$id('grid-size-number'),
 										$elm$html$Html$Attributes$min('2'),
 										$elm$html$Html$Attributes$max('50'),
 										$elm$html$Html$Attributes$value(
@@ -6839,7 +6934,11 @@ var $author$project$Main$viewGridParametersPanel = function (model) {
 													10,
 													$elm$core$String$toInt(s)));
 										}),
-										$elm$html$Html$Attributes$class('numeric-input')
+										$elm$html$Html$Attributes$class('numeric-input'),
+										A2(
+										$elm$html$Html$Attributes$attribute,
+										'aria-label',
+										A2($author$project$I18n$translate, model.language, $author$project$I18n$GridSize))
 									]),
 								_List_Nil),
 								A2(
@@ -6874,7 +6973,8 @@ var $author$project$Main$viewGridParametersPanel = function (model) {
 								$elm$html$Html$label,
 								_List_fromArray(
 									[
-										$elm$html$Html$Attributes$class('form-label')
+										$elm$html$Html$Attributes$class('form-label'),
+										$elm$html$Html$Attributes$for('grid-color-picker')
 									]),
 								_List_fromArray(
 									[
@@ -6895,9 +6995,14 @@ var $author$project$Main$viewGridParametersPanel = function (model) {
 								_List_fromArray(
 									[
 										$elm$html$Html$Attributes$type_('color'),
+										$elm$html$Html$Attributes$id('grid-color-picker'),
 										$elm$html$Html$Attributes$value(model.gridColor),
 										$elm$html$Html$Events$onInput($author$project$Main$GridColorChanged),
-										$elm$html$Html$Attributes$class('color-picker')
+										$elm$html$Html$Attributes$class('color-picker'),
+										A2(
+										$elm$html$Html$Attributes$attribute,
+										'aria-label',
+										A2($author$project$I18n$translate, model.language, $author$project$I18n$GridColor))
 									]),
 								_List_Nil),
 								A2(
@@ -6905,9 +7010,15 @@ var $author$project$Main$viewGridParametersPanel = function (model) {
 								_List_fromArray(
 									[
 										$elm$html$Html$Attributes$type_('text'),
+										$elm$html$Html$Attributes$id('grid-color-hex'),
 										$elm$html$Html$Attributes$value(model.gridColor),
 										$elm$html$Html$Events$onInput($author$project$Main$GridColorChanged),
-										$elm$html$Html$Attributes$class('hex-input')
+										$elm$html$Html$Attributes$class('hex-input'),
+										A2(
+										$elm$html$Html$Attributes$attribute,
+										'aria-label',
+										A2($author$project$I18n$translate, model.language, $author$project$I18n$GridColor) + ' hex value'),
+										$elm$html$Html$Attributes$placeholder('#RRGGBB')
 									]),
 								_List_Nil)
 							]))
@@ -6932,7 +7043,8 @@ var $author$project$Main$viewGridParametersPanel = function (model) {
 								$elm$html$Html$label,
 								_List_fromArray(
 									[
-										$elm$html$Html$Attributes$class('form-label')
+										$elm$html$Html$Attributes$class('form-label'),
+										$elm$html$Html$Attributes$for('grid-thickness-slider')
 									]),
 								_List_fromArray(
 									[
@@ -6953,6 +7065,7 @@ var $author$project$Main$viewGridParametersPanel = function (model) {
 								_List_fromArray(
 									[
 										$elm$html$Html$Attributes$type_('range'),
+										$elm$html$Html$Attributes$id('grid-thickness-slider'),
 										$elm$html$Html$Attributes$min('1'),
 										$elm$html$Html$Attributes$max('10'),
 										$elm$html$Html$Attributes$step('1'),
@@ -6966,7 +7079,14 @@ var $author$project$Main$viewGridParametersPanel = function (model) {
 													1,
 													$elm$core$String$toInt(s)));
 										}),
-										$elm$html$Html$Attributes$class('slider-input')
+										$elm$html$Html$Attributes$class('slider-input'),
+										A2($elm$html$Html$Attributes$attribute, 'aria-valuemin', '1'),
+										A2($elm$html$Html$Attributes$attribute, 'aria-valuemax', '10'),
+										A2(
+										$elm$html$Html$Attributes$attribute,
+										'aria-valuenow',
+										$elm$core$String$fromInt(model.gridThickness)),
+										A2($elm$html$Html$Attributes$attribute, 'aria-labelledby', 'grid-thickness-label')
 									]),
 								_List_Nil),
 								A2(
@@ -6974,6 +7094,7 @@ var $author$project$Main$viewGridParametersPanel = function (model) {
 								_List_fromArray(
 									[
 										$elm$html$Html$Attributes$type_('number'),
+										$elm$html$Html$Attributes$id('grid-thickness-number'),
 										$elm$html$Html$Attributes$min('1'),
 										$elm$html$Html$Attributes$max('10'),
 										$elm$html$Html$Attributes$value(
@@ -6986,7 +7107,11 @@ var $author$project$Main$viewGridParametersPanel = function (model) {
 													1,
 													$elm$core$String$toInt(s)));
 										}),
-										$elm$html$Html$Attributes$class('numeric-input')
+										$elm$html$Html$Attributes$class('numeric-input'),
+										A2(
+										$elm$html$Html$Attributes$attribute,
+										'aria-label',
+										A2($author$project$I18n$translate, model.language, $author$project$I18n$GridThickness))
 									]),
 								_List_Nil),
 								A2(
@@ -7021,7 +7146,8 @@ var $author$project$Main$viewGridParametersPanel = function (model) {
 								$elm$html$Html$label,
 								_List_fromArray(
 									[
-										$elm$html$Html$Attributes$class('form-label')
+										$elm$html$Html$Attributes$class('form-label'),
+										$elm$html$Html$Attributes$for('grid-opacity-slider')
 									]),
 								_List_fromArray(
 									[
@@ -7042,9 +7168,10 @@ var $author$project$Main$viewGridParametersPanel = function (model) {
 								_List_fromArray(
 									[
 										$elm$html$Html$Attributes$type_('range'),
+										$elm$html$Html$Attributes$id('grid-opacity-slider'),
 										$elm$html$Html$Attributes$min('0'),
 										$elm$html$Html$Attributes$max('1'),
-										$elm$html$Html$Attributes$step('0.1'),
+										$elm$html$Html$Attributes$step('0.01'),
 										$elm$html$Html$Attributes$value(
 										$elm$core$String$fromFloat(model.gridOpacity)),
 										$elm$html$Html$Events$onInput(
@@ -7055,7 +7182,14 @@ var $author$project$Main$viewGridParametersPanel = function (model) {
 													0.5,
 													$elm$core$String$toFloat(s)));
 										}),
-										$elm$html$Html$Attributes$class('slider-input')
+										$elm$html$Html$Attributes$class('slider-input'),
+										A2($elm$html$Html$Attributes$attribute, 'aria-valuemin', '0'),
+										A2($elm$html$Html$Attributes$attribute, 'aria-valuemax', '1'),
+										A2(
+										$elm$html$Html$Attributes$attribute,
+										'aria-valuenow',
+										$elm$core$String$fromFloat(model.gridOpacity)),
+										A2($elm$html$Html$Attributes$attribute, 'aria-labelledby', 'grid-opacity-label')
 									]),
 								_List_Nil),
 								A2(
@@ -7063,6 +7197,7 @@ var $author$project$Main$viewGridParametersPanel = function (model) {
 								_List_fromArray(
 									[
 										$elm$html$Html$Attributes$type_('number'),
+										$elm$html$Html$Attributes$id('grid-opacity-number'),
 										$elm$html$Html$Attributes$min('0'),
 										$elm$html$Html$Attributes$max('100'),
 										$elm$html$Html$Attributes$value(
@@ -7076,7 +7211,11 @@ var $author$project$Main$viewGridParametersPanel = function (model) {
 													50,
 													$elm$core$String$toInt(s)) / 100);
 										}),
-										$elm$html$Html$Attributes$class('numeric-input')
+										$elm$html$Html$Attributes$class('numeric-input'),
+										A2(
+										$elm$html$Html$Attributes$attribute,
+										'aria-label',
+										A2($author$project$I18n$translate, model.language, $author$project$I18n$GridOpacity))
 									]),
 								_List_Nil),
 								A2(
@@ -7154,7 +7293,7 @@ var $author$project$Main$viewStatusBar = function (model) {
 					]),
 				_List_fromArray(
 					[
-						$elm$html$Html$text('Made in  🇦🇷  with  ❤️  ᕦ(ò_óˇ)ᕤ')
+						$elm$html$Html$text('Made in  🇦🇷  with  ❤️ by me  ᕦ(ò_óˇ)ᕤ')
 					])),
 				A2(
 				$elm$html$Html$span,
@@ -7182,6 +7321,7 @@ var $author$project$I18n$Japanese = {$: 'Japanese'};
 var $author$project$Main$LanguageChanged = function (a) {
 	return {$: 'LanguageChanged', a: a};
 };
+var $author$project$I18n$LanguageLabel = {$: 'LanguageLabel'};
 var $author$project$I18n$Latin = {$: 'Latin'};
 var $author$project$I18n$Portuguese = {$: 'Portuguese'};
 var $author$project$I18n$Russian = {$: 'Russian'};
@@ -7255,14 +7395,45 @@ var $author$project$Main$viewLanguageSelector = function (currentLanguage) {
 						$elm$html$Html$Attributes$value(
 						languageToString(language)),
 						$elm$html$Html$Attributes$selected(
-						_Utils_eq(currentLanguage, language))
+						_Utils_eq(currentLanguage, language)),
+						A2($elm$html$Html$Attributes$attribute, 'aria-label', displayName)
 					]),
 				_List_fromArray(
 					[
 						$elm$html$Html$text(
-						languageFlag(language) + (' ' + displayName))
+						_Utils_ap(
+							languageFlag(language),
+							displayName))
 					]));
 		});
+	var languageCode = function () {
+		switch (currentLanguage.$) {
+			case 'English':
+				return 'en';
+			case 'Spanish':
+				return 'es';
+			case 'Latin':
+				return 'la';
+			case 'Italian':
+				return 'it';
+			case 'Portuguese':
+				return 'pt';
+			case 'French':
+				return 'fr';
+			case 'Asturiano':
+				return 'ast';
+			case 'Gaelic':
+				return 'gd';
+			case 'Euskara':
+				return 'eu';
+			case 'Japanese':
+				return 'ja';
+			case 'Russian':
+				return 'ru';
+			default:
+				return 'tyv';
+		}
+	}();
 	var handleLanguageChange = function (value) {
 		switch (value) {
 			case 'english':
@@ -7293,6 +7464,7 @@ var $author$project$Main$viewLanguageSelector = function (currentLanguage) {
 				return $author$project$Main$LanguageChanged($author$project$I18n$English);
 		}
 	};
+	var _v0 = $author$project$Main$debug('lang:' + languageCode);
 	return A2(
 		$elm$html$Html$div,
 		_List_fromArray(
@@ -7302,9 +7474,22 @@ var $author$project$Main$viewLanguageSelector = function (currentLanguage) {
 		_List_fromArray(
 			[
 				A2(
+				$elm$html$Html$label,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$for('language-select'),
+						$elm$html$Html$Attributes$class('sr-only')
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text(
+						A2($author$project$I18n$translate, currentLanguage, $author$project$I18n$LanguageLabel))
+					])),
+				A2(
 				$elm$html$Html$select,
 				_List_fromArray(
 					[
+						$elm$html$Html$Attributes$id('language-select'),
 						A2(
 						$elm$html$Html$Events$on,
 						'change',
@@ -7316,7 +7501,11 @@ var $author$project$Main$viewLanguageSelector = function (currentLanguage) {
 								_List_fromArray(
 									['target', 'value']),
 								$elm$json$Json$Decode$string))),
-						$elm$html$Html$Attributes$class('language-dropdown')
+						$elm$html$Html$Attributes$class('language-dropdown'),
+						A2(
+						$elm$html$Html$Attributes$attribute,
+						'aria-label',
+						A2($author$project$I18n$translate, currentLanguage, $author$project$I18n$LanguageLabel))
 					]),
 				_List_fromArray(
 					[
