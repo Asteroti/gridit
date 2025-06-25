@@ -16,6 +16,8 @@ type Language
     | Japanese
     | Russian
     | Tuvan
+    | Amharic
+    | Yiddish
 
 
 
@@ -46,6 +48,7 @@ type TranslationKey
     | GridPreviewPlaceholder
     | UploadPlaceholder
     | StatusReady
+    | MobileBanner
 
 
 
@@ -91,6 +94,12 @@ translations language key =
 
         Tuvan ->
             tuvanTranslations key
+
+        Amharic ->
+            amharicTranslations key
+
+        Yiddish ->
+            yiddishTranslations key
 
 
 
@@ -166,6 +175,9 @@ englishTranslations key =
         StatusReady ->
             "Status: Ready"
 
+        MobileBanner ->
+            "Yikes! ＼(º □ º l|l)/  Mobile version coming soon!"
+
 
 
 -- SPANISH TRANSLATIONS
@@ -239,6 +251,9 @@ spanishTranslations key =
 
         StatusReady ->
             "Status: Listo"
+
+        MobileBanner ->
+            "¡Ay! ＼(º □ º l|l)/  ¡Versión móvil próximamente!"
 
 
 
@@ -314,6 +329,9 @@ latinTranslations key =
         StatusReady ->
             "Status: Paratus"
 
+        MobileBanner ->
+            "Eheu! ＼(º □ º l|l)/  Versio mobilis mox ventura!"
+
 
 
 -- ITALIAN TRANSLATIONS
@@ -387,6 +405,9 @@ italianTranslations key =
 
         StatusReady ->
             "Status: Pronto"
+
+        MobileBanner ->
+            "Accidenti! ＼(º □ º l|l)/  Versione mobile in arrivo presto!"
 
 
 
@@ -462,6 +483,9 @@ portugueseTranslations key =
         StatusReady ->
             "Status: Pronto"
 
+        MobileBanner ->
+            "Nossa! ＼(º □ º l|l)/  Versão móvel em breve!"
+
 
 
 -- FRENCH TRANSLATIONS
@@ -535,6 +559,9 @@ frenchTranslations key =
 
         StatusReady ->
             "Status: Prêt"
+
+        MobileBanner ->
+            "Oups! ＼(º □ º l|l)/  Version mobile bientôt disponible!"
 
 
 
@@ -610,6 +637,9 @@ asturianoTranslations key =
         StatusReady ->
             "Status: Llistu"
 
+        MobileBanner ->
+            "¡Caray! ＼(º □ º l|l)/  ¡Versión móvil pronto!"
+
 
 
 -- GAELIC TRANSLATIONS
@@ -683,6 +713,9 @@ gaelicTranslations key =
 
         StatusReady ->
             "Status: Deiseil"
+
+        MobileBanner ->
+            "Och! ＼(º □ º l|l)/  Tionndadh mòbail a' tighinn a dh'aithghearr!"
 
 
 
@@ -758,6 +791,9 @@ euskaraTranslations key =
         StatusReady ->
             "Status: Prest"
 
+        MobileBanner ->
+            "Ai ama! ＼(º □ º l|l)/  Mugikorreko bertsioa laster!"
+
 
 
 -- JAPANESE TRANSLATIONS
@@ -831,6 +867,9 @@ japaneseTranslations key =
 
         StatusReady ->
             "Status: 準備完了"
+
+        MobileBanner ->
+            "げっ！ ＼(º □ º l|l)/  モバイル版は近日公開予定！"
 
 
 
@@ -906,6 +945,9 @@ russianTranslations key =
         StatusReady ->
             "Статус: Готово"
 
+        MobileBanner ->
+            "Ой! ＼(º □ º l|l)/  Мобильная версия скоро будет доступна!"
+
 
 
 -- TUVAN TRANSLATIONS
@@ -979,6 +1021,163 @@ tuvanTranslations key =
 
         StatusReady ->
             "Байдал: Белен"
+
+        MobileBanner ->
+            "Аттиг! ＼(º □ º l|l)/  Мобильдиг хевир удавас келир!"
+
+
+
+-- AMHARIC TRANSLATIONS
+
+
+amharicTranslations : TranslationKey -> String
+amharicTranslations key =
+    case key of
+        AppTitle ->
+            "Gridit! 🐸"
+
+        UploadImage ->
+            "ምስል ይጫኑ"
+
+        CustomizeIt ->
+            "ያስተካክሉት!"
+
+        GridSize ->
+            "መጠን"
+
+        Rectangles ->
+            " አራት ማዕዘኖች"
+
+        GridColor ->
+            "ቀለም"
+
+        GridThickness ->
+            "ውፍረት"
+
+        GridOpacity ->
+            "ግልጽነት"
+
+        OriginalImage ->
+            "ዋናው ምስል"
+
+        GriddedImage ->
+            "ፍርግርግ ያለው ምስል"
+
+        DownloadGriddedImage ->
+            "የፍርግርግ ምስልዎን ያውርዱ!!!"
+
+        Nice ->
+            "ጥሩ! "
+
+        NiceCounter ->
+            "ጥሩ ቆጣሪ: "
+
+        NoImageYet ->
+            "እስካሁን ምንም ምስል የለም! ለመጀመር ምስል ይጫኑ ጠቅ ያድርጉ!"
+
+        LanguageLabel ->
+            "ቋንቋ:"
+
+        FileOperations ->
+            "እዚህ ይጀምሩ"
+
+        GridParameters ->
+            "ፍርግርጉን በምስልዎ ላይ በትክክል እንዲታይ ያስተካክሉት"
+
+        Actions ->
+            "🐸 🐸 🐸"
+
+        AppSubtitle ->
+            "ሰላም። ይህ በእርስዎ ምርጫ ምስል ላይ አራት ማዕዘናዊ ፍርግርግ እንዲፈጥሩ ይረዳዎታል"
+
+        GridPreviewPlaceholder ->
+            "የፍርግርግ ምስልዎ እዚህ ይታያል"
+
+        UploadPlaceholder ->
+            "ለመጀመር ምስል ይጫኑ"
+
+        StatusReady ->
+            "ሁኔታ: ዝግጁ"
+
+        MobileBanner ->
+            "የማይ! ＼(º □ º l|l)/  የሞባይል ብስና በቅራቢ ይመጣል!"
+
+
+
+-- YIDDISH TRANSLATIONS
+
+
+yiddishTranslations : TranslationKey -> String
+yiddishTranslations key =
+    case key of
+        AppTitle ->
+            "Gridit! 🐸"
+
+        UploadImage ->
+            "אַרויפלאָדן בילד"
+
+        CustomizeIt ->
+            "פּערסאַנאַלייז עס!"
+
+        GridSize ->
+            "גרייס"
+
+        Rectangles ->
+            " רעקטאַנגלעס"
+
+        GridColor ->
+            "קאָליר"
+
+        GridThickness ->
+            "געדיכטקייט"
+
+        GridOpacity ->
+            "דורכזיכטיקייט"
+
+        OriginalImage ->
+            "אָריגינעל בילד"
+
+        GriddedImage ->
+            "געגרידעט בילד"
+
+        DownloadGriddedImage ->
+            "דאַונלאָוד דיין געגרידעט בילד!!!"
+
+        Nice ->
+            "שיין! "
+
+        NiceCounter ->
+            "שיין ציילער: "
+
+        NoImageYet ->
+            "נאָך קיין בילד! קליקט אַרויפלאָדן בילד צו אָנהייבן!"
+
+        LanguageLabel ->
+            "שפּראַך:"
+
+        FileOperations ->
+            "אָנהייבן דאָ"
+
+        GridParameters ->
+            "פּערסאַנאַלייז די נעץ אַזוי איר קענט זען עס געהעריק איבער דיין בילד"
+
+        Actions ->
+            "🐸 🐸 🐸"
+
+        AppSubtitle ->
+            "העלאָ דאָרט. דאָס העלפט איר שאַפֿן אַ רעקטילינעאַר נעץ איבער אַ בילד פון אייער אויסוואַל"
+
+        GridPreviewPlaceholder ->
+            "דיין געגרידעט בילד וועט דערשיינען דאָ"
+
+        UploadPlaceholder ->
+            "אַרויפלאָדן אַ בילד צו אָנהייבן"
+
+        StatusReady ->
+            "סטאַטוס: גרייט"
+
+        MobileBanner ->
+            "אוי ויי! ＼(º □ º l|l)/  מאָביל ווערסיע קומט באַלד!"
 
 
 translate : Language -> TranslationKey -> String
