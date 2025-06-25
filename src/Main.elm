@@ -96,6 +96,56 @@ init =
 
 
 
+-- HELPERS
+
+
+-- | Convert a Language to its ISO language code
+languageToCode : Language -> String
+languageToCode language =
+    case language of
+        English ->
+            "en"
+
+        Spanish ->
+            "es"
+
+        Latin ->
+            "la"
+
+        Italian ->
+            "it"
+
+        Portuguese ->
+            "pt"
+
+        French ->
+            "fr"
+
+        Asturiano ->
+            "ast"
+
+        Gaelic ->
+            "gd"
+
+        Euskara ->
+            "eu"
+
+        Japanese ->
+            "ja"
+
+        Russian ->
+            "ru"
+
+        Tuvan ->
+            "tyv"
+            
+        Amharic ->
+            "am"
+            
+        Yiddish ->
+            "yi"
+
+
 -- UPDATE
 
 
@@ -130,46 +180,7 @@ update msg model =
             ( { model | imageWidth = Just width, imageHeight = Just height }, Cmd.none )
 
         LanguageChanged newLanguage ->
-            let
-                langCode =
-                    case newLanguage of
-                        English ->
-                            "en"
-
-                        Spanish ->
-                            "es"
-
-                        Latin ->
-                            "la"
-
-                        Italian ->
-                            "it"
-
-                        Portuguese ->
-                            "pt"
-
-                        French ->
-                            "fr"
-
-                        Asturiano ->
-                            "ast"
-
-                        Gaelic ->
-                            "gd"
-
-                        Euskara ->
-                            "eu"
-
-                        Japanese ->
-                            "ja"
-
-                        Russian ->
-                            "ru"
-
-                        Tuvan ->
-                            "tyv"
-            in
-            ( { model | language = newLanguage }, setHtmlLang langCode )
+            ( { model | language = newLanguage }, setHtmlLang (languageToCode newLanguage) )
 
         ResetDownloadSuccess ->
             ( { model | downloadSuccess = False }, Cmd.none )
@@ -227,13 +238,23 @@ subscriptions _ =
 view : Model -> Html Msg
 view model =
     div [ class "app-container" ]
-        [ viewTitleBar model
+        [ viewMobileBanner model
+        , viewTitleBar model
         , div [ class "main-content" ]
             [ viewSidebar model
             , viewCanvasArea model
             ]
         , viewStatusBar model
         ]
+        
+
+-- MOBILE BANNER
+
+
+viewMobileBanner : Model -> Html Msg
+viewMobileBanner model =
+    div [ class "mobile-banner" ]
+        [ p [] [ text (translate model.language MobileBanner) ] ]
 
 
 
@@ -330,8 +351,7 @@ viewFileOperationsPanel model =
             , Html.Attributes.attribute "role" "button"
             , id "upload-image-button"
             ]
-            [ span [ class "icon" ] [ text "📁" ]
-            , text (translate model.language UploadImage)
+            [ text (translate model.language UploadImage)
             ]
         ]
 
@@ -501,7 +521,12 @@ viewActionsPanel model =
         [ span [ class "panel-title", id "actions-title" ] [ text (translate model.language Actions) ]
         , div []
             [ button
-                [ class "btn btn-primary"
+                [ class 
+                    (if model.uploadedImage /= Nothing then
+                        "btn btn-primary download-ready"
+                    else
+                        "btn btn-primary"
+                    )
                 , onClick DownloadClicked
                 , disabled (model.uploadedImage == Nothing)
                 , Html.Attributes.attribute "aria-label" (translate model.language DownloadGriddedImage)
@@ -514,9 +539,26 @@ viewActionsPanel model =
                      else
                         "false"
                     )
+                , style "background"
+                    (if model.uploadedImage /= Nothing then
+                        "linear-gradient(135deg, #132a13, #31572c, #4f772d, #90a955, #ecf39e)"
+                    else
+                        ""
+                    )
+                , style "color"
+                    (if model.uploadedImage /= Nothing then
+                        "white"
+                    else
+                        ""
+                    )
+                , style "text-shadow"
+                    (if model.uploadedImage /= Nothing then
+                        "0px 1px 2px rgba(0, 0, 0, 0.5)"
+                    else
+                        ""
+                    )
                 ]
-                [ span [ class "icon" ] [ text "⬇️" ]
-                , text (translate model.language DownloadGriddedImage)
+                [ text (translate model.language DownloadGriddedImage)
                 ]
             ]
         , div []
@@ -587,7 +629,7 @@ viewGridPreviewWindow model =
 viewPlaceholder : String -> String -> String -> Html Msg
 viewPlaceholder icon title subtitle =
     div [ class "placeholder" ]
-        [ div [ class "placeholder-icon" ]
+        [ div [ class "placeholder-icon", style "color" "white" ]
             [ text icon ]
         , p [ class "placeholder-title" ] [ text title ]
         , p [ class "placeholder-text" ] [ text subtitle ]
@@ -616,47 +658,153 @@ viewStatusBar model =
         ]
 
 
+-- | Convert a Language to a string identifier for the dropdown
+languageToString : Language -> String
+languageToString language =
+    case language of
+        English ->
+            "english"
+
+        Spanish ->
+            "spanish"
+
+        Latin ->
+            "latin"
+
+        Italian ->
+            "italian"
+
+        Portuguese ->
+            "portuguese"
+
+        French ->
+            "french"
+
+        Asturiano ->
+            "asturiano"
+
+        Gaelic ->
+            "gaelic"
+
+        Euskara ->
+            "euskara"
+
+        Japanese ->
+            "japanese"
+
+        Russian ->
+            "russian"
+
+        Tuvan ->
+            "tuvan"
+            
+        Amharic ->
+            "amharic"
+            
+        Yiddish ->
+            "yiddish"
+
+
+-- | Get flag emoji for a language
+languageFlag : Language -> String
+languageFlag language =
+    case language of
+        English ->
+            "🇬🇧🇺🇸 "
+
+        Spanish ->
+            "🇪🇸🇦🇷 "
+
+        Latin ->
+            "🇮🇹 "
+
+        Italian ->
+            "🇮🇹 "
+
+        Portuguese ->
+            "🇧🇷🇵🇹 "
+
+        French ->
+            "🇫🇷 "
+
+        Asturiano ->
+            "🇪🇸 "
+
+        Gaelic ->
+            "🇮🇪🏴\u{E0067}\u{E0062}\u{E0073}\u{E0063}\u{E0074}\u{E007F} "
+
+        Euskara ->
+            "🇪🇸 "
+
+        Japanese ->
+            "🇯🇵 "
+
+        Russian ->
+            "🇷🇺 "
+
+        Tuvan ->
+            "🇷🇺 "
+            
+        Amharic ->
+            "🇪🇹 "
+            
+        Yiddish ->
+            "🇮🇱 "
+
+
+-- | Parse a language string from the dropdown to a Language type
+parseLanguage : String -> Language
+parseLanguage value =
+    case value of
+        "english" ->
+            English
+
+        "spanish" ->
+            Spanish
+
+        "latin" ->
+            Latin
+
+        "italian" ->
+            Italian
+
+        "portuguese" ->
+            Portuguese
+
+        "french" ->
+            French
+
+        "asturiano" ->
+            Asturiano
+
+        "gaelic" ->
+            Gaelic
+
+        "euskara" ->
+            Euskara
+
+        "japanese" ->
+            Japanese
+
+        "russian" ->
+            Russian
+
+        "tuvan" ->
+            Tuvan
+            
+        "amharic" ->
+            Amharic
+            
+        "yiddish" ->
+            Yiddish
+
+        _ ->
+            English
+
+
 viewLanguageSelector : Language -> Html Msg
 viewLanguageSelector currentLanguage =
     let
-        languageFlag language =
-            case language of
-                English ->
-                    "🇬🇧 "
-
-                Spanish ->
-                    "🇪🇸🇦🇷 "
-
-                Latin ->
-                    "🇮🇹 "
-
-                Italian ->
-                    "🇮🇹 "
-
-                Portuguese ->
-                    "🇧🇷🇵🇹 "
-
-                French ->
-                    "🇫🇷 "
-
-                Asturiano ->
-                    "🇪🇸 "
-
-                Gaelic ->
-                    "🇮🇪🏴\u{E0067}\u{E0062}\u{E0073}\u{E0063}\u{E0074}\u{E007F} "
-
-                Euskara ->
-                    "🇪🇸 "
-
-                Japanese ->
-                    "🇯🇵 "
-
-                Russian ->
-                    "🇷🇺 "
-
-                Tuvan ->
-                    "🇷🇺 "
-
         languageOption language displayName =
             option
                 [ value (languageToString language)
@@ -665,126 +813,11 @@ viewLanguageSelector currentLanguage =
                 ]
                 [ text (languageFlag language ++ displayName) ]
 
-        languageToString language =
-            case language of
-                English ->
-                    "english"
-
-                Spanish ->
-                    "spanish"
-
-                Latin ->
-                    "latin"
-
-                Italian ->
-                    "italian"
-
-                Portuguese ->
-                    "portuguese"
-
-                French ->
-                    "french"
-
-                Asturiano ->
-                    "asturiano"
-
-                Gaelic ->
-                    "gaelic"
-
-                Euskara ->
-                    "euskara"
-
-                Japanese ->
-                    "japanese"
-
-                Russian ->
-                    "russian"
-
-                Tuvan ->
-                    "tuvan"
-
-        -- Get language code for HTML lang attribute
-        languageCode =
-            case currentLanguage of
-                English ->
-                    "en"
-
-                Spanish ->
-                    "es"
-
-                Latin ->
-                    "la"
-
-                Italian ->
-                    "it"
-
-                Portuguese ->
-                    "pt"
-
-                French ->
-                    "fr"
-
-                Asturiano ->
-                    "ast"
-
-                Gaelic ->
-                    "gd"
-
-                Euskara ->
-                    "eu"
-
-                Japanese ->
-                    "ja"
-
-                Russian ->
-                    "ru"
-
-                Tuvan ->
-                    "tyv"
-
         handleLanguageChange value =
-            case value of
-                "english" ->
-                    LanguageChanged English
-
-                "spanish" ->
-                    LanguageChanged Spanish
-
-                "latin" ->
-                    LanguageChanged Latin
-
-                "italian" ->
-                    LanguageChanged Italian
-
-                "portuguese" ->
-                    LanguageChanged Portuguese
-
-                "french" ->
-                    LanguageChanged French
-
-                "asturiano" ->
-                    LanguageChanged Asturiano
-
-                "gaelic" ->
-                    LanguageChanged Gaelic
-
-                "euskara" ->
-                    LanguageChanged Euskara
-
-                "japanese" ->
-                    LanguageChanged Japanese
-
-                "russian" ->
-                    LanguageChanged Russian
-
-                "tuvan" ->
-                    LanguageChanged Tuvan
-
-                _ ->
-                    LanguageChanged English
+            LanguageChanged (parseLanguage value)
 
         _ =
-            debug ("lang:" ++ languageCode)
+            debug ("lang:" ++ languageToCode currentLanguage)
     in
     div [ class "language-selector" ]
         [ label
@@ -810,6 +843,8 @@ viewLanguageSelector currentLanguage =
             , languageOption Japanese "日本語"
             , languageOption Russian "Русский"
             , languageOption Tuvan "Тыва дыл"
+            , languageOption Amharic "አማርኛ"
+            , languageOption Yiddish "ייִדיש"
             ]
         ]
 

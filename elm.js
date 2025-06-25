@@ -5393,6 +5393,38 @@ var $elm$file$File$Select$file = F2(
 			toMsg,
 			_File_uploadOne(mimes));
 	});
+var $author$project$Main$languageToCode = function (language) {
+	switch (language.$) {
+		case 'English':
+			return 'en';
+		case 'Spanish':
+			return 'es';
+		case 'Latin':
+			return 'la';
+		case 'Italian':
+			return 'it';
+		case 'Portuguese':
+			return 'pt';
+		case 'French':
+			return 'fr';
+		case 'Asturiano':
+			return 'ast';
+		case 'Gaelic':
+			return 'gd';
+		case 'Euskara':
+			return 'eu';
+		case 'Japanese':
+			return 'ja';
+		case 'Russian':
+			return 'ru';
+		case 'Tuvan':
+			return 'tyv';
+		case 'Amharic':
+			return 'am';
+		default:
+			return 'yi';
+	}
+};
 var $elm$json$Json$Encode$float = _Json_wrap;
 var $elm$json$Json$Encode$int = _Json_wrap;
 var $author$project$Main$requestPng = _Platform_outgoingPort(
@@ -5504,39 +5536,12 @@ var $author$project$Main$update = F2(
 					$elm$core$Platform$Cmd$none);
 			case 'LanguageChanged':
 				var newLanguage = msg.a;
-				var langCode = function () {
-					switch (newLanguage.$) {
-						case 'English':
-							return 'en';
-						case 'Spanish':
-							return 'es';
-						case 'Latin':
-							return 'la';
-						case 'Italian':
-							return 'it';
-						case 'Portuguese':
-							return 'pt';
-						case 'French':
-							return 'fr';
-						case 'Asturiano':
-							return 'ast';
-						case 'Gaelic':
-							return 'gd';
-						case 'Euskara':
-							return 'eu';
-						case 'Japanese':
-							return 'ja';
-						case 'Russian':
-							return 'ru';
-						default:
-							return 'tyv';
-					}
-				}();
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
 						{language: newLanguage}),
-					$author$project$Main$setHtmlLang(langCode));
+					$author$project$Main$setHtmlLang(
+						$author$project$Main$languageToCode(newLanguage)));
 			case 'ResetDownloadSuccess':
 				return _Utils_Tuple2(
 					_Utils_update(
@@ -5544,13 +5549,13 @@ var $author$project$Main$update = F2(
 						{downloadSuccess: false}),
 					$elm$core$Platform$Cmd$none);
 			case 'DownloadClicked':
-				var _v2 = _Utils_Tuple3(model.uploadedImage, model.imageWidth, model.imageHeight);
-				if (((_v2.a.$ === 'Just') && (_v2.b.$ === 'Just')) && (_v2.c.$ === 'Just')) {
-					var url = _v2.a.a;
-					var w = _v2.b.a;
-					var h = _v2.c.a;
+				var _v1 = _Utils_Tuple3(model.uploadedImage, model.imageWidth, model.imageHeight);
+				if (((_v1.a.$ === 'Just') && (_v1.b.$ === 'Just')) && (_v1.c.$ === 'Just')) {
+					var url = _v1.a.a;
+					var w = _v1.b.a;
+					var h = _v1.c.a;
 					var requestParams = {color: model.gridColor, grid: model.gridSize, height: h, opacity: model.gridOpacity, thickness: model.gridThickness, url: url, width: w};
-					var _v3 = $author$project$Main$debug(
+					var _v2 = $author$project$Main$debug(
 						'Elm: DownloadClicked with valid image data. Width: ' + ($elm$core$String$fromInt(w) + (', Height: ' + $elm$core$String$fromInt(h))));
 					return _Utils_Tuple2(
 						model,
@@ -5570,10 +5575,10 @@ var $author$project$Main$update = F2(
 				var updatedModel = _Utils_update(
 					model,
 					{downloadSuccess: true});
-				var _v4 = $author$project$Main$debug(
+				var _v3 = $author$project$Main$debug(
 					'Elm: GriddedReady received data URL of length: ' + $elm$core$String$fromInt(
 						$elm$core$String$length(dataUrl)));
-				var _v5 = $author$project$Main$debug('Elm: Triggering download via downloadImage port');
+				var _v4 = $author$project$Main$debug('Elm: Triggering download via downloadImage port');
 				return _Utils_Tuple2(
 					updatedModel,
 					$elm$core$Platform$Cmd$batch(
@@ -5584,7 +5589,7 @@ var $author$project$Main$update = F2(
 								{dataUrl: dataUrl}),
 								A2(
 								$elm$core$Task$perform,
-								function (_v6) {
+								function (_v5) {
 									return $author$project$Main$ResetDownloadSuccess;
 								},
 								$elm$core$Process$sleep(2000))
@@ -5605,6 +5610,56 @@ var $author$project$I18n$GriddedImage = {$: 'GriddedImage'};
 var $elm$html$Html$span = _VirtualDom_node('span');
 var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
+var $author$project$I18n$amharicTranslations = function (key) {
+	switch (key.$) {
+		case 'AppTitle':
+			return 'Gridit! 🐸';
+		case 'UploadImage':
+			return 'ምስል ይጫኑ';
+		case 'CustomizeIt':
+			return 'ያስተካክሉት!';
+		case 'GridSize':
+			return 'መጠን';
+		case 'Rectangles':
+			return ' አራት ማዕዘኖች';
+		case 'GridColor':
+			return 'ቀለም';
+		case 'GridThickness':
+			return 'ውፍረት';
+		case 'GridOpacity':
+			return 'ግልጽነት';
+		case 'OriginalImage':
+			return 'ዋናው ምስል';
+		case 'GriddedImage':
+			return 'ፍርግርግ ያለው ምስል';
+		case 'DownloadGriddedImage':
+			return 'የፍርግርግ ምስልዎን ያውርዱ!!!';
+		case 'Nice':
+			return 'ጥሩ! ';
+		case 'NiceCounter':
+			return 'ጥሩ ቆጣሪ: ';
+		case 'NoImageYet':
+			return 'እስካሁን ምንም ምስል የለም! ለመጀመር ምስል ይጫኑ ጠቅ ያድርጉ!';
+		case 'LanguageLabel':
+			return 'ቋንቋ:';
+		case 'FileOperations':
+			return 'እዚህ ይጀምሩ';
+		case 'GridParameters':
+			return 'ፍርግርጉን በምስልዎ ላይ በትክክል እንዲታይ ያስተካክሉት';
+		case 'Actions':
+			return '🐸 🐸 🐸';
+		case 'AppSubtitle':
+			return 'ሰላም። ይህ በእርስዎ ምርጫ ምስል ላይ አራት ማዕዘናዊ ፍርግርግ እንዲፈጥሩ ይረዳዎታል';
+		case 'GridPreviewPlaceholder':
+			return 'የፍርግርግ ምስልዎ እዚህ ይታያል';
+		case 'UploadPlaceholder':
+			return 'ለመጀመር ምስል ይጫኑ';
+		case 'StatusReady':
+			return 'ሁኔታ: ዝግጁ';
+		default:
+			return 'የማይ! ＼(º □ º l|l)/  የሞባይል ብስና በቅራቢ ይመጣል!';
+	}
+};
 var $author$project$I18n$asturianoTranslations = function (key) {
 	switch (key.$) {
 		case 'AppTitle':
@@ -5649,8 +5704,10 @@ var $author$project$I18n$asturianoTranslations = function (key) {
 			return 'La to imaxe con cuadrícula apaecerá equí';
 		case 'UploadPlaceholder':
 			return 'Xube una imaxe pa entamar';
-		default:
+		case 'StatusReady':
 			return 'Status: Llistu';
+		default:
+			return '¡Caray! ＼(º □ º l|l)/  ¡Versión móvil pronto!';
 	}
 };
 var $author$project$I18n$englishTranslations = function (key) {
@@ -5697,8 +5754,10 @@ var $author$project$I18n$englishTranslations = function (key) {
 			return 'Your gridded image will appear here';
 		case 'UploadPlaceholder':
 			return 'Upload an image to begin';
-		default:
+		case 'StatusReady':
 			return 'Status: Ready';
+		default:
+			return 'Yikes! ＼(º □ º l|l)/  Mobile version coming soon!';
 	}
 };
 var $author$project$I18n$euskaraTranslations = function (key) {
@@ -5745,8 +5804,10 @@ var $author$project$I18n$euskaraTranslations = function (key) {
 			return 'Zure saretadun irudia hemen agertuko da';
 		case 'UploadPlaceholder':
 			return 'Igo irudi bat hasteko';
-		default:
+		case 'StatusReady':
 			return 'Status: Prest';
+		default:
+			return 'Ai ama! ＼(º □ º l|l)/  Mugikorreko bertsioa laster!';
 	}
 };
 var $author$project$I18n$frenchTranslations = function (key) {
@@ -5793,8 +5854,10 @@ var $author$project$I18n$frenchTranslations = function (key) {
 			return 'Votre image avec grille apparaîtra ici';
 		case 'UploadPlaceholder':
 			return 'Téléchargez une image pour commencer';
-		default:
+		case 'StatusReady':
 			return 'Status: Prêt';
+		default:
+			return 'Oups! ＼(º □ º l|l)/  Version mobile bientôt disponible!';
 	}
 };
 var $author$project$I18n$gaelicTranslations = function (key) {
@@ -5841,8 +5904,10 @@ var $author$project$I18n$gaelicTranslations = function (key) {
 			return 'Nochdaidh do dhealbh le griod an seo';
 		case 'UploadPlaceholder':
 			return 'Luchdaich dealbh gus tòiseachadh';
-		default:
+		case 'StatusReady':
 			return 'Status: Deiseil';
+		default:
+			return 'Och! ＼(º □ º l|l)/  Tionndadh mòbail a\' tighinn a dh\'aithghearr!';
 	}
 };
 var $author$project$I18n$italianTranslations = function (key) {
@@ -5889,8 +5954,10 @@ var $author$project$I18n$italianTranslations = function (key) {
 			return 'La tua immagine con griglia apparirà qui';
 		case 'UploadPlaceholder':
 			return 'Carica un\'immagine per iniziare';
-		default:
+		case 'StatusReady':
 			return 'Status: Pronto';
+		default:
+			return 'Accidenti! ＼(º □ º l|l)/  Versione mobile in arrivo presto!';
 	}
 };
 var $author$project$I18n$japaneseTranslations = function (key) {
@@ -5937,8 +6004,10 @@ var $author$project$I18n$japaneseTranslations = function (key) {
 			return 'グリッド付き画像がここに表示されます';
 		case 'UploadPlaceholder':
 			return '画像をアップロードして始めましょう';
-		default:
+		case 'StatusReady':
 			return 'Status: 準備完了';
+		default:
+			return 'げっ！ ＼(º □ º l|l)/  モバイル版は近日公開予定！';
 	}
 };
 var $author$project$I18n$latinTranslations = function (key) {
@@ -5985,8 +6054,10 @@ var $author$project$I18n$latinTranslations = function (key) {
 			return 'Imago tua cum craticula hic apparebit';
 		case 'UploadPlaceholder':
 			return 'Submitte imaginem ut incipias';
-		default:
+		case 'StatusReady':
 			return 'Status: Paratus';
+		default:
+			return 'Eheu! ＼(º □ º l|l)/  Versio mobilis mox ventura!';
 	}
 };
 var $author$project$I18n$portugueseTranslations = function (key) {
@@ -6033,8 +6104,10 @@ var $author$project$I18n$portugueseTranslations = function (key) {
 			return 'Sua imagem com grade aparecerá aqui';
 		case 'UploadPlaceholder':
 			return 'Carregue uma imagem para começar';
-		default:
+		case 'StatusReady':
 			return 'Status: Pronto';
+		default:
+			return 'Nossa! ＼(º □ º l|l)/  Versão móvel em breve!';
 	}
 };
 var $author$project$I18n$russianTranslations = function (key) {
@@ -6081,8 +6154,10 @@ var $author$project$I18n$russianTranslations = function (key) {
 			return 'Ваше изображение с сеткой появится здесь';
 		case 'UploadPlaceholder':
 			return 'Загрузите изображение, чтобы начать';
-		default:
+		case 'StatusReady':
 			return 'Статус: Готово';
+		default:
+			return 'Ой! ＼(º □ º l|l)/  Мобильная версия скоро будет доступна!';
 	}
 };
 var $author$project$I18n$spanishTranslations = function (key) {
@@ -6129,8 +6204,10 @@ var $author$project$I18n$spanishTranslations = function (key) {
 			return 'Tu imagen con grilla va a aparecer acá';
 		case 'UploadPlaceholder':
 			return 'Subí una imagen para empezar';
-		default:
+		case 'StatusReady':
 			return 'Status: Listo';
+		default:
+			return '¡Ay! ＼(º □ º l|l)/  ¡Versión móvil próximamente!';
 	}
 };
 var $author$project$I18n$tuvanTranslations = function (key) {
@@ -6177,8 +6254,60 @@ var $author$project$I18n$tuvanTranslations = function (key) {
 			return 'Силерниң шыйыглыг чурууңар мында көстүп кээр';
 		case 'UploadPlaceholder':
 			return 'Эгелээр дээш чурукту киириңер';
-		default:
+		case 'StatusReady':
 			return 'Байдал: Белен';
+		default:
+			return 'Аттиг! ＼(º □ º l|l)/  Мобильдиг хевир удавас келир!';
+	}
+};
+var $author$project$I18n$yiddishTranslations = function (key) {
+	switch (key.$) {
+		case 'AppTitle':
+			return 'Gridit! 🐸';
+		case 'UploadImage':
+			return 'אַרויפלאָדן בילד';
+		case 'CustomizeIt':
+			return 'פּערסאַנאַלייז עס!';
+		case 'GridSize':
+			return 'גרייס';
+		case 'Rectangles':
+			return ' רעקטאַנגלעס';
+		case 'GridColor':
+			return 'קאָליר';
+		case 'GridThickness':
+			return 'געדיכטקייט';
+		case 'GridOpacity':
+			return 'דורכזיכטיקייט';
+		case 'OriginalImage':
+			return 'אָריגינעל בילד';
+		case 'GriddedImage':
+			return 'געגרידעט בילד';
+		case 'DownloadGriddedImage':
+			return 'דאַונלאָוד דיין געגרידעט בילד!!!';
+		case 'Nice':
+			return 'שיין! ';
+		case 'NiceCounter':
+			return 'שיין ציילער: ';
+		case 'NoImageYet':
+			return 'נאָך קיין בילד! קליקט אַרויפלאָדן בילד צו אָנהייבן!';
+		case 'LanguageLabel':
+			return 'שפּראַך:';
+		case 'FileOperations':
+			return 'אָנהייבן דאָ';
+		case 'GridParameters':
+			return 'פּערסאַנאַלייז די נעץ אַזוי איר קענט זען עס געהעריק איבער דיין בילד';
+		case 'Actions':
+			return '🐸 🐸 🐸';
+		case 'AppSubtitle':
+			return 'העלאָ דאָרט. דאָס העלפט איר שאַפֿן אַ רעקטילינעאַר נעץ איבער אַ בילד פון אייער אויסוואַל';
+		case 'GridPreviewPlaceholder':
+			return 'דיין געגרידעט בילד וועט דערשיינען דאָ';
+		case 'UploadPlaceholder':
+			return 'אַרויפלאָדן אַ בילד צו אָנהייבן';
+		case 'StatusReady':
+			return 'סטאַטוס: גרייט';
+		default:
+			return 'אוי ויי! ＼(º □ º l|l)/  מאָביל ווערסיע קומט באַלד!';
 	}
 };
 var $author$project$I18n$translations = F2(
@@ -6206,8 +6335,12 @@ var $author$project$I18n$translations = F2(
 				return $author$project$I18n$japaneseTranslations(key);
 			case 'Russian':
 				return $author$project$I18n$russianTranslations(key);
-			default:
+			case 'Tuvan':
 				return $author$project$I18n$tuvanTranslations(key);
+			case 'Amharic':
+				return $author$project$I18n$amharicTranslations(key);
+			default:
+				return $author$project$I18n$yiddishTranslations(key);
 		}
 	});
 var $author$project$I18n$translate = F2(
@@ -6329,6 +6462,8 @@ var $author$project$Main$viewGriddedImage = function (model) {
 	}
 };
 var $elm$html$Html$p = _VirtualDom_node('p');
+var $elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
+var $elm$html$Html$Attributes$style = $elm$virtual_dom$VirtualDom$style;
 var $author$project$Main$viewPlaceholder = F3(
 	function (icon, title, subtitle) {
 		return A2(
@@ -6343,7 +6478,8 @@ var $author$project$Main$viewPlaceholder = F3(
 					$elm$html$Html$div,
 					_List_fromArray(
 						[
-							$elm$html$Html$Attributes$class('placeholder-icon')
+							$elm$html$Html$Attributes$class('placeholder-icon'),
+							A2($elm$html$Html$Attributes$style, 'color', 'white')
 						]),
 					_List_fromArray(
 						[
@@ -6547,6 +6683,26 @@ var $author$project$Main$viewCanvasArea = function (model) {
 					]))
 			]));
 };
+var $author$project$I18n$MobileBanner = {$: 'MobileBanner'};
+var $author$project$Main$viewMobileBanner = function (model) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('mobile-banner')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$p,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text(
+						A2($author$project$I18n$translate, model.language, $author$project$I18n$MobileBanner))
+					]))
+			]));
+};
 var $author$project$I18n$Actions = {$: 'Actions'};
 var $author$project$Main$DownloadClicked = {$: 'DownloadClicked'};
 var $author$project$I18n$DownloadGriddedImage = {$: 'DownloadGriddedImage'};
@@ -6571,6 +6727,7 @@ var $elm$html$Html$Attributes$boolProperty = F2(
 	});
 var $elm$html$Html$Attributes$disabled = $elm$html$Html$Attributes$boolProperty('disabled');
 var $elm$html$Html$Attributes$id = $elm$html$Html$Attributes$stringProperty('id');
+var $elm$core$Basics$neq = _Utils_notEqual;
 var $elm$html$Html$Events$onClick = function (msg) {
 	return A2(
 		$elm$html$Html$Events$on,
@@ -6609,7 +6766,8 @@ var $author$project$Main$viewActionsPanel = function (model) {
 						$elm$html$Html$button,
 						_List_fromArray(
 							[
-								$elm$html$Html$Attributes$class('btn btn-primary'),
+								$elm$html$Html$Attributes$class(
+								(!_Utils_eq(model.uploadedImage, $elm$core$Maybe$Nothing)) ? 'btn btn-primary download-ready' : 'btn btn-primary'),
 								$elm$html$Html$Events$onClick($author$project$Main$DownloadClicked),
 								$elm$html$Html$Attributes$disabled(
 								_Utils_eq(model.uploadedImage, $elm$core$Maybe$Nothing)),
@@ -6622,20 +6780,22 @@ var $author$project$Main$viewActionsPanel = function (model) {
 								A2(
 								$elm$html$Html$Attributes$attribute,
 								'aria-disabled',
-								_Utils_eq(model.uploadedImage, $elm$core$Maybe$Nothing) ? 'true' : 'false')
+								_Utils_eq(model.uploadedImage, $elm$core$Maybe$Nothing) ? 'true' : 'false'),
+								A2(
+								$elm$html$Html$Attributes$style,
+								'background',
+								(!_Utils_eq(model.uploadedImage, $elm$core$Maybe$Nothing)) ? 'linear-gradient(135deg, #132a13, #31572c, #4f772d, #90a955, #ecf39e)' : ''),
+								A2(
+								$elm$html$Html$Attributes$style,
+								'color',
+								(!_Utils_eq(model.uploadedImage, $elm$core$Maybe$Nothing)) ? 'white' : ''),
+								A2(
+								$elm$html$Html$Attributes$style,
+								'text-shadow',
+								(!_Utils_eq(model.uploadedImage, $elm$core$Maybe$Nothing)) ? '0px 1px 2px rgba(0, 0, 0, 0.5)' : '')
 							]),
 						_List_fromArray(
 							[
-								A2(
-								$elm$html$Html$span,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$class('icon')
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('⬇️')
-									])),
 								$elm$html$Html$text(
 								A2($author$project$I18n$translate, model.language, $author$project$I18n$DownloadGriddedImage))
 							]))
@@ -6749,16 +6909,6 @@ var $author$project$Main$viewFileOperationsPanel = function (model) {
 					]),
 				_List_fromArray(
 					[
-						A2(
-						$elm$html$Html$span,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('icon')
-							]),
-						_List_fromArray(
-							[
-								$elm$html$Html$text('📁')
-							])),
 						$elm$html$Html$text(
 						A2($author$project$I18n$translate, model.language, $author$project$I18n$UploadImage))
 					]))
@@ -7311,6 +7461,7 @@ var $author$project$Main$viewStatusBar = function (model) {
 					]))
 			]));
 };
+var $author$project$I18n$Amharic = {$: 'Amharic'};
 var $author$project$I18n$Asturiano = {$: 'Asturiano'};
 var $author$project$I18n$English = {$: 'English'};
 var $author$project$I18n$Euskara = {$: 'Euskara'};
@@ -7326,66 +7477,109 @@ var $author$project$I18n$Latin = {$: 'Latin'};
 var $author$project$I18n$Portuguese = {$: 'Portuguese'};
 var $author$project$I18n$Russian = {$: 'Russian'};
 var $author$project$I18n$Tuvan = {$: 'Tuvan'};
+var $author$project$I18n$Yiddish = {$: 'Yiddish'};
+var $author$project$Main$languageFlag = function (language) {
+	switch (language.$) {
+		case 'English':
+			return '🇬🇧🇺🇸 ';
+		case 'Spanish':
+			return '🇪🇸🇦🇷 ';
+		case 'Latin':
+			return '🇮🇹 ';
+		case 'Italian':
+			return '🇮🇹 ';
+		case 'Portuguese':
+			return '🇧🇷🇵🇹 ';
+		case 'French':
+			return '🇫🇷 ';
+		case 'Asturiano':
+			return '🇪🇸 ';
+		case 'Gaelic':
+			return '🇮🇪🏴\uDB40\uDC67\uDB40\uDC62\uDB40\uDC73\uDB40\uDC63\uDB40\uDC74\uDB40\uDC7F ';
+		case 'Euskara':
+			return '🇪🇸 ';
+		case 'Japanese':
+			return '🇯🇵 ';
+		case 'Russian':
+			return '🇷🇺 ';
+		case 'Tuvan':
+			return '🇷🇺 ';
+		case 'Amharic':
+			return '🇪🇹 ';
+		default:
+			return '🇮🇱 ';
+	}
+};
+var $author$project$Main$languageToString = function (language) {
+	switch (language.$) {
+		case 'English':
+			return 'english';
+		case 'Spanish':
+			return 'spanish';
+		case 'Latin':
+			return 'latin';
+		case 'Italian':
+			return 'italian';
+		case 'Portuguese':
+			return 'portuguese';
+		case 'French':
+			return 'french';
+		case 'Asturiano':
+			return 'asturiano';
+		case 'Gaelic':
+			return 'gaelic';
+		case 'Euskara':
+			return 'euskara';
+		case 'Japanese':
+			return 'japanese';
+		case 'Russian':
+			return 'russian';
+		case 'Tuvan':
+			return 'tuvan';
+		case 'Amharic':
+			return 'amharic';
+		default:
+			return 'yiddish';
+	}
+};
 var $elm$html$Html$option = _VirtualDom_node('option');
+var $author$project$Main$parseLanguage = function (value) {
+	switch (value) {
+		case 'english':
+			return $author$project$I18n$English;
+		case 'spanish':
+			return $author$project$I18n$Spanish;
+		case 'latin':
+			return $author$project$I18n$Latin;
+		case 'italian':
+			return $author$project$I18n$Italian;
+		case 'portuguese':
+			return $author$project$I18n$Portuguese;
+		case 'french':
+			return $author$project$I18n$French;
+		case 'asturiano':
+			return $author$project$I18n$Asturiano;
+		case 'gaelic':
+			return $author$project$I18n$Gaelic;
+		case 'euskara':
+			return $author$project$I18n$Euskara;
+		case 'japanese':
+			return $author$project$I18n$Japanese;
+		case 'russian':
+			return $author$project$I18n$Russian;
+		case 'tuvan':
+			return $author$project$I18n$Tuvan;
+		case 'amharic':
+			return $author$project$I18n$Amharic;
+		case 'yiddish':
+			return $author$project$I18n$Yiddish;
+		default:
+			return $author$project$I18n$English;
+	}
+};
 var $elm$html$Html$select = _VirtualDom_node('select');
 var $elm$html$Html$Attributes$selected = $elm$html$Html$Attributes$boolProperty('selected');
 var $author$project$Main$viewLanguageSelector = function (currentLanguage) {
-	var languageToString = function (language) {
-		switch (language.$) {
-			case 'English':
-				return 'english';
-			case 'Spanish':
-				return 'spanish';
-			case 'Latin':
-				return 'latin';
-			case 'Italian':
-				return 'italian';
-			case 'Portuguese':
-				return 'portuguese';
-			case 'French':
-				return 'french';
-			case 'Asturiano':
-				return 'asturiano';
-			case 'Gaelic':
-				return 'gaelic';
-			case 'Euskara':
-				return 'euskara';
-			case 'Japanese':
-				return 'japanese';
-			case 'Russian':
-				return 'russian';
-			default:
-				return 'tuvan';
-		}
-	};
-	var languageFlag = function (language) {
-		switch (language.$) {
-			case 'English':
-				return '🇬🇧 ';
-			case 'Spanish':
-				return '🇪🇸🇦🇷 ';
-			case 'Latin':
-				return '🇮🇹 ';
-			case 'Italian':
-				return '🇮🇹 ';
-			case 'Portuguese':
-				return '🇧🇷🇵🇹 ';
-			case 'French':
-				return '🇫🇷 ';
-			case 'Asturiano':
-				return '🇪🇸 ';
-			case 'Gaelic':
-				return '🇮🇪🏴\uDB40\uDC67\uDB40\uDC62\uDB40\uDC73\uDB40\uDC63\uDB40\uDC74\uDB40\uDC7F ';
-			case 'Euskara':
-				return '🇪🇸 ';
-			case 'Japanese':
-				return '🇯🇵 ';
-			case 'Russian':
-				return '🇷🇺 ';
-			default:
-				return '🇷🇺 ';
-		}
-	};
 	var languageOption = F2(
 		function (language, displayName) {
 			return A2(
@@ -7393,7 +7587,7 @@ var $author$project$Main$viewLanguageSelector = function (currentLanguage) {
 				_List_fromArray(
 					[
 						$elm$html$Html$Attributes$value(
-						languageToString(language)),
+						$author$project$Main$languageToString(language)),
 						$elm$html$Html$Attributes$selected(
 						_Utils_eq(currentLanguage, language)),
 						A2($elm$html$Html$Attributes$attribute, 'aria-label', displayName)
@@ -7402,69 +7596,16 @@ var $author$project$Main$viewLanguageSelector = function (currentLanguage) {
 					[
 						$elm$html$Html$text(
 						_Utils_ap(
-							languageFlag(language),
+							$author$project$Main$languageFlag(language),
 							displayName))
 					]));
 		});
-	var languageCode = function () {
-		switch (currentLanguage.$) {
-			case 'English':
-				return 'en';
-			case 'Spanish':
-				return 'es';
-			case 'Latin':
-				return 'la';
-			case 'Italian':
-				return 'it';
-			case 'Portuguese':
-				return 'pt';
-			case 'French':
-				return 'fr';
-			case 'Asturiano':
-				return 'ast';
-			case 'Gaelic':
-				return 'gd';
-			case 'Euskara':
-				return 'eu';
-			case 'Japanese':
-				return 'ja';
-			case 'Russian':
-				return 'ru';
-			default:
-				return 'tyv';
-		}
-	}();
 	var handleLanguageChange = function (value) {
-		switch (value) {
-			case 'english':
-				return $author$project$Main$LanguageChanged($author$project$I18n$English);
-			case 'spanish':
-				return $author$project$Main$LanguageChanged($author$project$I18n$Spanish);
-			case 'latin':
-				return $author$project$Main$LanguageChanged($author$project$I18n$Latin);
-			case 'italian':
-				return $author$project$Main$LanguageChanged($author$project$I18n$Italian);
-			case 'portuguese':
-				return $author$project$Main$LanguageChanged($author$project$I18n$Portuguese);
-			case 'french':
-				return $author$project$Main$LanguageChanged($author$project$I18n$French);
-			case 'asturiano':
-				return $author$project$Main$LanguageChanged($author$project$I18n$Asturiano);
-			case 'gaelic':
-				return $author$project$Main$LanguageChanged($author$project$I18n$Gaelic);
-			case 'euskara':
-				return $author$project$Main$LanguageChanged($author$project$I18n$Euskara);
-			case 'japanese':
-				return $author$project$Main$LanguageChanged($author$project$I18n$Japanese);
-			case 'russian':
-				return $author$project$Main$LanguageChanged($author$project$I18n$Russian);
-			case 'tuvan':
-				return $author$project$Main$LanguageChanged($author$project$I18n$Tuvan);
-			default:
-				return $author$project$Main$LanguageChanged($author$project$I18n$English);
-		}
+		return $author$project$Main$LanguageChanged(
+			$author$project$Main$parseLanguage(value));
 	};
-	var _v0 = $author$project$Main$debug('lang:' + languageCode);
+	var _v0 = $author$project$Main$debug(
+		'lang:' + $author$project$Main$languageToCode(currentLanguage));
 	return A2(
 		$elm$html$Html$div,
 		_List_fromArray(
@@ -7520,7 +7661,9 @@ var $author$project$Main$viewLanguageSelector = function (currentLanguage) {
 						A2(languageOption, $author$project$I18n$Euskara, 'Euskara'),
 						A2(languageOption, $author$project$I18n$Japanese, '日本語'),
 						A2(languageOption, $author$project$I18n$Russian, 'Русский'),
-						A2(languageOption, $author$project$I18n$Tuvan, 'Тыва дыл')
+						A2(languageOption, $author$project$I18n$Tuvan, 'Тыва дыл'),
+						A2(languageOption, $author$project$I18n$Amharic, 'አማርኛ'),
+						A2(languageOption, $author$project$I18n$Yiddish, 'ייִדיש')
 					]))
 			]));
 };
@@ -7555,6 +7698,7 @@ var $author$project$Main$view = function (model) {
 			]),
 		_List_fromArray(
 			[
+				$author$project$Main$viewMobileBanner(model),
 				$author$project$Main$viewTitleBar(model),
 				A2(
 				$elm$html$Html$div,
