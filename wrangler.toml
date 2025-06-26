@@ -1,8 +1,4 @@
 name = "gridit"
-account_id = "c1a58888834f5ec157e4660fd6078417"
-compatibility_date = "2023-12-01"
-
 pages_build_output_dir = "."
-
-[pages]
-project_name = "asteroti-gridit"
+project_name = "asteroti-gridit"      # EXACT slug from `wrangler pages project list`
+compatibility_date = "2023-12-01"
