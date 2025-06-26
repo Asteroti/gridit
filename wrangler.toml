@@ -1,4 +1,3 @@
 name = "gridit"
 pages_build_output_dir = "."
-project_name = "asteroti-gridit"      # EXACT slug from `wrangler pages project list`
 compatibility_date = "2023-12-01"
