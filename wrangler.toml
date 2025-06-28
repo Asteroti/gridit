@@ -6,3 +6,11 @@ main = "./_worker.js"        # ← satisfies the "entry-point" check
 
 [site]
 bucket = "./public"          # ← folder containing built files
+
+# Enable logging for debugging
+[logs]
+fatal = true
+error = true
+warn = true
+info = true
+debug = false
