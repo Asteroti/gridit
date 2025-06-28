@@ -36,6 +36,8 @@ Gridit now supports multiple languages! Users can switch between languages using
 - Japanese (日本語)
 - Russian
 - Tuvan
+- Amharic
+- Yiddish
 
 ### Adding New Languages
 
