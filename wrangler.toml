@@ -1,7 +1,8 @@
-name         = "gridit"
-account_id   = "c1a58888834f5ec157e4660fd6078417"
+name               = "gridit"
+account_id         = "c1a58888834f5ec157e4660fd6078417"
 compatibility_date = "2023-12-01"
 
+main = "./_worker.js"        # ← satisfies the "entry-point" check
+
 [site]
-# folder Wrangler uploads as Worker assets
-bucket = "."
+bucket = "./public"          # ← folder containing built files
