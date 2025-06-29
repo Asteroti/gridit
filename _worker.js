@@ -1,3 +1,6 @@
+import manifestJSON from '__STATIC_CONTENT_MANIFEST';
+const manifest = JSON.parse(manifestJSON);
+
 export default {
   async fetch(request, env, ctx) {
     try {
@@ -13,15 +16,6 @@ export default {
       }
       
       console.log('__STATIC_CONTENT binding found, attempting to serve request');
-      // Parse the static content manifest mapping original filenames to hashed keys
-      let manifest = {};
-      if (env.__STATIC_CONTENT_MANIFEST) {
-        try {
-          manifest = JSON.parse(env.__STATIC_CONTENT_MANIFEST);
-        } catch (e) {
-          console.error('Failed to parse __STATIC_CONTENT_MANIFEST:', e);
-        }
-      }
       
       const url = new URL(request.url);
       let path = url.pathname;
