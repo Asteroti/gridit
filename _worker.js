@@ -4,7 +4,6 @@ export default {
       console.log('Worker received request:', request.url);
       console.log('Available environment bindings:', Object.keys(env));
       
-      // Check if __STATIC_CONTENT binding exists (this is the KV namespace shown in your Cloudflare dashboard)
       if (!env.__STATIC_CONTENT) {
         console.error('__STATIC_CONTENT binding is missing from environment');
         return new Response('__STATIC_CONTENT binding is not available. Please check your Cloudflare configuration.', {
@@ -14,30 +13,45 @@ export default {
       }
       
       console.log('__STATIC_CONTENT binding found, attempting to serve request');
+      // Parse the static content manifest mapping original filenames to hashed keys
+      let manifest = {};
+      if (env.__STATIC_CONTENT_MANIFEST) {
+        try {
+          manifest = JSON.parse(env.__STATIC_CONTENT_MANIFEST);
+        } catch (e) {
+          console.error('Failed to parse __STATIC_CONTENT_MANIFEST:', e);
+        }
+      }
       
-      // Get the URL pathname
       const url = new URL(request.url);
       let path = url.pathname;
       
-      // If path is '/', serve index.html
+      
       if (path === '/' || path === '') {
         path = '/index.html';
       }
       
-      // Remove leading slash for KV lookup
       const key = path.replace(/^\//, '');
       
-      console.log('Looking up key in KV:', key);
-      
-      // Try to get the file from KV
-      const value = await env.__STATIC_CONTENT.get(key, 'text');
+      console.log('Looking up key in manifest:', key);
+
+      const hashedKey = manifest[key];
+
+      if (!hashedKey) {
+        console.error('File not found in manifest:', key);
+        return new Response('File not found', { status: 404 });
+      }
+
+      console.log('Mapped to hashed key:', hashedKey);
+
+      // Try to get the file from KV using the hashed key
+      const value = await env.__STATIC_CONTENT.get(hashedKey, 'text');
       
       if (value === null) {
         console.error('File not found:', key);
         return new Response('File not found', { status: 404 });
       }
       
-      // Determine content type based on file extension
       const contentType = getContentType(key);
       
       return new Response(value, {
@@ -47,7 +61,6 @@ export default {
       });
     } catch (error) {
       console.error('Worker encountered an error:', error);
-      // Return a helpful error message
       return new Response(`Worker error: ${error.message}`, {
         status: 500,
         headers: { 'Content-Type': 'text/plain' }
@@ -56,7 +69,6 @@ export default {
   }
 };
 
-// Helper function to determine content type
 function getContentType(filename) {
   const ext = filename.split('.').pop().toLowerCase();
   const types = {
