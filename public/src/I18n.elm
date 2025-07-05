@@ -17,7 +17,7 @@ type Language
     | Russian
     | Tuvan
     | Amharic
-    | Yiddish
+    | Hebrew
 
 
 
@@ -48,7 +48,6 @@ type TranslationKey
     | GridPreviewPlaceholder
     | UploadPlaceholder
     | StatusReady
-    | MobileBanner
 
 
 
@@ -98,8 +97,8 @@ translations language key =
         Amharic ->
             amharicTranslations key
 
-        Yiddish ->
-            yiddishTranslations key
+        Hebrew ->
+            hebrewTranslations key
 
 
 
@@ -175,9 +174,6 @@ englishTranslations key =
         StatusReady ->
             "Status: Ready"
 
-        MobileBanner ->
-            "Yikes! ＼(º □ º l|l)/  Mobile version coming soon!"
-
 
 
 -- SPANISH TRANSLATIONS
@@ -251,9 +247,6 @@ spanishTranslations key =
 
         StatusReady ->
             "Status: Listo"
-
-        MobileBanner ->
-            "¡Ay! ＼(º □ º l|l)/  ¡Versión móvil próximamente!"
 
 
 
@@ -329,9 +322,6 @@ latinTranslations key =
         StatusReady ->
             "Status: Paratus"
 
-        MobileBanner ->
-            "Eheu! ＼(º □ º l|l)/  Versio mobilis mox ventura!"
-
 
 
 -- ITALIAN TRANSLATIONS
@@ -405,9 +395,6 @@ italianTranslations key =
 
         StatusReady ->
             "Status: Pronto"
-
-        MobileBanner ->
-            "Accidenti! ＼(º □ º l|l)/  Versione mobile in arrivo presto!"
 
 
 
@@ -483,9 +470,6 @@ portugueseTranslations key =
         StatusReady ->
             "Status: Pronto"
 
-        MobileBanner ->
-            "Nossa! ＼(º □ º l|l)/  Versão móvel em breve!"
-
 
 
 -- FRENCH TRANSLATIONS
@@ -559,9 +543,6 @@ frenchTranslations key =
 
         StatusReady ->
             "Status: Prêt"
-
-        MobileBanner ->
-            "Oups! ＼(º □ º l|l)/  Version mobile bientôt disponible!"
 
 
 
@@ -637,9 +618,6 @@ asturianoTranslations key =
         StatusReady ->
             "Status: Llistu"
 
-        MobileBanner ->
-            "¡Caray! ＼(º □ º l|l)/  ¡Versión móvil pronto!"
-
 
 
 -- GAELIC TRANSLATIONS
@@ -713,9 +691,6 @@ gaelicTranslations key =
 
         StatusReady ->
             "Status: Deiseil"
-
-        MobileBanner ->
-            "Och! ＼(º □ º l|l)/  Tionndadh mòbail a' tighinn a dh'aithghearr!"
 
 
 
@@ -791,9 +766,6 @@ euskaraTranslations key =
         StatusReady ->
             "Status: Prest"
 
-        MobileBanner ->
-            "Ai ama! ＼(º □ º l|l)/  Mugikorreko bertsioa laster!"
-
 
 
 -- JAPANESE TRANSLATIONS
@@ -866,10 +838,7 @@ japaneseTranslations key =
             "画像をアップロードして始めましょう"
 
         StatusReady ->
-            "Status: 準備完了"
-
-        MobileBanner ->
-            "げっ！ ＼(º □ º l|l)/  モバイル版は近日公開予定！"
+            "ステータス: 準備完了"
 
 
 
@@ -945,9 +914,6 @@ russianTranslations key =
         StatusReady ->
             "Статус: Готово"
 
-        MobileBanner ->
-            "Ой! ＼(º □ º l|l)/  Мобильная версия скоро будет доступна!"
-
 
 
 -- TUVAN TRANSLATIONS
@@ -1021,9 +987,6 @@ tuvanTranslations key =
 
         StatusReady ->
             "Байдал: Белен"
-
-        MobileBanner ->
-            "Аттиг! ＼(º □ º l|l)/  Мобильдиг хевир удавас келир!"
 
 
 
@@ -1099,85 +1062,79 @@ amharicTranslations key =
         StatusReady ->
             "ሁኔታ: ዝግጁ"
 
-        MobileBanner ->
-            "የማይ! ＼(º □ º l|l)/  የሞባይል ብስና በቅራቢ ይመጣል!"
 
 
+-- HEBREW TRANSLATIONS
 
--- YIDDISH TRANSLATIONS
 
-
-yiddishTranslations : TranslationKey -> String
-yiddishTranslations key =
+hebrewTranslations : TranslationKey -> String
+hebrewTranslations key =
     case key of
         AppTitle ->
             "Gridit! 🐸"
 
         UploadImage ->
-            "אַרויפלאָדן בילד"
+            "העלאת תמונה"
 
         CustomizeIt ->
-            "פּערסאַנאַלייז עס!"
+            "התאם אישית!"
 
         GridSize ->
-            "גרייס"
+            "גודל"
 
         Rectangles ->
-            " רעקטאַנגלעס"
+            " מלבנים"
 
         GridColor ->
-            "קאָליר"
+            "צבע"
 
         GridThickness ->
-            "געדיכטקייט"
+            "עובי"
 
         GridOpacity ->
-            "דורכזיכטיקייט"
+            "שקיפות"
 
         OriginalImage ->
-            "אָריגינעל בילד"
+            "תמונה מקורית"
 
         GriddedImage ->
-            "געגרידעט בילד"
+            "תמונה עם רשת"
 
         DownloadGriddedImage ->
-            "דאַונלאָוד דיין געגרידעט בילד!!!"
+            "הורד את התמונה עם הרשת!!!"
 
         Nice ->
-            "שיין! "
+            "יפה! "
 
         NiceCounter ->
-            "שיין ציילער: "
+            "מונה יפה: "
 
         NoImageYet ->
-            "נאָך קיין בילד! קליקט אַרויפלאָדן בילד צו אָנהייבן!"
+            "אין תמונה עדיין! לחץ על העלאת תמונה כדי להתחיל!"
 
         LanguageLabel ->
-            "שפּראַך:"
+            "שפה:"
 
         FileOperations ->
-            "אָנהייבן דאָ"
+            "התחל כאן"
 
         GridParameters ->
-            "פּערסאַנאַלייז די נעץ אַזוי איר קענט זען עס געהעריק איבער דיין בילד"
+            "התאם את הרשת כדי שתוכל לראות אותה כראוי על התמונה שלך"
 
         Actions ->
             "🐸 🐸 🐸"
 
         AppSubtitle ->
-            "העלאָ דאָרט. דאָס העלפט איר שאַפֿן אַ רעקטילינעאַר נעץ איבער אַ בילד פון אייער אויסוואַל"
+            "שלום. זה עוזר לך ליצור רשת מלבנית על תמונה לבחירתך"
 
         GridPreviewPlaceholder ->
-            "דיין געגרידעט בילד וועט דערשיינען דאָ"
+            "התמונה עם הרשת תופיע כאן"
 
         UploadPlaceholder ->
-            "אַרויפלאָדן אַ בילד צו אָנהייבן"
+            "העלה תמונה כדי להתחיל"
 
         StatusReady ->
-            "סטאַטוס: גרייט"
-
-        MobileBanner ->
-            "אוי ויי! ＼(º □ º l|l)/  מאָביל ווערסיע קומט באַלד!"
+            "סטטוס: מוכן"
 
 
 translate : Language -> TranslationKey -> String
