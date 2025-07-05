@@ -97,9 +97,9 @@ init =
 
 
 -- HELPERS
-
-
 -- | Convert a Language to its ISO language code
+
+
 languageToCode : Language -> String
 languageToCode language =
     case language of
@@ -138,12 +138,13 @@ languageToCode language =
 
         Tuvan ->
             "tyv"
-            
+
         Amharic ->
             "am"
-            
-        Yiddish ->
-            "yi"
+
+        Hebrew ->
+            "he"
+
 
 
 -- UPDATE
@@ -238,23 +239,13 @@ subscriptions _ =
 view : Model -> Html Msg
 view model =
     div [ class "app-container" ]
-        [ viewMobileBanner model
-        , viewTitleBar model
+        [ viewTitleBar model
         , div [ class "main-content" ]
             [ viewSidebar model
             , viewCanvasArea model
             ]
         , viewStatusBar model
         ]
-        
-
--- MOBILE BANNER
-
-
-viewMobileBanner : Model -> Html Msg
-viewMobileBanner model =
-    div [ class "mobile-banner" ]
-        [ p [] [ text (translate model.language MobileBanner) ] ]
 
 
 
@@ -289,55 +280,6 @@ viewAppHeader model =
             , p [ class "app-subtitle" ] [ text (translate model.language AppSubtitle) ]
             ]
         ]
-
-
-viewPixelFrog : Model -> Html Msg
-viewPixelFrog model =
-    Svg.svg [ SvgAttr.width "40", SvgAttr.height "40", SvgAttr.viewBox "0 0 16 16", SvgAttr.class "pixelated" ]
-        (if model.downloadSuccess then
-            -- Happy frog face (😄) when download is successful
-            [ -- Frog body - frog-green pixels
-              Svg.rect [ SvgAttr.x "4", SvgAttr.y "6", SvgAttr.width "8", SvgAttr.height "6", SvgAttr.fill "#00aa00" ] []
-            , Svg.rect [ SvgAttr.x "3", SvgAttr.y "7", SvgAttr.width "2", SvgAttr.height "4", SvgAttr.fill "#00aa00" ] []
-            , Svg.rect [ SvgAttr.x "11", SvgAttr.y "7", SvgAttr.width "2", SvgAttr.height "4", SvgAttr.fill "#00aa00" ] []
-            , -- Frog eyes - lighter green
-              Svg.rect [ SvgAttr.x "2", SvgAttr.y "4", SvgAttr.width "3", SvgAttr.height "3", SvgAttr.fill "#00cc00" ] []
-            , Svg.rect [ SvgAttr.x "11", SvgAttr.y "4", SvgAttr.width "3", SvgAttr.height "3", SvgAttr.fill "#00cc00" ] []
-            , -- Happy mouth - curved smile
-              Svg.rect [ SvgAttr.x "5", SvgAttr.y "9", SvgAttr.width "6", SvgAttr.height "1", SvgAttr.fill "#007700" ] []
-            , Svg.rect [ SvgAttr.x "4", SvgAttr.y "8", SvgAttr.width "1", SvgAttr.height "1", SvgAttr.fill "#007700" ] []
-            , Svg.rect [ SvgAttr.x "11", SvgAttr.y "8", SvgAttr.width "1", SvgAttr.height "1", SvgAttr.fill "#007700" ] []
-            , -- Frog legs
-              Svg.rect [ SvgAttr.x "1", SvgAttr.y "11", SvgAttr.width "3", SvgAttr.height "2", SvgAttr.fill "#00aa00" ] []
-            , Svg.rect [ SvgAttr.x "12", SvgAttr.y "11", SvgAttr.width "3", SvgAttr.height "2", SvgAttr.fill "#00aa00" ] []
-            , Svg.rect [ SvgAttr.x "0", SvgAttr.y "13", SvgAttr.width "2", SvgAttr.height "2", SvgAttr.fill "#00aa00" ] []
-            , Svg.rect [ SvgAttr.x "14", SvgAttr.y "13", SvgAttr.width "2", SvgAttr.height "2", SvgAttr.fill "#00aa00" ] []
-            , -- Green highlights
-              Svg.rect [ SvgAttr.x "5", SvgAttr.y "7", SvgAttr.width "1", SvgAttr.height "1", SvgAttr.fill "#00ff00" ] []
-            , Svg.rect [ SvgAttr.x "10", SvgAttr.y "7", SvgAttr.width "1", SvgAttr.height "1", SvgAttr.fill "#00ff00" ] []
-            ]
-
-         else
-            -- Normal frog face (🙂)
-            [ -- Frog body - frog-green pixels
-              Svg.rect [ SvgAttr.x "4", SvgAttr.y "6", SvgAttr.width "8", SvgAttr.height "6", SvgAttr.fill "#00aa00" ] []
-            , Svg.rect [ SvgAttr.x "3", SvgAttr.y "7", SvgAttr.width "2", SvgAttr.height "4", SvgAttr.fill "#00aa00" ] []
-            , Svg.rect [ SvgAttr.x "11", SvgAttr.y "7", SvgAttr.width "2", SvgAttr.height "4", SvgAttr.fill "#00aa00" ] []
-            , -- Frog eyes - lighter green
-              Svg.rect [ SvgAttr.x "2", SvgAttr.y "4", SvgAttr.width "3", SvgAttr.height "3", SvgAttr.fill "#00cc00" ] []
-            , Svg.rect [ SvgAttr.x "11", SvgAttr.y "4", SvgAttr.width "3", SvgAttr.height "3", SvgAttr.fill "#00cc00" ] []
-            , -- Normal mouth - straight line
-              Svg.rect [ SvgAttr.x "6", SvgAttr.y "9", SvgAttr.width "4", SvgAttr.height "1", SvgAttr.fill "#007700" ] []
-            , -- Frog legs
-              Svg.rect [ SvgAttr.x "1", SvgAttr.y "11", SvgAttr.width "3", SvgAttr.height "2", SvgAttr.fill "#00aa00" ] []
-            , Svg.rect [ SvgAttr.x "12", SvgAttr.y "11", SvgAttr.width "3", SvgAttr.height "2", SvgAttr.fill "#00aa00" ] []
-            , Svg.rect [ SvgAttr.x "0", SvgAttr.y "13", SvgAttr.width "2", SvgAttr.height "2", SvgAttr.fill "#00aa00" ] []
-            , Svg.rect [ SvgAttr.x "14", SvgAttr.y "13", SvgAttr.width "2", SvgAttr.height "2", SvgAttr.fill "#00aa00" ] []
-            , -- Green highlights
-              Svg.rect [ SvgAttr.x "5", SvgAttr.y "7", SvgAttr.width "1", SvgAttr.height "1", SvgAttr.fill "#00ff00" ] []
-            , Svg.rect [ SvgAttr.x "10", SvgAttr.y "7", SvgAttr.width "1", SvgAttr.height "1", SvgAttr.fill "#00ff00" ] []
-            ]
-        )
 
 
 viewFileOperationsPanel : Model -> Html Msg
@@ -397,7 +339,7 @@ viewGridParametersPanel model =
                     , Html.Attributes.attribute "aria-label" (translate model.language GridSize)
                     ]
                     []
-                , span [ class "unit" ] [ text "px" ]
+                , span [ class "unit" ] [ text "▭" ]
                 ]
             ]
 
@@ -521,10 +463,11 @@ viewActionsPanel model =
         [ span [ class "panel-title", id "actions-title" ] [ text (translate model.language Actions) ]
         , div []
             [ button
-                [ class 
+                [ class
                     (if model.uploadedImage /= Nothing then
                         "btn btn-primary download-ready"
-                    else
+
+                     else
                         "btn btn-primary"
                     )
                 , onClick DownloadClicked
@@ -542,19 +485,22 @@ viewActionsPanel model =
                 , style "background"
                     (if model.uploadedImage /= Nothing then
                         "linear-gradient(135deg, #132a13, #31572c, #4f772d, #90a955, #ecf39e)"
-                    else
+
+                     else
                         ""
                     )
                 , style "color"
                     (if model.uploadedImage /= Nothing then
                         "white"
-                    else
+
+                     else
                         ""
                     )
                 , style "text-shadow"
                     (if model.uploadedImage /= Nothing then
                         "0px 1px 2px rgba(0, 0, 0, 0.5)"
-                    else
+
+                     else
                         ""
                     )
                 ]
@@ -589,7 +535,7 @@ viewCanvasArea model =
 
 viewSourceImageWindow : Model -> Html Msg
 viewSourceImageWindow model =
-    div [ class "preview-window" ]
+    div [ class "preview-window original-image-preview" ]
         [ div [ class "window-titlebar" ]
             [ span [ class "window-title" ] [ text (translate model.language OriginalImage) ]
             ]
@@ -611,7 +557,7 @@ viewSourceImageWindow model =
 
 viewGridPreviewWindow : Model -> Html Msg
 viewGridPreviewWindow model =
-    div [ class "preview-window" ]
+    div [ class "preview-window gridded-image-preview" ]
         [ div [ class "window-titlebar" ]
             [ span [ class "window-title" ] [ text (translate model.language GriddedImage) ]
             ]
@@ -649,7 +595,7 @@ viewStatusBar model =
             , text "%"
             ]
         , span [ class "made-with" ]
-            [ text "Made in  🇦🇷  with  ❤️ by me  ᕦ(ò_óˇ)ᕤ" ]
+            [ text "Made in  🇦🇷  with  ❤️ (¯▿¯)" ]
         , span [ class "nice-count" ]
             [ text (translate model.language NiceCounter)
             , text (String.fromInt model.niceCounter)
@@ -658,7 +604,10 @@ viewStatusBar model =
         ]
 
 
+
 -- | Convert a Language to a string identifier for the dropdown
+
+
 languageToString : Language -> String
 languageToString language =
     case language of
@@ -697,15 +646,18 @@ languageToString language =
 
         Tuvan ->
             "tuvan"
-            
+
         Amharic ->
             "amharic"
-            
-        Yiddish ->
-            "yiddish"
+
+        Hebrew ->
+            "hebrew"
+
 
 
 -- | Get flag emoji for a language
+
+
 languageFlag : Language -> String
 languageFlag language =
     case language of
@@ -744,15 +696,18 @@ languageFlag language =
 
         Tuvan ->
             "🇷🇺 "
-            
+
         Amharic ->
             "🇪🇹 "
-            
-        Yiddish ->
+
+        Hebrew ->
             "🇮🇱 "
 
 
+
 -- | Parse a language string from the dropdown to a Language type
+
+
 parseLanguage : String -> Language
 parseLanguage value =
     case value of
@@ -791,12 +746,12 @@ parseLanguage value =
 
         "tuvan" ->
             Tuvan
-            
+
         "amharic" ->
             Amharic
-            
-        "yiddish" ->
-            Yiddish
+
+        "hebrew" ->
+            Hebrew
 
         _ ->
             English
@@ -844,7 +799,7 @@ viewLanguageSelector currentLanguage =
             , languageOption Russian "Русский"
             , languageOption Tuvan "Тыва дыл"
             , languageOption Amharic "አማርኛ"
-            , languageOption Yiddish "ייִדיש"
+            , languageOption Hebrew "עברית"
             ]
         ]
 
