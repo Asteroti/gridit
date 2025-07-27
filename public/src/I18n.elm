@@ -48,6 +48,7 @@ type TranslationKey
     | GridPreviewPlaceholder
     | UploadPlaceholder
     | StatusReady
+    | ShowDiagonals
 
 
 
@@ -174,6 +175,9 @@ englishTranslations key =
         StatusReady ->
             "Status: Ready"
 
+        ShowDiagonals ->
+            "Add diagonals"
+
 
 
 -- SPANISH TRANSLATIONS
@@ -247,6 +251,9 @@ spanishTranslations key =
 
         StatusReady ->
             "Status: Listo"
+
+        ShowDiagonals ->
+            "Agregar diagonales"
 
 
 
@@ -322,6 +329,9 @@ latinTranslations key =
         StatusReady ->
             "Status: Paratus"
 
+        ShowDiagonals ->
+            "Adde diagonalia"
+
 
 
 -- ITALIAN TRANSLATIONS
@@ -395,6 +405,9 @@ italianTranslations key =
 
         StatusReady ->
             "Status: Pronto"
+
+        ShowDiagonals ->
+            "Aggiungi diagonali"
 
 
 
@@ -470,6 +483,9 @@ portugueseTranslations key =
         StatusReady ->
             "Status: Pronto"
 
+        ShowDiagonals ->
+            "Adicionar diagonais"
+
 
 
 -- FRENCH TRANSLATIONS
@@ -543,6 +559,9 @@ frenchTranslations key =
 
         StatusReady ->
             "Status: Prêt"
+
+        ShowDiagonals ->
+            "Ajouter des diagonales"
 
 
 
@@ -618,6 +637,9 @@ asturianoTranslations key =
         StatusReady ->
             "Status: Llistu"
 
+        ShowDiagonals ->
+            "Añader diagonales"
+
 
 
 -- GAELIC TRANSLATIONS
@@ -692,6 +714,9 @@ gaelicTranslations key =
         StatusReady ->
             "Status: Deiseil"
 
+        ShowDiagonals ->
+            "Cuir trasnanan ris"
+
 
 
 -- EUSKARA TRANSLATIONS
@@ -764,7 +789,10 @@ euskaraTranslations key =
             "Igo irudi bat hasteko"
 
         StatusReady ->
-            "Status: Prest"
+            "Egoera: Prest"
+
+        ShowDiagonals ->
+            "Diagonalak gehitu"
 
 
 
@@ -840,6 +868,9 @@ japaneseTranslations key =
         StatusReady ->
             "ステータス: 準備完了"
 
+        ShowDiagonals ->
+            "対角線を追加"
+
 
 
 -- RUSSIAN TRANSLATIONS
@@ -913,6 +944,9 @@ russianTranslations key =
 
         StatusReady ->
             "Статус: Готово"
+
+        ShowDiagonals ->
+            "Добавить диагонали"
 
 
 
@@ -988,6 +1022,9 @@ tuvanTranslations key =
         StatusReady ->
             "Байдал: Белен"
 
+        ShowDiagonals ->
+            "Диагоналдар немээр"
+
 
 
 -- AMHARIC TRANSLATIONS
@@ -1062,6 +1099,9 @@ amharicTranslations key =
         StatusReady ->
             "ሁኔታ: ዝግጁ"
 
+        ShowDiagonals ->
+            "ሰማያዊ መስመሮችን አክል"
+
 
 
 -- HEBREW TRANSLATIONS
@@ -1135,6 +1175,9 @@ hebrewTranslations key =
 
         StatusReady ->
             "סטטוס: מוכן"
+
+        ShowDiagonals ->
+            "הוסף אלכסונים"
 
 
 translate : Language -> TranslationKey -> String

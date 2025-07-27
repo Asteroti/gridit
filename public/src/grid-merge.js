@@ -133,7 +133,11 @@ function initializeElmApp() {
   
   // Handle the requestPng port for grid overlay
   if (app.ports.requestPng) {
-    app.ports.requestPng.subscribe(function({ url, width, height, grid, color, thickness, opacity }) {
+    app.ports.requestPng.subscribe(function(params) {
+      console.log("JS: Received requestPng with params:", params);
+      
+      const { url, width, height, grid, color, thickness, opacity, showDiagonals } = params;
+      
       // Show progress indicator
       showProgress("Loading image...", 10);
       
@@ -193,6 +197,34 @@ function initializeElmApp() {
           ctx.moveTo(0, i * cellH);
           ctx.lineTo(canvasWidth, i * cellH);
           ctx.stroke();
+        }
+        
+        // Draw diagonal grid lines if enabled
+        if (showDiagonals) {
+          // Save context to restore opacity later
+          ctx.save();
+          
+          // Draw diagonals with slightly reduced opacity for better visibility
+          ctx.globalAlpha = opacity * 0.8;
+          
+          // Draw diagonal lines from top-left to bottom-right
+          for (let i = 0; i <= grid * 2; i++) {
+            ctx.beginPath();
+            ctx.moveTo(0, i * cellH);
+            ctx.lineTo(i * cellW, 0);
+            ctx.stroke();
+          }
+          
+          // Draw diagonal lines from top-right to bottom-left
+          for (let i = 0; i <= grid * 2; i++) {
+            ctx.beginPath();
+            ctx.moveTo(canvasWidth, i * cellH);
+            ctx.lineTo(canvasWidth - i * cellW, 0);
+            ctx.stroke();
+          }
+          
+          // Restore original opacity
+          ctx.restore();
         }
         
         updateProgress("Preparing download...", 75);

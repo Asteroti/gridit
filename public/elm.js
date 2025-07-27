@@ -600,11 +600,11 @@ function _Debug_crash_UNUSED(identifier, fact1, fact2, fact3, fact4)
 
 function _Debug_regionToString(region)
 {
-	if (region.S.I === region.Z.I)
+	if (region.T.J === region._.J)
 	{
-		return 'on line ' + region.S.I;
+		return 'on line ' + region.T.J;
 	}
-	return 'on lines ' + region.S.I + ' through ' + region.Z.I;
+	return 'on lines ' + region.T.J + ' through ' + region._.J;
 }
 
 
@@ -1857,9 +1857,9 @@ var _Platform_worker = F4(function(impl, flagDecoder, debugMetadata, args)
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.aL,
-		impl.aX,
-		impl.aV,
+		impl.aM,
+		impl.aY,
+		impl.aW,
 		function() { return function() {} }
 	);
 });
@@ -2719,9 +2719,9 @@ var _VirtualDom_mapEventTuple = F2(function(func, tuple)
 var _VirtualDom_mapEventRecord = F2(function(func, record)
 {
 	return {
-		u: func(record.u),
-		T: record.T,
-		Q: record.Q
+		v: func(record.v),
+		U: record.U,
+		R: record.R
 	}
 });
 
@@ -2989,11 +2989,11 @@ function _VirtualDom_makeCallback(eventNode, initialHandler)
 		// 3 = Custom
 
 		var value = result.a;
-		var message = !tag ? value : tag < 3 ? value.a : value.u;
-		var stopPropagation = tag == 1 ? value.b : tag == 3 && value.T;
+		var message = !tag ? value : tag < 3 ? value.a : value.v;
+		var stopPropagation = tag == 1 ? value.b : tag == 3 && value.U;
 		var currentEventNode = (
 			stopPropagation && event.stopPropagation(),
-			(tag == 2 ? value.b : tag == 3 && value.Q) && event.preventDefault(),
+			(tag == 2 ? value.b : tag == 3 && value.R) && event.preventDefault(),
 			eventNode
 		);
 		var tagger;
@@ -3943,11 +3943,11 @@ var _Browser_element = _Debugger_element || F4(function(impl, flagDecoder, debug
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.aL,
-		impl.aX,
-		impl.aV,
+		impl.aM,
+		impl.aY,
+		impl.aW,
 		function(sendToApp, initialModel) {
-			var view = impl.aY;
+			var view = impl.aZ;
 			/**/
 			var domNode = args['node'];
 			//*/
@@ -3979,12 +3979,12 @@ var _Browser_document = _Debugger_document || F4(function(impl, flagDecoder, deb
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.aL,
-		impl.aX,
-		impl.aV,
+		impl.aM,
+		impl.aY,
+		impl.aW,
 		function(sendToApp, initialModel) {
-			var divertHrefToApp = impl.R && impl.R(sendToApp)
-			var view = impl.aY;
+			var divertHrefToApp = impl.S && impl.S(sendToApp)
+			var view = impl.aZ;
 			var title = _VirtualDom_doc.title;
 			var bodyNode = _VirtualDom_doc.body;
 			var currNode = _VirtualDom_virtualize(bodyNode);
@@ -3992,12 +3992,12 @@ var _Browser_document = _Debugger_document || F4(function(impl, flagDecoder, deb
 			{
 				_VirtualDom_divertHrefToApp = divertHrefToApp;
 				var doc = view(model);
-				var nextNode = _VirtualDom_node('body')(_List_Nil)(doc.aC);
+				var nextNode = _VirtualDom_node('body')(_List_Nil)(doc.aD);
 				var patches = _VirtualDom_diff(currNode, nextNode);
 				bodyNode = _VirtualDom_applyPatches(bodyNode, currNode, patches, sendToApp);
 				currNode = nextNode;
 				_VirtualDom_divertHrefToApp = 0;
-				(title !== doc.aW) && (_VirtualDom_doc.title = title = doc.aW);
+				(title !== doc.aX) && (_VirtualDom_doc.title = title = doc.aX);
 			});
 		}
 	);
@@ -4053,12 +4053,12 @@ function _Browser_makeAnimator(model, draw)
 
 function _Browser_application(impl)
 {
-	var onUrlChange = impl.aQ;
-	var onUrlRequest = impl.aR;
+	var onUrlChange = impl.aR;
+	var onUrlRequest = impl.aS;
 	var key = function() { key.a(onUrlChange(_Browser_getUrl())); };
 
 	return _Browser_document({
-		R: function(sendToApp)
+		S: function(sendToApp)
 		{
 			key.a = sendToApp;
 			_Browser_window.addEventListener('popstate', key);
@@ -4074,9 +4074,9 @@ function _Browser_application(impl)
 					var next = $elm$url$Url$fromString(href).a;
 					sendToApp(onUrlRequest(
 						(next
-							&& curr.an === next.an
-							&& curr.ad === next.ad
-							&& curr.ak.a === next.ak.a
+							&& curr.ao === next.ao
+							&& curr.ae === next.ae
+							&& curr.al.a === next.al.a
 						)
 							? $elm$browser$Browser$Internal(next)
 							: $elm$browser$Browser$External(href)
@@ -4084,13 +4084,13 @@ function _Browser_application(impl)
 				}
 			});
 		},
-		aL: function(flags)
+		aM: function(flags)
 		{
-			return A3(impl.aL, flags, _Browser_getUrl(), key);
+			return A3(impl.aM, flags, _Browser_getUrl(), key);
 		},
+		aZ: impl.aZ,
 		aY: impl.aY,
-		aX: impl.aX,
-		aV: impl.aV
+		aW: impl.aW
 	});
 }
 
@@ -4156,17 +4156,17 @@ var _Browser_decodeEvent = F2(function(decoder, event)
 function _Browser_visibilityInfo()
 {
 	return (typeof _VirtualDom_doc.hidden !== 'undefined')
-		? { aI: 'hidden', aE: 'visibilitychange' }
+		? { aJ: 'hidden', aF: 'visibilitychange' }
 		:
 	(typeof _VirtualDom_doc.mozHidden !== 'undefined')
-		? { aI: 'mozHidden', aE: 'mozvisibilitychange' }
+		? { aJ: 'mozHidden', aF: 'mozvisibilitychange' }
 		:
 	(typeof _VirtualDom_doc.msHidden !== 'undefined')
-		? { aI: 'msHidden', aE: 'msvisibilitychange' }
+		? { aJ: 'msHidden', aF: 'msvisibilitychange' }
 		:
 	(typeof _VirtualDom_doc.webkitHidden !== 'undefined')
-		? { aI: 'webkitHidden', aE: 'webkitvisibilitychange' }
-		: { aI: 'hidden', aE: 'visibilitychange' };
+		? { aJ: 'webkitHidden', aF: 'webkitvisibilitychange' }
+		: { aJ: 'hidden', aF: 'visibilitychange' };
 }
 
 
@@ -4247,12 +4247,12 @@ var _Browser_call = F2(function(functionName, id)
 function _Browser_getViewport()
 {
 	return {
-		ar: _Browser_getScene(),
-		aw: {
-			ay: _Browser_window.pageXOffset,
-			az: _Browser_window.pageYOffset,
-			ax: _Browser_doc.documentElement.clientWidth,
-			ac: _Browser_doc.documentElement.clientHeight
+		as: _Browser_getScene(),
+		ax: {
+			az: _Browser_window.pageXOffset,
+			aA: _Browser_window.pageYOffset,
+			ay: _Browser_doc.documentElement.clientWidth,
+			ad: _Browser_doc.documentElement.clientHeight
 		}
 	};
 }
@@ -4262,8 +4262,8 @@ function _Browser_getScene()
 	var body = _Browser_doc.body;
 	var elem = _Browser_doc.documentElement;
 	return {
-		ax: Math.max(body.scrollWidth, body.offsetWidth, elem.scrollWidth, elem.offsetWidth, elem.clientWidth),
-		ac: Math.max(body.scrollHeight, body.offsetHeight, elem.scrollHeight, elem.offsetHeight, elem.clientHeight)
+		ay: Math.max(body.scrollWidth, body.offsetWidth, elem.scrollWidth, elem.offsetWidth, elem.clientWidth),
+		ad: Math.max(body.scrollHeight, body.offsetHeight, elem.scrollHeight, elem.offsetHeight, elem.clientHeight)
 	};
 }
 
@@ -4286,15 +4286,15 @@ function _Browser_getViewportOf(id)
 	return _Browser_withNode(id, function(node)
 	{
 		return {
-			ar: {
-				ax: node.scrollWidth,
-				ac: node.scrollHeight
+			as: {
+				ay: node.scrollWidth,
+				ad: node.scrollHeight
 			},
-			aw: {
-				ay: node.scrollLeft,
-				az: node.scrollTop,
-				ax: node.clientWidth,
-				ac: node.clientHeight
+			ax: {
+				az: node.scrollLeft,
+				aA: node.scrollTop,
+				ay: node.clientWidth,
+				ad: node.clientHeight
 			}
 		};
 	});
@@ -4324,18 +4324,18 @@ function _Browser_getElement(id)
 		var x = _Browser_window.pageXOffset;
 		var y = _Browser_window.pageYOffset;
 		return {
-			ar: _Browser_getScene(),
-			aw: {
-				ay: x,
-				az: y,
-				ax: _Browser_doc.documentElement.clientWidth,
-				ac: _Browser_doc.documentElement.clientHeight
+			as: _Browser_getScene(),
+			ax: {
+				az: x,
+				aA: y,
+				ay: _Browser_doc.documentElement.clientWidth,
+				ad: _Browser_doc.documentElement.clientHeight
 			},
-			aG: {
-				ay: x + rect.left,
-				az: y + rect.top,
-				ax: rect.width,
-				ac: rect.height
+			aH: {
+				az: x + rect.left,
+				aA: y + rect.top,
+				ay: rect.width,
+				ad: rect.height
 			}
 		};
 	});
@@ -5052,7 +5052,7 @@ var $elm$url$Url$Http = 0;
 var $elm$url$Url$Https = 1;
 var $elm$url$Url$Url = F6(
 	function (protocol, host, port_, path, query, fragment) {
-		return {aa: fragment, ad: host, ai: path, ak: port_, an: protocol, ao: query};
+		return {ab: fragment, ae: host, aj: path, al: port_, ao: protocol, ap: query};
 	});
 var $elm$core$String$contains = _String_contains;
 var $elm$core$String$length = _String_length;
@@ -5332,7 +5332,7 @@ var $elm$core$Task$perform = F2(
 	});
 var $elm$browser$Browser$element = _Browser_element;
 var $author$project$I18n$Spanish = 1;
-var $author$project$Main$init = {N: false, t: '#80ED99', m: 1, g: 10, p: 1, C: $elm$core$Maybe$Nothing, D: $elm$core$Maybe$Nothing, a: 1, E: 0, i: $elm$core$Maybe$Nothing};
+var $author$project$Main$init = {O: false, o: '#80ED99', l: 1, f: 10, m: 1, D: $elm$core$Maybe$Nothing, E: $elm$core$Maybe$Nothing, a: 1, F: 0, s: false, i: $elm$core$Maybe$Nothing};
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
 var $author$project$Main$GriddedReady = function (a) {
@@ -5373,7 +5373,7 @@ var $author$project$Main$downloadImage = _Platform_outgoingPort(
 				[
 					_Utils_Tuple2(
 					'dataUrl',
-					$elm$json$Json$Encode$string($.X))
+					$elm$json$Json$Encode$string($.Y))
 				]));
 	});
 var $elm$time$Time$Posix = $elm$core$Basics$identity;
@@ -5417,6 +5417,7 @@ var $author$project$Main$languageToCode = function (language) {
 			return 'he';
 	}
 };
+var $elm$json$Json$Encode$bool = _Json_wrap;
 var $elm$json$Json$Encode$float = _Json_wrap;
 var $elm$json$Json$Encode$int = _Json_wrap;
 var $author$project$Main$requestPng = _Platform_outgoingPort(
@@ -5427,25 +5428,28 @@ var $author$project$Main$requestPng = _Platform_outgoingPort(
 				[
 					_Utils_Tuple2(
 					'color',
-					$elm$json$Json$Encode$string($.W)),
+					$elm$json$Json$Encode$string($.X)),
 					_Utils_Tuple2(
 					'grid',
-					$elm$json$Json$Encode$int($.ab)),
-					_Utils_Tuple2(
-					'height',
 					$elm$json$Json$Encode$int($.ac)),
 					_Utils_Tuple2(
+					'height',
+					$elm$json$Json$Encode$int($.ad)),
+					_Utils_Tuple2(
 					'opacity',
-					$elm$json$Json$Encode$float($.ah)),
+					$elm$json$Json$Encode$float($.ai)),
+					_Utils_Tuple2(
+					'showDiagonals',
+					$elm$json$Json$Encode$bool($.s)),
 					_Utils_Tuple2(
 					'thickness',
-					$elm$json$Json$Encode$int($.au)),
+					$elm$json$Json$Encode$int($.av)),
 					_Utils_Tuple2(
 					'url',
-					$elm$json$Json$Encode$string($.av)),
+					$elm$json$Json$Encode$string($.aw)),
 					_Utils_Tuple2(
 					'width',
-					$elm$json$Json$Encode$int($.ax))
+					$elm$json$Json$Encode$int($.ay))
 				]));
 	});
 var $author$project$Main$setHtmlLang = _Platform_outgoingPort('setHtmlLang', $elm$json$Json$Encode$string);
@@ -5476,8 +5480,8 @@ var $author$project$Main$update = F2(
 					_Utils_update(
 						model,
 						{
-							C: $elm$core$Maybe$Nothing,
 							D: $elm$core$Maybe$Nothing,
+							E: $elm$core$Maybe$Nothing,
 							i: $elm$core$Maybe$Just(url)
 						}),
 					$elm$core$Platform$Cmd$none);
@@ -5486,34 +5490,34 @@ var $author$project$Main$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{g: size}),
+						{f: size}),
 					$elm$core$Platform$Cmd$none);
 			case 8:
 				var color = msg.a;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{t: color}),
+						{o: color}),
 					$elm$core$Platform$Cmd$none);
 			case 9:
 				var thickness = msg.a;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{p: thickness}),
+						{m: thickness}),
 					$elm$core$Platform$Cmd$none);
 			case 10:
 				var opacity = msg.a;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{m: opacity}),
+						{l: opacity}),
 					$elm$core$Platform$Cmd$none);
 			case 4:
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{E: model.E + 1}),
+						{F: model.F + 1}),
 					$elm$core$Platform$Cmd$none);
 			case 5:
 				var width = msg.a;
@@ -5522,8 +5526,8 @@ var $author$project$Main$update = F2(
 					_Utils_update(
 						model,
 						{
-							C: $elm$core$Maybe$Just(height),
-							D: $elm$core$Maybe$Just(width)
+							D: $elm$core$Maybe$Just(height),
+							E: $elm$core$Maybe$Just(width)
 						}),
 					$elm$core$Platform$Cmd$none);
 			case 11:
@@ -5538,15 +5542,22 @@ var $author$project$Main$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{N: false}),
+						{O: false}),
+					$elm$core$Platform$Cmd$none);
+			case 13:
+				var value = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{s: value}),
 					$elm$core$Platform$Cmd$none);
 			case 6:
-				var _v1 = _Utils_Tuple3(model.i, model.D, model.C);
+				var _v1 = _Utils_Tuple3(model.i, model.E, model.D);
 				if (((!_v1.a.$) && (!_v1.b.$)) && (!_v1.c.$)) {
 					var url = _v1.a.a;
 					var w = _v1.b.a;
 					var h = _v1.c.a;
-					var requestParams = {W: model.t, ab: model.g, ac: h, ah: model.m, au: model.p, av: url, ax: w};
+					var requestParams = {X: model.o, ac: model.f, ad: h, ai: model.l, s: model.s, av: model.m, aw: url, ay: w};
 					var _v2 = $author$project$Main$debug(
 						'Elm: DownloadClicked with valid image data. Width: ' + ($elm$core$String$fromInt(w) + (', Height: ' + $elm$core$String$fromInt(h))));
 					return _Utils_Tuple2(
@@ -5566,7 +5577,7 @@ var $author$project$Main$update = F2(
 				var dataUrl = msg.a;
 				var updatedModel = _Utils_update(
 					model,
-					{N: true});
+					{O: true});
 				var _v3 = $author$project$Main$debug(
 					'Elm: GriddedReady received data URL of length: ' + $elm$core$String$fromInt(
 						$elm$core$String$length(dataUrl)));
@@ -5578,7 +5589,7 @@ var $author$project$Main$update = F2(
 							[
 								$author$project$Main$debug('Elm: Starting download...'),
 								$author$project$Main$downloadImage(
-								{X: dataUrl}),
+								{Y: dataUrl}),
 								A2(
 								$elm$core$Task$perform,
 								function (_v5) {
@@ -5646,8 +5657,10 @@ var $author$project$I18n$amharicTranslations = function (key) {
 			return 'የፍርግርግ ምስልዎ እዚህ ይታያል';
 		case 20:
 			return 'ለመጀመር ምስል ይጫኑ';
-		default:
+		case 21:
 			return 'ሁኔታ: ዝግጁ';
+		default:
+			return 'ሰማያዊ መስመሮችን አክል';
 	}
 };
 var $author$project$I18n$asturianoTranslations = function (key) {
@@ -5694,8 +5707,10 @@ var $author$project$I18n$asturianoTranslations = function (key) {
 			return 'La to imaxe con cuadrícula apaecerá equí';
 		case 20:
 			return 'Xube una imaxe pa entamar';
-		default:
+		case 21:
 			return 'Status: Llistu';
+		default:
+			return 'Añader diagonales';
 	}
 };
 var $author$project$I18n$englishTranslations = function (key) {
@@ -5742,8 +5757,10 @@ var $author$project$I18n$englishTranslations = function (key) {
 			return 'Your gridded image will appear here';
 		case 20:
 			return 'Upload an image to begin';
-		default:
+		case 21:
 			return 'Status: Ready';
+		default:
+			return 'Add diagonals';
 	}
 };
 var $author$project$I18n$euskaraTranslations = function (key) {
@@ -5790,8 +5807,10 @@ var $author$project$I18n$euskaraTranslations = function (key) {
 			return 'Zure saretadun irudia hemen agertuko da';
 		case 20:
 			return 'Igo irudi bat hasteko';
+		case 21:
+			return 'Egoera: Prest';
 		default:
-			return 'Status: Prest';
+			return 'Diagonalak gehitu';
 	}
 };
 var $author$project$I18n$frenchTranslations = function (key) {
@@ -5838,8 +5857,10 @@ var $author$project$I18n$frenchTranslations = function (key) {
 			return 'Votre image avec grille apparaîtra ici';
 		case 20:
 			return 'Téléchargez une image pour commencer';
-		default:
+		case 21:
 			return 'Status: Prêt';
+		default:
+			return 'Ajouter des diagonales';
 	}
 };
 var $author$project$I18n$gaelicTranslations = function (key) {
@@ -5886,8 +5907,10 @@ var $author$project$I18n$gaelicTranslations = function (key) {
 			return 'Nochdaidh do dhealbh le griod an seo';
 		case 20:
 			return 'Luchdaich dealbh gus tòiseachadh';
-		default:
+		case 21:
 			return 'Status: Deiseil';
+		default:
+			return 'Cuir trasnanan ris';
 	}
 };
 var $author$project$I18n$hebrewTranslations = function (key) {
@@ -5934,8 +5957,10 @@ var $author$project$I18n$hebrewTranslations = function (key) {
 			return 'התמונה עם הרשת תופיע כאן';
 		case 20:
 			return 'העלה תמונה כדי להתחיל';
-		default:
+		case 21:
 			return 'סטטוס: מוכן';
+		default:
+			return 'הוסף אלכסונים';
 	}
 };
 var $author$project$I18n$italianTranslations = function (key) {
@@ -5982,8 +6007,10 @@ var $author$project$I18n$italianTranslations = function (key) {
 			return 'La tua immagine con griglia apparirà qui';
 		case 20:
 			return 'Carica un\'immagine per iniziare';
-		default:
+		case 21:
 			return 'Status: Pronto';
+		default:
+			return 'Aggiungi diagonali';
 	}
 };
 var $author$project$I18n$japaneseTranslations = function (key) {
@@ -6030,8 +6057,10 @@ var $author$project$I18n$japaneseTranslations = function (key) {
 			return 'グリッド付き画像がここに表示されます';
 		case 20:
 			return '画像をアップロードして始めましょう';
-		default:
+		case 21:
 			return 'ステータス: 準備完了';
+		default:
+			return '対角線を追加';
 	}
 };
 var $author$project$I18n$latinTranslations = function (key) {
@@ -6078,8 +6107,10 @@ var $author$project$I18n$latinTranslations = function (key) {
 			return 'Imago tua cum craticula hic apparebit';
 		case 20:
 			return 'Submitte imaginem ut incipias';
-		default:
+		case 21:
 			return 'Status: Paratus';
+		default:
+			return 'Adde diagonalia';
 	}
 };
 var $author$project$I18n$portugueseTranslations = function (key) {
@@ -6126,8 +6157,10 @@ var $author$project$I18n$portugueseTranslations = function (key) {
 			return 'Sua imagem com grade aparecerá aqui';
 		case 20:
 			return 'Carregue uma imagem para começar';
-		default:
+		case 21:
 			return 'Status: Pronto';
+		default:
+			return 'Adicionar diagonais';
 	}
 };
 var $author$project$I18n$russianTranslations = function (key) {
@@ -6174,8 +6207,10 @@ var $author$project$I18n$russianTranslations = function (key) {
 			return 'Ваше изображение с сеткой появится здесь';
 		case 20:
 			return 'Загрузите изображение, чтобы начать';
-		default:
+		case 21:
 			return 'Статус: Готово';
+		default:
+			return 'Добавить диагонали';
 	}
 };
 var $author$project$I18n$spanishTranslations = function (key) {
@@ -6222,8 +6257,10 @@ var $author$project$I18n$spanishTranslations = function (key) {
 			return 'Tu imagen con grilla va a aparecer acá';
 		case 20:
 			return 'Subí una imagen para empezar';
-		default:
+		case 21:
 			return 'Status: Listo';
+		default:
+			return 'Agregar diagonales';
 	}
 };
 var $author$project$I18n$tuvanTranslations = function (key) {
@@ -6270,8 +6307,10 @@ var $author$project$I18n$tuvanTranslations = function (key) {
 			return 'Силерниң шыйыглыг чурууңар мында көстүп кээр';
 		case 20:
 			return 'Эгелээр дээш чурукту киириңер';
-		default:
+		case 21:
 			return 'Байдал: Белен';
+		default:
+			return 'Диагоналдар немээр';
 	}
 };
 var $author$project$I18n$translations = F2(
@@ -6335,12 +6374,12 @@ var $elm$svg$Svg$Attributes$x2 = _VirtualDom_attribute('x2');
 var $elm$svg$Svg$Attributes$y1 = _VirtualDom_attribute('y1');
 var $elm$svg$Svg$Attributes$y2 = _VirtualDom_attribute('y2');
 var $author$project$Main$viewGriddedImage = function (model) {
-	var _v0 = _Utils_Tuple3(model.i, model.D, model.C);
+	var _v0 = _Utils_Tuple3(model.i, model.E, model.D);
 	if (((!_v0.a.$) && (!_v0.b.$)) && (!_v0.c.$)) {
 		var url = _v0.a.a;
 		var width = _v0.b.a;
 		var height = _v0.c.a;
-		var cellWidth = width / model.g;
+		var cellWidth = width / model.f;
 		var verticalLines = A2(
 			$elm$core$List$map,
 			function (i) {
@@ -6356,16 +6395,65 @@ var $author$project$Main$viewGriddedImage = function (model) {
 							$elm$core$String$fromFloat(x)),
 							$elm$svg$Svg$Attributes$y2(
 							$elm$core$String$fromInt(height)),
-							$elm$svg$Svg$Attributes$stroke(model.t),
+							$elm$svg$Svg$Attributes$stroke(model.o),
 							$elm$svg$Svg$Attributes$strokeWidth(
-							$elm$core$String$fromInt(model.p)),
+							$elm$core$String$fromInt(model.m)),
 							$elm$svg$Svg$Attributes$opacity(
-							$elm$core$String$fromFloat(model.m))
+							$elm$core$String$fromFloat(model.l))
 						]),
 					_List_Nil);
 			},
-			A2($elm$core$List$range, 0, model.g));
-		var cellHeight = height / model.g;
+			A2($elm$core$List$range, 0, model.f));
+		var cellHeight = height / model.f;
+		var diagonalLines1 = model.s ? A2(
+			$elm$core$List$map,
+			function (i) {
+				var y = i * cellHeight;
+				var x = i * cellWidth;
+				return A2(
+					$elm$svg$Svg$line,
+					_List_fromArray(
+						[
+							$elm$svg$Svg$Attributes$x1(
+							$elm$core$String$fromFloat(x)),
+							$elm$svg$Svg$Attributes$y1('0'),
+							$elm$svg$Svg$Attributes$x2('0'),
+							$elm$svg$Svg$Attributes$y2(
+							$elm$core$String$fromFloat(y)),
+							$elm$svg$Svg$Attributes$stroke(model.o),
+							$elm$svg$Svg$Attributes$strokeWidth(
+							$elm$core$String$fromInt(model.m)),
+							$elm$svg$Svg$Attributes$opacity(
+							$elm$core$String$fromFloat(model.l))
+						]),
+					_List_Nil);
+			},
+			A2($elm$core$List$range, 0, model.f * 2)) : _List_Nil;
+		var diagonalLines2 = model.s ? A2(
+			$elm$core$List$map,
+			function (i) {
+				var y = i * cellHeight;
+				var x = (model.f - i) * cellWidth;
+				return A2(
+					$elm$svg$Svg$line,
+					_List_fromArray(
+						[
+							$elm$svg$Svg$Attributes$x1(
+							$elm$core$String$fromFloat(x)),
+							$elm$svg$Svg$Attributes$y1('0'),
+							$elm$svg$Svg$Attributes$x2(
+							$elm$core$String$fromInt(width)),
+							$elm$svg$Svg$Attributes$y2(
+							$elm$core$String$fromFloat(y)),
+							$elm$svg$Svg$Attributes$stroke(model.o),
+							$elm$svg$Svg$Attributes$strokeWidth(
+							$elm$core$String$fromInt(model.m)),
+							$elm$svg$Svg$Attributes$opacity(
+							$elm$core$String$fromFloat(model.l))
+						]),
+					_List_Nil);
+			},
+			A2($elm$core$List$range, 0, model.f * 2)) : _List_Nil;
 		var horizontalLines = A2(
 			$elm$core$List$map,
 			function (i) {
@@ -6381,15 +6469,20 @@ var $author$project$Main$viewGriddedImage = function (model) {
 							$elm$core$String$fromInt(width)),
 							$elm$svg$Svg$Attributes$y2(
 							$elm$core$String$fromFloat(y)),
-							$elm$svg$Svg$Attributes$stroke(model.t),
+							$elm$svg$Svg$Attributes$stroke(model.o),
 							$elm$svg$Svg$Attributes$strokeWidth(
-							$elm$core$String$fromInt(model.p)),
+							$elm$core$String$fromInt(model.m)),
 							$elm$svg$Svg$Attributes$opacity(
-							$elm$core$String$fromFloat(model.m))
+							$elm$core$String$fromFloat(model.l))
 						]),
 					_List_Nil);
 			},
-			A2($elm$core$List$range, 0, model.g));
+			A2($elm$core$List$range, 0, model.f));
+		var allLines = _Utils_ap(
+			verticalLines,
+			_Utils_ap(
+				horizontalLines,
+				_Utils_ap(diagonalLines1, diagonalLines2)));
 		return A2(
 			$elm$html$Html$div,
 			_List_fromArray(
@@ -6418,7 +6511,7 @@ var $author$project$Main$viewGriddedImage = function (model) {
 							'0 0 ' + ($elm$core$String$fromInt(width) + (' ' + $elm$core$String$fromInt(height)))),
 							$elm$svg$Svg$Attributes$class('grid-overlay')
 						]),
-					_Utils_ap(verticalLines, horizontalLines))
+					allLines)
 				]));
 	} else {
 		return $elm$html$Html$text(
@@ -6661,7 +6754,6 @@ var $elm$virtual_dom$VirtualDom$attribute = F2(
 	});
 var $elm$html$Html$Attributes$attribute = $elm$virtual_dom$VirtualDom$attribute;
 var $elm$html$Html$button = _VirtualDom_node('button');
-var $elm$json$Json$Encode$bool = _Json_wrap;
 var $elm$html$Html$Attributes$boolProperty = F2(
 	function (key, bool) {
 		return A2(
@@ -6765,7 +6857,7 @@ var $author$project$Main$viewActionsPanel = function (model) {
 								$elm$html$Html$text(
 								A2($author$project$I18n$translate, model.a, 11)),
 								$elm$html$Html$text(
-								' (' + ($elm$core$String$fromInt(model.E) + ')'))
+								' (' + ($elm$core$String$fromInt(model.F) + ')'))
 							]))
 					]))
 			]));
@@ -6875,11 +6967,28 @@ var $author$project$I18n$GridThickness = 6;
 var $author$project$Main$GridThicknessChanged = function (a) {
 	return {$: 9, a: a};
 };
+var $author$project$I18n$ShowDiagonals = 22;
+var $author$project$Main$ToggleDiagonals = function (a) {
+	return {$: 13, a: a};
+};
+var $elm$html$Html$Attributes$checked = $elm$html$Html$Attributes$boolProperty('checked');
 var $elm$html$Html$Attributes$for = $elm$html$Html$Attributes$stringProperty('htmlFor');
 var $elm$html$Html$input = _VirtualDom_node('input');
 var $elm$html$Html$label = _VirtualDom_node('label');
 var $elm$html$Html$Attributes$max = $elm$html$Html$Attributes$stringProperty('max');
 var $elm$html$Html$Attributes$min = $elm$html$Html$Attributes$stringProperty('min');
+var $elm$json$Json$Decode$bool = _Json_decodeBool;
+var $elm$html$Html$Events$targetChecked = A2(
+	$elm$json$Json$Decode$at,
+	_List_fromArray(
+		['target', 'checked']),
+	$elm$json$Json$Decode$bool);
+var $elm$html$Html$Events$onCheck = function (tagger) {
+	return A2(
+		$elm$html$Html$Events$on,
+		'change',
+		A2($elm$json$Json$Decode$map, tagger, $elm$html$Html$Events$targetChecked));
+};
 var $elm$html$Html$Events$alwaysStop = function (x) {
 	return _Utils_Tuple2(x, true);
 };
@@ -6991,7 +7100,7 @@ var $author$project$Main$viewGridParametersPanel = function (model) {
 										$elm$html$Html$Attributes$max('50'),
 										$elm$html$Html$Attributes$step('1'),
 										$elm$html$Html$Attributes$value(
-										$elm$core$String$fromInt(model.g)),
+										$elm$core$String$fromInt(model.f)),
 										$elm$html$Html$Events$onInput(
 										function (s) {
 											return $author$project$Main$GridSizeChanged(
@@ -7006,7 +7115,7 @@ var $author$project$Main$viewGridParametersPanel = function (model) {
 										A2(
 										$elm$html$Html$Attributes$attribute,
 										'aria-valuenow',
-										$elm$core$String$fromInt(model.g)),
+										$elm$core$String$fromInt(model.f)),
 										A2($elm$html$Html$Attributes$attribute, 'aria-labelledby', 'grid-size-label')
 									]),
 								_List_Nil),
@@ -7019,7 +7128,7 @@ var $author$project$Main$viewGridParametersPanel = function (model) {
 										$elm$html$Html$Attributes$min('2'),
 										$elm$html$Html$Attributes$max('50'),
 										$elm$html$Html$Attributes$value(
-										$elm$core$String$fromInt(model.g)),
+										$elm$core$String$fromInt(model.f)),
 										$elm$html$Html$Events$onInput(
 										function (s) {
 											return $author$project$Main$GridSizeChanged(
@@ -7090,7 +7199,7 @@ var $author$project$Main$viewGridParametersPanel = function (model) {
 									[
 										$elm$html$Html$Attributes$type_('color'),
 										$elm$html$Html$Attributes$id('grid-color-picker'),
-										$elm$html$Html$Attributes$value(model.t),
+										$elm$html$Html$Attributes$value(model.o),
 										$elm$html$Html$Events$onInput($author$project$Main$GridColorChanged),
 										$elm$html$Html$Attributes$class('color-picker'),
 										A2(
@@ -7105,7 +7214,7 @@ var $author$project$Main$viewGridParametersPanel = function (model) {
 									[
 										$elm$html$Html$Attributes$type_('text'),
 										$elm$html$Html$Attributes$id('grid-color-hex'),
-										$elm$html$Html$Attributes$value(model.t),
+										$elm$html$Html$Attributes$value(model.o),
 										$elm$html$Html$Events$onInput($author$project$Main$GridColorChanged),
 										$elm$html$Html$Attributes$class('hex-input'),
 										A2(
@@ -7113,6 +7222,59 @@ var $author$project$Main$viewGridParametersPanel = function (model) {
 										'aria-label',
 										A2($author$project$I18n$translate, model.a, 5) + ' hex value'),
 										$elm$html$Html$Attributes$placeholder('#RRGGBB')
+									]),
+								_List_Nil)
+							]))
+					])),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('form-group')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('form-row')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$label,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('form-label'),
+										$elm$html$Html$Attributes$for('diagonal-checkbox')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text(
+										A2($author$project$I18n$translate, model.a, 22))
+									]))
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('checkbox-container')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$input,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$type_('checkbox'),
+										$elm$html$Html$Attributes$id('diagonal-checkbox'),
+										$elm$html$Html$Attributes$checked(model.s),
+										$elm$html$Html$Events$onCheck($author$project$Main$ToggleDiagonals),
+										A2(
+										$elm$html$Html$Attributes$attribute,
+										'aria-label',
+										A2($author$project$I18n$translate, model.a, 22))
 									]),
 								_List_Nil)
 							]))
@@ -7164,7 +7326,7 @@ var $author$project$Main$viewGridParametersPanel = function (model) {
 										$elm$html$Html$Attributes$max('10'),
 										$elm$html$Html$Attributes$step('1'),
 										$elm$html$Html$Attributes$value(
-										$elm$core$String$fromInt(model.p)),
+										$elm$core$String$fromInt(model.m)),
 										$elm$html$Html$Events$onInput(
 										function (s) {
 											return $author$project$Main$GridThicknessChanged(
@@ -7179,7 +7341,7 @@ var $author$project$Main$viewGridParametersPanel = function (model) {
 										A2(
 										$elm$html$Html$Attributes$attribute,
 										'aria-valuenow',
-										$elm$core$String$fromInt(model.p)),
+										$elm$core$String$fromInt(model.m)),
 										A2($elm$html$Html$Attributes$attribute, 'aria-labelledby', 'grid-thickness-label')
 									]),
 								_List_Nil),
@@ -7192,7 +7354,7 @@ var $author$project$Main$viewGridParametersPanel = function (model) {
 										$elm$html$Html$Attributes$min('1'),
 										$elm$html$Html$Attributes$max('10'),
 										$elm$html$Html$Attributes$value(
-										$elm$core$String$fromInt(model.p)),
+										$elm$core$String$fromInt(model.m)),
 										$elm$html$Html$Events$onInput(
 										function (s) {
 											return $author$project$Main$GridThicknessChanged(
@@ -7267,7 +7429,7 @@ var $author$project$Main$viewGridParametersPanel = function (model) {
 										$elm$html$Html$Attributes$max('1'),
 										$elm$html$Html$Attributes$step('0.01'),
 										$elm$html$Html$Attributes$value(
-										$elm$core$String$fromFloat(model.m)),
+										$elm$core$String$fromFloat(model.l)),
 										$elm$html$Html$Events$onInput(
 										function (s) {
 											return $author$project$Main$GridOpacityChanged(
@@ -7282,7 +7444,7 @@ var $author$project$Main$viewGridParametersPanel = function (model) {
 										A2(
 										$elm$html$Html$Attributes$attribute,
 										'aria-valuenow',
-										$elm$core$String$fromFloat(model.m)),
+										$elm$core$String$fromFloat(model.l)),
 										A2($elm$html$Html$Attributes$attribute, 'aria-labelledby', 'grid-opacity-label')
 									]),
 								_List_Nil),
@@ -7296,7 +7458,7 @@ var $author$project$Main$viewGridParametersPanel = function (model) {
 										$elm$html$Html$Attributes$max('100'),
 										$elm$html$Html$Attributes$value(
 										$elm$core$String$fromInt(
-											$elm$core$Basics$round(model.m * 100))),
+											$elm$core$Basics$round(model.l * 100))),
 										$elm$html$Html$Events$onInput(
 										function (s) {
 											return $author$project$Main$GridOpacityChanged(
@@ -7369,14 +7531,14 @@ var $author$project$Main$viewStatusBar = function (model) {
 						$elm$html$Html$text(
 						A2($author$project$I18n$translate, model.a, 21) + ' | Grid: '),
 						$elm$html$Html$text(
-						$elm$core$String$fromInt(model.g)),
+						$elm$core$String$fromInt(model.f)),
 						$elm$html$Html$text('×'),
 						$elm$html$Html$text(
-						$elm$core$String$fromInt(model.g)),
+						$elm$core$String$fromInt(model.f)),
 						$elm$html$Html$text(' | Opacity: '),
 						$elm$html$Html$text(
 						$elm$core$String$fromInt(
-							$elm$core$Basics$round(model.m * 100))),
+							$elm$core$Basics$round(model.l * 100))),
 						$elm$html$Html$text('%')
 					])),
 				A2(
@@ -7387,7 +7549,7 @@ var $author$project$Main$viewStatusBar = function (model) {
 					]),
 				_List_fromArray(
 					[
-						$elm$html$Html$text('Made in  🇦🇷  with  ❤️ by me  ᕦ(ò_óˇ)ᕤ')
+						$elm$html$Html$text('Made in  🇦🇷  with  ❤️ (¯▿¯)')
 					])),
 				A2(
 				$elm$html$Html$span,
@@ -7400,7 +7562,7 @@ var $author$project$Main$viewStatusBar = function (model) {
 						$elm$html$Html$text(
 						A2($author$project$I18n$translate, model.a, 12)),
 						$elm$html$Html$text(
-						$elm$core$String$fromInt(model.E)),
+						$elm$core$String$fromInt(model.F)),
 						$elm$html$Html$text(' 🐸')
 					]))
 			]));
@@ -7659,12 +7821,12 @@ var $author$project$Main$view = function (model) {
 };
 var $author$project$Main$main = $elm$browser$Browser$element(
 	{
-		aL: function (_v0) {
+		aM: function (_v0) {
 			return _Utils_Tuple2($author$project$Main$init, $elm$core$Platform$Cmd$none);
 		},
-		aV: $author$project$Main$subscriptions,
-		aX: $author$project$Main$update,
-		aY: $author$project$Main$view
+		aW: $author$project$Main$subscriptions,
+		aY: $author$project$Main$update,
+		aZ: $author$project$Main$view
 	});
 _Platform_export({'Main':{'init':$author$project$Main$main(
 	$elm$json$Json$Decode$succeed(0))(0)}});}(this));

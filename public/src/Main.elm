@@ -34,6 +34,7 @@ type alias Model =
     , gridOpacity : Float
     , language : Language
     , downloadSuccess : Bool
+    , showDiagonals : Bool
     }
 
 
@@ -55,6 +56,7 @@ type Msg
     | GridOpacityChanged Float
     | LanguageChanged Language
     | ResetDownloadSuccess
+    | ToggleDiagonals Bool
 
 
 
@@ -64,7 +66,7 @@ type Msg
 port debug : String -> Cmd msg
 
 
-port requestPng : { url : String, width : Int, height : Int, grid : Int, color : String, thickness : Int, opacity : Float } -> Cmd msg
+port requestPng : { url : String, width : Int, height : Int, grid : Int, color : String, thickness : Int, opacity : Float, showDiagonals : Bool } -> Cmd msg
 
 
 port receivePng : (String -> msg) -> Sub msg
@@ -92,6 +94,7 @@ init =
     , gridOpacity = 1
     , language = Spanish
     , downloadSuccess = False
+    , showDiagonals = False
     }
 
 
@@ -186,6 +189,9 @@ update msg model =
         ResetDownloadSuccess ->
             ( { model | downloadSuccess = False }, Cmd.none )
 
+        ToggleDiagonals value ->
+            ( { model | showDiagonals = value }, Cmd.none )
+
         DownloadClicked ->
             case ( model.uploadedImage, model.imageWidth, model.imageHeight ) of
                 ( Just url, Just w, Just h ) ->
@@ -194,7 +200,7 @@ update msg model =
                             debug ("Elm: DownloadClicked with valid image data. Width: " ++ String.fromInt w ++ ", Height: " ++ String.fromInt h)
 
                         requestParams =
-                            { url = url, width = w, height = h, grid = model.gridSize, color = model.gridColor, thickness = model.gridThickness, opacity = model.gridOpacity }
+                            { url = url, width = w, height = h, grid = model.gridSize, color = model.gridColor, thickness = model.gridThickness, opacity = model.gridOpacity, showDiagonals = model.showDiagonals }
                     in
                     ( model, Cmd.batch [ debug "Elm: Sending requestPng command", requestPng requestParams ] )
 
@@ -370,6 +376,27 @@ viewGridParametersPanel model =
                     , class "hex-input"
                     , Html.Attributes.attribute "aria-label" (translate model.language GridColor ++ " hex value")
                     , placeholder "#RRGGBB"
+                    ]
+                    []
+                ]
+            ]
+
+        -- Diagonal Grid Toggle
+        , div [ class "form-group" ]
+            [ div [ class "form-row" ]
+                [ label
+                    [ class "form-label"
+                    , for "diagonal-checkbox"
+                    ]
+                    [ text (translate model.language ShowDiagonals) ]
+                ]
+            , div [ class "checkbox-container" ]
+                [ input
+                    [ type_ "checkbox"
+                    , id "diagonal-checkbox"
+                    , Html.Attributes.checked model.showDiagonals
+                    , Html.Events.onCheck ToggleDiagonals
+                    , Html.Attributes.attribute "aria-label" (translate model.language ShowDiagonals)
                     ]
                     []
                 ]
@@ -872,6 +899,54 @@ viewGriddedImage model =
                                     ]
                                     []
                             )
+                            
+                diagonalLines1 =
+                    if model.showDiagonals then
+                        List.range 0 (model.gridSize * 2)
+                            |> List.map
+                                (\i ->
+                                    let
+                                        x = toFloat i * cellWidth
+                                        y = toFloat i * cellHeight
+                                    in
+                                    Svg.line
+                                        [ SvgAttr.x1 (String.fromFloat x)
+                                        , SvgAttr.y1 "0"
+                                        , SvgAttr.x2 "0"
+                                        , SvgAttr.y2 (String.fromFloat y)
+                                        , SvgAttr.stroke model.gridColor
+                                        , SvgAttr.strokeWidth (String.fromInt model.gridThickness)
+                                        , SvgAttr.opacity (String.fromFloat model.gridOpacity)
+                                        ]
+                                        []
+                                )
+                    else
+                        []
+                        
+                diagonalLines2 =
+                    if model.showDiagonals then
+                        List.range 0 (model.gridSize * 2)
+                            |> List.map
+                                (\i ->
+                                    let
+                                        x = toFloat (model.gridSize - i) * cellWidth
+                                        y = toFloat i * cellHeight
+                                    in
+                                    Svg.line
+                                        [ SvgAttr.x1 (String.fromFloat x)
+                                        , SvgAttr.y1 "0"
+                                        , SvgAttr.x2 (String.fromInt width)
+                                        , SvgAttr.y2 (String.fromFloat y)
+                                        , SvgAttr.stroke model.gridColor
+                                        , SvgAttr.strokeWidth (String.fromInt model.gridThickness)
+                                        , SvgAttr.opacity (String.fromFloat model.gridOpacity)
+                                        ]
+                                        []
+                                )
+                    else
+                        []
+                        
+                allLines = verticalLines ++ horizontalLines ++ diagonalLines1 ++ diagonalLines2
             in
             div [ class "gridded-image-container" ]
                 [ img
@@ -885,7 +960,7 @@ viewGriddedImage model =
                     , SvgAttr.viewBox ("0 0 " ++ String.fromInt width ++ " " ++ String.fromInt height)
                     , SvgAttr.class "grid-overlay"
                     ]
-                    (verticalLines ++ horizontalLines)
+                    allLines
                 ]
 
         _ ->
