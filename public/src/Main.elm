@@ -8,7 +8,7 @@ import Bytes.Encode as BE
 import File exposing (File)
 import File.Download
 import File.Select as Select
-import Html exposing (Html, button, div, h1, h2, h3, img, input, label, option, p, select, span, text)
+import Html exposing (Html, button, canvas, div, h1, h2, h3, img, input, label, option, p, select, span, text)
 import Html.Attributes exposing (class, disabled, for, id, max, min, placeholder, selected, src, step, style, type_, value)
 import Html.Events exposing (on, onClick, onInput)
 import I18n exposing (Language(..), TranslationKey(..), translate)
@@ -35,6 +35,7 @@ type alias Model =
     , language : Language
     , downloadSuccess : Bool
     , showDiagonals : Bool
+    , drawerExpanded : Bool
     }
 
 
@@ -57,6 +58,7 @@ type Msg
     | LanguageChanged Language
     | ResetDownloadSuccess
     | ToggleDiagonals Bool
+    | ToggleDrawer
 
 
 
@@ -82,20 +84,23 @@ port setHtmlLang : String -> Cmd msg
 -- INITIAL STATE
 
 
-init : Model
-init =
-    { uploadedImage = Nothing
-    , gridSize = 10
-    , niceCounter = 0
-    , imageWidth = Nothing
-    , imageHeight = Nothing
-    , gridColor = "#80ED99"
-    , gridThickness = 1
-    , gridOpacity = 1
-    , language = Spanish
-    , downloadSuccess = False
-    , showDiagonals = False
-    }
+init : () -> ( Model, Cmd Msg )
+init _ =
+    ( { uploadedImage = Nothing
+      , gridSize = 10
+      , niceCounter = 0
+      , imageWidth = Nothing
+      , imageHeight = Nothing
+      , gridColor = "#80ED99"
+      , gridThickness = 1
+      , gridOpacity = 1
+      , language = Spanish
+      , downloadSuccess = False
+      , showDiagonals = False
+      , drawerExpanded = False
+      }
+    , Cmd.none
+    )
 
 
 
@@ -192,6 +197,9 @@ update msg model =
         ToggleDiagonals value ->
             ( { model | showDiagonals = value }, Cmd.none )
 
+        ToggleDrawer ->
+            ( { model | drawerExpanded = not model.drawerExpanded }, Cmd.none )
+
         DownloadClicked ->
             case ( model.uploadedImage, model.imageWidth, model.imageHeight ) of
                 ( Just url, Just w, Just h ) ->
@@ -245,12 +253,19 @@ subscriptions _ =
 view : Model -> Html Msg
 view model =
     div [ class "app-container" ]
-        [ viewTitleBar model
+        [ viewHeader model.language
         , div [ class "main-content" ]
-            [ viewSidebar model
-            , viewCanvasArea model
+            [ viewLeftColumn model
+            , viewRightColumn model
             ]
         , viewStatusBar model
+        , input
+            [ type_ "file"
+            , id "file-input"
+            , class "hidden-file-input"
+            , Html.Attributes.attribute "accept" "image/*"
+            ]
+            []
         ]
 
 
@@ -258,116 +273,216 @@ view model =
 -- VIEW COMPONENTS
 
 
-viewTitleBar : Model -> Html Msg
-viewTitleBar model =
-    div [ class "title-bar" ]
-        [ span [ class "title-text" ] [ text " gridit gridit" ]
-        , viewLanguageSelector model.language
+viewHeader : Language -> Html Msg
+viewHeader language =
+    div [ class "app-header" ]
+        [ div [ class "app-logo-wrapper" ]
+            [ span [ class "app-logo" ] [ text "🐸" ]
+            , h1 [ class "app-title" ] [ text (translate language AppTitle) ]
+            ]
+        , p [ class "app-subtitle" ] [ text (translate language AppSubtitle) ]
+        , viewLanguageSelector language
         ]
 
 
 viewSidebar : Model -> Html Msg
 viewSidebar model =
-    div [ class "sidebar" ]
-        [ viewAppHeader model
+    div
+        [ class
+            (if model.drawerExpanded then
+                "sidebar expanded"
+
+             else
+                "sidebar"
+            )
+        ]
+        [ div [ class "drawer-handle", onClick ToggleDrawer ]
+            [ div [ class "drawer-handle-icon" ]
+                [ text "⌃" ]
+            ]
         , div [ class "sidebar-content" ]
-            [ viewFileOperationsPanel model
-            , viewGridParametersPanel model
-            , viewActionsPanel model
+            [ viewGridControls model
             ]
         ]
 
 
-viewAppHeader : Model -> Html Msg
-viewAppHeader model =
-    div [ class "app-header" ]
-        [ div []
-            [ h1 [ class "app-title" ] [ text (translate model.language AppTitle) ]
-            , p [ class "app-subtitle" ] [ text (translate model.language AppSubtitle) ]
+viewMobileActions : Model -> Html Msg
+viewMobileActions model =
+    div [ class "mobile-actions" ]
+        [ button
+            [ class "btn btn-primary"
+            , onClick DownloadClicked
+            , disabled (model.uploadedImage == Nothing)
             ]
-        ]
-
-
-viewFileOperationsPanel : Model -> Html Msg
-viewFileOperationsPanel model =
-    div [ class "panel", Html.Attributes.attribute "role" "group", Html.Attributes.attribute "aria-labelledby" "file-operations-title" ]
-        [ span [ class "panel-title", id "file-operations-title" ] [ text (translate model.language FileOperations) ]
+            [ span [ class "icon" ] [ text "↓" ]
+            , text (translate model.language Download)
+            ]
         , button
-            [ class "btn"
+            [ class "btn btn-accent"
+            ]
+            [ span [ class "icon" ] [ text "↗" ]
+            , text (translate model.language Share)
+            ]
+        ]
+
+
+
+-- Left Column with Upload Area and Grid Controls
+
+
+viewLeftColumn : Model -> Html Msg
+viewLeftColumn model =
+    div [ class "left-column" ]
+        [ viewUploadArea model
+        , viewGridControls model
+        ]
+
+
+
+-- Right Column with Grid Preview
+
+
+viewRightColumn : Model -> Html Msg
+viewRightColumn model =
+    div [ class "right-column" ]
+        [ viewGridPreviewArea model
+        ]
+
+
+
+-- Modern Grid Preview Area that matches the mockup
+
+
+viewGridPreviewArea : Model -> Html Msg
+viewGridPreviewArea model =
+    div [ class "preview-container" ]
+        [ case model.uploadedImage of
+            Just url ->
+                viewGriddedImage model
+
+            Nothing ->
+                div [ class "empty-state" ]
+                    [ span [ class "empty-icon" ] [ text "🖼" ]
+                    , p [ class "empty-text" ] [ text (translate model.language NoImageYet) ]
+                    ]
+        ]
+
+
+
+-- Modern Upload Area that matches the mockup
+
+
+viewUploadArea : Model -> Html Msg
+viewUploadArea model =
+    div [ class "panel" ]
+        [ div
+            [ class "upload-area"
             , onClick PickImage
-            , Html.Attributes.attribute "aria-label" (translate model.language UploadImage)
+            , Html.Attributes.attribute "aria-label" (translate model.language UploadPrompt)
             , Html.Attributes.attribute "role" "button"
             , id "upload-image-button"
             ]
-            [ text (translate model.language UploadImage)
+            [ span [ class "upload-icon" ]
+                [ if model.uploadedImage == Nothing then
+                    text "⬆️"
+
+                  else
+                    text "🖼️"
+                ]
+            , h3 [ class "upload-title" ]
+                [ if model.uploadedImage == Nothing then
+                    text (translate model.language UploadPrompt)
+
+                  else
+                    text (translate model.language UploadNew)
+                ]
+            , p [ class "upload-description" ]
+                [ text (translate model.language UploadDescription)
+                ]
+            , button
+                [ class "button button-outline"
+                ]
+                [ text (translate model.language ChooseFile)
+                ]
             ]
         ]
 
 
-viewGridParametersPanel : Model -> Html Msg
-viewGridParametersPanel model =
-    div [ class "panel" ]
-        [ span [ class "panel-title" ] [ text (translate model.language GridParameters) ]
 
-        -- Grid Size
-        , div [ class "form-group" ]
-            [ div [ class "form-row" ]
+-- Modern Grid Controls Panel that matches the mockup
+
+
+viewGridControls : Model -> Html Msg
+viewGridControls model =
+    div [ class "panel" ]
+        [ div [ class "settings-panel-header" ]
+            [ span [] [ text "🐸" ]
+            , span [ class "grid-icon" ] [ text "⊞" ]
+            , text (translate model.language GridSettings)
+            ]
+
+        -- Grid Controls in 2-column grid layout
+        , div [ class "settings-grid" ]
+            -- Grid Size
+            [ div [ class "form-group" ]
                 [ label
                     [ class "form-label"
                     , for "grid-size-slider"
                     ]
-                    [ text (translate model.language GridSize) ]
-                ]
-            , div [ class "input-with-text" ]
-                [ input
-                    [ type_ "range"
-                    , id "grid-size-slider"
-                    , Html.Attributes.min "2"
-                    , Html.Attributes.max "50"
-                    , step "1"
-                    , value (String.fromInt model.gridSize)
-                    , onInput (\s -> GridSizeChanged (Maybe.withDefault 10 (String.toInt s)))
-                    , class "slider"
-                    , Html.Attributes.attribute "aria-valuemin" "2"
-                    , Html.Attributes.attribute "aria-valuemax" "50"
-                    , Html.Attributes.attribute "aria-valuenow" (String.fromInt model.gridSize)
-                    , Html.Attributes.attribute "aria-labelledby" "grid-size-label"
+                    [ text (translate model.language GridSize ++ ": " ++ String.fromInt model.gridSize) ]
+                , div [ class "input-with-text" ]
+                    [ input
+                        [ type_ "range"
+                        , id "grid-size-slider"
+                        , Html.Attributes.min "2"
+                        , Html.Attributes.max "50"
+                        , step "1"
+                        , value (String.fromInt model.gridSize)
+                        , onInput (\s -> GridSizeChanged (Maybe.withDefault 10 (String.toInt s)))
+                        , class "slider"
+                        , Html.Attributes.attribute "aria-valuemin" "2"
+                        , Html.Attributes.attribute "aria-valuemax" "50"
+                        , Html.Attributes.attribute "aria-valuenow" (String.fromInt model.gridSize)
+                        , Html.Attributes.attribute "aria-labelledby" "grid-size-label"
+                        ]
+                        []
+                    , input
+                        [ type_ "number"
+                        , id "grid-size-number"
+                        , Html.Attributes.min "2"
+                        , Html.Attributes.max "50"
+                        , value (String.fromInt model.gridSize)
+                        , onInput (\s -> GridSizeChanged (Maybe.withDefault 10 (String.toInt s)))
+                        , class "numeric-input"
+                        , Html.Attributes.attribute "aria-label" (translate model.language GridSize)
+                        ]
+                        []
+                    , span [ class "unit" ] [ text "▭" ]
                     ]
-                    []
-                , input
-                    [ type_ "number"
-                    , id "grid-size-number"
-                    , Html.Attributes.min "2"
-                    , Html.Attributes.max "50"
-                    , value (String.fromInt model.gridSize)
-                    , onInput (\s -> GridSizeChanged (Maybe.withDefault 10 (String.toInt s)))
-                    , class "numeric-input"
-                    , Html.Attributes.attribute "aria-label" (translate model.language GridSize)
-                    ]
-                    []
-                , span [ class "unit" ] [ text "▭" ]
                 ]
-            ]
 
-        -- Grid Color
-        , div [ class "form-group" ]
-            [ div [ class "form-row" ]
+            -- Grid Color
+            , div [ class "form-group" ]
                 [ label
                     [ class "form-label"
                     , for "grid-color-picker"
                     ]
                     [ text (translate model.language GridColor) ]
-                ]
-            , div [ class "input-with-text" ]
-                [ input
-                    [ type_ "color"
-                    , id "grid-color-picker"
+                , select
+                    [ id "grid-color-picker"
                     , value model.gridColor
                     , onInput GridColorChanged
-                    , class "color-picker"
-                    , Html.Attributes.attribute "aria-label" (translate model.language GridColor)
+                    , class "select-input"
                     ]
-                    []
+                    [ option [ value "#000000" ] [ text "Black" ]
+                    , option [ value "#ffffff" ] [ text "White" ]
+                    , option [ value "#ff0000" ] [ text "Red" ]
+                    , option [ value "#00ff00" ] [ text "Green" ]
+                    , option [ value "#0000ff" ] [ text "Blue" ]
+                    , option [ value "#ffff00" ] [ text "Yellow" ]
+                    , option [ value "#ff00ff" ] [ text "Magenta" ]
+                    , option [ value "#00ffff" ] [ text "Cyan" ]
+                    ]
                 , input
                     [ type_ "text"
                     , id "grid-color-hex"
@@ -382,35 +497,49 @@ viewGridParametersPanel model =
             ]
 
         -- Diagonal Grid Toggle
-        , div [ class "form-group" ]
-            [ div [ class "form-row" ]
-                [ label
-                    [ class "form-label"
-                    , for "diagonal-checkbox"
-                    ]
-                    [ text (translate model.language ShowDiagonals) ]
-                ]
-            , div [ class "checkbox-container" ]
+        , div [ class "form-group toggle-group" ]
+            [ label
+                [ class "form-label", for "diagonal-toggle" ]
+                [ text (translate model.language DiagonalGrid) ]
+            , div [ class "toggle-switch-wrapper" ]
                 [ input
                     [ type_ "checkbox"
-                    , id "diagonal-checkbox"
-                    , Html.Attributes.checked model.showDiagonals
+                    , id "diagonal-toggle"
                     , Html.Events.onCheck ToggleDiagonals
-                    , Html.Attributes.attribute "aria-label" (translate model.language ShowDiagonals)
+                    , Html.Attributes.checked model.showDiagonals
+                    , class "toggle-switch"
                     ]
                     []
+                , span [ class "toggle-switch-label" ] []
                 ]
             ]
 
-        -- Grid Thickness
-        , div [ class "form-group" ]
-            [ div [ class "form-row" ]
-                [ label
-                    [ class "form-label"
-                    , for "grid-thickness-slider"
-                    ]
-                    [ text (translate model.language GridThickness) ]
+        -- Action Buttons
+        , div [ class "action-buttons" ]
+            [ button
+                [ class "button button-primary"
+                , onClick DownloadClicked
+                , disabled (model.uploadedImage == Nothing)
                 ]
+                [ span [ class "icon" ] [ text "↓" ]
+                , text (translate model.language Download)
+                ]
+            , button
+                [ class "button button-accent"
+                , disabled (model.uploadedImage == Nothing)
+                ]
+                [ span [ class "icon" ] [ text "↗" ]
+                , text (translate model.language Share)
+                ]
+            ]
+
+        -- Line Width
+        , div [ class "form-group" ]
+            [ label
+                [ class "form-label"
+                , for "grid-thickness-slider"
+                ]
+                [ text (translate model.language GridThickness ++ ": " ++ String.fromInt model.gridThickness ++ "px") ]
             , div [ class "input-with-text" ]
                 [ input
                     [ type_ "range"
@@ -444,13 +573,11 @@ viewGridParametersPanel model =
 
         -- Grid Opacity
         , div [ class "form-group" ]
-            [ div [ class "form-row" ]
-                [ label
-                    [ class "form-label"
-                    , for "grid-opacity-slider"
-                    ]
-                    [ text (translate model.language GridOpacity) ]
+            [ label
+                [ class "form-label"
+                , for "grid-opacity-slider"
                 ]
+                [ text (translate model.language GridOpacity ++ ": " ++ (String.fromFloat (model.gridOpacity * 100) |> String.left 4) ++ "%") ]
             , div [ class "input-with-text" ]
                 [ input
                     [ type_ "range"
@@ -553,48 +680,197 @@ viewActionsPanel model =
 viewCanvasArea : Model -> Html Msg
 viewCanvasArea model =
     div [ class "canvas-area" ]
-        [ div [ class "preview-grid" ]
-            [ viewSourceImageWindow model
-            , viewGridPreviewWindow model
-            ]
+        [ case model.uploadedImage of
+            Just url ->
+                viewGridPreviewLayout model url
+
+            Nothing ->
+                viewUploadPrompt model
         ]
 
 
-viewSourceImageWindow : Model -> Html Msg
-viewSourceImageWindow model =
-    div [ class "preview-window original-image-preview" ]
-        [ div [ class "window-titlebar" ]
-            [ span [ class "window-title" ] [ text (translate model.language OriginalImage) ]
+viewGridPreviewLayout : Model -> String -> Html Msg
+viewGridPreviewLayout model url =
+    div [ class "grid-preview-area" ]
+        [ div [ class "preview-header" ]
+            [ h2 [ class "preview-title" ]
+                [ span [ class "preview-icon" ] [ text "🖼️" ]
+                , text (translate model.language GriddedImage)
+                ]
             ]
-        , div [ class "window-content" ]
-            [ case model.uploadedImage of
-                Just url ->
-                    img
-                        [ src url
-                        , class "preview-image"
-                        , on "load" (decodeImageSize ImageSizeLoaded)
+        , div [ class "preview-content" ]
+            [ case ( model.imageWidth, model.imageHeight ) of
+                ( Just width, Just height ) ->
+                    let
+                        cellWidth =
+                            toFloat width / toFloat model.gridSize
+
+                        cellHeight =
+                            toFloat height / toFloat model.gridSize
+
+                        verticalLines =
+                            List.range 0 model.gridSize
+                                |> List.map
+                                    (\i ->
+                                        let
+                                            x =
+                                                toFloat i * cellWidth
+                                        in
+                                        Svg.line
+                                            [ SvgAttr.x1 (String.fromFloat x)
+                                            , SvgAttr.y1 "0"
+                                            , SvgAttr.x2 (String.fromFloat x)
+                                            , SvgAttr.y2 (String.fromInt height)
+                                            , SvgAttr.stroke model.gridColor
+                                            , SvgAttr.strokeWidth (String.fromInt model.gridThickness)
+                                            , SvgAttr.opacity (String.fromFloat model.gridOpacity)
+                                            ]
+                                            []
+                                    )
+
+                        horizontalLines =
+                            List.range 0 model.gridSize
+                                |> List.map
+                                    (\i ->
+                                        let
+                                            y =
+                                                toFloat i * cellHeight
+                                        in
+                                        Svg.line
+                                            [ SvgAttr.x1 "0"
+                                            , SvgAttr.y1 (String.fromFloat y)
+                                            , SvgAttr.x2 (String.fromInt width)
+                                            , SvgAttr.y2 (String.fromFloat y)
+                                            , SvgAttr.stroke model.gridColor
+                                            , SvgAttr.strokeWidth (String.fromInt model.gridThickness)
+                                            , SvgAttr.opacity (String.fromFloat model.gridOpacity)
+                                            ]
+                                            []
+                                    )
+
+                        diagonalLines =
+                            if model.showDiagonals then
+                                let
+                                    diagonalLines1 =
+                                        List.range 0 (model.gridSize * 2)
+                                            |> List.map
+                                                (\i ->
+                                                    let
+                                                        x =
+                                                            toFloat i * cellWidth
+
+                                                        y =
+                                                            toFloat i * cellHeight
+                                                    in
+                                                    Svg.line
+                                                        [ SvgAttr.x1 (String.fromFloat x)
+                                                        , SvgAttr.y1 "0"
+                                                        , SvgAttr.x2 "0"
+                                                        , SvgAttr.y2 (String.fromFloat y)
+                                                        , SvgAttr.stroke model.gridColor
+                                                        , SvgAttr.strokeWidth (String.fromInt model.gridThickness)
+                                                        , SvgAttr.opacity (String.fromFloat model.gridOpacity)
+                                                        ]
+                                                        []
+                                                )
+
+                                    diagonalLines2 =
+                                        List.range 0 (model.gridSize * 2)
+                                            |> List.map
+                                                (\i ->
+                                                    let
+                                                        x =
+                                                            toFloat (model.gridSize - i) * cellWidth
+
+                                                        y =
+                                                            toFloat i * cellHeight
+                                                    in
+                                                    Svg.line
+                                                        [ SvgAttr.x1 (String.fromFloat x)
+                                                        , SvgAttr.y1 "0"
+                                                        , SvgAttr.x2 (String.fromInt width)
+                                                        , SvgAttr.y2 (String.fromFloat y)
+                                                        , SvgAttr.stroke model.gridColor
+                                                        , SvgAttr.strokeWidth (String.fromInt model.gridThickness)
+                                                        , SvgAttr.opacity (String.fromFloat model.gridOpacity)
+                                                        ]
+                                                        []
+                                                )
+                                in
+                                diagonalLines1 ++ diagonalLines2
+
+                            else
+                                []
+
+                        allLines =
+                            verticalLines ++ horizontalLines ++ diagonalLines
+                    in
+                    div [ class "gridded-image-container" ]
+                        [ img
+                            [ src url
+                            , class "gridded-base-image"
+                            , on "load" (decodeImageSize ImageSizeLoaded)
+                            ]
+                            []
+                        , Svg.svg
+                            [ SvgAttr.width (String.fromInt width)
+                            , SvgAttr.height (String.fromInt height)
+                            , SvgAttr.viewBox ("0 0 " ++ String.fromInt width ++ " " ++ String.fromInt height)
+                            , SvgAttr.class "grid-overlay"
+                            ]
+                            allLines
                         ]
-                        []
 
-                Nothing ->
-                    viewPlaceholder "↑" (translate model.language NoImageYet) (translate model.language UploadPlaceholder)
+                _ ->
+                    div [ class "gridded-image-container" ]
+                        [ img
+                            [ src url
+                            , class "preview-image"
+                            , on "load" (decodeImageSize ImageSizeLoaded)
+                            ]
+                            []
+                        ]
+            ]
+        , viewDesktopActions model
+        ]
+
+
+viewUploadPrompt : Model -> Html Msg
+viewUploadPrompt model =
+    div [ class "upload-prompt" ]
+        [ div [ class "upload-container" ]
+            [ div [ class "upload-icon" ] [ text "📁" ]
+            , h2 [ class "upload-title" ] [ text (translate model.language UploadPrompt) ]
+            , p [ class "upload-subtitle" ] [ text (translate model.language UploadDescription) ]
+            , button
+                [ class "btn btn-primary upload-btn"
+                , onClick PickImage
+                , Html.Attributes.attribute "aria-label" (translate model.language UploadImage)
+                ]
+                [ span [ class "upload-icon" ] [ text "⬆️" ]
+                , text (translate model.language UploadImage)
+                ]
             ]
         ]
 
 
-viewGridPreviewWindow : Model -> Html Msg
-viewGridPreviewWindow model =
-    div [ class "preview-window gridded-image-preview" ]
-        [ div [ class "window-titlebar" ]
-            [ span [ class "window-title" ] [ text (translate model.language GriddedImage) ]
+viewDesktopActions : Model -> Html Msg
+viewDesktopActions model =
+    div [ class "desktop-actions" ]
+        [ button
+            [ class "btn btn-primary"
+            , onClick DownloadClicked
+            , disabled (model.uploadedImage == Nothing)
             ]
-        , div [ class "window-content" ]
-            [ case model.uploadedImage of
-                Just _ ->
-                    viewGriddedImage model
-
-                Nothing ->
-                    viewPlaceholder "#" (translate model.language GriddedImage) (translate model.language GridPreviewPlaceholder)
+            [ span [ class "icon" ] [ text "↓" ]
+            , text (translate model.language Download)
+            ]
+        , button
+            [ class "btn btn-secondary"
+            , onClick PickImage
+            ]
+            [ span [ class "icon" ] [ text "⬆" ]
+            , text (translate model.language UploadNew)
             ]
         ]
 
@@ -899,15 +1175,18 @@ viewGriddedImage model =
                                     ]
                                     []
                             )
-                            
+
                 diagonalLines1 =
                     if model.showDiagonals then
                         List.range 0 (model.gridSize * 2)
                             |> List.map
                                 (\i ->
                                     let
-                                        x = toFloat i * cellWidth
-                                        y = toFloat i * cellHeight
+                                        x =
+                                            toFloat i * cellWidth
+
+                                        y =
+                                            toFloat i * cellHeight
                                     in
                                     Svg.line
                                         [ SvgAttr.x1 (String.fromFloat x)
@@ -920,17 +1199,21 @@ viewGriddedImage model =
                                         ]
                                         []
                                 )
+
                     else
                         []
-                        
+
                 diagonalLines2 =
                     if model.showDiagonals then
                         List.range 0 (model.gridSize * 2)
                             |> List.map
                                 (\i ->
                                     let
-                                        x = toFloat (model.gridSize - i) * cellWidth
-                                        y = toFloat i * cellHeight
+                                        x =
+                                            toFloat (model.gridSize - i) * cellWidth
+
+                                        y =
+                                            toFloat i * cellHeight
                                     in
                                     Svg.line
                                         [ SvgAttr.x1 (String.fromFloat x)
@@ -943,10 +1226,12 @@ viewGriddedImage model =
                                         ]
                                         []
                                 )
+
                     else
                         []
-                        
-                allLines = verticalLines ++ horizontalLines ++ diagonalLines1 ++ diagonalLines2
+
+                allLines =
+                    verticalLines ++ horizontalLines ++ diagonalLines1 ++ diagonalLines2
             in
             div [ class "gridded-image-container" ]
                 [ img
@@ -1007,7 +1292,7 @@ decodeImageSize tagger =
 
 main =
     Browser.element
-        { init = \() -> ( init, Cmd.none )
+        { init = init
         , view = view
         , update = update
         , subscriptions = subscriptions
