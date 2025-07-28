@@ -49,6 +49,14 @@ type TranslationKey
     | UploadPlaceholder
     | StatusReady
     | ShowDiagonals
+    | Download
+    | Share
+    | UploadNew
+    | UploadPrompt
+    | UploadDescription
+    | ChooseFile
+    | GridSettings
+    | DiagonalGrid
 
 
 
@@ -178,6 +186,30 @@ englishTranslations key =
         ShowDiagonals ->
             "Add diagonals"
 
+        Download ->
+            "Download"
+
+        Share ->
+            "Share"
+
+        UploadNew ->
+            "Upload New"
+
+        UploadPrompt ->
+            "Upload Image"
+
+        UploadDescription ->
+            "Choose a file or drag and drop here"
+
+        ChooseFile ->
+            "Choose File"
+
+        GridSettings ->
+            "Grid Settings"
+
+        DiagonalGrid ->
+            "Diagonal Grid"
+
 
 
 -- SPANISH TRANSLATIONS
@@ -254,6 +286,30 @@ spanishTranslations key =
 
         ShowDiagonals ->
             "Agregar diagonales"
+
+        Download ->
+            "Descargar"
+
+        Share ->
+            "Compartir"
+
+        UploadNew ->
+            "Subir Nuevo"
+
+        UploadPrompt ->
+            "Subir una Imagen"
+
+        UploadDescription ->
+            "Elige un archivo o arrástralo aquí"
+
+        ChooseFile ->
+            "Elegir Archivo"
+
+        GridSettings ->
+            "Ajustes de Cuadrícula"
+
+        DiagonalGrid ->
+            "Cuadrícula Diagonal"
 
 
 
@@ -332,6 +388,30 @@ latinTranslations key =
         ShowDiagonals ->
             "Adde diagonalia"
 
+        Download ->
+            "Discaricare"
+
+        Share ->
+            "Communicare"
+
+        UploadNew ->
+            "Nova Submittere"
+
+        UploadPrompt ->
+            "Imago Submittere"
+
+        UploadDescription ->
+            "Elige fasciculum aut trahe et demitte hic"
+
+        ChooseFile ->
+            "Eligere Fasciculum"
+
+        GridSettings ->
+            "Configuratio Reticulationis"
+
+        DiagonalGrid ->
+            "Reticulatio Diagonalis"
+
 
 
 -- ITALIAN TRANSLATIONS
@@ -408,6 +488,30 @@ italianTranslations key =
 
         ShowDiagonals ->
             "Aggiungi diagonali"
+
+        Download ->
+            "Scarica"
+
+        Share ->
+            "Condividi"
+
+        UploadNew ->
+            "Carica Nuovo"
+
+        UploadPrompt ->
+            "Carica un'Immagine"
+
+        UploadDescription ->
+            "Scegli un file o trascina e rilascia qui"
+
+        ChooseFile ->
+            "Scegli File"
+
+        GridSettings ->
+            "Impostazioni Griglia"
+
+        DiagonalGrid ->
+            "Griglia Diagonale"
 
 
 
@@ -486,6 +590,30 @@ portugueseTranslations key =
         ShowDiagonals ->
             "Adicionar diagonais"
 
+        Download ->
+            "Baixar"
+
+        Share ->
+            "Compartilhar"
+
+        UploadNew ->
+            "Carregar Novo"
+
+        UploadPrompt ->
+            "Carregar uma Imagem"
+
+        UploadDescription ->
+            "Escolha um arquivo ou arraste e solte aqui"
+
+        ChooseFile ->
+            "Escolher Arquivo"
+
+        GridSettings ->
+            "Configurações de Grade"
+
+        DiagonalGrid ->
+            "Grade Diagonal"
+
 
 
 -- FRENCH TRANSLATIONS
@@ -562,6 +690,30 @@ frenchTranslations key =
 
         ShowDiagonals ->
             "Ajouter des diagonales"
+
+        Download ->
+            "Télécharger"
+
+        Share ->
+            "Partager"
+
+        UploadNew ->
+            "Télécharger Nouveau"
+
+        UploadPrompt ->
+            "Télécharger une Image"
+
+        UploadDescription ->
+            "Choisissez un fichier ou glissez-déposez ici"
+
+        ChooseFile ->
+            "Choisir Fichier"
+
+        GridSettings ->
+            "Paramètres de Grille"
+
+        DiagonalGrid ->
+            "Grille Diagonale"
 
 
 
@@ -640,6 +792,30 @@ asturianoTranslations key =
         ShowDiagonals ->
             "Añader diagonales"
 
+        Download ->
+            "Descargar"
+
+        Share ->
+            "Compartir"
+
+        UploadNew ->
+            "Xubir Nuevu"
+
+        UploadPrompt ->
+            "Xubir una Imaxe"
+
+        UploadDescription ->
+            "Escueyi un ficheru o arrastra y suelta equí"
+
+        ChooseFile ->
+            "Escueyi Ficheru"
+
+        GridSettings ->
+            "Axustes de Cuadrícula"
+
+        DiagonalGrid ->
+            "Cuadrícula Diagonal"
+
 
 
 -- GAELIC TRANSLATIONS
@@ -716,6 +892,30 @@ gaelicTranslations key =
 
         ShowDiagonals ->
             "Cuir trasnanan ris"
+
+        Download ->
+            "Luchdaich sìos"
+
+        Share ->
+            "Co-roinn"
+
+        UploadNew ->
+            "Luchdaich Ùr"
+
+        UploadPrompt ->
+            "Luchdaich Dealbh"
+
+        UploadDescription ->
+            "Tagh faidhle no tarraing is leig às an seo"
+
+        ChooseFile ->
+            "Tagh Faidhle"
+
+        GridSettings ->
+            "Suidheachaidhean Griod"
+
+        DiagonalGrid ->
+            "Griod Trasnach"
 
 
 
@@ -794,6 +994,30 @@ euskaraTranslations key =
         ShowDiagonals ->
             "Diagonalak gehitu"
 
+        Download ->
+            "Deskargatu"
+
+        Share ->
+            "Partekatu"
+
+        UploadNew ->
+            "Igo Berria"
+
+        UploadPrompt ->
+            "Igo Irudia"
+
+        UploadDescription ->
+            "Aukeratu fitxategia edo arrastatu eta jaregin hemen"
+
+        ChooseFile ->
+            "Fitxategia Aukeratu"
+
+        GridSettings ->
+            "Sareta Ezarpenak"
+
+        DiagonalGrid ->
+            "Sareta Diagonala"
+
 
 
 -- JAPANESE TRANSLATIONS
@@ -870,6 +1094,30 @@ japaneseTranslations key =
 
         ShowDiagonals ->
             "対角線を追加"
+
+        Download ->
+            "ダウンロード"
+
+        Share ->
+            "共有"
+
+        UploadNew ->
+            "新しくアップロード"
+
+        UploadPrompt ->
+            "画像をアップロード"
+
+        UploadDescription ->
+            "ファイルを選択するか、ここにドラッグ＆ドロップしてください"
+
+        ChooseFile ->
+            "ファイル選択"
+
+        GridSettings ->
+            "グリッド設定"
+
+        DiagonalGrid ->
+            "対角線グリッド"
 
 
 
@@ -948,6 +1196,30 @@ russianTranslations key =
         ShowDiagonals ->
             "Добавить диагонали"
 
+        Download ->
+            "Скачать"
+
+        Share ->
+            "Поделиться"
+
+        UploadNew ->
+            "Загрузить новое"
+
+        UploadPrompt ->
+            "Загрузить изображение"
+
+        UploadDescription ->
+            "Выберите файл или перетащите его сюда"
+
+        ChooseFile ->
+            "Выбрать Файл"
+
+        GridSettings ->
+            "Настройки Сетки"
+
+        DiagonalGrid ->
+            "Диагональная Сетка"
+
 
 
 -- TUVAN TRANSLATIONS
@@ -1024,6 +1296,30 @@ tuvanTranslations key =
 
         ShowDiagonals ->
             "Диагоналдар немээр"
+
+        Download ->
+            "Чүдүрүп алыр"
+
+        Share ->
+            "Үлежир"
+
+        UploadNew ->
+            "Чаа чүдүрер"
+
+        UploadPrompt ->
+            "Чурукту киирер"
+
+        UploadDescription ->
+            "Файлды шилиңер азы бээр чыгып каапкаш, салып каар"
+
+        ChooseFile ->
+            "Файл Шилиир"
+
+        GridSettings ->
+            "Шыйыг Тургузуглары"
+
+        DiagonalGrid ->
+            "Кыйгаар Шыйыглар"
 
 
 
@@ -1102,6 +1398,30 @@ amharicTranslations key =
         ShowDiagonals ->
             "ሰማያዊ መስመሮችን አክል"
 
+        Download ->
+            "አውርድ"
+
+        Share ->
+            "አጋራ"
+
+        UploadNew ->
+            "አዲስ ይጹኑ"
+
+        UploadPrompt ->
+            "ምስል ይጹኑ"
+
+        UploadDescription ->
+            "ፋይል ይምረፑ ወይም እዒህ ይገትቱ እና ይጣሉ"
+
+        ChooseFile ->
+            "ፋይል ይምረጡ"
+
+        GridSettings ->
+            "የፍርግርግ ቅንብሮች"
+
+        DiagonalGrid ->
+            "ሰማያዊ ፍርግርግ"
+
 
 
 -- HEBREW TRANSLATIONS
@@ -1178,6 +1498,127 @@ hebrewTranslations key =
 
         ShowDiagonals ->
             "הוסף אלכסונים"
+
+        Download ->
+            "הורדה"
+
+        Share ->
+            "שיתוף"
+
+        UploadNew ->
+            "העלאה חדשה"
+
+        UploadPrompt ->
+            "העלאת תמונה"
+
+        UploadDescription ->
+            "בחר קובץ או גרור ושחרר כאן"
+
+        ChooseFile ->
+            "בחר קובץ"
+
+        GridSettings ->
+            "הגדרות רשת"
+
+        DiagonalGrid ->
+            "רשת אלכסונית"
+
+
+tuvinianTranslations : TranslationKey -> String
+tuvinianTranslations key =
+    case key of
+        AppTitle ->
+            "Gridit! 🐸"
+
+        UploadImage ->
+            "Фото хүнү"
+
+        CustomizeIt ->
+            "Өөрчүлээр!"
+
+        GridSize ->
+            "Хемчээл"
+
+        Rectangles ->
+            " Чарыкчылар"
+
+        GridColor ->
+            "Өң"
+
+        GridThickness ->
+            "Калыңы"
+
+        GridOpacity ->
+            "Шынарлыг"
+
+        OriginalImage ->
+            "Эгелээр фото"
+
+        GriddedImage ->
+            "Чарыкчыларлыг фото"
+
+        DownloadGriddedImage ->
+            "Чарыкчыларлыг фотону хүлээ!!!"
+
+        Nice ->
+            "Чүрек! "
+
+        NiceCounter ->
+            "Чүрек санаашкын: "
+
+        NoImageYet ->
+            "Хүнүн эгелээр фото чок! Эгелээр фото хүнүп киир, шинчилээр!"
+
+        LanguageLabel ->
+            "Дыл:"
+
+        FileOperations ->
+            "Шинчилээр"
+
+        GridParameters ->
+            "Чарыкчыларны өөрчүлээр, фотоңарга дүгжүп турар"
+
+        Actions ->
+            "🐸 🐸 🐸"
+
+        AppSubtitle ->
+            "Сайын! Сен өөрүнүң фотоңарга чарыкчыларлыг тургузарынга дуза көргүзер."
+
+        GridPreviewPlaceholder ->
+            "Чарыкчыларлыг фотоңар эрге көстүр"
+
+        UploadPlaceholder ->
+            "Эгелээр фото хүнү"
+
+        StatusReady ->
+            "Тургустуң: дээди"
+
+        ShowDiagonals ->
+            "Диагоналдыг чарыкчыларны көргүзү"
+
+        Download ->
+            "Хүлээ"
+
+        Share ->
+            "Хөйүлдү"
+
+        UploadNew ->
+            "Чаңгыс фото хүнү"
+
+        UploadPrompt ->
+            "Фото хүнү"
+
+        UploadDescription ->
+            "Файлны сонуургаар, эскели эрге халдыр"
+
+        ChooseFile ->
+            "Файлны сонуургаар"
+
+        GridSettings ->
+            "Чарыкчыларның тургузуу"
+
+        DiagonalGrid ->
+            "Диагоналдыг чарыкчылар"
 
 
 translate : Language -> TranslationKey -> String
