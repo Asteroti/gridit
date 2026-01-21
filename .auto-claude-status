@@ -1,0 +1,25 @@
+{
+  "active": true,
+  "spec": "006-social-sharing",
+  "state": "building",
+  "subtasks": {
+    "completed": 15,
+    "total": 37,
+    "in_progress": 1,
+    "failed": 0
+  },
+  "phase": {
+    "current": "Elm Update Logic",
+    "id": null,
+    "total": 5
+  },
+  "workers": {
+    "active": 0,
+    "max": 1
+  },
+  "session": {
+    "number": 17,
+    "started_at": "2026-01-05T21:56:15.910919"
+  },
+  "last_update": "2026-01-05T22:24:53.661595"
+}

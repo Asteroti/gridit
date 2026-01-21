@@ -8,3 +8,9 @@ node_modules/
 .DS_Store
 .idea/
 .vscode/
+
+# Auto Claude data directory
+.auto-claude/
+.auto-claude-status
+.claude_settings.json
+.claude/

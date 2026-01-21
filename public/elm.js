@@ -77,7 +77,7 @@ function A9(fun, a, b, c, d, e, f, g, h, i) {
   return fun.a === 9 ? fun.f(a, b, c, d, e, f, g, h, i) : fun(a)(b)(c)(d)(e)(f)(g)(h)(i);
 }
 
-
+console.warn('Compiled in DEV mode. Follow the advice at https://elm-lang.org/0.19.1/optimize for better performance and smaller assets.');
 
 
 // EQUALITY
@@ -113,7 +113,7 @@ function _Utils_eqHelp(x, y, depth, stack)
 		return true;
 	}
 
-	/**_UNUSED/
+	/**/
 	if (x.$ === 'Set_elm_builtin')
 	{
 		x = $elm$core$Set$toList(x);
@@ -126,7 +126,7 @@ function _Utils_eqHelp(x, y, depth, stack)
 	}
 	//*/
 
-	/**/
+	/**_UNUSED/
 	if (x.$ < 0)
 	{
 		x = $elm$core$Dict$toList(x);
@@ -161,7 +161,7 @@ function _Utils_cmp(x, y, ord)
 		return x === y ? /*EQ*/ 0 : x < y ? /*LT*/ -1 : /*GT*/ 1;
 	}
 
-	/**_UNUSED/
+	/**/
 	if (x instanceof String)
 	{
 		var a = x.valueOf();
@@ -170,10 +170,10 @@ function _Utils_cmp(x, y, ord)
 	}
 	//*/
 
-	/**/
+	/**_UNUSED/
 	if (typeof x.$ === 'undefined')
 	//*/
-	/**_UNUSED/
+	/**/
 	if (x.$[0] === '#')
 	//*/
 	{
@@ -203,17 +203,17 @@ var _Utils_compare = F2(function(x, y)
 
 // COMMON VALUES
 
-var _Utils_Tuple0 = 0;
-var _Utils_Tuple0_UNUSED = { $: '#0' };
+var _Utils_Tuple0_UNUSED = 0;
+var _Utils_Tuple0 = { $: '#0' };
 
-function _Utils_Tuple2(a, b) { return { a: a, b: b }; }
-function _Utils_Tuple2_UNUSED(a, b) { return { $: '#2', a: a, b: b }; }
+function _Utils_Tuple2_UNUSED(a, b) { return { a: a, b: b }; }
+function _Utils_Tuple2(a, b) { return { $: '#2', a: a, b: b }; }
 
-function _Utils_Tuple3(a, b, c) { return { a: a, b: b, c: c }; }
-function _Utils_Tuple3_UNUSED(a, b, c) { return { $: '#3', a: a, b: b, c: c }; }
+function _Utils_Tuple3_UNUSED(a, b, c) { return { a: a, b: b, c: c }; }
+function _Utils_Tuple3(a, b, c) { return { $: '#3', a: a, b: b, c: c }; }
 
-function _Utils_chr(c) { return c; }
-function _Utils_chr_UNUSED(c) { return new String(c); }
+function _Utils_chr_UNUSED(c) { return c; }
+function _Utils_chr(c) { return new String(c); }
 
 
 // RECORDS
@@ -264,11 +264,11 @@ function _Utils_ap(xs, ys)
 
 
 
-var _List_Nil = { $: 0 };
-var _List_Nil_UNUSED = { $: '[]' };
+var _List_Nil_UNUSED = { $: 0 };
+var _List_Nil = { $: '[]' };
 
-function _List_Cons(hd, tl) { return { $: 1, a: hd, b: tl }; }
-function _List_Cons_UNUSED(hd, tl) { return { $: '::', a: hd, b: tl }; }
+function _List_Cons_UNUSED(hd, tl) { return { $: 1, a: hd, b: tl }; }
+function _List_Cons(hd, tl) { return { $: '::', a: hd, b: tl }; }
 
 
 var _List_cons = F2(_List_Cons);
@@ -499,12 +499,12 @@ var _JsArray_appendN = F3(function(n, dest, source)
 
 // LOG
 
-var _Debug_log = F2(function(tag, value)
+var _Debug_log_UNUSED = F2(function(tag, value)
 {
 	return value;
 });
 
-var _Debug_log_UNUSED = F2(function(tag, value)
+var _Debug_log = F2(function(tag, value)
 {
 	console.log(tag + ': ' + _Debug_toString(value));
 	return value;
@@ -530,12 +530,12 @@ function _Debug_todoCase(moduleName, region, value)
 
 // TO STRING
 
-function _Debug_toString(value)
+function _Debug_toString_UNUSED(value)
 {
 	return '<internals>';
 }
 
-function _Debug_toString_UNUSED(value)
+function _Debug_toString(value)
 {
 	return _Debug_toAnsiString(false, value);
 }
@@ -720,13 +720,13 @@ function _Debug_toHexDigit(n)
 // CRASH
 
 
-function _Debug_crash(identifier)
+function _Debug_crash_UNUSED(identifier)
 {
 	throw new Error('https://github.com/elm/core/blob/1.0.0/hints/' + identifier + '.md');
 }
 
 
-function _Debug_crash_UNUSED(identifier, fact1, fact2, fact3, fact4)
+function _Debug_crash(identifier, fact1, fact2, fact3, fact4)
 {
 	switch(identifier)
 	{
@@ -784,11 +784,11 @@ function _Debug_crash_UNUSED(identifier, fact1, fact2, fact3, fact4)
 
 function _Debug_regionToString(region)
 {
-	if (region.U.K === region.aa.K)
+	if (region.start.line === region.end.line)
 	{
-		return 'on line ' + region.U.K;
+		return 'on line ' + region.start.line;
 	}
-	return 'on lines ' + region.U.K + ' through ' + region.aa.K;
+	return 'on lines ' + region.start.line + ' through ' + region.end.line;
 }
 
 
@@ -1212,7 +1212,7 @@ function _Char_toLocaleLower(char)
 
 
 
-/**_UNUSED/
+/**/
 function _Json_errorToString(error)
 {
 	return $elm$json$Json$Decode$errorToString(error);
@@ -1616,11 +1616,11 @@ var _Json_encode = F2(function(indentLevel, value)
 	return JSON.stringify(_Json_unwrap(value), null, indentLevel) + '';
 });
 
-function _Json_wrap_UNUSED(value) { return { $: 0, a: value }; }
-function _Json_unwrap_UNUSED(value) { return value.a; }
+function _Json_wrap(value) { return { $: 0, a: value }; }
+function _Json_unwrap(value) { return value.a; }
 
-function _Json_wrap(value) { return value; }
-function _Json_unwrap(value) { return value; }
+function _Json_wrap_UNUSED(value) { return value; }
+function _Json_unwrap_UNUSED(value) { return value; }
 
 function _Json_emptyArray() { return []; }
 function _Json_emptyObject() { return {}; }
@@ -1857,9 +1857,9 @@ var _Platform_worker = F4(function(impl, flagDecoder, debugMetadata, args)
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.aN,
-		impl.aZ,
-		impl.aX,
+		impl.init,
+		impl.update,
+		impl.subscriptions,
 		function() { return function() {} }
 	);
 });
@@ -1872,7 +1872,7 @@ var _Platform_worker = F4(function(impl, flagDecoder, debugMetadata, args)
 function _Platform_initialize(flagDecoder, args, init, update, subscriptions, stepperBuilder)
 {
 	var result = A2(_Json_run, flagDecoder, _Json_wrap(args ? args['flags'] : undefined));
-	$elm$core$Result$isOk(result) || _Debug_crash(2 /**_UNUSED/, _Json_errorToString(result.a) /**/);
+	$elm$core$Result$isOk(result) || _Debug_crash(2 /**/, _Json_errorToString(result.a) /**/);
 	var managers = {};
 	var initPair = init(result.a);
 	var model = initPair.a;
@@ -2316,7 +2316,7 @@ function _Platform_setupIncomingPort(name, sendToApp)
 //
 
 
-function _Platform_export(exports)
+function _Platform_export_UNUSED(exports)
 {
 	scope['Elm']
 		? _Platform_mergeExportsProd(scope['Elm'], exports)
@@ -2337,7 +2337,7 @@ function _Platform_mergeExportsProd(obj, exports)
 }
 
 
-function _Platform_export_UNUSED(exports)
+function _Platform_export(exports)
 {
 	scope['Elm']
 		? _Platform_mergeExportsDebug('Elm', scope['Elm'], exports)
@@ -2377,10 +2377,10 @@ var _VirtualDom_init = F4(function(virtualNode, flagDecoder, debugMetadata, args
 {
 	// NOTE: this function needs _Platform_export available to work
 
-	/**/
+	/**_UNUSED/
 	var node = args['node'];
 	//*/
-	/**_UNUSED/
+	/**/
 	var node = args && args['node'] ? args['node'] : _Debug_crash(0);
 	//*/
 
@@ -2655,14 +2655,14 @@ function _VirtualDom_noInnerHtmlOrFormAction(key)
 function _VirtualDom_noJavaScriptUri(value)
 {
 	return _VirtualDom_RE_js.test(value)
-		? /**/''//*//**_UNUSED/'javascript:alert("This is an XSS vector. Please use ports or web components instead.")'//*/
+		? /**_UNUSED/''//*//**/'javascript:alert("This is an XSS vector. Please use ports or web components instead.")'//*/
 		: value;
 }
 
 function _VirtualDom_noJavaScriptOrHtmlUri(value)
 {
 	return _VirtualDom_RE_js_html.test(value)
-		? /**/''//*//**_UNUSED/'javascript:alert("This is an XSS vector. Please use ports or web components instead.")'//*/
+		? /**_UNUSED/''//*//**/'javascript:alert("This is an XSS vector. Please use ports or web components instead.")'//*/
 		: value;
 }
 
@@ -2670,7 +2670,7 @@ function _VirtualDom_noJavaScriptOrHtmlJson(value)
 {
 	return (typeof _Json_unwrap(value) === 'string' && _VirtualDom_RE_js_html.test(_Json_unwrap(value)))
 		? _Json_wrap(
-			/**/''//*//**_UNUSED/'javascript:alert("This is an XSS vector. Please use ports or web components instead.")'//*/
+			/**_UNUSED/''//*//**/'javascript:alert("This is an XSS vector. Please use ports or web components instead.")'//*/
 		) : value;
 }
 
@@ -2719,9 +2719,9 @@ var _VirtualDom_mapEventTuple = F2(function(func, tuple)
 var _VirtualDom_mapEventRecord = F2(function(func, record)
 {
 	return {
-		v: func(record.v),
-		V: record.V,
-		S: record.S
+		message: func(record.message),
+		stopPropagation: record.stopPropagation,
+		preventDefault: record.preventDefault
 	}
 });
 
@@ -2989,11 +2989,11 @@ function _VirtualDom_makeCallback(eventNode, initialHandler)
 		// 3 = Custom
 
 		var value = result.a;
-		var message = !tag ? value : tag < 3 ? value.a : value.v;
-		var stopPropagation = tag == 1 ? value.b : tag == 3 && value.V;
+		var message = !tag ? value : tag < 3 ? value.a : value.message;
+		var stopPropagation = tag == 1 ? value.b : tag == 3 && value.stopPropagation;
 		var currentEventNode = (
 			stopPropagation && event.stopPropagation(),
-			(tag == 2 ? value.b : tag == 3 && value.S) && event.preventDefault(),
+			(tag == 2 ? value.b : tag == 3 && value.preventDefault) && event.preventDefault(),
 			eventNode
 		);
 		var tagger;
@@ -3943,15 +3943,15 @@ var _Browser_element = _Debugger_element || F4(function(impl, flagDecoder, debug
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.aN,
-		impl.aZ,
-		impl.aX,
+		impl.init,
+		impl.update,
+		impl.subscriptions,
 		function(sendToApp, initialModel) {
-			var view = impl.a_;
-			/**/
+			var view = impl.view;
+			/**_UNUSED/
 			var domNode = args['node'];
 			//*/
-			/**_UNUSED/
+			/**/
 			var domNode = args && args['node'] ? args['node'] : _Debug_crash(0);
 			//*/
 			var currNode = _VirtualDom_virtualize(domNode);
@@ -3979,12 +3979,12 @@ var _Browser_document = _Debugger_document || F4(function(impl, flagDecoder, deb
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.aN,
-		impl.aZ,
-		impl.aX,
+		impl.init,
+		impl.update,
+		impl.subscriptions,
 		function(sendToApp, initialModel) {
-			var divertHrefToApp = impl.T && impl.T(sendToApp)
-			var view = impl.a_;
+			var divertHrefToApp = impl.setup && impl.setup(sendToApp)
+			var view = impl.view;
 			var title = _VirtualDom_doc.title;
 			var bodyNode = _VirtualDom_doc.body;
 			var currNode = _VirtualDom_virtualize(bodyNode);
@@ -3992,12 +3992,12 @@ var _Browser_document = _Debugger_document || F4(function(impl, flagDecoder, deb
 			{
 				_VirtualDom_divertHrefToApp = divertHrefToApp;
 				var doc = view(model);
-				var nextNode = _VirtualDom_node('body')(_List_Nil)(doc.aE);
+				var nextNode = _VirtualDom_node('body')(_List_Nil)(doc.body);
 				var patches = _VirtualDom_diff(currNode, nextNode);
 				bodyNode = _VirtualDom_applyPatches(bodyNode, currNode, patches, sendToApp);
 				currNode = nextNode;
 				_VirtualDom_divertHrefToApp = 0;
-				(title !== doc.aY) && (_VirtualDom_doc.title = title = doc.aY);
+				(title !== doc.title) && (_VirtualDom_doc.title = title = doc.title);
 			});
 		}
 	);
@@ -4053,12 +4053,12 @@ function _Browser_makeAnimator(model, draw)
 
 function _Browser_application(impl)
 {
-	var onUrlChange = impl.aS;
-	var onUrlRequest = impl.aT;
+	var onUrlChange = impl.onUrlChange;
+	var onUrlRequest = impl.onUrlRequest;
 	var key = function() { key.a(onUrlChange(_Browser_getUrl())); };
 
 	return _Browser_document({
-		T: function(sendToApp)
+		setup: function(sendToApp)
 		{
 			key.a = sendToApp;
 			_Browser_window.addEventListener('popstate', key);
@@ -4074,9 +4074,9 @@ function _Browser_application(impl)
 					var next = $elm$url$Url$fromString(href).a;
 					sendToApp(onUrlRequest(
 						(next
-							&& curr.ap === next.ap
-							&& curr.af === next.af
-							&& curr.am.a === next.am.a
+							&& curr.protocol === next.protocol
+							&& curr.host === next.host
+							&& curr.port_.a === next.port_.a
 						)
 							? $elm$browser$Browser$Internal(next)
 							: $elm$browser$Browser$External(href)
@@ -4084,13 +4084,13 @@ function _Browser_application(impl)
 				}
 			});
 		},
-		aN: function(flags)
+		init: function(flags)
 		{
-			return A3(impl.aN, flags, _Browser_getUrl(), key);
+			return A3(impl.init, flags, _Browser_getUrl(), key);
 		},
-		a_: impl.a_,
-		aZ: impl.aZ,
-		aX: impl.aX
+		view: impl.view,
+		update: impl.update,
+		subscriptions: impl.subscriptions
 	});
 }
 
@@ -4156,17 +4156,17 @@ var _Browser_decodeEvent = F2(function(decoder, event)
 function _Browser_visibilityInfo()
 {
 	return (typeof _VirtualDom_doc.hidden !== 'undefined')
-		? { aK: 'hidden', aG: 'visibilitychange' }
+		? { hidden: 'hidden', change: 'visibilitychange' }
 		:
 	(typeof _VirtualDom_doc.mozHidden !== 'undefined')
-		? { aK: 'mozHidden', aG: 'mozvisibilitychange' }
+		? { hidden: 'mozHidden', change: 'mozvisibilitychange' }
 		:
 	(typeof _VirtualDom_doc.msHidden !== 'undefined')
-		? { aK: 'msHidden', aG: 'msvisibilitychange' }
+		? { hidden: 'msHidden', change: 'msvisibilitychange' }
 		:
 	(typeof _VirtualDom_doc.webkitHidden !== 'undefined')
-		? { aK: 'webkitHidden', aG: 'webkitvisibilitychange' }
-		: { aK: 'hidden', aG: 'visibilitychange' };
+		? { hidden: 'webkitHidden', change: 'webkitvisibilitychange' }
+		: { hidden: 'hidden', change: 'visibilitychange' };
 }
 
 
@@ -4247,12 +4247,12 @@ var _Browser_call = F2(function(functionName, id)
 function _Browser_getViewport()
 {
 	return {
-		at: _Browser_getScene(),
-		ay: {
-			aA: _Browser_window.pageXOffset,
-			aB: _Browser_window.pageYOffset,
-			az: _Browser_doc.documentElement.clientWidth,
-			ae: _Browser_doc.documentElement.clientHeight
+		scene: _Browser_getScene(),
+		viewport: {
+			x: _Browser_window.pageXOffset,
+			y: _Browser_window.pageYOffset,
+			width: _Browser_doc.documentElement.clientWidth,
+			height: _Browser_doc.documentElement.clientHeight
 		}
 	};
 }
@@ -4262,8 +4262,8 @@ function _Browser_getScene()
 	var body = _Browser_doc.body;
 	var elem = _Browser_doc.documentElement;
 	return {
-		az: Math.max(body.scrollWidth, body.offsetWidth, elem.scrollWidth, elem.offsetWidth, elem.clientWidth),
-		ae: Math.max(body.scrollHeight, body.offsetHeight, elem.scrollHeight, elem.offsetHeight, elem.clientHeight)
+		width: Math.max(body.scrollWidth, body.offsetWidth, elem.scrollWidth, elem.offsetWidth, elem.clientWidth),
+		height: Math.max(body.scrollHeight, body.offsetHeight, elem.scrollHeight, elem.offsetHeight, elem.clientHeight)
 	};
 }
 
@@ -4286,15 +4286,15 @@ function _Browser_getViewportOf(id)
 	return _Browser_withNode(id, function(node)
 	{
 		return {
-			at: {
-				az: node.scrollWidth,
-				ae: node.scrollHeight
+			scene: {
+				width: node.scrollWidth,
+				height: node.scrollHeight
 			},
-			ay: {
-				aA: node.scrollLeft,
-				aB: node.scrollTop,
-				az: node.clientWidth,
-				ae: node.clientHeight
+			viewport: {
+				x: node.scrollLeft,
+				y: node.scrollTop,
+				width: node.clientWidth,
+				height: node.clientHeight
 			}
 		};
 	});
@@ -4324,18 +4324,18 @@ function _Browser_getElement(id)
 		var x = _Browser_window.pageXOffset;
 		var y = _Browser_window.pageYOffset;
 		return {
-			at: _Browser_getScene(),
-			ay: {
-				aA: x,
-				aB: y,
-				az: _Browser_doc.documentElement.clientWidth,
-				ae: _Browser_doc.documentElement.clientHeight
+			scene: _Browser_getScene(),
+			viewport: {
+				x: x,
+				y: y,
+				width: _Browser_doc.documentElement.clientWidth,
+				height: _Browser_doc.documentElement.clientHeight
 			},
-			aI: {
-				aA: x + rect.left,
-				aB: y + rect.top,
-				az: rect.width,
-				ae: rect.height
+			element: {
+				x: x + rect.left,
+				y: y + rect.top,
+				width: rect.width,
+				height: rect.height
 			}
 		};
 	});
@@ -4548,15 +4548,15 @@ function _File_toUrl(blob)
 	});
 }
 
-var $elm$core$Basics$EQ = 1;
-var $elm$core$Basics$GT = 2;
-var $elm$core$Basics$LT = 0;
+var $elm$core$Basics$EQ = {$: 'EQ'};
+var $elm$core$Basics$GT = {$: 'GT'};
+var $elm$core$Basics$LT = {$: 'LT'};
 var $elm$core$List$cons = _List_cons;
 var $elm$core$Dict$foldr = F3(
 	function (func, acc, t) {
 		foldr:
 		while (true) {
-			if (t.$ === -2) {
+			if (t.$ === 'RBEmpty_elm_builtin') {
 				return acc;
 			} else {
 				var key = t.b;
@@ -4601,7 +4601,7 @@ var $elm$core$Dict$keys = function (dict) {
 		dict);
 };
 var $elm$core$Set$toList = function (_v0) {
-	var dict = _v0;
+	var dict = _v0.a;
 	return $elm$core$Dict$keys(dict);
 };
 var $elm$core$Elm$JsArray$foldr = _JsArray_foldr;
@@ -4611,7 +4611,7 @@ var $elm$core$Array$foldr = F3(
 		var tail = _v0.d;
 		var helper = F2(
 			function (node, acc) {
-				if (!node.$) {
+				if (node.$ === 'SubTree') {
 					var subTree = node.a;
 					return A3($elm$core$Elm$JsArray$foldr, helper, acc, subTree);
 				} else {
@@ -4629,32 +4629,32 @@ var $elm$core$Array$toList = function (array) {
 	return A3($elm$core$Array$foldr, $elm$core$List$cons, _List_Nil, array);
 };
 var $elm$core$Result$Err = function (a) {
-	return {$: 1, a: a};
+	return {$: 'Err', a: a};
 };
 var $elm$json$Json$Decode$Failure = F2(
 	function (a, b) {
-		return {$: 3, a: a, b: b};
+		return {$: 'Failure', a: a, b: b};
 	});
 var $elm$json$Json$Decode$Field = F2(
 	function (a, b) {
-		return {$: 0, a: a, b: b};
+		return {$: 'Field', a: a, b: b};
 	});
 var $elm$json$Json$Decode$Index = F2(
 	function (a, b) {
-		return {$: 1, a: a, b: b};
+		return {$: 'Index', a: a, b: b};
 	});
 var $elm$core$Result$Ok = function (a) {
-	return {$: 0, a: a};
+	return {$: 'Ok', a: a};
 };
 var $elm$json$Json$Decode$OneOf = function (a) {
-	return {$: 2, a: a};
+	return {$: 'OneOf', a: a};
 };
-var $elm$core$Basics$False = 1;
+var $elm$core$Basics$False = {$: 'False'};
 var $elm$core$Basics$add = _Basics_add;
 var $elm$core$Maybe$Just = function (a) {
-	return {$: 0, a: a};
+	return {$: 'Just', a: a};
 };
-var $elm$core$Maybe$Nothing = {$: 1};
+var $elm$core$Maybe$Nothing = {$: 'Nothing'};
 var $elm$core$String$all = _String_all;
 var $elm$core$Basics$and = _Basics_and;
 var $elm$core$Basics$append = _Utils_append;
@@ -4779,12 +4779,12 @@ var $elm$json$Json$Decode$errorToStringHelp = F2(
 		errorToStringHelp:
 		while (true) {
 			switch (error.$) {
-				case 0:
+				case 'Field':
 					var f = error.a;
 					var err = error.b;
 					var isSimple = function () {
 						var _v1 = $elm$core$String$uncons(f);
-						if (_v1.$ === 1) {
+						if (_v1.$ === 'Nothing') {
 							return false;
 						} else {
 							var _v2 = _v1.a;
@@ -4799,7 +4799,7 @@ var $elm$json$Json$Decode$errorToStringHelp = F2(
 					error = $temp$error;
 					context = $temp$context;
 					continue errorToStringHelp;
-				case 1:
+				case 'Index':
 					var i = error.a;
 					var err = error.b;
 					var indexName = '[' + ($elm$core$String$fromInt(i) + ']');
@@ -4808,7 +4808,7 @@ var $elm$json$Json$Decode$errorToStringHelp = F2(
 					error = $temp$error;
 					context = $temp$context;
 					continue errorToStringHelp;
-				case 2:
+				case 'OneOf':
 					var errors = error.a;
 					if (!errors.b) {
 						return 'Ran into a Json.Decode.oneOf with no possibilities' + function () {
@@ -4872,7 +4872,7 @@ var $elm$json$Json$Decode$errorToStringHelp = F2(
 var $elm$core$Array$branchFactor = 32;
 var $elm$core$Array$Array_elm_builtin = F4(
 	function (a, b, c, d) {
-		return {$: 0, a: a, b: b, c: c, d: d};
+		return {$: 'Array_elm_builtin', a: a, b: b, c: c, d: d};
 	});
 var $elm$core$Elm$JsArray$empty = _JsArray_empty;
 var $elm$core$Basics$ceiling = _Basics_ceiling;
@@ -4887,7 +4887,7 @@ var $elm$core$Array$shiftStep = $elm$core$Basics$ceiling(
 var $elm$core$Array$empty = A4($elm$core$Array$Array_elm_builtin, 0, $elm$core$Array$shiftStep, $elm$core$Elm$JsArray$empty, $elm$core$Elm$JsArray$empty);
 var $elm$core$Elm$JsArray$initialize = _JsArray_initialize;
 var $elm$core$Array$Leaf = function (a) {
-	return {$: 1, a: a};
+	return {$: 'Leaf', a: a};
 };
 var $elm$core$Basics$apL = F2(
 	function (f, x) {
@@ -4907,7 +4907,7 @@ var $elm$core$Basics$max = F2(
 	});
 var $elm$core$Basics$mul = _Basics_mul;
 var $elm$core$Array$SubTree = function (a) {
-	return {$: 0, a: a};
+	return {$: 'SubTree', a: a};
 };
 var $elm$core$Elm$JsArray$initializeFromList = _JsArray_initializeFromList;
 var $elm$core$Array$compressNodes = F2(
@@ -4954,25 +4954,25 @@ var $elm$core$Array$treeFromBuilder = F2(
 	});
 var $elm$core$Array$builderToArray = F2(
 	function (reverseNodeList, builder) {
-		if (!builder.c) {
+		if (!builder.nodeListSize) {
 			return A4(
 				$elm$core$Array$Array_elm_builtin,
-				$elm$core$Elm$JsArray$length(builder.f),
+				$elm$core$Elm$JsArray$length(builder.tail),
 				$elm$core$Array$shiftStep,
 				$elm$core$Elm$JsArray$empty,
-				builder.f);
+				builder.tail);
 		} else {
-			var treeLen = builder.c * $elm$core$Array$branchFactor;
+			var treeLen = builder.nodeListSize * $elm$core$Array$branchFactor;
 			var depth = $elm$core$Basics$floor(
 				A2($elm$core$Basics$logBase, $elm$core$Array$branchFactor, treeLen - 1));
-			var correctNodeList = reverseNodeList ? $elm$core$List$reverse(builder.h) : builder.h;
-			var tree = A2($elm$core$Array$treeFromBuilder, correctNodeList, builder.c);
+			var correctNodeList = reverseNodeList ? $elm$core$List$reverse(builder.nodeList) : builder.nodeList;
+			var tree = A2($elm$core$Array$treeFromBuilder, correctNodeList, builder.nodeListSize);
 			return A4(
 				$elm$core$Array$Array_elm_builtin,
-				$elm$core$Elm$JsArray$length(builder.f) + treeLen,
+				$elm$core$Elm$JsArray$length(builder.tail) + treeLen,
 				A2($elm$core$Basics$max, 5, depth * $elm$core$Array$shiftStep),
 				tree,
-				builder.f);
+				builder.tail);
 		}
 	});
 var $elm$core$Basics$idiv = _Basics_idiv;
@@ -4985,7 +4985,7 @@ var $elm$core$Array$initializeHelp = F5(
 				return A2(
 					$elm$core$Array$builderToArray,
 					false,
-					{h: nodeList, c: (len / $elm$core$Array$branchFactor) | 0, f: tail});
+					{nodeList: nodeList, nodeListSize: (len / $elm$core$Array$branchFactor) | 0, tail: tail});
 			} else {
 				var leaf = $elm$core$Array$Leaf(
 					A3($elm$core$Elm$JsArray$initialize, $elm$core$Array$branchFactor, fromIndex, fn));
@@ -5015,9 +5015,9 @@ var $elm$core$Array$initialize = F2(
 			return A5($elm$core$Array$initializeHelp, fn, initialFromIndex, len, _List_Nil, tail);
 		}
 	});
-var $elm$core$Basics$True = 0;
+var $elm$core$Basics$True = {$: 'True'};
 var $elm$core$Result$isOk = function (result) {
-	if (!result.$) {
+	if (result.$ === 'Ok') {
 		return true;
 	} else {
 		return false;
@@ -5028,31 +5028,33 @@ var $elm$json$Json$Decode$map2 = _Json_map2;
 var $elm$json$Json$Decode$succeed = _Json_succeed;
 var $elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
 	switch (handler.$) {
-		case 0:
+		case 'Normal':
 			return 0;
-		case 1:
+		case 'MayStopPropagation':
 			return 1;
-		case 2:
+		case 'MayPreventDefault':
 			return 2;
 		default:
 			return 3;
 	}
 };
 var $elm$browser$Browser$External = function (a) {
-	return {$: 1, a: a};
+	return {$: 'External', a: a};
 };
 var $elm$browser$Browser$Internal = function (a) {
-	return {$: 0, a: a};
+	return {$: 'Internal', a: a};
 };
 var $elm$core$Basics$identity = function (x) {
 	return x;
 };
-var $elm$browser$Browser$Dom$NotFound = $elm$core$Basics$identity;
-var $elm$url$Url$Http = 0;
-var $elm$url$Url$Https = 1;
+var $elm$browser$Browser$Dom$NotFound = function (a) {
+	return {$: 'NotFound', a: a};
+};
+var $elm$url$Url$Http = {$: 'Http'};
+var $elm$url$Url$Https = {$: 'Https'};
 var $elm$url$Url$Url = F6(
 	function (protocol, host, port_, path, query, fragment) {
-		return {ac: fragment, af: host, ak: path, am: port_, ap: protocol, aq: query};
+		return {fragment: fragment, host: host, path: path, port_: port_, protocol: protocol, query: query};
 	});
 var $elm$core$String$contains = _String_contains;
 var $elm$core$String$length = _String_length;
@@ -5088,7 +5090,7 @@ var $elm$url$Url$chompBeforePath = F5(
 					var i = _v0.a;
 					var _v1 = $elm$core$String$toInt(
 						A2($elm$core$String$dropLeft, i + 1, str));
-					if (_v1.$ === 1) {
+					if (_v1.$ === 'Nothing') {
 						return $elm$core$Maybe$Nothing;
 					} else {
 						var port_ = _v1;
@@ -5171,24 +5173,26 @@ var $elm$core$String$startsWith = _String_startsWith;
 var $elm$url$Url$fromString = function (str) {
 	return A2($elm$core$String$startsWith, 'http://', str) ? A2(
 		$elm$url$Url$chompAfterProtocol,
-		0,
+		$elm$url$Url$Http,
 		A2($elm$core$String$dropLeft, 7, str)) : (A2($elm$core$String$startsWith, 'https://', str) ? A2(
 		$elm$url$Url$chompAfterProtocol,
-		1,
+		$elm$url$Url$Https,
 		A2($elm$core$String$dropLeft, 8, str)) : $elm$core$Maybe$Nothing);
 };
 var $elm$core$Basics$never = function (_v0) {
 	never:
 	while (true) {
-		var nvr = _v0;
+		var nvr = _v0.a;
 		var $temp$_v0 = nvr;
 		_v0 = $temp$_v0;
 		continue never;
 	}
 };
-var $elm$core$Task$Perform = $elm$core$Basics$identity;
+var $elm$core$Task$Perform = function (a) {
+	return {$: 'Perform', a: a};
+};
 var $elm$core$Task$succeed = _Scheduler_succeed;
-var $elm$core$Task$init = $elm$core$Task$succeed(0);
+var $elm$core$Task$init = $elm$core$Task$succeed(_Utils_Tuple0);
 var $elm$core$List$foldrHelper = F4(
 	function (fn, acc, ctr, ls) {
 		if (!ls.b) {
@@ -5294,7 +5298,7 @@ var $elm$core$Task$sequence = function (tasks) {
 var $elm$core$Platform$sendToApp = _Platform_sendToApp;
 var $elm$core$Task$spawnCmd = F2(
 	function (router, _v0) {
-		var task = _v0;
+		var task = _v0.a;
 		return _Scheduler_spawn(
 			A2(
 				$elm$core$Task$andThen,
@@ -5306,7 +5310,7 @@ var $elm$core$Task$onEffects = F3(
 		return A2(
 			$elm$core$Task$map,
 			function (_v0) {
-				return 0;
+				return _Utils_Tuple0;
 			},
 			$elm$core$Task$sequence(
 				A2(
@@ -5316,31 +5320,33 @@ var $elm$core$Task$onEffects = F3(
 	});
 var $elm$core$Task$onSelfMsg = F3(
 	function (_v0, _v1, _v2) {
-		return $elm$core$Task$succeed(0);
+		return $elm$core$Task$succeed(_Utils_Tuple0);
 	});
 var $elm$core$Task$cmdMap = F2(
 	function (tagger, _v0) {
-		var task = _v0;
-		return A2($elm$core$Task$map, tagger, task);
+		var task = _v0.a;
+		return $elm$core$Task$Perform(
+			A2($elm$core$Task$map, tagger, task));
 	});
 _Platform_effectManagers['Task'] = _Platform_createManager($elm$core$Task$init, $elm$core$Task$onEffects, $elm$core$Task$onSelfMsg, $elm$core$Task$cmdMap);
 var $elm$core$Task$command = _Platform_leaf('Task');
 var $elm$core$Task$perform = F2(
 	function (toMessage, task) {
 		return $elm$core$Task$command(
-			A2($elm$core$Task$map, toMessage, task));
+			$elm$core$Task$Perform(
+				A2($elm$core$Task$map, toMessage, task)));
 	});
 var $elm$browser$Browser$element = _Browser_element;
-var $author$project$I18n$Spanish = 1;
+var $author$project$I18n$Spanish = {$: 'Spanish'};
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
 var $author$project$Main$init = function (_v0) {
 	return _Utils_Tuple2(
-		{P: false, J: false, k: '#80ED99', g: 1, b: 10, i: 1, z: $elm$core$Maybe$Nothing, A: $elm$core$Maybe$Nothing, a: 1, F: 0, r: false, e: $elm$core$Maybe$Nothing},
+		{downloadSuccess: false, drawerExpanded: false, gridColor: '#80ED99', gridOpacity: 1, gridSize: 10, gridThickness: 1, imageHeight: $elm$core$Maybe$Nothing, imageWidth: $elm$core$Maybe$Nothing, language: $author$project$I18n$Spanish, niceCounter: 0, showDiagonals: false, uploadedImage: $elm$core$Maybe$Nothing},
 		$elm$core$Platform$Cmd$none);
 };
 var $author$project$Main$GriddedReady = function (a) {
-	return {$: 7, a: a};
+	return {$: 'GriddedReady', a: a};
 };
 var $elm$json$Json$Decode$string = _Json_decodeString;
 var $author$project$Main$receivePng = _Platform_incomingPort('receivePng', $elm$json$Json$Decode$string);
@@ -5348,12 +5354,12 @@ var $author$project$Main$subscriptions = function (_v0) {
 	return $author$project$Main$receivePng($author$project$Main$GriddedReady);
 };
 var $author$project$Main$ImageLoaded = function (a) {
-	return {$: 2, a: a};
+	return {$: 'ImageLoaded', a: a};
 };
 var $author$project$Main$ImageSelected = function (a) {
-	return {$: 1, a: a};
+	return {$: 'ImageSelected', a: a};
 };
-var $author$project$Main$ResetDownloadSuccess = {$: 12};
+var $author$project$Main$ResetDownloadSuccess = {$: 'ResetDownloadSuccess'};
 var $elm$json$Json$Encode$string = _Json_wrap;
 var $author$project$Main$debug = _Platform_outgoingPort('debug', $elm$json$Json$Encode$string);
 var $elm$json$Json$Encode$object = function (pairs) {
@@ -5366,7 +5372,7 @@ var $elm$json$Json$Encode$object = function (pairs) {
 					var v = _v0.b;
 					return A3(_Json_addField, k, v, obj);
 				}),
-			_Json_emptyObject(0),
+			_Json_emptyObject(_Utils_Tuple0),
 			pairs));
 };
 var $author$project$Main$downloadImage = _Platform_outgoingPort(
@@ -5377,11 +5383,13 @@ var $author$project$Main$downloadImage = _Platform_outgoingPort(
 				[
 					_Utils_Tuple2(
 					'dataUrl',
-					$elm$json$Json$Encode$string($.Z))
+					$elm$json$Json$Encode$string($.dataUrl))
 				]));
 	});
-var $elm$time$Time$Posix = $elm$core$Basics$identity;
-var $elm$time$Time$millisToPosix = $elm$core$Basics$identity;
+var $elm$time$Time$Posix = function (a) {
+	return {$: 'Posix', a: a};
+};
+var $elm$time$Time$millisToPosix = $elm$time$Time$Posix;
 var $elm$file$File$Select$file = F2(
 	function (mimes, toMsg) {
 		return A2(
@@ -5390,32 +5398,32 @@ var $elm$file$File$Select$file = F2(
 			_File_uploadOne(mimes));
 	});
 var $author$project$Main$languageToCode = function (language) {
-	switch (language) {
-		case 0:
+	switch (language.$) {
+		case 'English':
 			return 'en';
-		case 1:
+		case 'Spanish':
 			return 'es';
-		case 2:
+		case 'Latin':
 			return 'la';
-		case 3:
+		case 'Italian':
 			return 'it';
-		case 4:
+		case 'Portuguese':
 			return 'pt';
-		case 5:
+		case 'French':
 			return 'fr';
-		case 6:
+		case 'Asturiano':
 			return 'ast';
-		case 7:
+		case 'Gaelic':
 			return 'gd';
-		case 8:
+		case 'Euskara':
 			return 'eu';
-		case 9:
+		case 'Japanese':
 			return 'ja';
-		case 10:
+		case 'Russian':
 			return 'ru';
-		case 11:
+		case 'Tuvan':
 			return 'tyv';
-		case 12:
+		case 'Amharic':
 			return 'am';
 		default:
 			return 'he';
@@ -5433,28 +5441,28 @@ var $author$project$Main$requestPng = _Platform_outgoingPort(
 				[
 					_Utils_Tuple2(
 					'color',
-					$elm$json$Json$Encode$string($.Y)),
+					$elm$json$Json$Encode$string($.color)),
 					_Utils_Tuple2(
 					'grid',
-					$elm$json$Json$Encode$int($.ad)),
+					$elm$json$Json$Encode$int($.grid)),
 					_Utils_Tuple2(
 					'height',
-					$elm$json$Json$Encode$int($.ae)),
+					$elm$json$Json$Encode$int($.height)),
 					_Utils_Tuple2(
 					'opacity',
-					$elm$json$Json$Encode$float($.aj)),
+					$elm$json$Json$Encode$float($.opacity)),
 					_Utils_Tuple2(
 					'showDiagonals',
-					$elm$json$Json$Encode$bool($.r)),
+					$elm$json$Json$Encode$bool($.showDiagonals)),
 					_Utils_Tuple2(
 					'thickness',
-					$elm$json$Json$Encode$int($.aw)),
+					$elm$json$Json$Encode$int($.thickness)),
 					_Utils_Tuple2(
 					'url',
-					$elm$json$Json$Encode$string($.ax)),
+					$elm$json$Json$Encode$string($.url)),
 					_Utils_Tuple2(
 					'width',
-					$elm$json$Json$Encode$int($.az))
+					$elm$json$Json$Encode$int($.width))
 				]));
 	});
 var $author$project$Main$setHtmlLang = _Platform_outgoingPort('setHtmlLang', $elm$json$Json$Encode$string);
@@ -5463,7 +5471,7 @@ var $elm$file$File$toUrl = _File_toUrl;
 var $author$project$Main$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
-			case 0:
+			case 'PickImage':
 				return _Utils_Tuple2(
 					model,
 					A2(
@@ -5471,7 +5479,7 @@ var $author$project$Main$update = F2(
 						_List_fromArray(
 							['image/*']),
 						$author$project$Main$ImageSelected));
-			case 1:
+			case 'ImageSelected':
 				var file = msg.a;
 				return _Utils_Tuple2(
 					model,
@@ -5479,96 +5487,96 @@ var $author$project$Main$update = F2(
 						$elm$core$Task$perform,
 						$author$project$Main$ImageLoaded,
 						$elm$file$File$toUrl(file)));
-			case 2:
+			case 'ImageLoaded':
 				var url = msg.a;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
 						{
-							z: $elm$core$Maybe$Nothing,
-							A: $elm$core$Maybe$Nothing,
-							e: $elm$core$Maybe$Just(url)
+							imageHeight: $elm$core$Maybe$Nothing,
+							imageWidth: $elm$core$Maybe$Nothing,
+							uploadedImage: $elm$core$Maybe$Just(url)
 						}),
 					$elm$core$Platform$Cmd$none);
-			case 3:
+			case 'GridSizeChanged':
 				var size = msg.a;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{b: size}),
+						{gridSize: size}),
 					$elm$core$Platform$Cmd$none);
-			case 8:
+			case 'GridColorChanged':
 				var color = msg.a;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{k: color}),
+						{gridColor: color}),
 					$elm$core$Platform$Cmd$none);
-			case 9:
+			case 'GridThicknessChanged':
 				var thickness = msg.a;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{i: thickness}),
+						{gridThickness: thickness}),
 					$elm$core$Platform$Cmd$none);
-			case 10:
+			case 'GridOpacityChanged':
 				var opacity = msg.a;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{g: opacity}),
+						{gridOpacity: opacity}),
 					$elm$core$Platform$Cmd$none);
-			case 4:
+			case 'NiceButtonClicked':
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{F: model.F + 1}),
+						{niceCounter: model.niceCounter + 1}),
 					$elm$core$Platform$Cmd$none);
-			case 5:
+			case 'ImageSizeLoaded':
 				var width = msg.a;
 				var height = msg.b;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
 						{
-							z: $elm$core$Maybe$Just(height),
-							A: $elm$core$Maybe$Just(width)
+							imageHeight: $elm$core$Maybe$Just(height),
+							imageWidth: $elm$core$Maybe$Just(width)
 						}),
 					$elm$core$Platform$Cmd$none);
-			case 11:
+			case 'LanguageChanged':
 				var newLanguage = msg.a;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{a: newLanguage}),
+						{language: newLanguage}),
 					$author$project$Main$setHtmlLang(
 						$author$project$Main$languageToCode(newLanguage)));
-			case 12:
+			case 'ResetDownloadSuccess':
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{P: false}),
+						{downloadSuccess: false}),
 					$elm$core$Platform$Cmd$none);
-			case 13:
+			case 'ToggleDiagonals':
 				var value = msg.a;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{r: value}),
+						{showDiagonals: value}),
 					$elm$core$Platform$Cmd$none);
-			case 14:
+			case 'ToggleDrawer':
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{J: !model.J}),
+						{drawerExpanded: !model.drawerExpanded}),
 					$elm$core$Platform$Cmd$none);
-			case 6:
-				var _v1 = _Utils_Tuple3(model.e, model.A, model.z);
-				if (((!_v1.a.$) && (!_v1.b.$)) && (!_v1.c.$)) {
+			case 'DownloadClicked':
+				var _v1 = _Utils_Tuple3(model.uploadedImage, model.imageWidth, model.imageHeight);
+				if (((_v1.a.$ === 'Just') && (_v1.b.$ === 'Just')) && (_v1.c.$ === 'Just')) {
 					var url = _v1.a.a;
 					var w = _v1.b.a;
 					var h = _v1.c.a;
-					var requestParams = {Y: model.k, ad: model.b, ae: h, aj: model.g, r: model.r, aw: model.i, ax: url, az: w};
+					var requestParams = {color: model.gridColor, grid: model.gridSize, height: h, opacity: model.gridOpacity, showDiagonals: model.showDiagonals, thickness: model.gridThickness, url: url, width: w};
 					var _v2 = $author$project$Main$debug(
 						'Elm: DownloadClicked with valid image data. Width: ' + ($elm$core$String$fromInt(w) + (', Height: ' + $elm$core$String$fromInt(h))));
 					return _Utils_Tuple2(
@@ -5588,7 +5596,7 @@ var $author$project$Main$update = F2(
 				var dataUrl = msg.a;
 				var updatedModel = _Utils_update(
 					model,
-					{P: true});
+					{downloadSuccess: true});
 				var _v3 = $author$project$Main$debug(
 					'Elm: GriddedReady received data URL of length: ' + $elm$core$String$fromInt(
 						$elm$core$String$length(dataUrl)));
@@ -5600,7 +5608,7 @@ var $author$project$Main$update = F2(
 							[
 								$author$project$Main$debug('Elm: Starting download...'),
 								$author$project$Main$downloadImage(
-								{Z: dataUrl}),
+								{dataUrl: dataUrl}),
 								A2(
 								$elm$core$Task$perform,
 								function (_v5) {
@@ -5630,1064 +5638,42 @@ var $elm$html$Html$div = _VirtualDom_node('div');
 var $elm$html$Html$Attributes$id = $elm$html$Html$Attributes$stringProperty('id');
 var $elm$html$Html$input = _VirtualDom_node('input');
 var $elm$html$Html$Attributes$type_ = $elm$html$Html$Attributes$stringProperty('type');
-var $author$project$I18n$AppSubtitle = 18;
-var $author$project$I18n$AppTitle = 0;
-var $elm$html$Html$h1 = _VirtualDom_node('h1');
-var $elm$html$Html$p = _VirtualDom_node('p');
-var $elm$html$Html$span = _VirtualDom_node('span');
-var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
-var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
-var $author$project$I18n$amharicTranslations = function (key) {
-	switch (key) {
-		case 0:
-			return 'Gridit! 🐸';
-		case 1:
-			return 'ምስል ይጫኑ';
-		case 2:
-			return 'ያስተካክሉት!';
-		case 3:
-			return 'መጠን';
-		case 4:
-			return ' አራት ማዕዘኖች';
-		case 5:
-			return 'ቀለም';
-		case 6:
-			return 'ውፍረት';
-		case 7:
-			return 'ግልጽነት';
-		case 8:
-			return 'ዋናው ምስል';
-		case 9:
-			return 'ፍርግርግ ያለው ምስል';
-		case 10:
-			return 'የፍርግርግ ምስልዎን ያውርዱ!!!';
-		case 11:
-			return 'ጥሩ! ';
-		case 12:
-			return 'ጥሩ ቆጣሪ: ';
-		case 13:
-			return 'እስካሁን ምንም ምስል የለም! ለመጀመር ምስል ይጫኑ ጠቅ ያድርጉ!';
-		case 14:
-			return 'ቋንቋ:';
-		case 15:
-			return 'እዚህ ይጀምሩ';
-		case 16:
-			return 'ፍርግርጉን በምስልዎ ላይ በትክክል እንዲታይ ያስተካክሉት';
-		case 17:
-			return '🐸 🐸 🐸';
-		case 18:
-			return 'ሰላም። ይህ በእርስዎ ምርጫ ምስል ላይ አራት ማዕዘናዊ ፍርግርግ እንዲፈጥሩ ይረዳዎታል';
-		case 19:
-			return 'የፍርግርግ ምስልዎ እዚህ ይታያል';
-		case 20:
-			return 'ለመጀመር ምስል ይጫኑ';
-		case 21:
-			return 'ሁኔታ: ዝግጁ';
-		case 22:
-			return 'ሰማያዊ መስመሮችን አክል';
-		case 23:
-			return 'አውርድ';
-		case 24:
-			return 'አጋራ';
-		case 25:
-			return 'አዲስ ይጹኑ';
-		case 26:
-			return 'ምስል ይጹኑ';
-		case 27:
-			return 'ፋይል ይምረፑ ወይም እዒህ ይገትቱ እና ይጣሉ';
-		case 28:
-			return 'ፋይል ይምረጡ';
-		case 29:
-			return 'የፍርግርግ ቅንብሮች';
-		default:
-			return 'ሰማያዊ ፍርግርግ';
-	}
+var $author$project$I18n$DiagonalGrid = {$: 'DiagonalGrid'};
+var $author$project$I18n$GridColor = {$: 'GridColor'};
+var $author$project$Main$GridColorChanged = function (a) {
+	return {$: 'GridColorChanged', a: a};
 };
-var $author$project$I18n$asturianoTranslations = function (key) {
-	switch (key) {
-		case 0:
-			return 'Gridit! 🐸';
-		case 1:
-			return 'Xubir Imaxe';
-		case 2:
-			return '¡Personalízalu!';
-		case 3:
-			return 'Tamañu';
-		case 4:
-			return ' rectángulos.';
-		case 5:
-			return 'Color';
-		case 6:
-			return 'Grosor';
-		case 7:
-			return 'Opacidá';
-		case 8:
-			return 'Imaxe Orixinal';
-		case 9:
-			return 'Imaxe con Cuadrícula';
-		case 10:
-			return '¡Descarga la to Imaxe con Cuadrícula!';
-		case 11:
-			return '¡Guapu! ';
-		case 12:
-			return 'Contador Guapu: ';
-		case 13:
-			return '¡Entá nun hai imaxe! ¡Fai clic en Xubir Imaxe pa entamar!';
-		case 14:
-			return 'Llingua:';
-		case 15:
-			return 'Empieza equí';
-		case 16:
-			return 'Personaliza la cuadrícula pa vela correutamente sobro la to imaxen';
-		case 17:
-			return '🐸 🐸 🐸';
-		case 18:
-			return 'Hola. Esto ayúdate a crear una cuadrícula retilínia sobro una imaxen de la to eleición';
-		case 19:
-			return 'La to imaxe con cuadrícula apaecerá equí';
-		case 20:
-			return 'Xube una imaxe pa entamar';
-		case 21:
-			return 'Status: Llistu';
-		case 22:
-			return 'Añader diagonales';
-		case 23:
-			return 'Descargar';
-		case 24:
-			return 'Compartir';
-		case 25:
-			return 'Xubir Nuevu';
-		case 26:
-			return 'Xubir una Imaxe';
-		case 27:
-			return 'Escueyi un ficheru o arrastra y suelta equí';
-		case 28:
-			return 'Escueyi Ficheru';
-		case 29:
-			return 'Axustes de Cuadrícula';
-		default:
-			return 'Cuadrícula Diagonal';
-	}
+var $author$project$I18n$GridOpacity = {$: 'GridOpacity'};
+var $author$project$Main$GridOpacityChanged = function (a) {
+	return {$: 'GridOpacityChanged', a: a};
 };
-var $author$project$I18n$englishTranslations = function (key) {
-	switch (key) {
-		case 0:
-			return 'Gridit! 🐸';
-		case 1:
-			return 'Upload Image';
-		case 2:
-			return 'Customize it!';
-		case 3:
-			return 'Size';
-		case 4:
-			return ' rectangles.';
-		case 5:
-			return 'Color';
-		case 6:
-			return 'Thickness';
-		case 7:
-			return 'Opacity';
-		case 8:
-			return 'Original Image';
-		case 9:
-			return 'Gridded Image';
-		case 10:
-			return 'Download your Gridded Image!!!';
-		case 11:
-			return 'Nice! ';
-		case 12:
-			return 'Nice Counter: ';
-		case 13:
-			return 'No image yet! Click Upload Image to begin!';
-		case 14:
-			return 'Language:';
-		case 15:
-			return 'Start here';
-		case 16:
-			return 'Customize the grid so you can see it properly over your image';
-		case 17:
-			return '🐸 🐸 🐸';
-		case 18:
-			return 'Hello there. This helps you create a rectilinear grid over an image of your choosing';
-		case 19:
-			return 'Your gridded image will appear here';
-		case 20:
-			return 'Upload an image to begin';
-		case 21:
-			return 'Status: Ready';
-		case 22:
-			return 'Add diagonals';
-		case 23:
-			return 'Download';
-		case 24:
-			return 'Share';
-		case 25:
-			return 'Upload New';
-		case 26:
-			return 'Upload Image';
-		case 27:
-			return 'Choose a file or drag and drop here';
-		case 28:
-			return 'Choose File';
-		case 29:
-			return 'Grid Settings';
-		default:
-			return 'Diagonal Grid';
-	}
+var $author$project$I18n$GridSettings = {$: 'GridSettings'};
+var $author$project$I18n$GridSize = {$: 'GridSize'};
+var $author$project$Main$GridSizeChanged = function (a) {
+	return {$: 'GridSizeChanged', a: a};
 };
-var $author$project$I18n$euskaraTranslations = function (key) {
-	switch (key) {
-		case 0:
-			return 'Gridit! 🐸';
-		case 1:
-			return 'Irudia Igo';
-		case 2:
-			return 'Pertsonalizatu!';
-		case 3:
-			return 'Tamaina';
-		case 4:
-			return ' laukizuzenak.';
-		case 5:
-			return 'Kolorea';
-		case 6:
-			return 'Lodiera';
-		case 7:
-			return 'Opakutasuna';
-		case 8:
-			return 'Jatorrizko Irudia';
-		case 9:
-			return 'Saretadun Irudia';
-		case 10:
-			return 'Zure Saretadun Irudia Deskargatu!';
-		case 11:
-			return 'Bikain! ';
-		case 12:
-			return 'Bikain Kontagailua: ';
-		case 13:
-			return 'Oraindik ez dago irudirik! Egin klik Irudia Igo botoian hasteko!';
-		case 14:
-			return 'Hizkuntza:';
-		case 15:
-			return 'Hasi hemen';
-		case 16:
-			return 'Pertsonalizatu sareta zure irudian behar bezala ikusteko';
-		case 17:
-			return '🐸 🐸 🐸';
-		case 18:
-			return 'Kaixo. Honek hautatutako irudi baten gainean sareta zuzen bat sortzen laguntzen dizu';
-		case 19:
-			return 'Zure saretadun irudia hemen agertuko da';
-		case 20:
-			return 'Igo irudi bat hasteko';
-		case 21:
-			return 'Egoera: Prest';
-		case 22:
-			return 'Diagonalak gehitu';
-		case 23:
-			return 'Deskargatu';
-		case 24:
-			return 'Partekatu';
-		case 25:
-			return 'Igo Berria';
-		case 26:
-			return 'Igo Irudia';
-		case 27:
-			return 'Aukeratu fitxategia edo arrastatu eta jaregin hemen';
-		case 28:
-			return 'Fitxategia Aukeratu';
-		case 29:
-			return 'Sareta Ezarpenak';
-		default:
-			return 'Sareta Diagonala';
-	}
+var $author$project$I18n$GridThickness = {$: 'GridThickness'};
+var $author$project$Main$GridThicknessChanged = function (a) {
+	return {$: 'GridThicknessChanged', a: a};
 };
-var $author$project$I18n$frenchTranslations = function (key) {
-	switch (key) {
-		case 0:
-			return 'Gridit! 🐸';
-		case 1:
-			return 'Télécharger une Image';
-		case 2:
-			return 'Personnalisez-le!';
-		case 3:
-			return 'Taille';
-		case 4:
-			return ' rectangles.';
-		case 5:
-			return 'Couleur';
-		case 6:
-			return 'Épaisseur';
-		case 7:
-			return 'Opacité';
-		case 8:
-			return 'Image Originale';
-		case 9:
-			return 'Image avec Grille';
-		case 10:
-			return 'Téléchargez votre Image avec Grille!';
-		case 11:
-			return 'Sympa! ';
-		case 12:
-			return 'Compteur Sympa: ';
-		case 13:
-			return 'Pas encore d\'image! Cliquez sur Télécharger une Image pour commencer!';
-		case 14:
-			return 'Langue:';
-		case 15:
-			return 'Commencez ici';
-		case 16:
-			return 'Personnalisez la grille pour la voir correctement sur votre image';
-		case 17:
-			return '🐸 🐸 🐸';
-		case 18:
-			return 'Bonjour. Ceci vous aide à créer une grille rectiligne sur une image de votre choix';
-		case 19:
-			return 'Votre image avec grille apparaîtra ici';
-		case 20:
-			return 'Téléchargez une image pour commencer';
-		case 21:
-			return 'Status: Prêt';
-		case 22:
-			return 'Ajouter des diagonales';
-		case 23:
-			return 'Télécharger';
-		case 24:
-			return 'Partager';
-		case 25:
-			return 'Télécharger Nouveau';
-		case 26:
-			return 'Télécharger une Image';
-		case 27:
-			return 'Choisissez un fichier ou glissez-déposez ici';
-		case 28:
-			return 'Choisir Fichier';
-		case 29:
-			return 'Paramètres de Grille';
-		default:
-			return 'Grille Diagonale';
-	}
+var $author$project$Main$ToggleDiagonals = function (a) {
+	return {$: 'ToggleDiagonals', a: a};
 };
-var $author$project$I18n$gaelicTranslations = function (key) {
-	switch (key) {
-		case 0:
-			return 'Gridit! 🐸';
-		case 1:
-			return 'Luchdaich Dealbh';
-		case 2:
-			return 'Gnàthaich e!';
-		case 3:
-			return 'Meud';
-		case 4:
-			return ' ceart-chearnagan.';
-		case 5:
-			return 'Dath';
-		case 6:
-			return 'Tiughad';
-		case 7:
-			return 'Dorchadas';
-		case 8:
-			return 'Dealbh Tùsail';
-		case 9:
-			return 'Dealbh le Griod';
-		case 10:
-			return 'Luchdaich sìos do Dhealbh le Griod!';
-		case 11:
-			return 'Sgoinneil! ';
-		case 12:
-			return 'Cunntair Sgoinneil: ';
-		case 13:
-			return 'Chan eil dealbh ann fhathast! Cliog air Luchdaich Dealbh gus tòiseachadh!';
-		case 14:
-			return 'Cànan:';
-		case 15:
-			return 'Tòisich an seo';
-		case 16:
-			return 'Gnàthaich an griod gus am faic thu e gu ceart thar do dhealbh';
-		case 17:
-			return '🐸 🐸 🐸';
-		case 18:
-			return 'Halò. Bidh seo a\' cuideachadh thu le bhith a\' cruthachadh griod dìreach air ìomhaigh de do roghainn';
-		case 19:
-			return 'Nochdaidh do dhealbh le griod an seo';
-		case 20:
-			return 'Luchdaich dealbh gus tòiseachadh';
-		case 21:
-			return 'Status: Deiseil';
-		case 22:
-			return 'Cuir trasnanan ris';
-		case 23:
-			return 'Luchdaich sìos';
-		case 24:
-			return 'Co-roinn';
-		case 25:
-			return 'Luchdaich Ùr';
-		case 26:
-			return 'Luchdaich Dealbh';
-		case 27:
-			return 'Tagh faidhle no tarraing is leig às an seo';
-		case 28:
-			return 'Tagh Faidhle';
-		case 29:
-			return 'Suidheachaidhean Griod';
-		default:
-			return 'Griod Trasnach';
-	}
-};
-var $author$project$I18n$hebrewTranslations = function (key) {
-	switch (key) {
-		case 0:
-			return 'Gridit! 🐸';
-		case 1:
-			return 'העלאת תמונה';
-		case 2:
-			return 'התאם אישית!';
-		case 3:
-			return 'גודל';
-		case 4:
-			return ' מלבנים';
-		case 5:
-			return 'צבע';
-		case 6:
-			return 'עובי';
-		case 7:
-			return 'שקיפות';
-		case 8:
-			return 'תמונה מקורית';
-		case 9:
-			return 'תמונה עם רשת';
-		case 10:
-			return 'הורד את התמונה עם הרשת!!!';
-		case 11:
-			return 'יפה! ';
-		case 12:
-			return 'מונה יפה: ';
-		case 13:
-			return 'אין תמונה עדיין! לחץ על העלאת תמונה כדי להתחיל!';
-		case 14:
-			return 'שפה:';
-		case 15:
-			return 'התחל כאן';
-		case 16:
-			return 'התאם את הרשת כדי שתוכל לראות אותה כראוי על התמונה שלך';
-		case 17:
-			return '🐸 🐸 🐸';
-		case 18:
-			return 'שלום. זה עוזר לך ליצור רשת מלבנית על תמונה לבחירתך';
-		case 19:
-			return 'התמונה עם הרשת תופיע כאן';
-		case 20:
-			return 'העלה תמונה כדי להתחיל';
-		case 21:
-			return 'סטטוס: מוכן';
-		case 22:
-			return 'הוסף אלכסונים';
-		case 23:
-			return 'הורדה';
-		case 24:
-			return 'שיתוף';
-		case 25:
-			return 'העלאה חדשה';
-		case 26:
-			return 'העלאת תמונה';
-		case 27:
-			return 'בחר קובץ או גרור ושחרר כאן';
-		case 28:
-			return 'בחר קובץ';
-		case 29:
-			return 'הגדרות רשת';
-		default:
-			return 'רשת אלכסונית';
-	}
-};
-var $author$project$I18n$italianTranslations = function (key) {
-	switch (key) {
-		case 0:
-			return 'Gridit! 🐸';
-		case 1:
-			return 'Carica Immagine';
-		case 2:
-			return 'Personalizzalo!';
-		case 3:
-			return 'Dimensione';
-		case 4:
-			return ' rettangoli.';
-		case 5:
-			return 'Colore';
-		case 6:
-			return 'Spessore';
-		case 7:
-			return 'Opacità';
-		case 8:
-			return 'Immagine Originale';
-		case 9:
-			return 'Immagine con Griglia';
-		case 10:
-			return 'Scarica la tua Immagine con Griglia!';
-		case 11:
-			return 'Bello! ';
-		case 12:
-			return 'Contatore Bello: ';
-		case 13:
-			return 'Nessuna immagine ancora! Clicca su Carica Immagine per iniziare!';
-		case 14:
-			return 'Lingua:';
-		case 15:
-			return 'Inizia qui';
-		case 16:
-			return 'Personalizza la griglia in modo da vederla correttamente sulla tua immagine';
-		case 17:
-			return '🐸 🐸 🐸';
-		case 18:
-			return 'Ciao. Questo ti aiuta a creare una griglia rettilinea su un\'immagine di tua scelta';
-		case 19:
-			return 'La tua immagine con griglia apparirà qui';
-		case 20:
-			return 'Carica un\'immagine per iniziare';
-		case 21:
-			return 'Status: Pronto';
-		case 22:
-			return 'Aggiungi diagonali';
-		case 23:
-			return 'Scarica';
-		case 24:
-			return 'Condividi';
-		case 25:
-			return 'Carica Nuovo';
-		case 26:
-			return 'Carica un\'Immagine';
-		case 27:
-			return 'Scegli un file o trascina e rilascia qui';
-		case 28:
-			return 'Scegli File';
-		case 29:
-			return 'Impostazioni Griglia';
-		default:
-			return 'Griglia Diagonale';
-	}
-};
-var $author$project$I18n$japaneseTranslations = function (key) {
-	switch (key) {
-		case 0:
-			return 'Gridit! 🐸';
-		case 1:
-			return '画像をアップロード';
-		case 2:
-			return 'カスタマイズしよう！';
-		case 3:
-			return 'サイズ';
-		case 4:
-			return ' 長方形';
-		case 5:
-			return '色';
-		case 6:
-			return '太さ';
-		case 7:
-			return '不透明度';
-		case 8:
-			return '元の画像';
-		case 9:
-			return 'グリッド付き画像';
-		case 10:
-			return 'グリッド付き画像をダウンロード！';
-		case 11:
-			return 'いいね！ ';
-		case 12:
-			return 'いいねカウンター: ';
-		case 13:
-			return 'まだ画像がありません！画像をアップロードをクリックして始めましょう！';
-		case 14:
-			return '言語:';
-		case 15:
-			return 'ここから始める';
-		case 16:
-			return '画像上で適切に表示できるようにグリッドをカスタマイズする';
-		case 17:
-			return '🐸 🐸 🐸';
-		case 18:
-			return 'こんにちは。これはあなたが選んだ画像上に直線グリッドを作成するのに役立ちます';
-		case 19:
-			return 'グリッド付き画像がここに表示されます';
-		case 20:
-			return '画像をアップロードして始めましょう';
-		case 21:
-			return 'ステータス: 準備完了';
-		case 22:
-			return '対角線を追加';
-		case 23:
-			return 'ダウンロード';
-		case 24:
-			return '共有';
-		case 25:
-			return '新しくアップロード';
-		case 26:
-			return '画像をアップロード';
-		case 27:
-			return 'ファイルを選択するか、ここにドラッグ＆ドロップしてください';
-		case 28:
-			return 'ファイル選択';
-		case 29:
-			return 'グリッド設定';
-		default:
-			return '対角線グリッド';
-	}
-};
-var $author$project$I18n$latinTranslations = function (key) {
-	switch (key) {
-		case 0:
-			return 'Gridit! 🐸';
-		case 1:
-			return 'Imago Submittere';
-		case 2:
-			return 'Personaliza!';
-		case 3:
-			return 'Magnitudinem';
-		case 4:
-			return ' rectangula.';
-		case 5:
-			return 'Color';
-		case 6:
-			return 'Crassitudo';
-		case 7:
-			return 'Opacitas';
-		case 8:
-			return 'Imago Originalis';
-		case 9:
-			return 'Imago cum Craticula';
-		case 10:
-			return 'Imago cum Craticula Discaricare!!!';
-		case 11:
-			return 'Bellus! ';
-		case 12:
-			return 'Bellus Numerator: ';
-		case 13:
-			return 'Nondum imago! Imago Submittere preme ut incipias!';
-		case 14:
-			return 'Lingua:';
-		case 15:
-			return 'Incipe hic';
-		case 16:
-			return 'Personaliza cratem ut videas eam recte super imaginem tuam';
-		case 17:
-			return '🐸 🐸 🐸';
-		case 18:
-			return 'Salve. Hoc te adiuvat creare reticulum rectilineare super imaginem tuam electam';
-		case 19:
-			return 'Imago tua cum craticula hic apparebit';
-		case 20:
-			return 'Submitte imaginem ut incipias';
-		case 21:
-			return 'Status: Paratus';
-		case 22:
-			return 'Adde diagonalia';
-		case 23:
-			return 'Discaricare';
-		case 24:
-			return 'Communicare';
-		case 25:
-			return 'Nova Submittere';
-		case 26:
-			return 'Imago Submittere';
-		case 27:
-			return 'Elige fasciculum aut trahe et demitte hic';
-		case 28:
-			return 'Eligere Fasciculum';
-		case 29:
-			return 'Configuratio Reticulationis';
-		default:
-			return 'Reticulatio Diagonalis';
-	}
-};
-var $author$project$I18n$portugueseTranslations = function (key) {
-	switch (key) {
-		case 0:
-			return 'Gridit! 🐸';
-		case 1:
-			return 'Carregar Imagem';
-		case 2:
-			return 'Personalize!';
-		case 3:
-			return 'Tamanho';
-		case 4:
-			return ' retângulos.';
-		case 5:
-			return 'Cor';
-		case 6:
-			return 'Espessura: ';
-		case 7:
-			return 'Opacidade';
-		case 8:
-			return 'Imagem Original';
-		case 9:
-			return 'Imagem com Grade';
-		case 10:
-			return 'Baixe sua Imagem com Grade!';
-		case 11:
-			return 'Legal! ';
-		case 12:
-			return 'Contador Legal: ';
-		case 13:
-			return 'Nenhuma imagem ainda! Clique em Carregar Imagem para começar!';
-		case 14:
-			return 'Idioma:';
-		case 15:
-			return 'Comece aqui';
-		case 16:
-			return 'Personalize a grade para que você possa vê-la corretamente sobre sua imagem';
-		case 17:
-			return '🐸 🐸 🐸';
-		case 18:
-			return 'Olá. Isto ajuda-te a criar uma grelha retilínea sobre uma imagem à tua escolha';
-		case 19:
-			return 'Sua imagem com grade aparecerá aqui';
-		case 20:
-			return 'Carregue uma imagem para começar';
-		case 21:
-			return 'Status: Pronto';
-		case 22:
-			return 'Adicionar diagonais';
-		case 23:
-			return 'Baixar';
-		case 24:
-			return 'Compartilhar';
-		case 25:
-			return 'Carregar Novo';
-		case 26:
-			return 'Carregar uma Imagem';
-		case 27:
-			return 'Escolha um arquivo ou arraste e solte aqui';
-		case 28:
-			return 'Escolher Arquivo';
-		case 29:
-			return 'Configurações de Grade';
-		default:
-			return 'Grade Diagonal';
-	}
-};
-var $author$project$I18n$russianTranslations = function (key) {
-	switch (key) {
-		case 0:
-			return 'Gridit! 🐸';
-		case 1:
-			return 'Загрузить изображение';
-		case 2:
-			return 'Настроить!';
-		case 3:
-			return 'Размер';
-		case 4:
-			return ' прямоугольников';
-		case 5:
-			return 'Цвет';
-		case 6:
-			return 'Толщина';
-		case 7:
-			return 'Прозрачность';
-		case 8:
-			return 'Исходное изображение';
-		case 9:
-			return 'Изображение с сеткой';
-		case 10:
-			return 'Скачать изображение с сеткой!';
-		case 11:
-			return 'Отлично! ';
-		case 12:
-			return 'Счетчик отлично: ';
-		case 13:
-			return 'Изображения пока нет! Нажмите Загрузить изображение, чтобы начать!';
-		case 14:
-			return 'Язык:';
-		case 15:
-			return 'Начните здесь';
-		case 16:
-			return 'Настройте сетку, чтобы она хорошо отображалась на вашем изображении';
-		case 17:
-			return '🐸 🐸 🐸';
-		case 18:
-			return 'Здравствуйте. Это поможет вам создать прямоугольную сетку поверх выбранного вами изображения';
-		case 19:
-			return 'Ваше изображение с сеткой появится здесь';
-		case 20:
-			return 'Загрузите изображение, чтобы начать';
-		case 21:
-			return 'Статус: Готово';
-		case 22:
-			return 'Добавить диагонали';
-		case 23:
-			return 'Скачать';
-		case 24:
-			return 'Поделиться';
-		case 25:
-			return 'Загрузить новое';
-		case 26:
-			return 'Загрузить изображение';
-		case 27:
-			return 'Выберите файл или перетащите его сюда';
-		case 28:
-			return 'Выбрать Файл';
-		case 29:
-			return 'Настройки Сетки';
-		default:
-			return 'Диагональная Сетка';
-	}
-};
-var $author$project$I18n$spanishTranslations = function (key) {
-	switch (key) {
-		case 0:
-			return 'Gridit! 🐸';
-		case 1:
-			return 'Subir una Imagen';
-		case 2:
-			return 'Personalizá la grilla';
-		case 3:
-			return 'Tamaño';
-		case 4:
-			return ' rectángulos';
-		case 5:
-			return 'Color';
-		case 6:
-			return 'Grosor';
-		case 7:
-			return 'Opacidad';
-		case 8:
-			return 'Imagen Original';
-		case 9:
-			return 'Imagen con Grilla';
-		case 10:
-			return 'Descarga tu Imagen con Grilla!';
-		case 11:
-			return 'Buenísimo! ';
-		case 12:
-			return 'Contador de Buenísimo: ';
-		case 13:
-			return 'Hacé click en Subir Imagen para empezar!';
-		case 14:
-			return 'Idioma:';
-		case 15:
-			return 'Empezá acá';
-		case 16:
-			return 'Customizá la grilla para verla bien sobre tu imagen';
-		case 17:
-			return '🐸 🐸 🐸';
-		case 18:
-			return 'Buenas. Agregale una grilla rectilinear a una imagen que elijas';
-		case 19:
-			return 'Tu imagen con grilla va a aparecer acá';
-		case 20:
-			return 'Subí una imagen para empezar';
-		case 21:
-			return 'Status: Listo';
-		case 22:
-			return 'Agregar diagonales';
-		case 23:
-			return 'Descargar';
-		case 24:
-			return 'Compartir';
-		case 25:
-			return 'Subir Nuevo';
-		case 26:
-			return 'Subir una Imagen';
-		case 27:
-			return 'Elige un archivo o arrástralo aquí';
-		case 28:
-			return 'Elegir Archivo';
-		case 29:
-			return 'Ajustes de Cuadrícula';
-		default:
-			return 'Cuadrícula Diagonal';
-	}
-};
-var $author$project$I18n$tuvanTranslations = function (key) {
-	switch (key) {
-		case 0:
-			return 'Gridit! 🐸';
-		case 1:
-			return 'Чурукту киирер';
-		case 2:
-			return 'Таарыштырар!';
-		case 3:
-			return 'Хемчээл';
-		case 4:
-			return ' дөрбелчиннер';
-		case 5:
-			return 'Өң';
-		case 6:
-			return 'Кылын';
-		case 7:
-			return 'Көскүзү';
-		case 8:
-			return 'Баштайгы чурук';
-		case 9:
-			return 'Шыйыглыг чурук';
-		case 10:
-			return 'Шыйыглыг чурукту чүдүрүп алыр!';
-		case 11:
-			return 'Эки! ';
-		case 12:
-			return 'Эки саналга: ';
-		case 13:
-			return 'Чурук чок! Эгелээр дээш Чурукту киирер деп базыңар!';
-		case 14:
-			return 'Дыл:';
-		case 15:
-			return 'Мындан эгелеңер';
-		case 16:
-			return 'Шыйыгны чурукка эки көстүр кылдыр таарыштырыңар';
-		case 17:
-			return '🐸 🐸 🐸';
-		case 18:
-			return 'Экии. Бо дээрге силерниң шилип алган чурууңарга дорт шыйыглар кылырынга дузалаар';
-		case 19:
-			return 'Силерниң шыйыглыг чурууңар мында көстүп кээр';
-		case 20:
-			return 'Эгелээр дээш чурукту киириңер';
-		case 21:
-			return 'Байдал: Белен';
-		case 22:
-			return 'Диагоналдар немээр';
-		case 23:
-			return 'Чүдүрүп алыр';
-		case 24:
-			return 'Үлежир';
-		case 25:
-			return 'Чаа чүдүрер';
-		case 26:
-			return 'Чурукту киирер';
-		case 27:
-			return 'Файлды шилиңер азы бээр чыгып каапкаш, салып каар';
-		case 28:
-			return 'Файл Шилиир';
-		case 29:
-			return 'Шыйыг Тургузуглары';
-		default:
-			return 'Кыйгаар Шыйыглар';
-	}
-};
-var $author$project$I18n$translations = F2(
-	function (language, key) {
-		switch (language) {
-			case 0:
-				return $author$project$I18n$englishTranslations(key);
-			case 1:
-				return $author$project$I18n$spanishTranslations(key);
-			case 2:
-				return $author$project$I18n$latinTranslations(key);
-			case 3:
-				return $author$project$I18n$italianTranslations(key);
-			case 4:
-				return $author$project$I18n$portugueseTranslations(key);
-			case 5:
-				return $author$project$I18n$frenchTranslations(key);
-			case 6:
-				return $author$project$I18n$asturianoTranslations(key);
-			case 7:
-				return $author$project$I18n$gaelicTranslations(key);
-			case 8:
-				return $author$project$I18n$euskaraTranslations(key);
-			case 9:
-				return $author$project$I18n$japaneseTranslations(key);
-			case 10:
-				return $author$project$I18n$russianTranslations(key);
-			case 11:
-				return $author$project$I18n$tuvanTranslations(key);
-			case 12:
-				return $author$project$I18n$amharicTranslations(key);
-			default:
-				return $author$project$I18n$hebrewTranslations(key);
-		}
+var $elm$html$Html$Attributes$boolProperty = F2(
+	function (key, bool) {
+		return A2(
+			_VirtualDom_property,
+			key,
+			$elm$json$Json$Encode$bool(bool));
 	});
-var $author$project$I18n$translate = F2(
-	function (language, key) {
-		return A2($author$project$I18n$translations, language, key);
-	});
-var $author$project$I18n$Amharic = 12;
-var $author$project$I18n$Asturiano = 6;
-var $author$project$I18n$English = 0;
-var $author$project$I18n$Euskara = 8;
-var $author$project$I18n$French = 5;
-var $author$project$I18n$Gaelic = 7;
-var $author$project$I18n$Hebrew = 13;
-var $author$project$I18n$Italian = 3;
-var $author$project$I18n$Japanese = 9;
-var $author$project$Main$LanguageChanged = function (a) {
-	return {$: 11, a: a};
-};
-var $author$project$I18n$LanguageLabel = 14;
-var $author$project$I18n$Latin = 2;
-var $author$project$I18n$Portuguese = 4;
-var $author$project$I18n$Russian = 10;
-var $author$project$I18n$Tuvan = 11;
-var $elm$json$Json$Decode$field = _Json_decodeField;
-var $elm$json$Json$Decode$at = F2(
-	function (fields, decoder) {
-		return A3($elm$core$List$foldr, $elm$json$Json$Decode$field, decoder, fields);
-	});
+var $elm$html$Html$Attributes$checked = $elm$html$Html$Attributes$boolProperty('checked');
 var $elm$html$Html$Attributes$for = $elm$html$Html$Attributes$stringProperty('htmlFor');
+var $elm$core$String$fromFloat = _String_fromNumber;
 var $elm$html$Html$label = _VirtualDom_node('label');
-var $author$project$Main$languageFlag = function (language) {
-	switch (language) {
-		case 0:
-			return '🇬🇧🇺🇸 ';
-		case 1:
-			return '🇪🇸🇦🇷 ';
-		case 2:
-			return '🇮🇹 ';
-		case 3:
-			return '🇮🇹 ';
-		case 4:
-			return '🇧🇷🇵🇹 ';
-		case 5:
-			return '🇫🇷 ';
-		case 6:
-			return '🇪🇸 ';
-		case 7:
-			return '🇮🇪🏴\uDB40\uDC67\uDB40\uDC62\uDB40\uDC73\uDB40\uDC63\uDB40\uDC74\uDB40\uDC7F ';
-		case 8:
-			return '🇪🇸 ';
-		case 9:
-			return '🇯🇵 ';
-		case 10:
-			return '🇷🇺 ';
-		case 11:
-			return '🇷🇺 ';
-		case 12:
-			return '🇪🇹 ';
-		default:
-			return '🇮🇱 ';
-	}
-};
-var $author$project$Main$languageToString = function (language) {
-	switch (language) {
-		case 0:
-			return 'english';
-		case 1:
-			return 'spanish';
-		case 2:
-			return 'latin';
-		case 3:
-			return 'italian';
-		case 4:
-			return 'portuguese';
-		case 5:
-			return 'french';
-		case 6:
-			return 'asturiano';
-		case 7:
-			return 'gaelic';
-		case 8:
-			return 'euskara';
-		case 9:
-			return 'japanese';
-		case 10:
-			return 'russian';
-		case 11:
-			return 'tuvan';
-		case 12:
-			return 'amharic';
-		default:
-			return 'hebrew';
-	}
-};
+var $elm$html$Html$Attributes$max = $elm$html$Html$Attributes$stringProperty('max');
+var $elm$html$Html$Attributes$min = $elm$html$Html$Attributes$stringProperty('min');
 var $elm$virtual_dom$VirtualDom$Normal = function (a) {
-	return {$: 0, a: a};
+	return {$: 'Normal', a: a};
 };
 var $elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
 var $elm$html$Html$Events$on = F2(
@@ -6697,222 +5683,11 @@ var $elm$html$Html$Events$on = F2(
 			event,
 			$elm$virtual_dom$VirtualDom$Normal(decoder));
 	});
-var $elm$html$Html$option = _VirtualDom_node('option');
-var $author$project$Main$parseLanguage = function (value) {
-	switch (value) {
-		case 'english':
-			return 0;
-		case 'spanish':
-			return 1;
-		case 'latin':
-			return 2;
-		case 'italian':
-			return 3;
-		case 'portuguese':
-			return 4;
-		case 'french':
-			return 5;
-		case 'asturiano':
-			return 6;
-		case 'gaelic':
-			return 7;
-		case 'euskara':
-			return 8;
-		case 'japanese':
-			return 9;
-		case 'russian':
-			return 10;
-		case 'tuvan':
-			return 11;
-		case 'amharic':
-			return 12;
-		case 'hebrew':
-			return 13;
-		default:
-			return 0;
-	}
-};
-var $elm$html$Html$select = _VirtualDom_node('select');
-var $elm$html$Html$Attributes$boolProperty = F2(
-	function (key, bool) {
-		return A2(
-			_VirtualDom_property,
-			key,
-			$elm$json$Json$Encode$bool(bool));
+var $elm$json$Json$Decode$field = _Json_decodeField;
+var $elm$json$Json$Decode$at = F2(
+	function (fields, decoder) {
+		return A3($elm$core$List$foldr, $elm$json$Json$Decode$field, decoder, fields);
 	});
-var $elm$html$Html$Attributes$selected = $elm$html$Html$Attributes$boolProperty('selected');
-var $elm$html$Html$Attributes$value = $elm$html$Html$Attributes$stringProperty('value');
-var $author$project$Main$viewLanguageSelector = function (currentLanguage) {
-	var languageOption = F2(
-		function (language, displayName) {
-			return A2(
-				$elm$html$Html$option,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$value(
-						$author$project$Main$languageToString(language)),
-						$elm$html$Html$Attributes$selected(
-						_Utils_eq(currentLanguage, language)),
-						A2($elm$html$Html$Attributes$attribute, 'aria-label', displayName)
-					]),
-				_List_fromArray(
-					[
-						$elm$html$Html$text(
-						_Utils_ap(
-							$author$project$Main$languageFlag(language),
-							displayName))
-					]));
-		});
-	var handleLanguageChange = function (value) {
-		return $author$project$Main$LanguageChanged(
-			$author$project$Main$parseLanguage(value));
-	};
-	var _v0 = $author$project$Main$debug(
-		'lang:' + $author$project$Main$languageToCode(currentLanguage));
-	return A2(
-		$elm$html$Html$div,
-		_List_fromArray(
-			[
-				$elm$html$Html$Attributes$class('language-selector')
-			]),
-		_List_fromArray(
-			[
-				A2(
-				$elm$html$Html$label,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$for('language-select'),
-						$elm$html$Html$Attributes$class('sr-only')
-					]),
-				_List_fromArray(
-					[
-						$elm$html$Html$text(
-						A2($author$project$I18n$translate, currentLanguage, 14))
-					])),
-				A2(
-				$elm$html$Html$select,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$id('language-select'),
-						A2(
-						$elm$html$Html$Events$on,
-						'change',
-						A2(
-							$elm$json$Json$Decode$map,
-							handleLanguageChange,
-							A2(
-								$elm$json$Json$Decode$at,
-								_List_fromArray(
-									['target', 'value']),
-								$elm$json$Json$Decode$string))),
-						$elm$html$Html$Attributes$class('language-dropdown'),
-						A2(
-						$elm$html$Html$Attributes$attribute,
-						'aria-label',
-						A2($author$project$I18n$translate, currentLanguage, 14))
-					]),
-				_List_fromArray(
-					[
-						A2(languageOption, 0, 'English'),
-						A2(languageOption, 1, 'Español'),
-						A2(languageOption, 2, 'Latin'),
-						A2(languageOption, 3, 'Italiano'),
-						A2(languageOption, 4, 'Português'),
-						A2(languageOption, 5, 'Français'),
-						A2(languageOption, 6, 'Asturianu'),
-						A2(languageOption, 7, 'Gàidhlig'),
-						A2(languageOption, 8, 'Euskara'),
-						A2(languageOption, 9, '日本語'),
-						A2(languageOption, 10, 'Русский'),
-						A2(languageOption, 11, 'Тыва дыл'),
-						A2(languageOption, 12, 'አማርኛ'),
-						A2(languageOption, 13, 'עברית')
-					]))
-			]));
-};
-var $author$project$Main$viewHeader = function (language) {
-	return A2(
-		$elm$html$Html$div,
-		_List_fromArray(
-			[
-				$elm$html$Html$Attributes$class('app-header')
-			]),
-		_List_fromArray(
-			[
-				A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('app-logo-wrapper')
-					]),
-				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$span,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('app-logo')
-							]),
-						_List_fromArray(
-							[
-								$elm$html$Html$text('🐸')
-							])),
-						A2(
-						$elm$html$Html$h1,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('app-title')
-							]),
-						_List_fromArray(
-							[
-								$elm$html$Html$text(
-								A2($author$project$I18n$translate, language, 0))
-							]))
-					])),
-				A2(
-				$elm$html$Html$p,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('app-subtitle')
-					]),
-				_List_fromArray(
-					[
-						$elm$html$Html$text(
-						A2($author$project$I18n$translate, language, 18))
-					])),
-				$author$project$Main$viewLanguageSelector(language)
-			]));
-};
-var $author$project$I18n$DiagonalGrid = 30;
-var $author$project$I18n$Download = 23;
-var $author$project$Main$DownloadClicked = {$: 6};
-var $author$project$I18n$GridColor = 5;
-var $author$project$Main$GridColorChanged = function (a) {
-	return {$: 8, a: a};
-};
-var $author$project$I18n$GridOpacity = 7;
-var $author$project$Main$GridOpacityChanged = function (a) {
-	return {$: 10, a: a};
-};
-var $author$project$I18n$GridSettings = 29;
-var $author$project$I18n$GridSize = 3;
-var $author$project$Main$GridSizeChanged = function (a) {
-	return {$: 3, a: a};
-};
-var $author$project$I18n$GridThickness = 6;
-var $author$project$Main$GridThicknessChanged = function (a) {
-	return {$: 9, a: a};
-};
-var $author$project$I18n$Share = 24;
-var $author$project$Main$ToggleDiagonals = function (a) {
-	return {$: 13, a: a};
-};
-var $elm$html$Html$button = _VirtualDom_node('button');
-var $elm$html$Html$Attributes$checked = $elm$html$Html$Attributes$boolProperty('checked');
-var $elm$html$Html$Attributes$disabled = $elm$html$Html$Attributes$boolProperty('disabled');
-var $elm$core$String$fromFloat = _String_fromNumber;
-var $elm$html$Html$Attributes$max = $elm$html$Html$Attributes$stringProperty('max');
-var $elm$html$Html$Attributes$min = $elm$html$Html$Attributes$stringProperty('min');
 var $elm$json$Json$Decode$bool = _Json_decodeBool;
 var $elm$html$Html$Events$targetChecked = A2(
 	$elm$json$Json$Decode$at,
@@ -6925,17 +5700,11 @@ var $elm$html$Html$Events$onCheck = function (tagger) {
 		'change',
 		A2($elm$json$Json$Decode$map, tagger, $elm$html$Html$Events$targetChecked));
 };
-var $elm$html$Html$Events$onClick = function (msg) {
-	return A2(
-		$elm$html$Html$Events$on,
-		'click',
-		$elm$json$Json$Decode$succeed(msg));
-};
 var $elm$html$Html$Events$alwaysStop = function (x) {
 	return _Utils_Tuple2(x, true);
 };
 var $elm$virtual_dom$VirtualDom$MayStopPropagation = function (a) {
-	return {$: 1, a: a};
+	return {$: 'MayStopPropagation', a: a};
 };
 var $elm$html$Html$Events$stopPropagationOn = F2(
 	function (event, decoder) {
@@ -6958,27 +5727,1301 @@ var $elm$html$Html$Events$onInput = function (tagger) {
 			$elm$html$Html$Events$alwaysStop,
 			A2($elm$json$Json$Decode$map, tagger, $elm$html$Html$Events$targetValue)));
 };
-var $elm$html$Html$Attributes$placeholder = $elm$html$Html$Attributes$stringProperty('placeholder');
 var $elm$core$Basics$round = _Basics_round;
+var $elm$html$Html$span = _VirtualDom_node('span');
 var $elm$html$Html$Attributes$step = function (n) {
 	return A2($elm$html$Html$Attributes$stringProperty, 'step', n);
 };
+var $elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
+var $elm$html$Html$Attributes$style = $elm$virtual_dom$VirtualDom$style;
+var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
+var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
 var $elm$core$String$toFloat = _String_toFloat;
+var $author$project$I18n$amharicTranslations = function (key) {
+	switch (key.$) {
+		case 'AppTitle':
+			return 'Gridit! 🐸';
+		case 'UploadImage':
+			return 'ምስል ይጫኑ';
+		case 'CustomizeIt':
+			return 'ያስተካክሉት!';
+		case 'GridSize':
+			return 'መጠን';
+		case 'Rectangles':
+			return ' አራት ማዕዘኖች';
+		case 'GridColor':
+			return 'ቀለም';
+		case 'GridThickness':
+			return 'ውፍረት';
+		case 'GridOpacity':
+			return 'ግልጽነት';
+		case 'OriginalImage':
+			return 'ዋናው ምስል';
+		case 'GriddedImage':
+			return 'ፍርግርግ ያለው ምስል';
+		case 'DownloadGriddedImage':
+			return 'የፍርግርግ ምስልዎን ያውርዱ!!!';
+		case 'Nice':
+			return 'ጥሩ! ';
+		case 'NiceCounter':
+			return 'ጥሩ ቆጣሪ: ';
+		case 'NoImageYet':
+			return 'እስካሁን ምንም ምስል የለም! ለመጀመር ምስል ይጫኑ ጠቅ ያድርጉ!';
+		case 'LanguageLabel':
+			return 'ቋንቋ:';
+		case 'FileOperations':
+			return 'እዚህ ይጀምሩ';
+		case 'GridParameters':
+			return 'ፍርግርጉን በምስልዎ ላይ በትክክል እንዲታይ ያስተካክሉት';
+		case 'Actions':
+			return '🐸 🐸 🐸';
+		case 'AppSubtitle':
+			return 'ሰላም። ይህ በእርስዎ ምርጫ ምስል ላይ አራት ማዕዘናዊ ፍርግርግ እንዲፈጥሩ ይረዳዎታል';
+		case 'GridPreviewPlaceholder':
+			return 'የፍርግርግ ምስልዎ እዚህ ይታያል';
+		case 'UploadPlaceholder':
+			return 'ለመጀመር ምስል ይጫኑ';
+		case 'StatusReady':
+			return 'ሁኔታ: ዝግጁ';
+		case 'ShowDiagonals':
+			return 'ሰማያዊ መስመሮችን አክል';
+		case 'Download':
+			return 'አውርድ';
+		case 'Share':
+			return 'አጋራ';
+		case 'UploadNew':
+			return 'አዲስ ይጹኑ';
+		case 'UploadPrompt':
+			return 'ምስል ይጹኑ';
+		case 'UploadDescription':
+			return 'ፋይል ይምረፑ ወይም እዒህ ይገትቱ እና ይጣሉ';
+		case 'ChooseFile':
+			return 'ፋይል ይምረጡ';
+		case 'GridSettings':
+			return 'የፍርግርግ ቅንብሮች';
+		case 'DiagonalGrid':
+			return 'ሰማያዊ ፍርግርግ';
+		case 'WhatsThisAbout':
+			return 'ይህ ስለ ምን ነው?';
+		case 'WhatsThisDescription':
+			return 'Gridit Baby! ፍፁም ፍርግርጎችን በምስሎችዎ ላይ እንዲተገብሩ ይረዳዎታል - እንቁራሪቶች \"gridit gridit\" እንደሚሉት! ማንኛውንም ምስል ይጫኑ፣ የፍርግርጉን መጠን እና ግልጽነት ያስተካክሉ፣ ከዚያም ለስብጥር፣ ስእል ወይም ዲዛይን ስራ እንደ መመሪያ ይጠቀሙበት።';
+		case 'PerfectForArtists':
+			return 'ለአርቲስቶች፣ ፎቶግራፍ አንሺዎች እና ትክክለኛ ንድፎችን ለሚወዱ ሁሉ ፍፁም!';
+		case 'MaxFileSize':
+			return 'ከፍተኛ 5MB';
+		case 'SupportedFormats':
+			return 'JPG፣ PNG፣ GIF ይደገፋል';
+		case 'GriditScores':
+			return 'የGridit ውጤቶች';
+		case 'YourScore':
+			return 'ውጤትዎ:';
+		case 'ThatsNiceGridit':
+			return 'ጥሩ ነው! Gridit!';
+		case 'MadeInArgentina':
+			return 'በአርጀንቲና ተሰርቷል በ';
+		case 'WhatsGridit':
+			return 'Gridit ምንድን ነው?';
+		default:
+			return 'ሰላም! ኮድ መጻፍ እና መሳል የሚወድ ገንቢ ነኝ። Gridit ፍርግርጎችን በመጠቀም ስዕሎችን ወደ ሸራ ለማስተላለፍ ይረዳኛል። ለእርስዎም እንደሚረዳ ተስፋ አደርጋለሁ!';
+	}
+};
+var $author$project$I18n$asturianoTranslations = function (key) {
+	switch (key.$) {
+		case 'AppTitle':
+			return 'Gridit! 🐸';
+		case 'UploadImage':
+			return 'Xubir Imaxe';
+		case 'CustomizeIt':
+			return '¡Personalízalu!';
+		case 'GridSize':
+			return 'Tamañu';
+		case 'Rectangles':
+			return ' rectángulos.';
+		case 'GridColor':
+			return 'Color';
+		case 'GridThickness':
+			return 'Grosor';
+		case 'GridOpacity':
+			return 'Opacidá';
+		case 'OriginalImage':
+			return 'Imaxe Orixinal';
+		case 'GriddedImage':
+			return 'Imaxe con Cuadrícula';
+		case 'DownloadGriddedImage':
+			return '¡Descarga la to Imaxe con Cuadrícula!';
+		case 'Nice':
+			return '¡Guapu! ';
+		case 'NiceCounter':
+			return 'Contador Guapu: ';
+		case 'NoImageYet':
+			return '¡Entá nun hai imaxe! ¡Fai clic en Xubir Imaxe pa entamar!';
+		case 'LanguageLabel':
+			return 'Llingua:';
+		case 'FileOperations':
+			return 'Empieza equí';
+		case 'GridParameters':
+			return 'Personaliza la cuadrícula pa vela correutamente sobro la to imaxen';
+		case 'Actions':
+			return '🐸 🐸 🐸';
+		case 'AppSubtitle':
+			return 'Hola. Esto ayúdate a crear una cuadrícula retilínia sobro una imaxen de la to eleición';
+		case 'GridPreviewPlaceholder':
+			return 'La to imaxe con cuadrícula apaecerá equí';
+		case 'UploadPlaceholder':
+			return 'Xube una imaxe pa entamar';
+		case 'StatusReady':
+			return 'Status: Llistu';
+		case 'ShowDiagonals':
+			return 'Añader diagonales';
+		case 'Download':
+			return 'Descargar';
+		case 'Share':
+			return 'Compartir';
+		case 'UploadNew':
+			return 'Xubir Nuevu';
+		case 'UploadPrompt':
+			return 'Xubir una Imaxe';
+		case 'UploadDescription':
+			return 'Escueyi un ficheru o arrastra y suelta equí';
+		case 'ChooseFile':
+			return 'Escueyi Ficheru';
+		case 'GridSettings':
+			return 'Axustes de Cuadrícula';
+		case 'DiagonalGrid':
+			return 'Cuadrícula Diagonal';
+		case 'WhatsThisAbout':
+			return '¿De qué va eso?';
+		case 'WhatsThisDescription':
+			return '¡Gridit Baby! ayúdate a aplicar cuadrícules perfectes a les tos imaxes - ¡como cuando les ranes dicen \"gridit gridit\"! Xube cualquier imaxe, axusta\'l tamañu y opacidá de la cuadrícula, y úsala como guía pa composición, dibuxu o diseñu.';
+		case 'PerfectForArtists':
+			return '¡Perfectu pa artistes, fotógrafos y cualquiera que-y gusten los diseños precisos!';
+		case 'MaxFileSize':
+			return 'Máx 5MB';
+		case 'SupportedFormats':
+			return 'JPG, PNG, GIF soportaos';
+		case 'GriditScores':
+			return 'Puntuaciones Gridit';
+		case 'YourScore':
+			return 'La to puntuación:';
+		case 'ThatsNiceGridit':
+			return '¡Qué guapu! ¡Gridit!';
+		case 'MadeInArgentina':
+			return 'Fechu n\'Arxentina con';
+		case 'WhatsGridit':
+			return '¿Qué ye Gridit?';
+		default:
+			return '¡Hola! Soi una desarrolladora que-y presta programar y pintar. Gridit ayúdame a tresferir bocetos al llienzu usando cuadrícules. ¡Espero que te sirva tamién!';
+	}
+};
+var $author$project$I18n$englishTranslations = function (key) {
+	switch (key.$) {
+		case 'AppTitle':
+			return 'Gridit! 🐸';
+		case 'UploadImage':
+			return 'Upload Image';
+		case 'CustomizeIt':
+			return 'Customize it!';
+		case 'GridSize':
+			return 'Size';
+		case 'Rectangles':
+			return ' rectangles.';
+		case 'GridColor':
+			return 'Color';
+		case 'GridThickness':
+			return 'Thickness';
+		case 'GridOpacity':
+			return 'Opacity';
+		case 'OriginalImage':
+			return 'Original Image';
+		case 'GriddedImage':
+			return 'Gridded Image';
+		case 'DownloadGriddedImage':
+			return 'Download your Gridded Image!!!';
+		case 'Nice':
+			return 'Nice! ';
+		case 'NiceCounter':
+			return 'Nice Counter: ';
+		case 'NoImageYet':
+			return 'No image yet! Click Upload Image to begin!';
+		case 'LanguageLabel':
+			return 'Language:';
+		case 'FileOperations':
+			return 'Start here';
+		case 'GridParameters':
+			return 'Customize the grid so you can see it properly over your image';
+		case 'Actions':
+			return '🐸 🐸 🐸';
+		case 'AppSubtitle':
+			return 'Hello there. This helps you create a rectilinear grid over an image of your choosing';
+		case 'GridPreviewPlaceholder':
+			return 'Your gridded image will appear here';
+		case 'UploadPlaceholder':
+			return 'Upload an image to begin';
+		case 'StatusReady':
+			return 'Status: Ready';
+		case 'ShowDiagonals':
+			return 'Add diagonals';
+		case 'Download':
+			return 'Download';
+		case 'Share':
+			return 'Share';
+		case 'UploadNew':
+			return 'Upload New';
+		case 'UploadPrompt':
+			return 'Upload Image';
+		case 'UploadDescription':
+			return 'Choose a file or drag and drop here';
+		case 'ChooseFile':
+			return 'Choose File';
+		case 'GridSettings':
+			return 'Grid Settings';
+		case 'DiagonalGrid':
+			return 'Diagonal Grid';
+		case 'WhatsThisAbout':
+			return 'What\'s This About?';
+		case 'WhatsThisDescription':
+			return 'Gridit Baby! helps you apply perfect grids to your images - just like how frogs say \"gridit gridit\"! Upload any image, adjust the grid size and opacity, then use the grid as a guide for composition, drawing, or design work.';
+		case 'PerfectForArtists':
+			return 'Perfect for artists, photographers, and anyone who loves precise layouts!';
+		case 'MaxFileSize':
+			return 'Max 5MB';
+		case 'SupportedFormats':
+			return 'JPG, PNG, GIF supported';
+		case 'GriditScores':
+			return 'Gridit Scores';
+		case 'YourScore':
+			return 'Your Score:';
+		case 'ThatsNiceGridit':
+			return 'That\'s Nice! Gridit!';
+		case 'MadeInArgentina':
+			return 'Made in Argentina with';
+		case 'WhatsGridit':
+			return 'What\'s Gridit?';
+		default:
+			return 'Hi! I\'m a developer who loves to code and paint. Gridit helps me transfer sketches to canvas using grids. Hope it helps you too!';
+	}
+};
+var $author$project$I18n$euskaraTranslations = function (key) {
+	switch (key.$) {
+		case 'AppTitle':
+			return 'Gridit! 🐸';
+		case 'UploadImage':
+			return 'Irudia Igo';
+		case 'CustomizeIt':
+			return 'Pertsonalizatu!';
+		case 'GridSize':
+			return 'Tamaina';
+		case 'Rectangles':
+			return ' laukizuzenak.';
+		case 'GridColor':
+			return 'Kolorea';
+		case 'GridThickness':
+			return 'Lodiera';
+		case 'GridOpacity':
+			return 'Opakutasuna';
+		case 'OriginalImage':
+			return 'Jatorrizko Irudia';
+		case 'GriddedImage':
+			return 'Saretadun Irudia';
+		case 'DownloadGriddedImage':
+			return 'Zure Saretadun Irudia Deskargatu!';
+		case 'Nice':
+			return 'Bikain! ';
+		case 'NiceCounter':
+			return 'Bikain Kontagailua: ';
+		case 'NoImageYet':
+			return 'Oraindik ez dago irudirik! Egin klik Irudia Igo botoian hasteko!';
+		case 'LanguageLabel':
+			return 'Hizkuntza:';
+		case 'FileOperations':
+			return 'Hasi hemen';
+		case 'GridParameters':
+			return 'Pertsonalizatu sareta zure irudian behar bezala ikusteko';
+		case 'Actions':
+			return '🐸 🐸 🐸';
+		case 'AppSubtitle':
+			return 'Kaixo. Honek hautatutako irudi baten gainean sareta zuzen bat sortzen laguntzen dizu';
+		case 'GridPreviewPlaceholder':
+			return 'Zure saretadun irudia hemen agertuko da';
+		case 'UploadPlaceholder':
+			return 'Igo irudi bat hasteko';
+		case 'StatusReady':
+			return 'Egoera: Prest';
+		case 'ShowDiagonals':
+			return 'Diagonalak gehitu';
+		case 'Download':
+			return 'Deskargatu';
+		case 'Share':
+			return 'Partekatu';
+		case 'UploadNew':
+			return 'Igo Berria';
+		case 'UploadPrompt':
+			return 'Igo Irudia';
+		case 'UploadDescription':
+			return 'Aukeratu fitxategia edo arrastatu eta jaregin hemen';
+		case 'ChooseFile':
+			return 'Fitxategia Aukeratu';
+		case 'GridSettings':
+			return 'Sareta Ezarpenak';
+		case 'DiagonalGrid':
+			return 'Sareta Diagonala';
+		case 'WhatsThisAbout':
+			return 'Zer da hau?';
+		case 'WhatsThisDescription':
+			return 'Gridit Baby!-k sareta perfektuak aplikatzen laguntzen dizu zure irudiei - igelak \"gridit gridit\" esaten duten bezala! Igo edozein irudi, doitu saretaren tamaina eta opakutasuna, eta gero erabili gida gisa konposiziorako, marrazkirako edo diseinurako.';
+		case 'PerfectForArtists':
+			return 'Artista, argazkilari eta diseinu zehatzak maite dituen edonorentzat perfektua!';
+		case 'MaxFileSize':
+			return 'Gehienez 5MB';
+		case 'SupportedFormats':
+			return 'JPG, PNG, GIF onartuta';
+		case 'GriditScores':
+			return 'Gridit Puntuazioak';
+		case 'YourScore':
+			return 'Zure puntuazioa:';
+		case 'ThatsNiceGridit':
+			return 'Polita da! Gridit!';
+		case 'MadeInArgentina':
+			return 'Argentinan egina honekin';
+		case 'WhatsGridit':
+			return 'Zer da Gridit?';
+		default:
+			return 'Kaixo! Programatzea eta margotzea maite duen garatzailea naiz. Gridit-ek zirriborroak oihalera transferitzen laguntzen dit saretak erabiliz. Espero dut zuri ere laguntzea!';
+	}
+};
+var $author$project$I18n$frenchTranslations = function (key) {
+	switch (key.$) {
+		case 'AppTitle':
+			return 'Gridit! 🐸';
+		case 'UploadImage':
+			return 'Télécharger une Image';
+		case 'CustomizeIt':
+			return 'Personnalisez-le!';
+		case 'GridSize':
+			return 'Taille';
+		case 'Rectangles':
+			return ' rectangles.';
+		case 'GridColor':
+			return 'Couleur';
+		case 'GridThickness':
+			return 'Épaisseur';
+		case 'GridOpacity':
+			return 'Opacité';
+		case 'OriginalImage':
+			return 'Image Originale';
+		case 'GriddedImage':
+			return 'Image avec Grille';
+		case 'DownloadGriddedImage':
+			return 'Téléchargez votre Image avec Grille!';
+		case 'Nice':
+			return 'Sympa! ';
+		case 'NiceCounter':
+			return 'Compteur Sympa: ';
+		case 'NoImageYet':
+			return 'Pas encore d\'image! Cliquez sur Télécharger une Image pour commencer!';
+		case 'LanguageLabel':
+			return 'Langue:';
+		case 'FileOperations':
+			return 'Commencez ici';
+		case 'GridParameters':
+			return 'Personnalisez la grille pour la voir correctement sur votre image';
+		case 'Actions':
+			return '🐸 🐸 🐸';
+		case 'AppSubtitle':
+			return 'Bonjour. Ceci vous aide à créer une grille rectiligne sur une image de votre choix';
+		case 'GridPreviewPlaceholder':
+			return 'Votre image avec grille apparaîtra ici';
+		case 'UploadPlaceholder':
+			return 'Téléchargez une image pour commencer';
+		case 'StatusReady':
+			return 'Status: Prêt';
+		case 'ShowDiagonals':
+			return 'Ajouter des diagonales';
+		case 'Download':
+			return 'Télécharger';
+		case 'Share':
+			return 'Partager';
+		case 'UploadNew':
+			return 'Télécharger Nouveau';
+		case 'UploadPrompt':
+			return 'Télécharger une Image';
+		case 'UploadDescription':
+			return 'Choisissez un fichier ou glissez-déposez ici';
+		case 'ChooseFile':
+			return 'Choisir Fichier';
+		case 'GridSettings':
+			return 'Paramètres de Grille';
+		case 'DiagonalGrid':
+			return 'Grille Diagonale';
+		case 'WhatsThisAbout':
+			return 'De quoi s\'agit-il?';
+		case 'WhatsThisDescription':
+			return 'Gridit Baby! vous aide à appliquer des grilles parfaites à vos images - comme les grenouilles disent \"gridit gridit\"! Téléchargez n\'importe quelle image, ajustez la taille et l\'opacité de la grille, puis utilisez-la comme guide pour la composition, le dessin ou le design.';
+		case 'PerfectForArtists':
+			return 'Parfait pour les artistes, photographes et tous ceux qui aiment les mises en page précises!';
+		case 'MaxFileSize':
+			return 'Max 5Mo';
+		case 'SupportedFormats':
+			return 'JPG, PNG, GIF supportés';
+		case 'GriditScores':
+			return 'Scores Gridit';
+		case 'YourScore':
+			return 'Votre score:';
+		case 'ThatsNiceGridit':
+			return 'C\'est sympa! Gridit!';
+		case 'MadeInArgentina':
+			return 'Fait en Argentine avec';
+		case 'WhatsGridit':
+			return 'C\'est quoi Gridit?';
+		default:
+			return 'Salut! Je suis une développeuse qui aime coder et peindre. Gridit m\'aide à transférer des croquis sur toile en utilisant des grilles. J\'espère que ça vous aide aussi!';
+	}
+};
+var $author$project$I18n$gaelicTranslations = function (key) {
+	switch (key.$) {
+		case 'AppTitle':
+			return 'Gridit! 🐸';
+		case 'UploadImage':
+			return 'Luchdaich Dealbh';
+		case 'CustomizeIt':
+			return 'Gnàthaich e!';
+		case 'GridSize':
+			return 'Meud';
+		case 'Rectangles':
+			return ' ceart-chearnagan.';
+		case 'GridColor':
+			return 'Dath';
+		case 'GridThickness':
+			return 'Tiughad';
+		case 'GridOpacity':
+			return 'Dorchadas';
+		case 'OriginalImage':
+			return 'Dealbh Tùsail';
+		case 'GriddedImage':
+			return 'Dealbh le Griod';
+		case 'DownloadGriddedImage':
+			return 'Luchdaich sìos do Dhealbh le Griod!';
+		case 'Nice':
+			return 'Sgoinneil! ';
+		case 'NiceCounter':
+			return 'Cunntair Sgoinneil: ';
+		case 'NoImageYet':
+			return 'Chan eil dealbh ann fhathast! Cliog air Luchdaich Dealbh gus tòiseachadh!';
+		case 'LanguageLabel':
+			return 'Cànan:';
+		case 'FileOperations':
+			return 'Tòisich an seo';
+		case 'GridParameters':
+			return 'Gnàthaich an griod gus am faic thu e gu ceart thar do dhealbh';
+		case 'Actions':
+			return '🐸 🐸 🐸';
+		case 'AppSubtitle':
+			return 'Halò. Bidh seo a\' cuideachadh thu le bhith a\' cruthachadh griod dìreach air ìomhaigh de do roghainn';
+		case 'GridPreviewPlaceholder':
+			return 'Nochdaidh do dhealbh le griod an seo';
+		case 'UploadPlaceholder':
+			return 'Luchdaich dealbh gus tòiseachadh';
+		case 'StatusReady':
+			return 'Status: Deiseil';
+		case 'ShowDiagonals':
+			return 'Cuir trasnanan ris';
+		case 'Download':
+			return 'Luchdaich sìos';
+		case 'Share':
+			return 'Co-roinn';
+		case 'UploadNew':
+			return 'Luchdaich Ùr';
+		case 'UploadPrompt':
+			return 'Luchdaich Dealbh';
+		case 'UploadDescription':
+			return 'Tagh faidhle no tarraing is leig às an seo';
+		case 'ChooseFile':
+			return 'Tagh Faidhle';
+		case 'GridSettings':
+			return 'Suidheachaidhean Griod';
+		case 'DiagonalGrid':
+			return 'Griod Trasnach';
+		case 'WhatsThisAbout':
+			return 'Dè tha seo mu dheidhinn?';
+		case 'WhatsThisDescription':
+			return 'Tha Gridit Baby! a\' cuideachadh thu le bhith a\' cur griodaichean foirfe air na dealbhan agad - dìreach mar a chanas losgannan \"gridit gridit\"! Luchdaich dealbh sam bith, atharraich meud agus dorchadas a\' ghriod, an uairsin cleachd e mar stiùireadh airson co-dhèanamh, tarraing no obair dealbhaidh.';
+		case 'PerfectForArtists':
+			return 'Foirfe airson luchd-ealain, dealbhadairean, agus duine sam bith a tha gràdhach air co-dhealbhaidhean mionaideach!';
+		case 'MaxFileSize':
+			return 'Max 5MB';
+		case 'SupportedFormats':
+			return 'JPG, PNG, GIF le taic';
+		case 'GriditScores':
+			return 'Sgòran Gridit';
+		case 'YourScore':
+			return 'Do sgòr:';
+		case 'ThatsNiceGridit':
+			return 'Tha sin sgoinneil! Gridit!';
+		case 'MadeInArgentina':
+			return 'Air a dhèanamh ann an Argentina le';
+		case 'WhatsGridit':
+			return 'Dè th\' ann an Gridit?';
+		default:
+			return 'Halò! Is mise leasaichear a tha gaolach air còdadh agus peantadh. Tha Gridit gam chuideachadh gus sgeidseachan a ghluasad gu canabhas le griodaichean. Tha mi an dòchas gun cuidich e thu cuideachd!';
+	}
+};
+var $author$project$I18n$hebrewTranslations = function (key) {
+	switch (key.$) {
+		case 'AppTitle':
+			return 'Gridit! 🐸';
+		case 'UploadImage':
+			return 'העלאת תמונה';
+		case 'CustomizeIt':
+			return 'התאם אישית!';
+		case 'GridSize':
+			return 'גודל';
+		case 'Rectangles':
+			return ' מלבנים';
+		case 'GridColor':
+			return 'צבע';
+		case 'GridThickness':
+			return 'עובי';
+		case 'GridOpacity':
+			return 'שקיפות';
+		case 'OriginalImage':
+			return 'תמונה מקורית';
+		case 'GriddedImage':
+			return 'תמונה עם רשת';
+		case 'DownloadGriddedImage':
+			return 'הורד את התמונה עם הרשת!!!';
+		case 'Nice':
+			return 'יפה! ';
+		case 'NiceCounter':
+			return 'מונה יפה: ';
+		case 'NoImageYet':
+			return 'אין תמונה עדיין! לחץ על העלאת תמונה כדי להתחיל!';
+		case 'LanguageLabel':
+			return 'שפה:';
+		case 'FileOperations':
+			return 'התחל כאן';
+		case 'GridParameters':
+			return 'התאם את הרשת כדי שתוכל לראות אותה כראוי על התמונה שלך';
+		case 'Actions':
+			return '🐸 🐸 🐸';
+		case 'AppSubtitle':
+			return 'שלום. זה עוזר לך ליצור רשת מלבנית על תמונה לבחירתך';
+		case 'GridPreviewPlaceholder':
+			return 'התמונה עם הרשת תופיע כאן';
+		case 'UploadPlaceholder':
+			return 'העלה תמונה כדי להתחיל';
+		case 'StatusReady':
+			return 'סטטוס: מוכן';
+		case 'ShowDiagonals':
+			return 'הוסף אלכסונים';
+		case 'Download':
+			return 'הורדה';
+		case 'Share':
+			return 'שיתוף';
+		case 'UploadNew':
+			return 'העלאה חדשה';
+		case 'UploadPrompt':
+			return 'העלאת תמונה';
+		case 'UploadDescription':
+			return 'בחר קובץ או גרור ושחרר כאן';
+		case 'ChooseFile':
+			return 'בחר קובץ';
+		case 'GridSettings':
+			return 'הגדרות רשת';
+		case 'DiagonalGrid':
+			return 'רשת אלכסונית';
+		case 'WhatsThisAbout':
+			return 'במה מדובר?';
+		case 'WhatsThisDescription':
+			return 'Gridit Baby! עוזר לך ליישם רשתות מושלמות על התמונות שלך - בדיוק כמו שצפרדעים אומרות \"gridit gridit\"! העלה כל תמונה, התאם את גודל הרשת והאטימות, ואז השתמש בה כמדריך לקומפוזיציה, ציור או עיצוב.';
+		case 'PerfectForArtists':
+			return 'מושלם לאמנים, צלמים וכל מי שאוהב פריסות מדויקות!';
+		case 'MaxFileSize':
+			return 'מקסימום 5MB';
+		case 'SupportedFormats':
+			return 'JPG, PNG, GIF נתמכים';
+		case 'GriditScores':
+			return 'ניקוד Gridit';
+		case 'YourScore':
+			return 'הניקוד שלך:';
+		case 'ThatsNiceGridit':
+			return 'זה יפה! Gridit!';
+		case 'MadeInArgentina':
+			return 'נעשה בארגנטינה עם';
+		case 'WhatsGridit':
+			return 'מה זה Gridit?';
+		default:
+			return 'שלום! אני מפתחת שאוהבת לתכנת ולצייר. Gridit עוזר לי להעביר סקיצות לקנבס באמצעות רשתות. מקווה שזה יעזור גם לך!';
+	}
+};
+var $author$project$I18n$italianTranslations = function (key) {
+	switch (key.$) {
+		case 'AppTitle':
+			return 'Gridit! 🐸';
+		case 'UploadImage':
+			return 'Carica Immagine';
+		case 'CustomizeIt':
+			return 'Personalizzalo!';
+		case 'GridSize':
+			return 'Dimensione';
+		case 'Rectangles':
+			return ' rettangoli.';
+		case 'GridColor':
+			return 'Colore';
+		case 'GridThickness':
+			return 'Spessore';
+		case 'GridOpacity':
+			return 'Opacità';
+		case 'OriginalImage':
+			return 'Immagine Originale';
+		case 'GriddedImage':
+			return 'Immagine con Griglia';
+		case 'DownloadGriddedImage':
+			return 'Scarica la tua Immagine con Griglia!';
+		case 'Nice':
+			return 'Bello! ';
+		case 'NiceCounter':
+			return 'Contatore Bello: ';
+		case 'NoImageYet':
+			return 'Nessuna immagine ancora! Clicca su Carica Immagine per iniziare!';
+		case 'LanguageLabel':
+			return 'Lingua:';
+		case 'FileOperations':
+			return 'Inizia qui';
+		case 'GridParameters':
+			return 'Personalizza la griglia in modo da vederla correttamente sulla tua immagine';
+		case 'Actions':
+			return '🐸 🐸 🐸';
+		case 'AppSubtitle':
+			return 'Ciao. Questo ti aiuta a creare una griglia rettilinea su un\'immagine di tua scelta';
+		case 'GridPreviewPlaceholder':
+			return 'La tua immagine con griglia apparirà qui';
+		case 'UploadPlaceholder':
+			return 'Carica un\'immagine per iniziare';
+		case 'StatusReady':
+			return 'Status: Pronto';
+		case 'ShowDiagonals':
+			return 'Aggiungi diagonali';
+		case 'Download':
+			return 'Scarica';
+		case 'Share':
+			return 'Condividi';
+		case 'UploadNew':
+			return 'Carica Nuovo';
+		case 'UploadPrompt':
+			return 'Carica un\'Immagine';
+		case 'UploadDescription':
+			return 'Scegli un file o trascina e rilascia qui';
+		case 'ChooseFile':
+			return 'Scegli File';
+		case 'GridSettings':
+			return 'Impostazioni Griglia';
+		case 'DiagonalGrid':
+			return 'Griglia Diagonale';
+		case 'WhatsThisAbout':
+			return 'Di cosa si tratta?';
+		case 'WhatsThisDescription':
+			return 'Gridit Baby! ti aiuta ad applicare griglie perfette alle tue immagini - proprio come le rane dicono \"gridit gridit\"! Carica qualsiasi immagine, regola dimensione e opacità della griglia, poi usala come guida per composizione, disegno o design.';
+		case 'PerfectForArtists':
+			return 'Perfetto per artisti, fotografi e chiunque ami layout precisi!';
+		case 'MaxFileSize':
+			return 'Max 5MB';
+		case 'SupportedFormats':
+			return 'JPG, PNG, GIF supportati';
+		case 'GriditScores':
+			return 'Punteggi Gridit';
+		case 'YourScore':
+			return 'Il tuo punteggio:';
+		case 'ThatsNiceGridit':
+			return 'Che bello! Gridit!';
+		case 'MadeInArgentina':
+			return 'Fatto in Argentina con';
+		case 'WhatsGridit':
+			return 'Cos\'è Gridit?';
+		default:
+			return 'Ciao! Sono una sviluppatrice che ama programmare e dipingere. Gridit mi aiuta a trasferire schizzi sulla tela usando griglie. Spero sia utile anche a te!';
+	}
+};
+var $author$project$I18n$japaneseTranslations = function (key) {
+	switch (key.$) {
+		case 'AppTitle':
+			return 'Gridit! 🐸';
+		case 'UploadImage':
+			return '画像をアップロード';
+		case 'CustomizeIt':
+			return 'カスタマイズしよう！';
+		case 'GridSize':
+			return 'サイズ';
+		case 'Rectangles':
+			return ' 長方形';
+		case 'GridColor':
+			return '色';
+		case 'GridThickness':
+			return '太さ';
+		case 'GridOpacity':
+			return '不透明度';
+		case 'OriginalImage':
+			return '元の画像';
+		case 'GriddedImage':
+			return 'グリッド付き画像';
+		case 'DownloadGriddedImage':
+			return 'グリッド付き画像をダウンロード！';
+		case 'Nice':
+			return 'いいね！ ';
+		case 'NiceCounter':
+			return 'いいねカウンター: ';
+		case 'NoImageYet':
+			return 'まだ画像がありません！画像をアップロードをクリックして始めましょう！';
+		case 'LanguageLabel':
+			return '言語:';
+		case 'FileOperations':
+			return 'ここから始める';
+		case 'GridParameters':
+			return '画像上で適切に表示できるようにグリッドをカスタマイズする';
+		case 'Actions':
+			return '🐸 🐸 🐸';
+		case 'AppSubtitle':
+			return 'こんにちは。これはあなたが選んだ画像上に直線グリッドを作成するのに役立ちます';
+		case 'GridPreviewPlaceholder':
+			return 'グリッド付き画像がここに表示されます';
+		case 'UploadPlaceholder':
+			return '画像をアップロードして始めましょう';
+		case 'StatusReady':
+			return 'ステータス: 準備完了';
+		case 'ShowDiagonals':
+			return '対角線を追加';
+		case 'Download':
+			return 'ダウンロード';
+		case 'Share':
+			return '共有';
+		case 'UploadNew':
+			return '新しくアップロード';
+		case 'UploadPrompt':
+			return '画像をアップロード';
+		case 'UploadDescription':
+			return 'ファイルを選択するか、ここにドラッグ＆ドロップしてください';
+		case 'ChooseFile':
+			return 'ファイル選択';
+		case 'GridSettings':
+			return 'グリッド設定';
+		case 'DiagonalGrid':
+			return '対角線グリッド';
+		case 'WhatsThisAbout':
+			return 'これは何？';
+		case 'WhatsThisDescription':
+			return 'Gridit Baby!は、あなたの画像に完璧なグリッドを適用するのを助けます - カエルが「gridit gridit」と言うように！どんな画像でもアップロードし、グリッドのサイズと不透明度を調整し、構図、描画、デザイン作業のガイドとして使用してください。';
+		case 'PerfectForArtists':
+			return 'アーティスト、写真家、そして正確なレイアウトを愛するすべての人に最適！';
+		case 'MaxFileSize':
+			return '最大5MB';
+		case 'SupportedFormats':
+			return 'JPG、PNG、GIF対応';
+		case 'GriditScores':
+			return 'Griditスコア';
+		case 'YourScore':
+			return 'あなたのスコア：';
+		case 'ThatsNiceGridit':
+			return 'いいね！Gridit！';
+		case 'MadeInArgentina':
+			return 'アルゼンチン製';
+		case 'WhatsGridit':
+			return 'Griditとは？';
+		default:
+			return 'こんにちは！プログラミングと絵を描くことが大好きな開発者です。Griditはグリッドを使ってスケッチをキャンバスに転写するのに役立ちます。あなたにも役立つことを願っています！';
+	}
+};
+var $author$project$I18n$latinTranslations = function (key) {
+	switch (key.$) {
+		case 'AppTitle':
+			return 'Gridit! 🐸';
+		case 'UploadImage':
+			return 'Imago Submittere';
+		case 'CustomizeIt':
+			return 'Personaliza!';
+		case 'GridSize':
+			return 'Magnitudinem';
+		case 'Rectangles':
+			return ' rectangula.';
+		case 'GridColor':
+			return 'Color';
+		case 'GridThickness':
+			return 'Crassitudo';
+		case 'GridOpacity':
+			return 'Opacitas';
+		case 'OriginalImage':
+			return 'Imago Originalis';
+		case 'GriddedImage':
+			return 'Imago cum Craticula';
+		case 'DownloadGriddedImage':
+			return 'Imago cum Craticula Discaricare!!!';
+		case 'Nice':
+			return 'Bellus! ';
+		case 'NiceCounter':
+			return 'Bellus Numerator: ';
+		case 'NoImageYet':
+			return 'Nondum imago! Imago Submittere preme ut incipias!';
+		case 'LanguageLabel':
+			return 'Lingua:';
+		case 'FileOperations':
+			return 'Incipe hic';
+		case 'GridParameters':
+			return 'Personaliza cratem ut videas eam recte super imaginem tuam';
+		case 'Actions':
+			return '🐸 🐸 🐸';
+		case 'AppSubtitle':
+			return 'Salve. Hoc te adiuvat creare reticulum rectilineare super imaginem tuam electam';
+		case 'GridPreviewPlaceholder':
+			return 'Imago tua cum craticula hic apparebit';
+		case 'UploadPlaceholder':
+			return 'Submitte imaginem ut incipias';
+		case 'StatusReady':
+			return 'Status: Paratus';
+		case 'ShowDiagonals':
+			return 'Adde diagonalia';
+		case 'Download':
+			return 'Discaricare';
+		case 'Share':
+			return 'Communicare';
+		case 'UploadNew':
+			return 'Nova Submittere';
+		case 'UploadPrompt':
+			return 'Imago Submittere';
+		case 'UploadDescription':
+			return 'Elige fasciculum aut trahe et demitte hic';
+		case 'ChooseFile':
+			return 'Eligere Fasciculum';
+		case 'GridSettings':
+			return 'Configuratio Reticulationis';
+		case 'DiagonalGrid':
+			return 'Reticulatio Diagonalis';
+		case 'WhatsThisAbout':
+			return 'Quid Hoc Est?';
+		case 'WhatsThisDescription':
+			return 'Gridit Baby! te adiuvat perfectas cratias imaginibus tuis applicare - sicut ranae dicunt \"gridit gridit\"! Quamlibet imaginem submitte, magnitudinem et opacitatem gratiae tempera, deinde ut duce ad compositionem, picturam vel opus designationis utere.';
+		case 'PerfectForArtists':
+			return 'Perfectum pro artificibus, photographis, et omnibus qui dispositiones praecisas amant!';
+		case 'MaxFileSize':
+			return 'Max 5MB';
+		case 'SupportedFormats':
+			return 'JPG, PNG, GIF sustinetur';
+		case 'GriditScores':
+			return 'Puncta Gridit';
+		case 'YourScore':
+			return 'Puncta Tua:';
+		case 'ThatsNiceGridit':
+			return 'Pulchrum Est! Gridit!';
+		case 'MadeInArgentina':
+			return 'Factum in Argentina cum';
+		case 'WhatsGridit':
+			return 'Quid est Gridit?';
+		default:
+			return 'Salve! Sum programmator qui amat codicem scribere et pingere. Gridit me adiuvat picturas ad telam transferre utens cratibulis. Spero tibi quoque prodesse!';
+	}
+};
+var $author$project$I18n$portugueseTranslations = function (key) {
+	switch (key.$) {
+		case 'AppTitle':
+			return 'Gridit! 🐸';
+		case 'UploadImage':
+			return 'Carregar Imagem';
+		case 'CustomizeIt':
+			return 'Personalize!';
+		case 'GridSize':
+			return 'Tamanho';
+		case 'Rectangles':
+			return ' retângulos.';
+		case 'GridColor':
+			return 'Cor';
+		case 'GridThickness':
+			return 'Espessura: ';
+		case 'GridOpacity':
+			return 'Opacidade';
+		case 'OriginalImage':
+			return 'Imagem Original';
+		case 'GriddedImage':
+			return 'Imagem com Grade';
+		case 'DownloadGriddedImage':
+			return 'Baixe sua Imagem com Grade!';
+		case 'Nice':
+			return 'Legal! ';
+		case 'NiceCounter':
+			return 'Contador Legal: ';
+		case 'NoImageYet':
+			return 'Nenhuma imagem ainda! Clique em Carregar Imagem para começar!';
+		case 'LanguageLabel':
+			return 'Idioma:';
+		case 'FileOperations':
+			return 'Comece aqui';
+		case 'GridParameters':
+			return 'Personalize a grade para que você possa vê-la corretamente sobre sua imagem';
+		case 'Actions':
+			return '🐸 🐸 🐸';
+		case 'AppSubtitle':
+			return 'Olá. Isto ajuda-te a criar uma grelha retilínea sobre uma imagem à tua escolha';
+		case 'GridPreviewPlaceholder':
+			return 'Sua imagem com grade aparecerá aqui';
+		case 'UploadPlaceholder':
+			return 'Carregue uma imagem para começar';
+		case 'StatusReady':
+			return 'Status: Pronto';
+		case 'ShowDiagonals':
+			return 'Adicionar diagonais';
+		case 'Download':
+			return 'Baixar';
+		case 'Share':
+			return 'Compartilhar';
+		case 'UploadNew':
+			return 'Carregar Novo';
+		case 'UploadPrompt':
+			return 'Carregar uma Imagem';
+		case 'UploadDescription':
+			return 'Escolha um arquivo ou arraste e solte aqui';
+		case 'ChooseFile':
+			return 'Escolher Arquivo';
+		case 'GridSettings':
+			return 'Configurações de Grade';
+		case 'DiagonalGrid':
+			return 'Grade Diagonal';
+		case 'WhatsThisAbout':
+			return 'Do que se trata?';
+		case 'WhatsThisDescription':
+			return 'Gridit Baby! ajuda-te a aplicar grades perfeitas às tuas imagens - tal como os sapos dizem \"gridit gridit\"! Carrega qualquer imagem, ajusta o tamanho e opacidade da grade, depois usa-a como guia para composição, desenho ou design.';
+		case 'PerfectForArtists':
+			return 'Perfeito para artistas, fotógrafos e qualquer pessoa que ame layouts precisos!';
+		case 'MaxFileSize':
+			return 'Máx 5MB';
+		case 'SupportedFormats':
+			return 'JPG, PNG, GIF suportados';
+		case 'GriditScores':
+			return 'Pontuações Gridit';
+		case 'YourScore':
+			return 'Tua pontuação:';
+		case 'ThatsNiceGridit':
+			return 'Que legal! Gridit!';
+		case 'MadeInArgentina':
+			return 'Feito na Argentina com';
+		case 'WhatsGridit':
+			return 'O que é Gridit?';
+		default:
+			return 'Olá! Sou uma desenvolvedora que ama programar e pintar. Gridit me ajuda a transferir esboços para a tela usando grades. Espero que te ajude também!';
+	}
+};
+var $author$project$I18n$russianTranslations = function (key) {
+	switch (key.$) {
+		case 'AppTitle':
+			return 'Gridit! 🐸';
+		case 'UploadImage':
+			return 'Загрузить изображение';
+		case 'CustomizeIt':
+			return 'Настроить!';
+		case 'GridSize':
+			return 'Размер';
+		case 'Rectangles':
+			return ' прямоугольников';
+		case 'GridColor':
+			return 'Цвет';
+		case 'GridThickness':
+			return 'Толщина';
+		case 'GridOpacity':
+			return 'Прозрачность';
+		case 'OriginalImage':
+			return 'Исходное изображение';
+		case 'GriddedImage':
+			return 'Изображение с сеткой';
+		case 'DownloadGriddedImage':
+			return 'Скачать изображение с сеткой!';
+		case 'Nice':
+			return 'Отлично! ';
+		case 'NiceCounter':
+			return 'Счетчик отлично: ';
+		case 'NoImageYet':
+			return 'Изображения пока нет! Нажмите Загрузить изображение, чтобы начать!';
+		case 'LanguageLabel':
+			return 'Язык:';
+		case 'FileOperations':
+			return 'Начните здесь';
+		case 'GridParameters':
+			return 'Настройте сетку, чтобы она хорошо отображалась на вашем изображении';
+		case 'Actions':
+			return '🐸 🐸 🐸';
+		case 'AppSubtitle':
+			return 'Здравствуйте. Это поможет вам создать прямоугольную сетку поверх выбранного вами изображения';
+		case 'GridPreviewPlaceholder':
+			return 'Ваше изображение с сеткой появится здесь';
+		case 'UploadPlaceholder':
+			return 'Загрузите изображение, чтобы начать';
+		case 'StatusReady':
+			return 'Статус: Готово';
+		case 'ShowDiagonals':
+			return 'Добавить диагонали';
+		case 'Download':
+			return 'Скачать';
+		case 'Share':
+			return 'Поделиться';
+		case 'UploadNew':
+			return 'Загрузить новое';
+		case 'UploadPrompt':
+			return 'Загрузить изображение';
+		case 'UploadDescription':
+			return 'Выберите файл или перетащите его сюда';
+		case 'ChooseFile':
+			return 'Выбрать Файл';
+		case 'GridSettings':
+			return 'Настройки Сетки';
+		case 'DiagonalGrid':
+			return 'Диагональная Сетка';
+		case 'WhatsThisAbout':
+			return 'О чём это?';
+		case 'WhatsThisDescription':
+			return 'Gridit Baby! помогает применять идеальные сетки к вашим изображениям - как лягушки говорят \"gridit gridit\"! Загрузите любое изображение, настройте размер и прозрачность сетки, затем используйте её как руководство для композиции, рисования или дизайна.';
+		case 'PerfectForArtists':
+			return 'Идеально для художников, фотографов и всех, кто любит точные макеты!';
+		case 'MaxFileSize':
+			return 'Макс 5МБ';
+		case 'SupportedFormats':
+			return 'JPG, PNG, GIF поддерживаются';
+		case 'GriditScores':
+			return 'Очки Gridit';
+		case 'YourScore':
+			return 'Ваш счёт:';
+		case 'ThatsNiceGridit':
+			return 'Это круто! Gridit!';
+		case 'MadeInArgentina':
+			return 'Сделано в Аргентине с';
+		case 'WhatsGridit':
+			return 'Что такое Gridit?';
+		default:
+			return 'Привет! Я разработчик, который любит программировать и рисовать. Gridit помогает мне переносить эскизы на холст с помощью сеток. Надеюсь, вам тоже пригодится!';
+	}
+};
+var $author$project$I18n$spanishTranslations = function (key) {
+	switch (key.$) {
+		case 'AppTitle':
+			return 'Gridit! 🐸';
+		case 'UploadImage':
+			return 'Subir una Imagen';
+		case 'CustomizeIt':
+			return 'Personalizá la grilla';
+		case 'GridSize':
+			return 'Tamaño';
+		case 'Rectangles':
+			return ' rectángulos';
+		case 'GridColor':
+			return 'Color';
+		case 'GridThickness':
+			return 'Grosor';
+		case 'GridOpacity':
+			return 'Opacidad';
+		case 'OriginalImage':
+			return 'Imagen Original';
+		case 'GriddedImage':
+			return 'Imagen con Grilla';
+		case 'DownloadGriddedImage':
+			return 'Descarga tu Imagen con Grilla!';
+		case 'Nice':
+			return 'Buenísimo! ';
+		case 'NiceCounter':
+			return 'Contador de Buenísimo: ';
+		case 'NoImageYet':
+			return 'Hacé click en Subir Imagen para empezar!';
+		case 'LanguageLabel':
+			return 'Idioma:';
+		case 'FileOperations':
+			return 'Empezá acá';
+		case 'GridParameters':
+			return 'Customizá la grilla para verla bien sobre tu imagen';
+		case 'Actions':
+			return '🐸 🐸 🐸';
+		case 'AppSubtitle':
+			return 'Buenas. Agregale una grilla rectilinear a una imagen que elijas';
+		case 'GridPreviewPlaceholder':
+			return 'Tu imagen con grilla va a aparecer acá';
+		case 'UploadPlaceholder':
+			return 'Subí una imagen para empezar';
+		case 'StatusReady':
+			return 'Status: Listo';
+		case 'ShowDiagonals':
+			return 'Agregar diagonales';
+		case 'Download':
+			return 'Descargar';
+		case 'Share':
+			return 'Compartir';
+		case 'UploadNew':
+			return 'Subir Nuevo';
+		case 'UploadPrompt':
+			return 'Subir una Imagen';
+		case 'UploadDescription':
+			return 'Elige un archivo o arrástralo aquí';
+		case 'ChooseFile':
+			return 'Elegir Archivo';
+		case 'GridSettings':
+			return 'Ajustes de Cuadrícula';
+		case 'DiagonalGrid':
+			return 'Cuadrícula Diagonal';
+		case 'WhatsThisAbout':
+			return '¿De qué se trata?';
+		case 'WhatsThisDescription':
+			return '¡Gridit Baby! te ayuda a aplicar grillas perfectas a tus imágenes - ¡como cuando las ranas dicen \"gridit gridit\"! Subí cualquier imagen, ajustá el tamaño y opacidad de la grilla, y usala como guía para composición, dibujo o diseño.';
+		case 'PerfectForArtists':
+			return '¡Perfecto para artistas, fotógrafos y cualquiera que ame los diseños precisos!';
+		case 'MaxFileSize':
+			return 'Máx 5MB';
+		case 'SupportedFormats':
+			return 'JPG, PNG, GIF soportados';
+		case 'GriditScores':
+			return 'Puntuación Gridit';
+		case 'YourScore':
+			return 'Tu puntuación:';
+		case 'ThatsNiceGridit':
+			return '¡Qué lindo! ¡Gridit!';
+		case 'MadeInArgentina':
+			return 'Hecho en Argentina con';
+		case 'WhatsGridit':
+			return '¿Qué es Gridit?';
+		default:
+			return '¡Hola! Soy una desarrolladora que ama programar y pintar. Gridit me ayuda a transferir bocetos al lienzo usando grillas. ¡Espero que te sirva también!';
+	}
+};
+var $author$project$I18n$tuvanTranslations = function (key) {
+	switch (key.$) {
+		case 'AppTitle':
+			return 'Gridit! 🐸';
+		case 'UploadImage':
+			return 'Чурукту киирер';
+		case 'CustomizeIt':
+			return 'Таарыштырар!';
+		case 'GridSize':
+			return 'Хемчээл';
+		case 'Rectangles':
+			return ' дөрбелчиннер';
+		case 'GridColor':
+			return 'Өң';
+		case 'GridThickness':
+			return 'Кылын';
+		case 'GridOpacity':
+			return 'Көскүзү';
+		case 'OriginalImage':
+			return 'Баштайгы чурук';
+		case 'GriddedImage':
+			return 'Шыйыглыг чурук';
+		case 'DownloadGriddedImage':
+			return 'Шыйыглыг чурукту чүдүрүп алыр!';
+		case 'Nice':
+			return 'Эки! ';
+		case 'NiceCounter':
+			return 'Эки саналга: ';
+		case 'NoImageYet':
+			return 'Чурук чок! Эгелээр дээш Чурукту киирер деп базыңар!';
+		case 'LanguageLabel':
+			return 'Дыл:';
+		case 'FileOperations':
+			return 'Мындан эгелеңер';
+		case 'GridParameters':
+			return 'Шыйыгны чурукка эки көстүр кылдыр таарыштырыңар';
+		case 'Actions':
+			return '🐸 🐸 🐸';
+		case 'AppSubtitle':
+			return 'Экии. Бо дээрге силерниң шилип алган чурууңарга дорт шыйыглар кылырынга дузалаар';
+		case 'GridPreviewPlaceholder':
+			return 'Силерниң шыйыглыг чурууңар мында көстүп кээр';
+		case 'UploadPlaceholder':
+			return 'Эгелээр дээш чурукту киириңер';
+		case 'StatusReady':
+			return 'Байдал: Белен';
+		case 'ShowDiagonals':
+			return 'Диагоналдар немээр';
+		case 'Download':
+			return 'Чүдүрүп алыр';
+		case 'Share':
+			return 'Үлежир';
+		case 'UploadNew':
+			return 'Чаа чүдүрер';
+		case 'UploadPrompt':
+			return 'Чурукту киирер';
+		case 'UploadDescription':
+			return 'Файлды шилиңер азы бээр чыгып каапкаш, салып каар';
+		case 'ChooseFile':
+			return 'Файл Шилиир';
+		case 'GridSettings':
+			return 'Шыйыг Тургузуглары';
+		case 'DiagonalGrid':
+			return 'Кыйгаар Шыйыглар';
+		case 'WhatsThisAbout':
+			return 'Бо чүү дугайында?';
+		case 'WhatsThisDescription':
+			return 'Gridit Baby! силерниң чуруктарыңарга эки шыйыглар кылырынга дузалаар - пагалар \"gridit gridit\" дээн ышкаш! Кандыг-даа чурук киирип, шыйыгның хемчээлин болгаш көскүзүн таарыштырыңар, оон ону композиция, чурулга азы дизайн кылырынга удуртулга кылып ажыглаңар.';
+		case 'PerfectForArtists':
+			return 'Чурукчуларга, фото тырттырыкчыларга болгаш шын чуруктар ынак улуска дыка эки!';
+		case 'MaxFileSize':
+			return 'Эң хөйү 5MB';
+		case 'SupportedFormats':
+			return 'JPG, PNG, GIF ажыглаттынар';
+		case 'GriditScores':
+			return 'Gridit Санаашкыннары';
+		case 'YourScore':
+			return 'Силерниң санаашкыныңар:';
+		case 'ThatsNiceGridit':
+			return 'Эки! Gridit!';
+		case 'MadeInArgentina':
+			return 'Аргентинага кылган';
+		case 'WhatsGridit':
+			return 'Gridit деп чүү?';
+		default:
+			return 'Экии! Мен программировать база чуруур ынак программист мен. Gridit меңээ шыйыглар ажыглап скетчтерни холстче көжүрерге дузалаар. Силерге база дузалаар деп идегеп тур мен!';
+	}
+};
+var $author$project$I18n$translations = F2(
+	function (language, key) {
+		switch (language.$) {
+			case 'English':
+				return $author$project$I18n$englishTranslations(key);
+			case 'Spanish':
+				return $author$project$I18n$spanishTranslations(key);
+			case 'Latin':
+				return $author$project$I18n$latinTranslations(key);
+			case 'Italian':
+				return $author$project$I18n$italianTranslations(key);
+			case 'Portuguese':
+				return $author$project$I18n$portugueseTranslations(key);
+			case 'French':
+				return $author$project$I18n$frenchTranslations(key);
+			case 'Asturiano':
+				return $author$project$I18n$asturianoTranslations(key);
+			case 'Gaelic':
+				return $author$project$I18n$gaelicTranslations(key);
+			case 'Euskara':
+				return $author$project$I18n$euskaraTranslations(key);
+			case 'Japanese':
+				return $author$project$I18n$japaneseTranslations(key);
+			case 'Russian':
+				return $author$project$I18n$russianTranslations(key);
+			case 'Tuvan':
+				return $author$project$I18n$tuvanTranslations(key);
+			case 'Amharic':
+				return $author$project$I18n$amharicTranslations(key);
+			default:
+				return $author$project$I18n$hebrewTranslations(key);
+		}
+	});
+var $author$project$I18n$translate = F2(
+	function (language, key) {
+		return A2($author$project$I18n$translations, language, key);
+	});
+var $elm$html$Html$Attributes$value = $elm$html$Html$Attributes$stringProperty('value');
 var $elm$core$Maybe$withDefault = F2(
 	function (_default, maybe) {
-		if (!maybe.$) {
+		if (maybe.$ === 'Just') {
 			var value = maybe.a;
 			return value;
 		} else {
 			return _default;
 		}
 	});
-var $author$project$Main$viewGridControls = function (model) {
+var $author$project$Main$viewGridControlsCard = function (model) {
 	return A2(
 		$elm$html$Html$div,
 		_List_fromArray(
 			[
-				$elm$html$Html$Attributes$class('panel')
+				$elm$html$Html$Attributes$class('card')
 			]),
 		_List_fromArray(
 			[
@@ -6986,35 +7029,37 @@ var $author$project$Main$viewGridControls = function (model) {
 				$elm$html$Html$div,
 				_List_fromArray(
 					[
-						$elm$html$Html$Attributes$class('settings-panel-header')
+						$elm$html$Html$Attributes$class('step-indicator')
 					]),
 				_List_fromArray(
 					[
 						A2(
 						$elm$html$Html$span,
-						_List_Nil,
 						_List_fromArray(
 							[
-								$elm$html$Html$text('🐸')
+								$elm$html$Html$Attributes$class('step-badge')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('2')
 							])),
 						A2(
 						$elm$html$Html$span,
 						_List_fromArray(
 							[
-								$elm$html$Html$Attributes$class('grid-icon')
+								$elm$html$Html$Attributes$class('step-title')
 							]),
 						_List_fromArray(
 							[
-								$elm$html$Html$text('⊞')
-							])),
-						$elm$html$Html$text(
-						A2($author$project$I18n$translate, model.a, 29))
+								$elm$html$Html$text(
+								A2($author$project$I18n$translate, model.language, $author$project$I18n$GridSettings))
+							]))
 					])),
 				A2(
 				$elm$html$Html$div,
 				_List_fromArray(
 					[
-						$elm$html$Html$Attributes$class('settings-grid')
+						$elm$html$Html$Attributes$class('grid-controls-grid')
 					]),
 				_List_fromArray(
 					[
@@ -7022,466 +7067,112 @@ var $author$project$Main$viewGridControls = function (model) {
 						$elm$html$Html$div,
 						_List_fromArray(
 							[
-								$elm$html$Html$Attributes$class('form-group')
+								$elm$html$Html$Attributes$class('control-group')
 							]),
 						_List_fromArray(
 							[
-								A2(
-								$elm$html$Html$label,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$class('form-label'),
-										$elm$html$Html$Attributes$for('grid-size-slider')
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text(
-										A2($author$project$I18n$translate, model.a, 3) + (': ' + $elm$core$String$fromInt(model.b)))
-									])),
 								A2(
 								$elm$html$Html$div,
 								_List_fromArray(
 									[
-										$elm$html$Html$Attributes$class('input-with-text')
+										$elm$html$Html$Attributes$class('control-header')
 									]),
 								_List_fromArray(
 									[
 										A2(
-										$elm$html$Html$input,
+										$elm$html$Html$label,
 										_List_fromArray(
 											[
-												$elm$html$Html$Attributes$type_('range'),
-												$elm$html$Html$Attributes$id('grid-size-slider'),
-												$elm$html$Html$Attributes$min('2'),
-												$elm$html$Html$Attributes$max('50'),
-												$elm$html$Html$Attributes$step('1'),
-												$elm$html$Html$Attributes$value(
-												$elm$core$String$fromInt(model.b)),
-												$elm$html$Html$Events$onInput(
-												function (s) {
-													return $author$project$Main$GridSizeChanged(
-														A2(
-															$elm$core$Maybe$withDefault,
-															10,
-															$elm$core$String$toInt(s)));
-												}),
-												$elm$html$Html$Attributes$class('slider'),
-												A2($elm$html$Html$Attributes$attribute, 'aria-valuemin', '2'),
-												A2($elm$html$Html$Attributes$attribute, 'aria-valuemax', '50'),
-												A2(
-												$elm$html$Html$Attributes$attribute,
-												'aria-valuenow',
-												$elm$core$String$fromInt(model.b)),
-												A2($elm$html$Html$Attributes$attribute, 'aria-labelledby', 'grid-size-label')
+												$elm$html$Html$Attributes$class('control-label')
 											]),
-										_List_Nil),
-										A2(
-										$elm$html$Html$input,
 										_List_fromArray(
 											[
-												$elm$html$Html$Attributes$type_('number'),
-												$elm$html$Html$Attributes$id('grid-size-number'),
-												$elm$html$Html$Attributes$min('2'),
-												$elm$html$Html$Attributes$max('50'),
-												$elm$html$Html$Attributes$value(
-												$elm$core$String$fromInt(model.b)),
-												$elm$html$Html$Events$onInput(
-												function (s) {
-													return $author$project$Main$GridSizeChanged(
-														A2(
-															$elm$core$Maybe$withDefault,
-															10,
-															$elm$core$String$toInt(s)));
-												}),
-												$elm$html$Html$Attributes$class('numeric-input'),
-												A2(
-												$elm$html$Html$Attributes$attribute,
-												'aria-label',
-												A2($author$project$I18n$translate, model.a, 3))
-											]),
-										_List_Nil),
+												$elm$html$Html$text(
+												A2($author$project$I18n$translate, model.language, $author$project$I18n$GridSize))
+											])),
 										A2(
 										$elm$html$Html$span,
 										_List_fromArray(
 											[
-												$elm$html$Html$Attributes$class('unit')
+												$elm$html$Html$Attributes$class('control-value')
 											]),
 										_List_fromArray(
 											[
-												$elm$html$Html$text('▭')
-											]))
-									]))
-							])),
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('form-group')
-							]),
-						_List_fromArray(
-							[
-								A2(
-								$elm$html$Html$label,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$class('form-label'),
-										$elm$html$Html$Attributes$for('grid-color-picker')
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text(
-										A2($author$project$I18n$translate, model.a, 5))
-									])),
-								A2(
-								$elm$html$Html$select,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$id('grid-color-picker'),
-										$elm$html$Html$Attributes$value(model.k),
-										$elm$html$Html$Events$onInput($author$project$Main$GridColorChanged),
-										$elm$html$Html$Attributes$class('select-input')
-									]),
-								_List_fromArray(
-									[
-										A2(
-										$elm$html$Html$option,
-										_List_fromArray(
-											[
-												$elm$html$Html$Attributes$value('#000000')
-											]),
-										_List_fromArray(
-											[
-												$elm$html$Html$text('Black')
-											])),
-										A2(
-										$elm$html$Html$option,
-										_List_fromArray(
-											[
-												$elm$html$Html$Attributes$value('#ffffff')
-											]),
-										_List_fromArray(
-											[
-												$elm$html$Html$text('White')
-											])),
-										A2(
-										$elm$html$Html$option,
-										_List_fromArray(
-											[
-												$elm$html$Html$Attributes$value('#ff0000')
-											]),
-										_List_fromArray(
-											[
-												$elm$html$Html$text('Red')
-											])),
-										A2(
-										$elm$html$Html$option,
-										_List_fromArray(
-											[
-												$elm$html$Html$Attributes$value('#00ff00')
-											]),
-										_List_fromArray(
-											[
-												$elm$html$Html$text('Green')
-											])),
-										A2(
-										$elm$html$Html$option,
-										_List_fromArray(
-											[
-												$elm$html$Html$Attributes$value('#0000ff')
-											]),
-										_List_fromArray(
-											[
-												$elm$html$Html$text('Blue')
-											])),
-										A2(
-										$elm$html$Html$option,
-										_List_fromArray(
-											[
-												$elm$html$Html$Attributes$value('#ffff00')
-											]),
-										_List_fromArray(
-											[
-												$elm$html$Html$text('Yellow')
-											])),
-										A2(
-										$elm$html$Html$option,
-										_List_fromArray(
-											[
-												$elm$html$Html$Attributes$value('#ff00ff')
-											]),
-										_List_fromArray(
-											[
-												$elm$html$Html$text('Magenta')
-											])),
-										A2(
-										$elm$html$Html$option,
-										_List_fromArray(
-											[
-												$elm$html$Html$Attributes$value('#00ffff')
-											]),
-										_List_fromArray(
-											[
-												$elm$html$Html$text('Cyan')
+												$elm$html$Html$text(
+												$elm$core$String$fromInt(model.gridSize) + ('x' + $elm$core$String$fromInt(model.gridSize)))
 											]))
 									])),
 								A2(
 								$elm$html$Html$input,
 								_List_fromArray(
 									[
-										$elm$html$Html$Attributes$type_('text'),
-										$elm$html$Html$Attributes$id('grid-color-hex'),
-										$elm$html$Html$Attributes$value(model.k),
-										$elm$html$Html$Events$onInput($author$project$Main$GridColorChanged),
-										$elm$html$Html$Attributes$class('hex-input'),
+										$elm$html$Html$Attributes$type_('range'),
+										$elm$html$Html$Attributes$min('2'),
+										$elm$html$Html$Attributes$max('32'),
+										$elm$html$Html$Attributes$value(
+										$elm$core$String$fromInt(model.gridSize)),
+										$elm$html$Html$Events$onInput(
+										function (s) {
+											return $author$project$Main$GridSizeChanged(
+												A2(
+													$elm$core$Maybe$withDefault,
+													10,
+													$elm$core$String$toInt(s)));
+										}),
+										$elm$html$Html$Attributes$class('slider')
+									]),
+								_List_Nil)
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('control-group')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('control-header')
+									]),
+								_List_fromArray(
+									[
 										A2(
-										$elm$html$Html$Attributes$attribute,
-										'aria-label',
-										A2($author$project$I18n$translate, model.a, 5) + ' hex value'),
-										$elm$html$Html$Attributes$placeholder('#RRGGBB')
-									]),
-								_List_Nil)
-							]))
-					])),
-				A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('form-group toggle-group')
-					]),
-				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$label,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('form-label'),
-								$elm$html$Html$Attributes$for('diagonal-toggle')
-							]),
-						_List_fromArray(
-							[
-								$elm$html$Html$text(
-								A2($author$project$I18n$translate, model.a, 30))
-							])),
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('toggle-switch-wrapper')
-							]),
-						_List_fromArray(
-							[
-								A2(
-								$elm$html$Html$input,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$type_('checkbox'),
-										$elm$html$Html$Attributes$id('diagonal-toggle'),
-										$elm$html$Html$Events$onCheck($author$project$Main$ToggleDiagonals),
-										$elm$html$Html$Attributes$checked(model.r),
-										$elm$html$Html$Attributes$class('toggle-switch')
-									]),
-								_List_Nil),
-								A2(
-								$elm$html$Html$span,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$class('toggle-switch-label')
-									]),
-								_List_Nil)
-							]))
-					])),
-				A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('action-buttons')
-					]),
-				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$button,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('button button-primary'),
-								$elm$html$Html$Events$onClick($author$project$Main$DownloadClicked),
-								$elm$html$Html$Attributes$disabled(
-								_Utils_eq(model.e, $elm$core$Maybe$Nothing))
-							]),
-						_List_fromArray(
-							[
-								A2(
-								$elm$html$Html$span,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$class('icon')
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('↓')
+										$elm$html$Html$label,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$class('control-label')
+											]),
+										_List_fromArray(
+											[
+												$elm$html$Html$text(
+												A2($author$project$I18n$translate, model.language, $author$project$I18n$GridOpacity))
+											])),
+										A2(
+										$elm$html$Html$span,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$class('control-value')
+											]),
+										_List_fromArray(
+											[
+												$elm$html$Html$text(
+												$elm$core$String$fromInt(
+													$elm$core$Basics$round(model.gridOpacity * 100)) + '%')
+											]))
 									])),
-								$elm$html$Html$text(
-								A2($author$project$I18n$translate, model.a, 23))
-							])),
-						A2(
-						$elm$html$Html$button,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('button button-accent'),
-								$elm$html$Html$Attributes$disabled(
-								_Utils_eq(model.e, $elm$core$Maybe$Nothing))
-							]),
-						_List_fromArray(
-							[
-								A2(
-								$elm$html$Html$span,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$class('icon')
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('↗')
-									])),
-								$elm$html$Html$text(
-								A2($author$project$I18n$translate, model.a, 24))
-							]))
-					])),
-				A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('form-group')
-					]),
-				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$label,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('form-label'),
-								$elm$html$Html$Attributes$for('grid-thickness-slider')
-							]),
-						_List_fromArray(
-							[
-								$elm$html$Html$text(
-								A2($author$project$I18n$translate, model.a, 6) + (': ' + ($elm$core$String$fromInt(model.i) + 'px')))
-							])),
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('input-with-text')
-							]),
-						_List_fromArray(
-							[
 								A2(
 								$elm$html$Html$input,
 								_List_fromArray(
 									[
 										$elm$html$Html$Attributes$type_('range'),
-										$elm$html$Html$Attributes$id('grid-thickness-slider'),
-										$elm$html$Html$Attributes$min('1'),
-										$elm$html$Html$Attributes$max('10'),
-										$elm$html$Html$Attributes$step('1'),
-										$elm$html$Html$Attributes$value(
-										$elm$core$String$fromInt(model.i)),
-										$elm$html$Html$Events$onInput(
-										function (s) {
-											return $author$project$Main$GridThicknessChanged(
-												A2(
-													$elm$core$Maybe$withDefault,
-													1,
-													$elm$core$String$toInt(s)));
-										}),
-										$elm$html$Html$Attributes$class('slider-input'),
-										A2($elm$html$Html$Attributes$attribute, 'aria-valuemin', '1'),
-										A2($elm$html$Html$Attributes$attribute, 'aria-valuemax', '10'),
-										A2(
-										$elm$html$Html$Attributes$attribute,
-										'aria-valuenow',
-										$elm$core$String$fromInt(model.i)),
-										A2($elm$html$Html$Attributes$attribute, 'aria-labelledby', 'grid-thickness-label')
-									]),
-								_List_Nil),
-								A2(
-								$elm$html$Html$input,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$type_('number'),
-										$elm$html$Html$Attributes$id('grid-thickness-number'),
-										$elm$html$Html$Attributes$min('1'),
-										$elm$html$Html$Attributes$max('10'),
-										$elm$html$Html$Attributes$value(
-										$elm$core$String$fromInt(model.i)),
-										$elm$html$Html$Events$onInput(
-										function (s) {
-											return $author$project$Main$GridThicknessChanged(
-												A2(
-													$elm$core$Maybe$withDefault,
-													1,
-													$elm$core$String$toInt(s)));
-										}),
-										$elm$html$Html$Attributes$class('numeric-input'),
-										A2(
-										$elm$html$Html$Attributes$attribute,
-										'aria-label',
-										A2($author$project$I18n$translate, model.a, 6))
-									]),
-								_List_Nil),
-								A2(
-								$elm$html$Html$span,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$class('unit')
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('px')
-									]))
-							]))
-					])),
-				A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('form-group')
-					]),
-				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$label,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('form-label'),
-								$elm$html$Html$Attributes$for('grid-opacity-slider')
-							]),
-						_List_fromArray(
-							[
-								$elm$html$Html$text(
-								A2($author$project$I18n$translate, model.a, 7) + (': ' + (A2(
-									$elm$core$String$left,
-									4,
-									$elm$core$String$fromFloat(model.g * 100)) + '%')))
-							])),
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('input-with-text')
-							]),
-						_List_fromArray(
-							[
-								A2(
-								$elm$html$Html$input,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$type_('range'),
-										$elm$html$Html$Attributes$id('grid-opacity-slider'),
-										$elm$html$Html$Attributes$min('0'),
+										$elm$html$Html$Attributes$min('0.1'),
 										$elm$html$Html$Attributes$max('1'),
-										$elm$html$Html$Attributes$step('0.01'),
+										$elm$html$Html$Attributes$step('0.1'),
 										$elm$html$Html$Attributes$value(
-										$elm$core$String$fromFloat(model.g)),
+										$elm$core$String$fromFloat(model.gridOpacity)),
 										$elm$html$Html$Events$onInput(
 										function (s) {
 											return $author$project$Main$GridOpacityChanged(
@@ -7490,68 +7181,462 @@ var $author$project$Main$viewGridControls = function (model) {
 													0.5,
 													$elm$core$String$toFloat(s)));
 										}),
-										$elm$html$Html$Attributes$class('slider-input'),
-										A2($elm$html$Html$Attributes$attribute, 'aria-valuemin', '0'),
-										A2($elm$html$Html$Attributes$attribute, 'aria-valuemax', '1'),
-										A2(
-										$elm$html$Html$Attributes$attribute,
-										'aria-valuenow',
-										$elm$core$String$fromFloat(model.g)),
-										A2($elm$html$Html$Attributes$attribute, 'aria-labelledby', 'grid-opacity-label')
+										$elm$html$Html$Attributes$class('slider')
 									]),
-								_List_Nil),
+								_List_Nil)
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('control-group')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('control-header')
+									]),
+								_List_fromArray(
+									[
+										A2(
+										$elm$html$Html$label,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$class('control-label')
+											]),
+										_List_fromArray(
+											[
+												$elm$html$Html$text(
+												A2($author$project$I18n$translate, model.language, $author$project$I18n$GridThickness))
+											])),
+										A2(
+										$elm$html$Html$span,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$class('control-value')
+											]),
+										_List_fromArray(
+											[
+												$elm$html$Html$text(
+												$elm$core$String$fromInt(model.gridThickness) + 'px')
+											]))
+									])),
 								A2(
 								$elm$html$Html$input,
 								_List_fromArray(
 									[
-										$elm$html$Html$Attributes$type_('number'),
-										$elm$html$Html$Attributes$id('grid-opacity-number'),
-										$elm$html$Html$Attributes$min('0'),
-										$elm$html$Html$Attributes$max('100'),
+										$elm$html$Html$Attributes$type_('range'),
+										$elm$html$Html$Attributes$min('1'),
+										$elm$html$Html$Attributes$max('5'),
 										$elm$html$Html$Attributes$value(
-										$elm$core$String$fromInt(
-											$elm$core$Basics$round(model.g * 100))),
+										$elm$core$String$fromInt(model.gridThickness)),
 										$elm$html$Html$Events$onInput(
 										function (s) {
-											return $author$project$Main$GridOpacityChanged(
+											return $author$project$Main$GridThicknessChanged(
 												A2(
 													$elm$core$Maybe$withDefault,
-													50,
-													$elm$core$String$toInt(s)) / 100);
+													1,
+													$elm$core$String$toInt(s)));
 										}),
-										$elm$html$Html$Attributes$class('numeric-input'),
+										$elm$html$Html$Attributes$class('slider')
+									]),
+								_List_Nil)
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('control-group')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('control-header')
+									]),
+								_List_fromArray(
+									[
 										A2(
-										$elm$html$Html$Attributes$attribute,
-										'aria-label',
-										A2($author$project$I18n$translate, model.a, 7))
+										$elm$html$Html$label,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$class('control-label')
+											]),
+										_List_fromArray(
+											[
+												$elm$html$Html$text(
+												A2($author$project$I18n$translate, model.language, $author$project$I18n$GridColor))
+											])),
+										A2(
+										$elm$html$Html$div,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$class('color-preview'),
+												A2($elm$html$Html$Attributes$style, 'background-color', model.gridColor)
+											]),
+										_List_Nil)
+									])),
+								A2(
+								$elm$html$Html$input,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$type_('color'),
+										$elm$html$Html$Attributes$value(model.gridColor),
+										$elm$html$Html$Events$onInput($author$project$Main$GridColorChanged),
+										$elm$html$Html$Attributes$class('color-input')
+									]),
+								_List_Nil)
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('toggle-row')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$input,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$type_('checkbox'),
+										$elm$html$Html$Events$onCheck($author$project$Main$ToggleDiagonals),
+										$elm$html$Html$Attributes$checked(model.showDiagonals),
+										$elm$html$Html$Attributes$class('toggle-checkbox'),
+										$elm$html$Html$Attributes$id('diagonals')
 									]),
 								_List_Nil),
 								A2(
-								$elm$html$Html$span,
+								$elm$html$Html$label,
 								_List_fromArray(
 									[
-										$elm$html$Html$Attributes$class('unit')
+										$elm$html$Html$Attributes$class('toggle-label'),
+										$elm$html$Html$Attributes$for('diagonals')
 									]),
 								_List_fromArray(
 									[
-										$elm$html$Html$text('%')
+										$elm$html$Html$text(
+										A2($author$project$I18n$translate, model.language, $author$project$I18n$DiagonalGrid))
 									]))
 							]))
 					]))
 			]));
 };
-var $author$project$I18n$ChooseFile = 28;
-var $author$project$Main$PickImage = {$: 0};
-var $author$project$I18n$UploadDescription = 27;
-var $author$project$I18n$UploadNew = 25;
-var $author$project$I18n$UploadPrompt = 26;
-var $elm$html$Html$h3 = _VirtualDom_node('h3');
-var $author$project$Main$viewUploadArea = function (model) {
+var $author$project$I18n$UploadPlaceholder = {$: 'UploadPlaceholder'};
+var $elm$svg$Svg$Attributes$class = _VirtualDom_attribute('class');
+var $elm$svg$Svg$Attributes$d = _VirtualDom_attribute('d');
+var $elm$svg$Svg$trustedNode = _VirtualDom_nodeNS('http://www.w3.org/2000/svg');
+var $elm$svg$Svg$defs = $elm$svg$Svg$trustedNode('defs');
+var $elm$svg$Svg$Attributes$fill = _VirtualDom_attribute('fill');
+var $elm$svg$Svg$Attributes$height = _VirtualDom_attribute('height');
+var $elm$svg$Svg$Attributes$id = _VirtualDom_attribute('id');
+var $elm$svg$Svg$Attributes$opacity = _VirtualDom_attribute('opacity');
+var $elm$html$Html$p = _VirtualDom_node('p');
+var $elm$svg$Svg$path = $elm$svg$Svg$trustedNode('path');
+var $elm$svg$Svg$pattern = $elm$svg$Svg$trustedNode('pattern');
+var $elm$svg$Svg$Attributes$patternUnits = _VirtualDom_attribute('patternUnits');
+var $elm$svg$Svg$Attributes$preserveAspectRatio = _VirtualDom_attribute('preserveAspectRatio');
+var $elm$svg$Svg$rect = $elm$svg$Svg$trustedNode('rect');
+var $elm$svg$Svg$Attributes$stroke = _VirtualDom_attribute('stroke');
+var $elm$svg$Svg$Attributes$strokeWidth = _VirtualDom_attribute('stroke-width');
+var $elm$svg$Svg$svg = $elm$svg$Svg$trustedNode('svg');
+var $author$project$Main$ImageSizeLoaded = F2(
+	function (a, b) {
+		return {$: 'ImageSizeLoaded', a: a, b: b};
+	});
+var $author$project$I18n$NoImageYet = {$: 'NoImageYet'};
+var $elm$svg$Svg$line = $elm$svg$Svg$trustedNode('line');
+var $elm$svg$Svg$Attributes$x1 = _VirtualDom_attribute('x1');
+var $elm$svg$Svg$Attributes$x2 = _VirtualDom_attribute('x2');
+var $elm$svg$Svg$Attributes$y1 = _VirtualDom_attribute('y1');
+var $elm$svg$Svg$Attributes$y2 = _VirtualDom_attribute('y2');
+var $author$project$Main$svgLine = F5(
+	function (config, x1, y1, x2, y2) {
+		return A2(
+			$elm$svg$Svg$line,
+			_List_fromArray(
+				[
+					$elm$svg$Svg$Attributes$x1(
+					$elm$core$String$fromFloat(x1)),
+					$elm$svg$Svg$Attributes$y1(
+					$elm$core$String$fromFloat(y1)),
+					$elm$svg$Svg$Attributes$x2(
+					$elm$core$String$fromFloat(x2)),
+					$elm$svg$Svg$Attributes$y2(
+					$elm$core$String$fromFloat(y2)),
+					$elm$svg$Svg$Attributes$stroke(config.gridColor),
+					$elm$svg$Svg$Attributes$strokeWidth(
+					$elm$core$String$fromInt(config.gridThickness)),
+					$elm$svg$Svg$Attributes$opacity(
+					$elm$core$String$fromFloat(config.gridOpacity))
+				]),
+			_List_Nil);
+	});
+var $author$project$Main$allGridLines = F2(
+	function (config, dims) {
+		var cellWidth = dims.width / config.gridSize;
+		var verticalLines = A2(
+			$elm$core$List$map,
+			function (i) {
+				return A5($author$project$Main$svgLine, config, i * cellWidth, 0, i * cellWidth, dims.height);
+			},
+			A2($elm$core$List$range, 0, config.gridSize));
+		var cellHeight = dims.height / config.gridSize;
+		var diagonal1 = config.showDiagonals ? A2(
+			$elm$core$List$map,
+			function (i) {
+				return A5($author$project$Main$svgLine, config, i * cellWidth, 0, 0, i * cellHeight);
+			},
+			A2($elm$core$List$range, 0, config.gridSize * 2)) : _List_Nil;
+		var diagonal2 = config.showDiagonals ? A2(
+			$elm$core$List$map,
+			function (i) {
+				return A5($author$project$Main$svgLine, config, (config.gridSize - i) * cellWidth, 0, dims.width, i * cellHeight);
+			},
+			A2($elm$core$List$range, 0, config.gridSize * 2)) : _List_Nil;
+		var horizontalLines = A2(
+			$elm$core$List$map,
+			function (i) {
+				return A5($author$project$Main$svgLine, config, 0, i * cellHeight, dims.width, i * cellHeight);
+			},
+			A2($elm$core$List$range, 0, config.gridSize));
+		return _Utils_ap(
+			verticalLines,
+			_Utils_ap(
+				horizontalLines,
+				_Utils_ap(diagonal1, diagonal2)));
+	});
+var $elm$json$Json$Decode$int = _Json_decodeInt;
+var $author$project$Main$decodeImageSize = function (tagger) {
+	return A3(
+		$elm$json$Json$Decode$map2,
+		tagger,
+		A2(
+			$elm$json$Json$Decode$at,
+			_List_fromArray(
+				['target', 'naturalWidth']),
+			$elm$json$Json$Decode$int),
+		A2(
+			$elm$json$Json$Decode$at,
+			_List_fromArray(
+				['target', 'naturalHeight']),
+			$elm$json$Json$Decode$int));
+};
+var $author$project$Main$gridConfigFromModel = function (model) {
+	return {gridColor: model.gridColor, gridOpacity: model.gridOpacity, gridSize: model.gridSize, gridThickness: model.gridThickness, showDiagonals: model.showDiagonals};
+};
+var $elm$html$Html$img = _VirtualDom_node('img');
+var $elm$html$Html$Attributes$src = function (url) {
+	return A2(
+		$elm$html$Html$Attributes$stringProperty,
+		'src',
+		_VirtualDom_noJavaScriptOrHtmlUri(url));
+};
+var $elm$svg$Svg$Attributes$viewBox = _VirtualDom_attribute('viewBox');
+var $elm$svg$Svg$Attributes$width = _VirtualDom_attribute('width');
+var $author$project$Main$viewGriddedImage = function (model) {
+	var _v0 = _Utils_Tuple3(model.uploadedImage, model.imageWidth, model.imageHeight);
+	if (_v0.a.$ === 'Just') {
+		if ((_v0.b.$ === 'Just') && (_v0.c.$ === 'Just')) {
+			var url = _v0.a.a;
+			var width = _v0.b.a;
+			var height = _v0.c.a;
+			var dims = {height: height, width: width};
+			var config = $author$project$Main$gridConfigFromModel(model);
+			var gridLines = A2($author$project$Main$allGridLines, config, dims);
+			return A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('gridded-image-container')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$img,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$src(url),
+								$elm$html$Html$Attributes$class('gridded-base-image')
+							]),
+						_List_Nil),
+						A2(
+						$elm$svg$Svg$svg,
+						_List_fromArray(
+							[
+								$elm$svg$Svg$Attributes$width(
+								$elm$core$String$fromInt(width)),
+								$elm$svg$Svg$Attributes$height(
+								$elm$core$String$fromInt(height)),
+								$elm$svg$Svg$Attributes$viewBox(
+								'0 0 ' + ($elm$core$String$fromInt(width) + (' ' + $elm$core$String$fromInt(height)))),
+								$elm$svg$Svg$Attributes$class('grid-overlay')
+							]),
+						gridLines)
+					]));
+		} else {
+			var url = _v0.a.a;
+			return A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('gridded-image-container')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$img,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$src(url),
+								$elm$html$Html$Attributes$class('gridded-base-image loading'),
+								A2(
+								$elm$html$Html$Events$on,
+								'load',
+								$author$project$Main$decodeImageSize($author$project$Main$ImageSizeLoaded))
+							]),
+						_List_Nil)
+					]));
+		}
+	} else {
+		return $elm$html$Html$text(
+			A2($author$project$I18n$translate, model.language, $author$project$I18n$NoImageYet));
+	}
+};
+var $author$project$Main$viewGridPreview = function (model) {
 	return A2(
 		$elm$html$Html$div,
 		_List_fromArray(
 			[
-				$elm$html$Html$Attributes$class('panel')
+				$elm$html$Html$Attributes$class('preview-card')
+			]),
+		_List_fromArray(
+			[
+				function () {
+				var _v0 = model.uploadedImage;
+				if (_v0.$ === 'Just') {
+					var url = _v0.a;
+					return $author$project$Main$viewGriddedImage(model);
+				} else {
+					return A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('preview-placeholder')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$svg$Svg$svg,
+								_List_fromArray(
+									[
+										$elm$svg$Svg$Attributes$class('placeholder-grid-background'),
+										$elm$svg$Svg$Attributes$width('100%'),
+										$elm$svg$Svg$Attributes$height('100%'),
+										$elm$svg$Svg$Attributes$preserveAspectRatio('xMidYMid slice')
+									]),
+								_List_fromArray(
+									[
+										A2(
+										$elm$svg$Svg$defs,
+										_List_Nil,
+										_List_fromArray(
+											[
+												A2(
+												$elm$svg$Svg$pattern,
+												_List_fromArray(
+													[
+														$elm$svg$Svg$Attributes$id('placeholderGrid'),
+														$elm$svg$Svg$Attributes$width('40'),
+														$elm$svg$Svg$Attributes$height('40'),
+														$elm$svg$Svg$Attributes$patternUnits('userSpaceOnUse')
+													]),
+												_List_fromArray(
+													[
+														A2(
+														$elm$svg$Svg$path,
+														_List_fromArray(
+															[
+																$elm$svg$Svg$Attributes$d('M 40 0 L 0 0 0 40'),
+																$elm$svg$Svg$Attributes$fill('none'),
+																$elm$svg$Svg$Attributes$stroke('#80ED99'),
+																$elm$svg$Svg$Attributes$strokeWidth('1'),
+																$elm$svg$Svg$Attributes$opacity('0.3')
+															]),
+														_List_Nil)
+													]))
+											])),
+										A2(
+										$elm$svg$Svg$rect,
+										_List_fromArray(
+											[
+												$elm$svg$Svg$Attributes$width('100%'),
+												$elm$svg$Svg$Attributes$height('100%'),
+												$elm$svg$Svg$Attributes$fill('url(#placeholderGrid)')
+											]),
+										_List_Nil)
+									])),
+								A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('placeholder-content')
+									]),
+								_List_fromArray(
+									[
+										A2(
+										$elm$html$Html$span,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$class('placeholder-icon')
+											]),
+										_List_fromArray(
+											[
+												$elm$html$Html$text(':)')
+											])),
+										A2(
+										$elm$html$Html$p,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$class('placeholder-text')
+											]),
+										_List_fromArray(
+											[
+												$elm$html$Html$text(
+												A2($author$project$I18n$translate, model.language, $author$project$I18n$UploadPlaceholder))
+											]))
+									]))
+							]));
+				}
+			}()
+			]));
+};
+var $author$project$Main$viewCenterColumn = function (model) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('center-column')
+			]),
+		_List_fromArray(
+			[
+				$author$project$Main$viewGridPreview(model),
+				$author$project$Main$viewGridControlsCard(model)
+			]));
+};
+var $author$project$I18n$FooterTooltip = {$: 'FooterTooltip'};
+var $author$project$I18n$MadeInArgentina = {$: 'MadeInArgentina'};
+var $author$project$Main$viewFooter = function (model) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('app-footer')
 			]),
 		_List_fromArray(
 			[
@@ -7559,14 +7644,331 @@ var $author$project$Main$viewUploadArea = function (model) {
 				$elm$html$Html$div,
 				_List_fromArray(
 					[
-						$elm$html$Html$Attributes$class('upload-area'),
-						$elm$html$Html$Events$onClick($author$project$Main$PickImage),
+						$elm$html$Html$Attributes$class('footer-content')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('tooltip-container')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$span,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('footer-text-main')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text(
+										A2($author$project$I18n$translate, model.language, $author$project$I18n$MadeInArgentina) + ' 💚 (╹◡╹๑)')
+									])),
+								A2(
+								$elm$html$Html$span,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('tooltip-content')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text(
+										A2($author$project$I18n$translate, model.language, $author$project$I18n$FooterTooltip))
+									]))
+							]))
+					]))
+			]));
+};
+var $author$project$I18n$AppSubtitle = {$: 'AppSubtitle'};
+var $elm$html$Html$h1 = _VirtualDom_node('h1');
+var $author$project$I18n$Amharic = {$: 'Amharic'};
+var $author$project$I18n$Asturiano = {$: 'Asturiano'};
+var $author$project$I18n$English = {$: 'English'};
+var $author$project$I18n$Euskara = {$: 'Euskara'};
+var $author$project$I18n$French = {$: 'French'};
+var $author$project$I18n$Gaelic = {$: 'Gaelic'};
+var $author$project$I18n$Hebrew = {$: 'Hebrew'};
+var $author$project$I18n$Italian = {$: 'Italian'};
+var $author$project$I18n$Japanese = {$: 'Japanese'};
+var $author$project$Main$LanguageChanged = function (a) {
+	return {$: 'LanguageChanged', a: a};
+};
+var $author$project$I18n$LanguageLabel = {$: 'LanguageLabel'};
+var $author$project$I18n$Latin = {$: 'Latin'};
+var $author$project$I18n$Portuguese = {$: 'Portuguese'};
+var $author$project$I18n$Russian = {$: 'Russian'};
+var $author$project$I18n$Tuvan = {$: 'Tuvan'};
+var $author$project$Main$languageFlag = function (language) {
+	switch (language.$) {
+		case 'English':
+			return '🇬🇧🇺🇸 ';
+		case 'Spanish':
+			return '🇪🇸🇦🇷 ';
+		case 'Latin':
+			return '🇮🇹 ';
+		case 'Italian':
+			return '🇮🇹 ';
+		case 'Portuguese':
+			return '🇧🇷🇵🇹 ';
+		case 'French':
+			return '🇫🇷 ';
+		case 'Asturiano':
+			return '🇪🇸 ';
+		case 'Gaelic':
+			return '🇮🇪🏴\uDB40\uDC67\uDB40\uDC62\uDB40\uDC73\uDB40\uDC63\uDB40\uDC74\uDB40\uDC7F ';
+		case 'Euskara':
+			return '🇪🇸 ';
+		case 'Japanese':
+			return '🇯🇵 ';
+		case 'Russian':
+			return '🇷🇺 ';
+		case 'Tuvan':
+			return '🇷🇺 ';
+		case 'Amharic':
+			return '🇪🇹 ';
+		default:
+			return '🇮🇱 ';
+	}
+};
+var $author$project$Main$languageToString = function (language) {
+	switch (language.$) {
+		case 'English':
+			return 'english';
+		case 'Spanish':
+			return 'spanish';
+		case 'Latin':
+			return 'latin';
+		case 'Italian':
+			return 'italian';
+		case 'Portuguese':
+			return 'portuguese';
+		case 'French':
+			return 'french';
+		case 'Asturiano':
+			return 'asturiano';
+		case 'Gaelic':
+			return 'gaelic';
+		case 'Euskara':
+			return 'euskara';
+		case 'Japanese':
+			return 'japanese';
+		case 'Russian':
+			return 'russian';
+		case 'Tuvan':
+			return 'tuvan';
+		case 'Amharic':
+			return 'amharic';
+		default:
+			return 'hebrew';
+	}
+};
+var $elm$html$Html$option = _VirtualDom_node('option');
+var $author$project$Main$parseLanguage = function (value) {
+	switch (value) {
+		case 'english':
+			return $author$project$I18n$English;
+		case 'spanish':
+			return $author$project$I18n$Spanish;
+		case 'latin':
+			return $author$project$I18n$Latin;
+		case 'italian':
+			return $author$project$I18n$Italian;
+		case 'portuguese':
+			return $author$project$I18n$Portuguese;
+		case 'french':
+			return $author$project$I18n$French;
+		case 'asturiano':
+			return $author$project$I18n$Asturiano;
+		case 'gaelic':
+			return $author$project$I18n$Gaelic;
+		case 'euskara':
+			return $author$project$I18n$Euskara;
+		case 'japanese':
+			return $author$project$I18n$Japanese;
+		case 'russian':
+			return $author$project$I18n$Russian;
+		case 'tuvan':
+			return $author$project$I18n$Tuvan;
+		case 'amharic':
+			return $author$project$I18n$Amharic;
+		case 'hebrew':
+			return $author$project$I18n$Hebrew;
+		default:
+			return $author$project$I18n$English;
+	}
+};
+var $elm$html$Html$select = _VirtualDom_node('select');
+var $elm$html$Html$Attributes$selected = $elm$html$Html$Attributes$boolProperty('selected');
+var $elm$core$String$toUpper = _String_toUpper;
+var $author$project$Main$viewLanguageSelector = function (currentLanguage) {
+	var languageOption = F3(
+		function (language, displayName, code) {
+			return A2(
+				$elm$html$Html$option,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$value(
+						$author$project$Main$languageToString(language)),
+						$elm$html$Html$Attributes$selected(
+						_Utils_eq(currentLanguage, language)),
+						A2($elm$html$Html$Attributes$attribute, 'aria-label', displayName)
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text(
+						_Utils_ap(
+							$author$project$Main$languageFlag(language),
+							$elm$core$String$toUpper(code)))
+					]));
+		});
+	var handleLanguageChange = function (value) {
+		return $author$project$Main$LanguageChanged(
+			$author$project$Main$parseLanguage(value));
+	};
+	var _v0 = $author$project$Main$debug(
+		'lang:' + $author$project$Main$languageToCode(currentLanguage));
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('language-selector compact')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$span,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('globe-icon')
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text('🌐')
+					])),
+				A2(
+				$elm$html$Html$label,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$for('language-select'),
+						$elm$html$Html$Attributes$class('sr-only')
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text(
+						A2($author$project$I18n$translate, currentLanguage, $author$project$I18n$LanguageLabel))
+					])),
+				A2(
+				$elm$html$Html$select,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$id('language-select'),
+						A2(
+						$elm$html$Html$Events$on,
+						'change',
+						A2(
+							$elm$json$Json$Decode$map,
+							handleLanguageChange,
+							A2(
+								$elm$json$Json$Decode$at,
+								_List_fromArray(
+									['target', 'value']),
+								$elm$json$Json$Decode$string))),
+						$elm$html$Html$Attributes$class('language-dropdown compact'),
 						A2(
 						$elm$html$Html$Attributes$attribute,
 						'aria-label',
-						A2($author$project$I18n$translate, model.a, 26)),
-						A2($elm$html$Html$Attributes$attribute, 'role', 'button'),
-						$elm$html$Html$Attributes$id('upload-image-button')
+						A2($author$project$I18n$translate, currentLanguage, $author$project$I18n$LanguageLabel))
+					]),
+				_List_fromArray(
+					[
+						A3(languageOption, $author$project$I18n$English, 'English', 'en'),
+						A3(languageOption, $author$project$I18n$Spanish, 'Español', 'es'),
+						A3(languageOption, $author$project$I18n$Latin, 'Latin', 'la'),
+						A3(languageOption, $author$project$I18n$Italian, 'Italiano', 'it'),
+						A3(languageOption, $author$project$I18n$Portuguese, 'Português', 'pt'),
+						A3(languageOption, $author$project$I18n$French, 'Français', 'fr'),
+						A3(languageOption, $author$project$I18n$Asturiano, 'Asturianu', 'ast'),
+						A3(languageOption, $author$project$I18n$Gaelic, 'Gàidhlig', 'gd'),
+						A3(languageOption, $author$project$I18n$Euskara, 'Euskara', 'eu'),
+						A3(languageOption, $author$project$I18n$Japanese, '日本語', 'ja'),
+						A3(languageOption, $author$project$I18n$Russian, 'Русский', 'ru'),
+						A3(languageOption, $author$project$I18n$Tuvan, 'Тыва дыл', 'tyv'),
+						A3(languageOption, $author$project$I18n$Amharic, 'አማርኛ', 'am'),
+						A3(languageOption, $author$project$I18n$Hebrew, 'עברית', 'he')
+					]))
+			]));
+};
+var $author$project$Main$viewHeader = function (model) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('app-header')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('header-content')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$h1,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('app-title')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Gridit Baby! 🐸')
+							])),
+						A2(
+						$elm$html$Html$p,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('app-subtitle')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text(
+								A2($author$project$I18n$translate, model.language, $author$project$I18n$AppSubtitle))
+							]))
+					])),
+				$author$project$Main$viewLanguageSelector(model.language)
+			]));
+};
+var $author$project$I18n$ChooseFile = {$: 'ChooseFile'};
+var $author$project$I18n$MaxFileSize = {$: 'MaxFileSize'};
+var $author$project$Main$PickImage = {$: 'PickImage'};
+var $author$project$I18n$SupportedFormats = {$: 'SupportedFormats'};
+var $author$project$I18n$UploadImage = {$: 'UploadImage'};
+var $elm$html$Html$button = _VirtualDom_node('button');
+var $elm$html$Html$Events$onClick = function (msg) {
+	return A2(
+		$elm$html$Html$Events$on,
+		'click',
+		$elm$json$Json$Decode$succeed(msg));
+};
+var $author$project$Main$viewUploadCard = function (model) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('card')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('step-indicator')
 					]),
 				_List_fromArray(
 					[
@@ -7574,46 +7976,82 @@ var $author$project$Main$viewUploadArea = function (model) {
 						$elm$html$Html$span,
 						_List_fromArray(
 							[
-								$elm$html$Html$Attributes$class('upload-icon')
+								$elm$html$Html$Attributes$class('step-badge')
 							]),
 						_List_fromArray(
 							[
-								_Utils_eq(model.e, $elm$core$Maybe$Nothing) ? $elm$html$Html$text('⬆️') : $elm$html$Html$text('🖼️')
+								$elm$html$Html$text('1')
 							])),
 						A2(
-						$elm$html$Html$h3,
+						$elm$html$Html$span,
 						_List_fromArray(
 							[
-								$elm$html$Html$Attributes$class('upload-title')
-							]),
-						_List_fromArray(
-							[
-								_Utils_eq(model.e, $elm$core$Maybe$Nothing) ? $elm$html$Html$text(
-								A2($author$project$I18n$translate, model.a, 26)) : $elm$html$Html$text(
-								A2($author$project$I18n$translate, model.a, 25))
-							])),
-						A2(
-						$elm$html$Html$p,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('upload-description')
+								$elm$html$Html$Attributes$class('step-title')
 							]),
 						_List_fromArray(
 							[
 								$elm$html$Html$text(
-								A2($author$project$I18n$translate, model.a, 27))
-							])),
-						A2(
-						$elm$html$Html$button,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('button button-outline')
-							]),
-						_List_fromArray(
-							[
-								$elm$html$Html$text(
-								A2($author$project$I18n$translate, model.a, 28))
+								A2($author$project$I18n$translate, model.language, $author$project$I18n$UploadImage))
 							]))
+					])),
+				A2(
+				$elm$html$Html$button,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('button button-upload'),
+						$elm$html$Html$Events$onClick($author$project$Main$PickImage)
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text(
+						A2($author$project$I18n$translate, model.language, $author$project$I18n$ChooseFile) + ' 📷')
+					])),
+				A2(
+				$elm$html$Html$p,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('card-text-small')
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text(
+						A2($author$project$I18n$translate, model.language, $author$project$I18n$MaxFileSize) + (' • ' + A2($author$project$I18n$translate, model.language, $author$project$I18n$SupportedFormats)))
+					]))
+			]));
+};
+var $author$project$I18n$WhatsGridit = {$: 'WhatsGridit'};
+var $author$project$I18n$WhatsThisDescription = {$: 'WhatsThisDescription'};
+var $elm$html$Html$h2 = _VirtualDom_node('h2');
+var $author$project$Main$viewWhatsThisAbout = function (model) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('card about-card')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$h2,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('card-title')
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text(
+						'🐸 ' + A2($author$project$I18n$translate, model.language, $author$project$I18n$WhatsGridit))
+					])),
+				A2(
+				$elm$html$Html$p,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('card-text')
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text(
+						A2($author$project$I18n$translate, model.language, $author$project$I18n$WhatsThisDescription))
 					]))
 			]));
 };
@@ -7626,226 +8064,15 @@ var $author$project$Main$viewLeftColumn = function (model) {
 			]),
 		_List_fromArray(
 			[
-				$author$project$Main$viewUploadArea(model),
-				$author$project$Main$viewGridControls(model)
+				$author$project$Main$viewWhatsThisAbout(model),
+				$author$project$Main$viewUploadCard(model)
 			]));
 };
-var $author$project$I18n$NoImageYet = 13;
-var $elm$svg$Svg$Attributes$class = _VirtualDom_attribute('class');
-var $elm$svg$Svg$Attributes$height = _VirtualDom_attribute('height');
-var $elm$html$Html$img = _VirtualDom_node('img');
-var $elm$svg$Svg$trustedNode = _VirtualDom_nodeNS('http://www.w3.org/2000/svg');
-var $elm$svg$Svg$line = $elm$svg$Svg$trustedNode('line');
-var $elm$svg$Svg$Attributes$opacity = _VirtualDom_attribute('opacity');
-var $elm$html$Html$Attributes$src = function (url) {
-	return A2(
-		$elm$html$Html$Attributes$stringProperty,
-		'src',
-		_VirtualDom_noJavaScriptOrHtmlUri(url));
-};
-var $elm$svg$Svg$Attributes$stroke = _VirtualDom_attribute('stroke');
-var $elm$svg$Svg$Attributes$strokeWidth = _VirtualDom_attribute('stroke-width');
-var $elm$svg$Svg$svg = $elm$svg$Svg$trustedNode('svg');
-var $elm$svg$Svg$Attributes$viewBox = _VirtualDom_attribute('viewBox');
-var $elm$svg$Svg$Attributes$width = _VirtualDom_attribute('width');
-var $elm$svg$Svg$Attributes$x1 = _VirtualDom_attribute('x1');
-var $elm$svg$Svg$Attributes$x2 = _VirtualDom_attribute('x2');
-var $elm$svg$Svg$Attributes$y1 = _VirtualDom_attribute('y1');
-var $elm$svg$Svg$Attributes$y2 = _VirtualDom_attribute('y2');
-var $author$project$Main$viewGriddedImage = function (model) {
-	var _v0 = _Utils_Tuple3(model.e, model.A, model.z);
-	if (((!_v0.a.$) && (!_v0.b.$)) && (!_v0.c.$)) {
-		var url = _v0.a.a;
-		var width = _v0.b.a;
-		var height = _v0.c.a;
-		var cellWidth = width / model.b;
-		var verticalLines = A2(
-			$elm$core$List$map,
-			function (i) {
-				var x = i * cellWidth;
-				return A2(
-					$elm$svg$Svg$line,
-					_List_fromArray(
-						[
-							$elm$svg$Svg$Attributes$x1(
-							$elm$core$String$fromFloat(x)),
-							$elm$svg$Svg$Attributes$y1('0'),
-							$elm$svg$Svg$Attributes$x2(
-							$elm$core$String$fromFloat(x)),
-							$elm$svg$Svg$Attributes$y2(
-							$elm$core$String$fromInt(height)),
-							$elm$svg$Svg$Attributes$stroke(model.k),
-							$elm$svg$Svg$Attributes$strokeWidth(
-							$elm$core$String$fromInt(model.i)),
-							$elm$svg$Svg$Attributes$opacity(
-							$elm$core$String$fromFloat(model.g))
-						]),
-					_List_Nil);
-			},
-			A2($elm$core$List$range, 0, model.b));
-		var cellHeight = height / model.b;
-		var diagonalLines1 = model.r ? A2(
-			$elm$core$List$map,
-			function (i) {
-				var y = i * cellHeight;
-				var x = i * cellWidth;
-				return A2(
-					$elm$svg$Svg$line,
-					_List_fromArray(
-						[
-							$elm$svg$Svg$Attributes$x1(
-							$elm$core$String$fromFloat(x)),
-							$elm$svg$Svg$Attributes$y1('0'),
-							$elm$svg$Svg$Attributes$x2('0'),
-							$elm$svg$Svg$Attributes$y2(
-							$elm$core$String$fromFloat(y)),
-							$elm$svg$Svg$Attributes$stroke(model.k),
-							$elm$svg$Svg$Attributes$strokeWidth(
-							$elm$core$String$fromInt(model.i)),
-							$elm$svg$Svg$Attributes$opacity(
-							$elm$core$String$fromFloat(model.g))
-						]),
-					_List_Nil);
-			},
-			A2($elm$core$List$range, 0, model.b * 2)) : _List_Nil;
-		var diagonalLines2 = model.r ? A2(
-			$elm$core$List$map,
-			function (i) {
-				var y = i * cellHeight;
-				var x = (model.b - i) * cellWidth;
-				return A2(
-					$elm$svg$Svg$line,
-					_List_fromArray(
-						[
-							$elm$svg$Svg$Attributes$x1(
-							$elm$core$String$fromFloat(x)),
-							$elm$svg$Svg$Attributes$y1('0'),
-							$elm$svg$Svg$Attributes$x2(
-							$elm$core$String$fromInt(width)),
-							$elm$svg$Svg$Attributes$y2(
-							$elm$core$String$fromFloat(y)),
-							$elm$svg$Svg$Attributes$stroke(model.k),
-							$elm$svg$Svg$Attributes$strokeWidth(
-							$elm$core$String$fromInt(model.i)),
-							$elm$svg$Svg$Attributes$opacity(
-							$elm$core$String$fromFloat(model.g))
-						]),
-					_List_Nil);
-			},
-			A2($elm$core$List$range, 0, model.b * 2)) : _List_Nil;
-		var horizontalLines = A2(
-			$elm$core$List$map,
-			function (i) {
-				var y = i * cellHeight;
-				return A2(
-					$elm$svg$Svg$line,
-					_List_fromArray(
-						[
-							$elm$svg$Svg$Attributes$x1('0'),
-							$elm$svg$Svg$Attributes$y1(
-							$elm$core$String$fromFloat(y)),
-							$elm$svg$Svg$Attributes$x2(
-							$elm$core$String$fromInt(width)),
-							$elm$svg$Svg$Attributes$y2(
-							$elm$core$String$fromFloat(y)),
-							$elm$svg$Svg$Attributes$stroke(model.k),
-							$elm$svg$Svg$Attributes$strokeWidth(
-							$elm$core$String$fromInt(model.i)),
-							$elm$svg$Svg$Attributes$opacity(
-							$elm$core$String$fromFloat(model.g))
-						]),
-					_List_Nil);
-			},
-			A2($elm$core$List$range, 0, model.b));
-		var allLines = _Utils_ap(
-			verticalLines,
-			_Utils_ap(
-				horizontalLines,
-				_Utils_ap(diagonalLines1, diagonalLines2)));
-		return A2(
-			$elm$html$Html$div,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$class('gridded-image-container')
-				]),
-			_List_fromArray(
-				[
-					A2(
-					$elm$html$Html$img,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$src(url),
-							$elm$html$Html$Attributes$class('gridded-base-image')
-						]),
-					_List_Nil),
-					A2(
-					$elm$svg$Svg$svg,
-					_List_fromArray(
-						[
-							$elm$svg$Svg$Attributes$width(
-							$elm$core$String$fromInt(width)),
-							$elm$svg$Svg$Attributes$height(
-							$elm$core$String$fromInt(height)),
-							$elm$svg$Svg$Attributes$viewBox(
-							'0 0 ' + ($elm$core$String$fromInt(width) + (' ' + $elm$core$String$fromInt(height)))),
-							$elm$svg$Svg$Attributes$class('grid-overlay')
-						]),
-					allLines)
-				]));
-	} else {
-		return $elm$html$Html$text(
-			A2($author$project$I18n$translate, model.a, 13));
-	}
-};
-var $author$project$Main$viewGridPreviewArea = function (model) {
-	return A2(
-		$elm$html$Html$div,
-		_List_fromArray(
-			[
-				$elm$html$Html$Attributes$class('preview-container')
-			]),
-		_List_fromArray(
-			[
-				function () {
-				var _v0 = model.e;
-				if (!_v0.$) {
-					var url = _v0.a;
-					return $author$project$Main$viewGriddedImage(model);
-				} else {
-					return A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('empty-state')
-							]),
-						_List_fromArray(
-							[
-								A2(
-								$elm$html$Html$span,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$class('empty-icon')
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('🖼')
-									])),
-								A2(
-								$elm$html$Html$p,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$class('empty-text')
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text(
-										A2($author$project$I18n$translate, model.a, 13))
-									]))
-							]));
-				}
-			}()
-			]));
-};
+var $author$project$Main$DownloadClicked = {$: 'DownloadClicked'};
+var $author$project$I18n$DownloadGriddedImage = {$: 'DownloadGriddedImage'};
+var $author$project$I18n$Nice = {$: 'Nice'};
+var $author$project$Main$NiceButtonClicked = {$: 'NiceButtonClicked'};
+var $elm$html$Html$Attributes$disabled = $elm$html$Html$Attributes$boolProperty('disabled');
 var $author$project$Main$viewRightColumn = function (model) {
 	return A2(
 		$elm$html$Html$div,
@@ -7855,61 +8082,110 @@ var $author$project$Main$viewRightColumn = function (model) {
 			]),
 		_List_fromArray(
 			[
-				$author$project$Main$viewGridPreviewArea(model)
-			]));
-};
-var $author$project$I18n$NiceCounter = 12;
-var $author$project$I18n$StatusReady = 21;
-var $author$project$Main$viewStatusBar = function (model) {
-	return A2(
-		$elm$html$Html$div,
-		_List_fromArray(
-			[
-				$elm$html$Html$Attributes$class('status-bar')
-			]),
-		_List_fromArray(
-			[
 				A2(
-				$elm$html$Html$span,
-				_List_Nil,
+				$elm$html$Html$div,
 				_List_fromArray(
 					[
-						$elm$html$Html$text(
-						A2($author$project$I18n$translate, model.a, 21) + ' | Grid: '),
-						$elm$html$Html$text(
-						$elm$core$String$fromInt(model.b)),
-						$elm$html$Html$text('×'),
-						$elm$html$Html$text(
-						$elm$core$String$fromInt(model.b)),
-						$elm$html$Html$text(' | Opacity: '),
-						$elm$html$Html$text(
-						$elm$core$String$fromInt(
-							$elm$core$Basics$round(model.g * 100))),
-						$elm$html$Html$text('%')
-					])),
-				A2(
-				$elm$html$Html$span,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('made-with')
+						$elm$html$Html$Attributes$class('card download-card')
 					]),
 				_List_fromArray(
 					[
-						$elm$html$Html$text('Made in  🇦🇷  with  ❤️ (¯▿¯)')
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('step-indicator')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$span,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('step-badge')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('3')
+									])),
+								A2(
+								$elm$html$Html$span,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('step-title')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text(
+										A2($author$project$I18n$translate, model.language, $author$project$I18n$DownloadGriddedImage))
+									]))
+							])),
+						A2(
+						$elm$html$Html$button,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('button button-primary button-download'),
+								$elm$html$Html$Events$onClick($author$project$Main$DownloadClicked),
+								$elm$html$Html$Attributes$disabled(
+								_Utils_eq(model.uploadedImage, $elm$core$Maybe$Nothing))
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$span,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('button-icon')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('⬇️')
+									])),
+								$elm$html$Html$text(
+								A2($author$project$I18n$translate, model.language, $author$project$I18n$DownloadGriddedImage))
+							]))
 					])),
 				A2(
-				$elm$html$Html$span,
+				$elm$html$Html$div,
 				_List_fromArray(
 					[
-						$elm$html$Html$Attributes$class('nice-count')
+						$elm$html$Html$Attributes$class('nice-section')
 					]),
 				_List_fromArray(
 					[
-						$elm$html$Html$text(
-						A2($author$project$I18n$translate, model.a, 12)),
-						$elm$html$Html$text(
-						$elm$core$String$fromInt(model.F)),
-						$elm$html$Html$text(' 🐸')
+						A2(
+						$elm$html$Html$button,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('button button-nice'),
+								$elm$html$Html$Events$onClick($author$project$Main$NiceButtonClicked)
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$span,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('button-icon')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('♡')
+									])),
+								$elm$html$Html$text(
+								A2($author$project$I18n$translate, model.language, $author$project$I18n$Nice))
+							])),
+						(model.niceCounter > 0) ? A2(
+						$elm$html$Html$span,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('nice-counter')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text(
+								'×' + $elm$core$String$fromInt(model.niceCounter))
+							])) : $elm$html$Html$text('')
 					]))
 			]));
 };
@@ -7922,7 +8198,7 @@ var $author$project$Main$view = function (model) {
 			]),
 		_List_fromArray(
 			[
-				$author$project$Main$viewHeader(model.a),
+				$author$project$Main$viewHeader(model),
 				A2(
 				$elm$html$Html$div,
 				_List_fromArray(
@@ -7932,9 +8208,10 @@ var $author$project$Main$view = function (model) {
 				_List_fromArray(
 					[
 						$author$project$Main$viewLeftColumn(model),
+						$author$project$Main$viewCenterColumn(model),
 						$author$project$Main$viewRightColumn(model)
 					])),
-				$author$project$Main$viewStatusBar(model),
+				$author$project$Main$viewFooter(model),
 				A2(
 				$elm$html$Html$input,
 				_List_fromArray(
@@ -7948,6 +8225,6 @@ var $author$project$Main$view = function (model) {
 			]));
 };
 var $author$project$Main$main = $elm$browser$Browser$element(
-	{aN: $author$project$Main$init, aX: $author$project$Main$subscriptions, aZ: $author$project$Main$update, a_: $author$project$Main$view});
+	{init: $author$project$Main$init, subscriptions: $author$project$Main$subscriptions, update: $author$project$Main$update, view: $author$project$Main$view});
 _Platform_export({'Main':{'init':$author$project$Main$main(
-	$elm$json$Json$Decode$succeed(0))(0)}});}(this));
+	$elm$json$Json$Decode$succeed(_Utils_Tuple0))(0)}});}(this));
