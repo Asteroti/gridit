@@ -57,6 +57,17 @@ type TranslationKey
     | ChooseFile
     | GridSettings
     | DiagonalGrid
+    | WhatsThisAbout
+    | WhatsThisDescription
+    | PerfectForArtists
+    | MaxFileSize
+    | SupportedFormats
+    | GriditScores
+    | YourScore
+    | ThatsNiceGridit
+    | MadeInArgentina
+    | WhatsGridit
+    | FooterTooltip
 
 
 
@@ -210,6 +221,39 @@ englishTranslations key =
         DiagonalGrid ->
             "Diagonal Grid"
 
+        WhatsThisAbout ->
+            "What's This About?"
+
+        WhatsThisDescription ->
+            "Gridit Baby! helps you apply perfect grids to your images - just like how frogs say \"gridit gridit\"! Upload any image, adjust the grid size and opacity, then use the grid as a guide for composition, drawing, or design work."
+
+        PerfectForArtists ->
+            "Perfect for artists, photographers, and anyone who loves precise layouts!"
+
+        MaxFileSize ->
+            "Max 5MB"
+
+        SupportedFormats ->
+            "JPG, PNG, GIF supported"
+
+        GriditScores ->
+            "Gridit Scores"
+
+        YourScore ->
+            "Your Score:"
+
+        ThatsNiceGridit ->
+            "That's Nice! Gridit!"
+
+        MadeInArgentina ->
+            "Made in Argentina with"
+
+        WhatsGridit ->
+            "What's Gridit?"
+
+        FooterTooltip ->
+            "Hi! I'm a developer who loves to code and paint. Gridit helps me transfer sketches to canvas using grids. Hope it helps you too!"
+
 
 
 -- SPANISH TRANSLATIONS
@@ -310,6 +354,39 @@ spanishTranslations key =
 
         DiagonalGrid ->
             "Cuadrícula Diagonal"
+
+        WhatsThisAbout ->
+            "¿De qué se trata?"
+
+        WhatsThisDescription ->
+            "¡Gridit Baby! te ayuda a aplicar grillas perfectas a tus imágenes - ¡como cuando las ranas dicen \"gridit gridit\"! Subí cualquier imagen, ajustá el tamaño y opacidad de la grilla, y usala como guía para composición, dibujo o diseño."
+
+        PerfectForArtists ->
+            "¡Perfecto para artistas, fotógrafos y cualquiera que ame los diseños precisos!"
+
+        MaxFileSize ->
+            "Máx 5MB"
+
+        SupportedFormats ->
+            "JPG, PNG, GIF soportados"
+
+        GriditScores ->
+            "Puntuación Gridit"
+
+        YourScore ->
+            "Tu puntuación:"
+
+        ThatsNiceGridit ->
+            "¡Qué lindo! ¡Gridit!"
+
+        MadeInArgentina ->
+            "Hecho en Argentina con"
+
+        WhatsGridit ->
+            "¿Qué es Gridit?"
+
+        FooterTooltip ->
+            "¡Hola! Soy una desarrolladora que ama programar y pintar. Gridit me ayuda a transferir bocetos al lienzo usando grillas. ¡Espero que te sirva también!"
 
 
 
@@ -412,6 +489,39 @@ latinTranslations key =
         DiagonalGrid ->
             "Reticulatio Diagonalis"
 
+        WhatsThisAbout ->
+            "Quid Hoc Est?"
+
+        WhatsThisDescription ->
+            "Gridit Baby! te adiuvat perfectas cratias imaginibus tuis applicare - sicut ranae dicunt \"gridit gridit\"! Quamlibet imaginem submitte, magnitudinem et opacitatem gratiae tempera, deinde ut duce ad compositionem, picturam vel opus designationis utere."
+
+        PerfectForArtists ->
+            "Perfectum pro artificibus, photographis, et omnibus qui dispositiones praecisas amant!"
+
+        MaxFileSize ->
+            "Max 5MB"
+
+        SupportedFormats ->
+            "JPG, PNG, GIF sustinetur"
+
+        GriditScores ->
+            "Puncta Gridit"
+
+        YourScore ->
+            "Puncta Tua:"
+
+        ThatsNiceGridit ->
+            "Pulchrum Est! Gridit!"
+
+        MadeInArgentina ->
+            "Factum in Argentina cum"
+
+        WhatsGridit ->
+            "Quid est Gridit?"
+
+        FooterTooltip ->
+            "Salve! Sum programmator qui amat codicem scribere et pingere. Gridit me adiuvat picturas ad telam transferre utens cratibulis. Spero tibi quoque prodesse!"
+
 
 
 -- ITALIAN TRANSLATIONS
@@ -512,6 +622,39 @@ italianTranslations key =
 
         DiagonalGrid ->
             "Griglia Diagonale"
+
+        WhatsThisAbout ->
+            "Di cosa si tratta?"
+
+        WhatsThisDescription ->
+            "Gridit Baby! ti aiuta ad applicare griglie perfette alle tue immagini - proprio come le rane dicono \"gridit gridit\"! Carica qualsiasi immagine, regola dimensione e opacità della griglia, poi usala come guida per composizione, disegno o design."
+
+        PerfectForArtists ->
+            "Perfetto per artisti, fotografi e chiunque ami layout precisi!"
+
+        MaxFileSize ->
+            "Max 5MB"
+
+        SupportedFormats ->
+            "JPG, PNG, GIF supportati"
+
+        GriditScores ->
+            "Punteggi Gridit"
+
+        YourScore ->
+            "Il tuo punteggio:"
+
+        ThatsNiceGridit ->
+            "Che bello! Gridit!"
+
+        MadeInArgentina ->
+            "Fatto in Argentina con"
+
+        WhatsGridit ->
+            "Cos'è Gridit?"
+
+        FooterTooltip ->
+            "Ciao! Sono una sviluppatrice che ama programmare e dipingere. Gridit mi aiuta a trasferire schizzi sulla tela usando griglie. Spero sia utile anche a te!"
 
 
 
@@ -614,6 +757,39 @@ portugueseTranslations key =
         DiagonalGrid ->
             "Grade Diagonal"
 
+        WhatsThisAbout ->
+            "Do que se trata?"
+
+        WhatsThisDescription ->
+            "Gridit Baby! ajuda-te a aplicar grades perfeitas às tuas imagens - tal como os sapos dizem \"gridit gridit\"! Carrega qualquer imagem, ajusta o tamanho e opacidade da grade, depois usa-a como guia para composição, desenho ou design."
+
+        PerfectForArtists ->
+            "Perfeito para artistas, fotógrafos e qualquer pessoa que ame layouts precisos!"
+
+        MaxFileSize ->
+            "Máx 5MB"
+
+        SupportedFormats ->
+            "JPG, PNG, GIF suportados"
+
+        GriditScores ->
+            "Pontuações Gridit"
+
+        YourScore ->
+            "Tua pontuação:"
+
+        ThatsNiceGridit ->
+            "Que legal! Gridit!"
+
+        MadeInArgentina ->
+            "Feito na Argentina com"
+
+        WhatsGridit ->
+            "O que é Gridit?"
+
+        FooterTooltip ->
+            "Olá! Sou uma desenvolvedora que ama programar e pintar. Gridit me ajuda a transferir esboços para a tela usando grades. Espero que te ajude também!"
+
 
 
 -- FRENCH TRANSLATIONS
@@ -714,6 +890,39 @@ frenchTranslations key =
 
         DiagonalGrid ->
             "Grille Diagonale"
+
+        WhatsThisAbout ->
+            "De quoi s'agit-il?"
+
+        WhatsThisDescription ->
+            "Gridit Baby! vous aide à appliquer des grilles parfaites à vos images - comme les grenouilles disent \"gridit gridit\"! Téléchargez n'importe quelle image, ajustez la taille et l'opacité de la grille, puis utilisez-la comme guide pour la composition, le dessin ou le design."
+
+        PerfectForArtists ->
+            "Parfait pour les artistes, photographes et tous ceux qui aiment les mises en page précises!"
+
+        MaxFileSize ->
+            "Max 5Mo"
+
+        SupportedFormats ->
+            "JPG, PNG, GIF supportés"
+
+        GriditScores ->
+            "Scores Gridit"
+
+        YourScore ->
+            "Votre score:"
+
+        ThatsNiceGridit ->
+            "C'est sympa! Gridit!"
+
+        MadeInArgentina ->
+            "Fait en Argentine avec"
+
+        WhatsGridit ->
+            "C'est quoi Gridit?"
+
+        FooterTooltip ->
+            "Salut! Je suis une développeuse qui aime coder et peindre. Gridit m'aide à transférer des croquis sur toile en utilisant des grilles. J'espère que ça vous aide aussi!"
 
 
 
@@ -816,6 +1025,39 @@ asturianoTranslations key =
         DiagonalGrid ->
             "Cuadrícula Diagonal"
 
+        WhatsThisAbout ->
+            "¿De qué va eso?"
+
+        WhatsThisDescription ->
+            "¡Gridit Baby! ayúdate a aplicar cuadrícules perfectes a les tos imaxes - ¡como cuando les ranes dicen \"gridit gridit\"! Xube cualquier imaxe, axusta'l tamañu y opacidá de la cuadrícula, y úsala como guía pa composición, dibuxu o diseñu."
+
+        PerfectForArtists ->
+            "¡Perfectu pa artistes, fotógrafos y cualquiera que-y gusten los diseños precisos!"
+
+        MaxFileSize ->
+            "Máx 5MB"
+
+        SupportedFormats ->
+            "JPG, PNG, GIF soportaos"
+
+        GriditScores ->
+            "Puntuaciones Gridit"
+
+        YourScore ->
+            "La to puntuación:"
+
+        ThatsNiceGridit ->
+            "¡Qué guapu! ¡Gridit!"
+
+        MadeInArgentina ->
+            "Fechu n'Arxentina con"
+
+        WhatsGridit ->
+            "¿Qué ye Gridit?"
+
+        FooterTooltip ->
+            "¡Hola! Soi una desarrolladora que-y presta programar y pintar. Gridit ayúdame a tresferir bocetos al llienzu usando cuadrícules. ¡Espero que te sirva tamién!"
+
 
 
 -- GAELIC TRANSLATIONS
@@ -916,6 +1158,39 @@ gaelicTranslations key =
 
         DiagonalGrid ->
             "Griod Trasnach"
+
+        WhatsThisAbout ->
+            "Dè tha seo mu dheidhinn?"
+
+        WhatsThisDescription ->
+            "Tha Gridit Baby! a' cuideachadh thu le bhith a' cur griodaichean foirfe air na dealbhan agad - dìreach mar a chanas losgannan \"gridit gridit\"! Luchdaich dealbh sam bith, atharraich meud agus dorchadas a' ghriod, an uairsin cleachd e mar stiùireadh airson co-dhèanamh, tarraing no obair dealbhaidh."
+
+        PerfectForArtists ->
+            "Foirfe airson luchd-ealain, dealbhadairean, agus duine sam bith a tha gràdhach air co-dhealbhaidhean mionaideach!"
+
+        MaxFileSize ->
+            "Max 5MB"
+
+        SupportedFormats ->
+            "JPG, PNG, GIF le taic"
+
+        GriditScores ->
+            "Sgòran Gridit"
+
+        YourScore ->
+            "Do sgòr:"
+
+        ThatsNiceGridit ->
+            "Tha sin sgoinneil! Gridit!"
+
+        MadeInArgentina ->
+            "Air a dhèanamh ann an Argentina le"
+
+        WhatsGridit ->
+            "Dè th' ann an Gridit?"
+
+        FooterTooltip ->
+            "Halò! Is mise leasaichear a tha gaolach air còdadh agus peantadh. Tha Gridit gam chuideachadh gus sgeidseachan a ghluasad gu canabhas le griodaichean. Tha mi an dòchas gun cuidich e thu cuideachd!"
 
 
 
@@ -1018,6 +1293,39 @@ euskaraTranslations key =
         DiagonalGrid ->
             "Sareta Diagonala"
 
+        WhatsThisAbout ->
+            "Zer da hau?"
+
+        WhatsThisDescription ->
+            "Gridit Baby!-k sareta perfektuak aplikatzen laguntzen dizu zure irudiei - igelak \"gridit gridit\" esaten duten bezala! Igo edozein irudi, doitu saretaren tamaina eta opakutasuna, eta gero erabili gida gisa konposiziorako, marrazkirako edo diseinurako."
+
+        PerfectForArtists ->
+            "Artista, argazkilari eta diseinu zehatzak maite dituen edonorentzat perfektua!"
+
+        MaxFileSize ->
+            "Gehienez 5MB"
+
+        SupportedFormats ->
+            "JPG, PNG, GIF onartuta"
+
+        GriditScores ->
+            "Gridit Puntuazioak"
+
+        YourScore ->
+            "Zure puntuazioa:"
+
+        ThatsNiceGridit ->
+            "Polita da! Gridit!"
+
+        MadeInArgentina ->
+            "Argentinan egina honekin"
+
+        WhatsGridit ->
+            "Zer da Gridit?"
+
+        FooterTooltip ->
+            "Kaixo! Programatzea eta margotzea maite duen garatzailea naiz. Gridit-ek zirriborroak oihalera transferitzen laguntzen dit saretak erabiliz. Espero dut zuri ere laguntzea!"
+
 
 
 -- JAPANESE TRANSLATIONS
@@ -1118,6 +1426,39 @@ japaneseTranslations key =
 
         DiagonalGrid ->
             "対角線グリッド"
+
+        WhatsThisAbout ->
+            "これは何？"
+
+        WhatsThisDescription ->
+            "Gridit Baby!は、あなたの画像に完璧なグリッドを適用するのを助けます - カエルが「gridit gridit」と言うように！どんな画像でもアップロードし、グリッドのサイズと不透明度を調整し、構図、描画、デザイン作業のガイドとして使用してください。"
+
+        PerfectForArtists ->
+            "アーティスト、写真家、そして正確なレイアウトを愛するすべての人に最適！"
+
+        MaxFileSize ->
+            "最大5MB"
+
+        SupportedFormats ->
+            "JPG、PNG、GIF対応"
+
+        GriditScores ->
+            "Griditスコア"
+
+        YourScore ->
+            "あなたのスコア："
+
+        ThatsNiceGridit ->
+            "いいね！Gridit！"
+
+        MadeInArgentina ->
+            "アルゼンチン製"
+
+        WhatsGridit ->
+            "Griditとは？"
+
+        FooterTooltip ->
+            "こんにちは！プログラミングと絵を描くことが大好きな開発者です。Griditはグリッドを使ってスケッチをキャンバスに転写するのに役立ちます。あなたにも役立つことを願っています！"
 
 
 
@@ -1220,6 +1561,39 @@ russianTranslations key =
         DiagonalGrid ->
             "Диагональная Сетка"
 
+        WhatsThisAbout ->
+            "О чём это?"
+
+        WhatsThisDescription ->
+            "Gridit Baby! помогает применять идеальные сетки к вашим изображениям - как лягушки говорят \"gridit gridit\"! Загрузите любое изображение, настройте размер и прозрачность сетки, затем используйте её как руководство для композиции, рисования или дизайна."
+
+        PerfectForArtists ->
+            "Идеально для художников, фотографов и всех, кто любит точные макеты!"
+
+        MaxFileSize ->
+            "Макс 5МБ"
+
+        SupportedFormats ->
+            "JPG, PNG, GIF поддерживаются"
+
+        GriditScores ->
+            "Очки Gridit"
+
+        YourScore ->
+            "Ваш счёт:"
+
+        ThatsNiceGridit ->
+            "Это круто! Gridit!"
+
+        MadeInArgentina ->
+            "Сделано в Аргентине с"
+
+        WhatsGridit ->
+            "Что такое Gridit?"
+
+        FooterTooltip ->
+            "Привет! Я разработчик, который любит программировать и рисовать. Gridit помогает мне переносить эскизы на холст с помощью сеток. Надеюсь, вам тоже пригодится!"
+
 
 
 -- TUVAN TRANSLATIONS
@@ -1320,6 +1694,39 @@ tuvanTranslations key =
 
         DiagonalGrid ->
             "Кыйгаар Шыйыглар"
+
+        WhatsThisAbout ->
+            "Бо чүү дугайында?"
+
+        WhatsThisDescription ->
+            "Gridit Baby! силерниң чуруктарыңарга эки шыйыглар кылырынга дузалаар - пагалар \"gridit gridit\" дээн ышкаш! Кандыг-даа чурук киирип, шыйыгның хемчээлин болгаш көскүзүн таарыштырыңар, оон ону композиция, чурулга азы дизайн кылырынга удуртулга кылып ажыглаңар."
+
+        PerfectForArtists ->
+            "Чурукчуларга, фото тырттырыкчыларга болгаш шын чуруктар ынак улуска дыка эки!"
+
+        MaxFileSize ->
+            "Эң хөйү 5MB"
+
+        SupportedFormats ->
+            "JPG, PNG, GIF ажыглаттынар"
+
+        GriditScores ->
+            "Gridit Санаашкыннары"
+
+        YourScore ->
+            "Силерниң санаашкыныңар:"
+
+        ThatsNiceGridit ->
+            "Эки! Gridit!"
+
+        MadeInArgentina ->
+            "Аргентинага кылган"
+
+        WhatsGridit ->
+            "Gridit деп чүү?"
+
+        FooterTooltip ->
+            "Экии! Мен программировать база чуруур ынак программист мен. Gridit меңээ шыйыглар ажыглап скетчтерни холстче көжүрерге дузалаар. Силерге база дузалаар деп идегеп тур мен!"
 
 
 
@@ -1422,6 +1829,39 @@ amharicTranslations key =
         DiagonalGrid ->
             "ሰማያዊ ፍርግርግ"
 
+        WhatsThisAbout ->
+            "ይህ ስለ ምን ነው?"
+
+        WhatsThisDescription ->
+            "Gridit Baby! ፍፁም ፍርግርጎችን በምስሎችዎ ላይ እንዲተገብሩ ይረዳዎታል - እንቁራሪቶች \"gridit gridit\" እንደሚሉት! ማንኛውንም ምስል ይጫኑ፣ የፍርግርጉን መጠን እና ግልጽነት ያስተካክሉ፣ ከዚያም ለስብጥር፣ ስእል ወይም ዲዛይን ስራ እንደ መመሪያ ይጠቀሙበት።"
+
+        PerfectForArtists ->
+            "ለአርቲስቶች፣ ፎቶግራፍ አንሺዎች እና ትክክለኛ ንድፎችን ለሚወዱ ሁሉ ፍፁም!"
+
+        MaxFileSize ->
+            "ከፍተኛ 5MB"
+
+        SupportedFormats ->
+            "JPG፣ PNG፣ GIF ይደገፋል"
+
+        GriditScores ->
+            "የGridit ውጤቶች"
+
+        YourScore ->
+            "ውጤትዎ:"
+
+        ThatsNiceGridit ->
+            "ጥሩ ነው! Gridit!"
+
+        MadeInArgentina ->
+            "በአርጀንቲና ተሰርቷል በ"
+
+        WhatsGridit ->
+            "Gridit ምንድን ነው?"
+
+        FooterTooltip ->
+            "ሰላም! ኮድ መጻፍ እና መሳል የሚወድ ገንቢ ነኝ። Gridit ፍርግርጎችን በመጠቀም ስዕሎችን ወደ ሸራ ለማስተላለፍ ይረዳኛል። ለእርስዎም እንደሚረዳ ተስፋ አደርጋለሁ!"
+
 
 
 -- HEBREW TRANSLATIONS
@@ -1523,6 +1963,39 @@ hebrewTranslations key =
         DiagonalGrid ->
             "רשת אלכסונית"
 
+        WhatsThisAbout ->
+            "במה מדובר?"
+
+        WhatsThisDescription ->
+            "Gridit Baby! עוזר לך ליישם רשתות מושלמות על התמונות שלך - בדיוק כמו שצפרדעים אומרות \"gridit gridit\"! העלה כל תמונה, התאם את גודל הרשת והאטימות, ואז השתמש בה כמדריך לקומפוזיציה, ציור או עיצוב."
+
+        PerfectForArtists ->
+            "מושלם לאמנים, צלמים וכל מי שאוהב פריסות מדויקות!"
+
+        MaxFileSize ->
+            "מקסימום 5MB"
+
+        SupportedFormats ->
+            "JPG, PNG, GIF נתמכים"
+
+        GriditScores ->
+            "ניקוד Gridit"
+
+        YourScore ->
+            "הניקוד שלך:"
+
+        ThatsNiceGridit ->
+            "זה יפה! Gridit!"
+
+        MadeInArgentina ->
+            "נעשה בארגנטינה עם"
+
+        WhatsGridit ->
+            "מה זה Gridit?"
+
+        FooterTooltip ->
+            "שלום! אני מפתחת שאוהבת לתכנת ולצייר. Gridit עוזר לי להעביר סקיצות לקנבס באמצעות רשתות. מקווה שזה יעזור גם לך!"
+
 
 tuvinianTranslations : TranslationKey -> String
 tuvinianTranslations key =
@@ -1619,6 +2092,39 @@ tuvinianTranslations key =
 
         DiagonalGrid ->
             "Диагоналдыг чарыкчылар"
+
+        WhatsThisAbout ->
+            "Бо чүү дугайында?"
+
+        WhatsThisDescription ->
+            "Gridit Baby! силерниң чуруктарыңарга эки шыйыглар кылырынга дузалаар!"
+
+        PerfectForArtists ->
+            "Чурукчуларга болгаш фото тырттырыкчыларга дыка эки!"
+
+        MaxFileSize ->
+            "Эң хөйү 5MB"
+
+        SupportedFormats ->
+            "JPG, PNG, GIF"
+
+        GriditScores ->
+            "Gridit Санаашкыннары"
+
+        YourScore ->
+            "Санаашкын:"
+
+        ThatsNiceGridit ->
+            "Эки! Gridit!"
+
+        MadeInArgentina ->
+            "Аргентинага кылган"
+
+        WhatsGridit ->
+            "Gridit деп чүү?"
+
+        FooterTooltip ->
+            "Экии! Мен код бижиир база чуруур ынак программист мен. Gridit меңээ шыйыглар ажыглап скетчтерни холстче көжүрерге дузалаар!"
 
 
 translate : Language -> TranslationKey -> String
