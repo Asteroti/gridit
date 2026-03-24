@@ -1,7 +1,5 @@
 module I18n exposing (Language(..), TranslationKey(..), translate)
 
--- LANGUAGE TYPE
-
 
 type Language
     = English
@@ -20,63 +18,38 @@ type Language
     | Hebrew
 
 
-
--- TRANSLATION KEYS
--- Define all the text keys used in the application
-
-
 type TranslationKey
-    = AppTitle
-    | UploadImage
-    | CustomizeIt
-    | GridSize
-    | Rectangles
+    = GridSize
     | GridColor
     | GridThickness
     | GridOpacity
-    | OriginalImage
-    | GriddedImage
     | DownloadGriddedImage
     | Nice
-    | NiceCounter
     | NoImageYet
     | LanguageLabel
-    | FileOperations
-    | GridParameters
-    | Actions
     | AppSubtitle
-    | GridPreviewPlaceholder
     | UploadPlaceholder
-    | StatusReady
-    | ShowDiagonals
-    | Download
-    | Share
-    | UploadNew
-    | UploadPrompt
-    | UploadDescription
     | ChooseFile
     | GridSettings
-    | DiagonalGrid
-    | WhatsThisAbout
+    | DownloadStep
     | WhatsThisDescription
-    | PerfectForArtists
     | MaxFileSize
     | SupportedFormats
-    | GriditScores
-    | YourScore
-    | ThatsNiceGridit
     | MadeInArgentina
     | WhatsGridit
     | FooterTooltip
+    | ImagePrivacy
+    | Downloaded
+    | ToggleGridView
+    | ShowGrid
+    | HideGrid
+    | AddDiagonalLines
+    | CuriousAboutGrids
+    | ChangeImage
 
 
-
--- TRANSLATIONS
--- Dictionary of all translations
-
-
-translations : Language -> TranslationKey -> String
-translations language key =
+translate : Language -> TranslationKey -> String
+translate language key =
     case language of
         English ->
             englishTranslations key
@@ -121,27 +94,12 @@ translations language key =
             hebrewTranslations key
 
 
-
--- ENGLISH TRANSLATIONS
-
-
 englishTranslations : TranslationKey -> String
 englishTranslations key =
     case key of
-        AppTitle ->
-            "Gridit! 🐸"
-
-        UploadImage ->
-            "Upload Image"
-
-        CustomizeIt ->
-            "Customize it!"
 
         GridSize ->
             "Size"
-
-        Rectangles ->
-            " rectangles."
 
         GridColor ->
             "Color"
@@ -152,20 +110,11 @@ englishTranslations key =
         GridOpacity ->
             "Opacity"
 
-        OriginalImage ->
-            "Original Image"
-
-        GriddedImage ->
-            "Gridded Image"
-
         DownloadGriddedImage ->
-            "Download your Gridded Image!!!"
+            "Download!"
 
         Nice ->
             "Nice! "
-
-        NiceCounter ->
-            "Nice Counter: "
 
         NoImageYet ->
             "No image yet! Click Upload Image to begin!"
@@ -173,44 +122,11 @@ englishTranslations key =
         LanguageLabel ->
             "Language:"
 
-        FileOperations ->
-            "Start here"
-
-        GridParameters ->
-            "Customize the grid so you can see it properly over your image"
-
-        Actions ->
-            "🐸 🐸 🐸"
-
         AppSubtitle ->
-            "Hello there. This helps you create a rectilinear grid over an image of your choosing"
-
-        GridPreviewPlaceholder ->
-            "Your gridded image will appear here"
+            "Grid your reference image the way artists do \u{2014} private, free, in 14 languages"
 
         UploadPlaceholder ->
             "Upload an image to begin"
-
-        StatusReady ->
-            "Status: Ready"
-
-        ShowDiagonals ->
-            "Add diagonals"
-
-        Download ->
-            "Download"
-
-        Share ->
-            "Share"
-
-        UploadNew ->
-            "Upload New"
-
-        UploadPrompt ->
-            "Upload Image"
-
-        UploadDescription ->
-            "Choose a file or drag and drop here"
 
         ChooseFile ->
             "Choose File"
@@ -218,32 +134,17 @@ englishTranslations key =
         GridSettings ->
             "Grid Settings"
 
-        DiagonalGrid ->
-            "Diagonal Grid"
-
-        WhatsThisAbout ->
-            "What's This About?"
+        DownloadStep ->
+            "Download"
 
         WhatsThisDescription ->
-            "Gridit Baby! helps you apply perfect grids to your images - just like how frogs say \"gridit gridit\"! Upload any image, adjust the grid size and opacity, then use the grid as a guide for composition, drawing, or design work."
-
-        PerfectForArtists ->
-            "Perfect for artists, photographers, and anyone who loves precise layouts!"
+            "Gridit, baby! Upload any image, overlay a grid, and use it to scale your drawing onto canvas. Artists have used this technique for centuries \u{2014} from Renaissance masters to modern illustrators \u{2014} to transfer and enlarge compositions with precision."
 
         MaxFileSize ->
             "Max 5MB"
 
         SupportedFormats ->
             "JPG, PNG, GIF supported"
-
-        GriditScores ->
-            "Gridit Scores"
-
-        YourScore ->
-            "Your Score:"
-
-        ThatsNiceGridit ->
-            "That's Nice! Gridit!"
 
         MadeInArgentina ->
             "Made in Argentina with"
@@ -254,28 +155,37 @@ englishTranslations key =
         FooterTooltip ->
             "Hi! I'm a developer who loves to code and paint. Gridit helps me transfer sketches to canvas using grids. Hope it helps you too!"
 
+        ImagePrivacy ->
+            "Your image never leaves your device"
 
+        Downloaded ->
+            "Downloaded!"
 
--- SPANISH TRANSLATIONS
+        ToggleGridView ->
+            "Toggle Grid"
+
+        ShowGrid ->
+            "Show Grid"
+
+        HideGrid ->
+            "Hide Grid"
+
+        AddDiagonalLines ->
+            "Add diagonal lines to grid"
+
+        CuriousAboutGrids ->
+            "Curious? Read more about this centuries-old method on Wikipedia:"
+
+        ChangeImage ->
+            "Choose another image"
 
 
 spanishTranslations : TranslationKey -> String
 spanishTranslations key =
     case key of
-        AppTitle ->
-            "Gridit! 🐸"
-
-        UploadImage ->
-            "Subir una Imagen"
-
-        CustomizeIt ->
-            "Personalizá la grilla"
 
         GridSize ->
-            "Tamaño"
-
-        Rectangles ->
-            " rectángulos"
+            "Tama\u{00F1}o"
 
         GridColor ->
             "Color"
@@ -286,130 +196,82 @@ spanishTranslations key =
         GridOpacity ->
             "Opacidad"
 
-        OriginalImage ->
-            "Imagen Original"
-
-        GriddedImage ->
-            "Imagen con Grilla"
-
         DownloadGriddedImage ->
-            "Descarga tu Imagen con Grilla!"
+            "Descargar!"
 
         Nice ->
-            "Buenísimo! "
-
-        NiceCounter ->
-            "Contador de Buenísimo: "
+            "Buen\u{00ED}simo! "
 
         NoImageYet ->
-            "Hacé click en Subir Imagen para empezar!"
+            "Hace click en Subir Imagen para empezar!"
 
         LanguageLabel ->
             "Idioma:"
 
-        FileOperations ->
-            "Empezá acá"
-
-        GridParameters ->
-            "Customizá la grilla para verla bien sobre tu imagen"
-
-        Actions ->
-            "🐸 🐸 🐸"
-
         AppSubtitle ->
             "Buenas. Agregale una grilla rectilinear a una imagen que elijas"
 
-        GridPreviewPlaceholder ->
-            "Tu imagen con grilla va a aparecer acá"
-
         UploadPlaceholder ->
-            "Subí una imagen para empezar"
-
-        StatusReady ->
-            "Status: Listo"
-
-        ShowDiagonals ->
-            "Agregar diagonales"
-
-        Download ->
-            "Descargar"
-
-        Share ->
-            "Compartir"
-
-        UploadNew ->
-            "Subir Nuevo"
-
-        UploadPrompt ->
-            "Subir una Imagen"
-
-        UploadDescription ->
-            "Elige un archivo o arrástralo aquí"
+            "Subi una imagen para empezar"
 
         ChooseFile ->
-            "Elegir Archivo"
+            "Elegir imagen"
 
         GridSettings ->
-            "Ajustes de Cuadrícula"
+            "Ajustes de Cuadr\u{00ED}cula"
 
-        DiagonalGrid ->
-            "Cuadrícula Diagonal"
-
-        WhatsThisAbout ->
-            "¿De qué se trata?"
+        DownloadStep ->
+            "Descarga"
 
         WhatsThisDescription ->
-            "¡Gridit Baby! te ayuda a aplicar grillas perfectas a tus imágenes - ¡como cuando las ranas dicen \"gridit gridit\"! Subí cualquier imagen, ajustá el tamaño y opacidad de la grilla, y usala como guía para composición, dibujo o diseño."
-
-        PerfectForArtists ->
-            "¡Perfecto para artistas, fotógrafos y cualquiera que ame los diseños precisos!"
+            "Gridit, baby! Sub\u{00ED} cualquier imagen, superpon\u{00E9} una grilla rectilinear y utilizala para escalar tu dibujo al medio que prefieras. Esta t\u{00E9}cnica es antiqu\u{00ED}sima y se mantiene fuerte como uno de los m\u{00E9}todos m\u{00E1}s confiables para escalar y traspasar composiciones con precisi\u{00F3}n."
 
         MaxFileSize ->
-            "Máx 5MB"
+            "Max 5MB"
 
         SupportedFormats ->
             "JPG, PNG, GIF soportados"
-
-        GriditScores ->
-            "Puntuación Gridit"
-
-        YourScore ->
-            "Tu puntuación:"
-
-        ThatsNiceGridit ->
-            "¡Qué lindo! ¡Gridit!"
 
         MadeInArgentina ->
             "Hecho en Argentina con"
 
         WhatsGridit ->
-            "¿Qué es Gridit?"
+            "Qu\u{00E9} es Gridit?"
 
         FooterTooltip ->
-            "¡Hola! Soy una desarrolladora que ama programar y pintar. Gridit me ayuda a transferir bocetos al lienzo usando grillas. ¡Espero que te sirva también!"
+            "Hola! Soy una desarrolladora que ama programar y pintar. Gridit me ayuda a transferir bocetos al lienzo usando grillas. Espero que te sirva tambi\u{00E9}n!"
 
+        ImagePrivacy ->
+            "Tu imagen nunca sale de tu dispositivo"
 
+        Downloaded ->
+            "Descargado!"
 
--- LATIN TRANSLATIONS
+        ToggleGridView ->
+            "Alternar Grilla"
+
+        ShowGrid ->
+            "Mostrar Grilla"
+
+        HideGrid ->
+            "Ocultar Grilla"
+
+        AddDiagonalLines ->
+            "Agregar l\u{00ED}neas diagonales a la grilla"
+
+        CuriousAboutGrids ->
+            "Si te pica la curiosidad, ac\u{00E1} te dejo unos links sobre este m\u{00E9}todo centenario:"
+
+        ChangeImage ->
+            "Elegir otra imagen"
 
 
 latinTranslations : TranslationKey -> String
 latinTranslations key =
     case key of
-        AppTitle ->
-            "Gridit! 🐸"
-
-        UploadImage ->
-            "Imago Submittere"
-
-        CustomizeIt ->
-            "Personaliza!"
 
         GridSize ->
             "Magnitudinem"
-
-        Rectangles ->
-            " rectangula."
 
         GridColor ->
             "Color"
@@ -420,20 +282,11 @@ latinTranslations key =
         GridOpacity ->
             "Opacitas"
 
-        OriginalImage ->
-            "Imago Originalis"
-
-        GriddedImage ->
-            "Imago cum Craticula"
-
         DownloadGriddedImage ->
-            "Imago cum Craticula Discaricare!!!"
+            "Imago cum Craticula Discaricare!"
 
         Nice ->
             "Bellus! "
-
-        NiceCounter ->
-            "Bellus Numerator: "
 
         NoImageYet ->
             "Nondum imago! Imago Submittere preme ut incipias!"
@@ -441,44 +294,11 @@ latinTranslations key =
         LanguageLabel ->
             "Lingua:"
 
-        FileOperations ->
-            "Incipe hic"
-
-        GridParameters ->
-            "Personaliza cratem ut videas eam recte super imaginem tuam"
-
-        Actions ->
-            "🐸 🐸 🐸"
-
         AppSubtitle ->
             "Salve. Hoc te adiuvat creare reticulum rectilineare super imaginem tuam electam"
 
-        GridPreviewPlaceholder ->
-            "Imago tua cum craticula hic apparebit"
-
         UploadPlaceholder ->
             "Submitte imaginem ut incipias"
-
-        StatusReady ->
-            "Status: Paratus"
-
-        ShowDiagonals ->
-            "Adde diagonalia"
-
-        Download ->
-            "Discaricare"
-
-        Share ->
-            "Communicare"
-
-        UploadNew ->
-            "Nova Submittere"
-
-        UploadPrompt ->
-            "Imago Submittere"
-
-        UploadDescription ->
-            "Elige fasciculum aut trahe et demitte hic"
 
         ChooseFile ->
             "Eligere Fasciculum"
@@ -486,32 +306,17 @@ latinTranslations key =
         GridSettings ->
             "Configuratio Reticulationis"
 
-        DiagonalGrid ->
-            "Reticulatio Diagonalis"
-
-        WhatsThisAbout ->
-            "Quid Hoc Est?"
+        DownloadStep ->
+            "Discaricare"
 
         WhatsThisDescription ->
-            "Gridit Baby! te adiuvat perfectas cratias imaginibus tuis applicare - sicut ranae dicunt \"gridit gridit\"! Quamlibet imaginem submitte, magnitudinem et opacitatem gratiae tempera, deinde ut duce ad compositionem, picturam vel opus designationis utere."
-
-        PerfectForArtists ->
-            "Perfectum pro artificibus, photographis, et omnibus qui dispositiones praecisas amant!"
+            "Gridit, infans! Quamlibet imaginem submitte, reticulum superpone, et eo utere ut picturam tuam in tabulam transferas. Artifices hanc artem per saecula adhibuerunt \u{2014} a magistris Renascentiae ad illustratores modernos \u{2014} ut compositiones cum praecisione transferant et amplificent."
 
         MaxFileSize ->
             "Max 5MB"
 
         SupportedFormats ->
             "JPG, PNG, GIF sustinetur"
-
-        GriditScores ->
-            "Puncta Gridit"
-
-        YourScore ->
-            "Puncta Tua:"
-
-        ThatsNiceGridit ->
-            "Pulchrum Est! Gridit!"
 
         MadeInArgentina ->
             "Factum in Argentina cum"
@@ -522,28 +327,37 @@ latinTranslations key =
         FooterTooltip ->
             "Salve! Sum programmator qui amat codicem scribere et pingere. Gridit me adiuvat picturas ad telam transferre utens cratibulis. Spero tibi quoque prodesse!"
 
+        ImagePrivacy ->
+            "Imago tua numquam discedit de instrumento tuo"
 
+        Downloaded ->
+            "Discariatum!"
 
--- ITALIAN TRANSLATIONS
+        ToggleGridView ->
+            "Commutare Reticulationem"
+
+        ShowGrid ->
+            "Ostende Reticulationem"
+
+        HideGrid ->
+            "Cela Reticulationem"
+
+        AddDiagonalLines ->
+            "Adde lineas diagonales reticulationi"
+
+        CuriousAboutGrids ->
+            "Curiose? Lege plura de hac arte saeculari in Vicipaedia:"
+
+        ChangeImage ->
+            "Aliam imaginem eligere"
 
 
 italianTranslations : TranslationKey -> String
 italianTranslations key =
     case key of
-        AppTitle ->
-            "Gridit! 🐸"
-
-        UploadImage ->
-            "Carica Immagine"
-
-        CustomizeIt ->
-            "Personalizzalo!"
 
         GridSize ->
             "Dimensione"
-
-        Rectangles ->
-            " rettangoli."
 
         GridColor ->
             "Colore"
@@ -552,13 +366,7 @@ italianTranslations key =
             "Spessore"
 
         GridOpacity ->
-            "Opacità"
-
-        OriginalImage ->
-            "Immagine Originale"
-
-        GriddedImage ->
-            "Immagine con Griglia"
+            "Opacita"
 
         DownloadGriddedImage ->
             "Scarica la tua Immagine con Griglia!"
@@ -566,53 +374,17 @@ italianTranslations key =
         Nice ->
             "Bello! "
 
-        NiceCounter ->
-            "Contatore Bello: "
-
         NoImageYet ->
             "Nessuna immagine ancora! Clicca su Carica Immagine per iniziare!"
 
         LanguageLabel ->
             "Lingua:"
 
-        FileOperations ->
-            "Inizia qui"
-
-        GridParameters ->
-            "Personalizza la griglia in modo da vederla correttamente sulla tua immagine"
-
-        Actions ->
-            "🐸 🐸 🐸"
-
         AppSubtitle ->
             "Ciao. Questo ti aiuta a creare una griglia rettilinea su un'immagine di tua scelta"
 
-        GridPreviewPlaceholder ->
-            "La tua immagine con griglia apparirà qui"
-
         UploadPlaceholder ->
             "Carica un'immagine per iniziare"
-
-        StatusReady ->
-            "Status: Pronto"
-
-        ShowDiagonals ->
-            "Aggiungi diagonali"
-
-        Download ->
-            "Scarica"
-
-        Share ->
-            "Condividi"
-
-        UploadNew ->
-            "Carica Nuovo"
-
-        UploadPrompt ->
-            "Carica un'Immagine"
-
-        UploadDescription ->
-            "Scegli un file o trascina e rilascia qui"
 
         ChooseFile ->
             "Scegli File"
@@ -620,17 +392,11 @@ italianTranslations key =
         GridSettings ->
             "Impostazioni Griglia"
 
-        DiagonalGrid ->
-            "Griglia Diagonale"
-
-        WhatsThisAbout ->
-            "Di cosa si tratta?"
+        DownloadStep ->
+            "Scarica"
 
         WhatsThisDescription ->
-            "Gridit Baby! ti aiuta ad applicare griglie perfette alle tue immagini - proprio come le rane dicono \"gridit gridit\"! Carica qualsiasi immagine, regola dimensione e opacità della griglia, poi usala come guida per composizione, disegno o design."
-
-        PerfectForArtists ->
-            "Perfetto per artisti, fotografi e chiunque ami layout precisi!"
+            "Gridit, baby! Carica qualsiasi immagine, sovrapponi una griglia e usala per scalare il tuo disegno sulla tela. Gli artisti hanno usato questa tecnica per secoli \u{2014} dai maestri del Rinascimento agli illustratori moderni \u{2014} per trasferire e ingrandire composizioni con precisione."
 
         MaxFileSize ->
             "Max 5MB"
@@ -638,61 +404,55 @@ italianTranslations key =
         SupportedFormats ->
             "JPG, PNG, GIF supportati"
 
-        GriditScores ->
-            "Punteggi Gridit"
-
-        YourScore ->
-            "Il tuo punteggio:"
-
-        ThatsNiceGridit ->
-            "Che bello! Gridit!"
-
         MadeInArgentina ->
             "Fatto in Argentina con"
 
         WhatsGridit ->
-            "Cos'è Gridit?"
+            "Cos'e Gridit?"
 
         FooterTooltip ->
             "Ciao! Sono una sviluppatrice che ama programmare e dipingere. Gridit mi aiuta a trasferire schizzi sulla tela usando griglie. Spero sia utile anche a te!"
 
+        ImagePrivacy ->
+            "La tua immagine non lascia mai il tuo dispositivo"
 
+        Downloaded ->
+            "Scaricato!"
 
--- PORTUGUESE TRANSLATIONS
+        ToggleGridView ->
+            "Mostra/Nascondi Griglia"
+
+        ShowGrid ->
+            "Mostra Griglia"
+
+        HideGrid ->
+            "Nascondi Griglia"
+
+        AddDiagonalLines ->
+            "Aggiungi linee diagonali alla griglia"
+
+        CuriousAboutGrids ->
+            "Curiosi? Scoprite di piu su questo metodo secolare su Wikipedia:"
+
+        ChangeImage ->
+            "Scegli un'altra immagine"
 
 
 portugueseTranslations : TranslationKey -> String
 portugueseTranslations key =
     case key of
-        AppTitle ->
-            "Gridit! 🐸"
-
-        UploadImage ->
-            "Carregar Imagem"
-
-        CustomizeIt ->
-            "Personalize!"
 
         GridSize ->
             "Tamanho"
-
-        Rectangles ->
-            " retângulos."
 
         GridColor ->
             "Cor"
 
         GridThickness ->
-            "Espessura: "
+            "Espessura"
 
         GridOpacity ->
             "Opacidade"
-
-        OriginalImage ->
-            "Imagem Original"
-
-        GriddedImage ->
-            "Imagem com Grade"
 
         DownloadGriddedImage ->
             "Baixe sua Imagem com Grade!"
@@ -700,220 +460,121 @@ portugueseTranslations key =
         Nice ->
             "Legal! "
 
-        NiceCounter ->
-            "Contador Legal: "
-
         NoImageYet ->
-            "Nenhuma imagem ainda! Clique em Carregar Imagem para começar!"
+            "Nenhuma imagem ainda! Clique em Carregar Imagem para comecar!"
 
         LanguageLabel ->
             "Idioma:"
 
-        FileOperations ->
-            "Comece aqui"
-
-        GridParameters ->
-            "Personalize a grade para que você possa vê-la corretamente sobre sua imagem"
-
-        Actions ->
-            "🐸 🐸 🐸"
-
         AppSubtitle ->
-            "Olá. Isto ajuda-te a criar uma grelha retilínea sobre uma imagem à tua escolha"
-
-        GridPreviewPlaceholder ->
-            "Sua imagem com grade aparecerá aqui"
+            "Ola. Isto ajuda-te a criar uma grelha retilinea sobre uma imagem a tua escolha"
 
         UploadPlaceholder ->
-            "Carregue uma imagem para começar"
-
-        StatusReady ->
-            "Status: Pronto"
-
-        ShowDiagonals ->
-            "Adicionar diagonais"
-
-        Download ->
-            "Baixar"
-
-        Share ->
-            "Compartilhar"
-
-        UploadNew ->
-            "Carregar Novo"
-
-        UploadPrompt ->
-            "Carregar uma Imagem"
-
-        UploadDescription ->
-            "Escolha um arquivo ou arraste e solte aqui"
+            "Carregue uma imagem para comecar"
 
         ChooseFile ->
             "Escolher Arquivo"
 
         GridSettings ->
-            "Configurações de Grade"
+            "Configuracoes de Grade"
 
-        DiagonalGrid ->
-            "Grade Diagonal"
-
-        WhatsThisAbout ->
-            "Do que se trata?"
+        DownloadStep ->
+            "Baixar"
 
         WhatsThisDescription ->
-            "Gridit Baby! ajuda-te a aplicar grades perfeitas às tuas imagens - tal como os sapos dizem \"gridit gridit\"! Carrega qualquer imagem, ajusta o tamanho e opacidade da grade, depois usa-a como guia para composição, desenho ou design."
-
-        PerfectForArtists ->
-            "Perfeito para artistas, fotógrafos e qualquer pessoa que ame layouts precisos!"
+            "Gridit, baby! Carrega qualquer imagem, sobrepe uma grelha e usa-a para escalar o teu desenho para a tela. Os artistas usam esta tecnica ha seculos \u{2014} dos mestres do Renascimento aos ilustradores modernos \u{2014} para transferir e ampliar composicoes com precisao."
 
         MaxFileSize ->
-            "Máx 5MB"
+            "Max 5MB"
 
         SupportedFormats ->
             "JPG, PNG, GIF suportados"
-
-        GriditScores ->
-            "Pontuações Gridit"
-
-        YourScore ->
-            "Tua pontuação:"
-
-        ThatsNiceGridit ->
-            "Que legal! Gridit!"
 
         MadeInArgentina ->
             "Feito na Argentina com"
 
         WhatsGridit ->
-            "O que é Gridit?"
+            "O que e Gridit?"
 
         FooterTooltip ->
-            "Olá! Sou uma desenvolvedora que ama programar e pintar. Gridit me ajuda a transferir esboços para a tela usando grades. Espero que te ajude também!"
+            "Ola! Sou uma desenvolvedora que ama programar e pintar. Gridit me ajuda a transferir esbocos para a tela usando grades. Espero que te ajude tambem!"
 
+        ImagePrivacy ->
+            "A sua imagem nunca sai do seu dispositivo"
 
+        Downloaded ->
+            "Baixado!"
 
--- FRENCH TRANSLATIONS
+        ToggleGridView ->
+            "Alternar Grade"
+
+        ShowGrid ->
+            "Mostrar Grade"
+
+        HideGrid ->
+            "Ocultar Grade"
+
+        AddDiagonalLines ->
+            "Adicionar linhas diagonais a grade"
+
+        CuriousAboutGrids ->
+            "Curioso? Le mais sobre este metodo centenario na Wikipedia:"
+
+        ChangeImage ->
+            "Escolher outra imagem"
 
 
 frenchTranslations : TranslationKey -> String
 frenchTranslations key =
     case key of
-        AppTitle ->
-            "Gridit! 🐸"
-
-        UploadImage ->
-            "Télécharger une Image"
-
-        CustomizeIt ->
-            "Personnalisez-le!"
 
         GridSize ->
             "Taille"
-
-        Rectangles ->
-            " rectangles."
 
         GridColor ->
             "Couleur"
 
         GridThickness ->
-            "Épaisseur"
+            "Epaisseur"
 
         GridOpacity ->
-            "Opacité"
-
-        OriginalImage ->
-            "Image Originale"
-
-        GriddedImage ->
-            "Image avec Grille"
+            "Opacite"
 
         DownloadGriddedImage ->
-            "Téléchargez votre Image avec Grille!"
+            "Telechargez votre Image avec Grille!"
 
         Nice ->
             "Sympa! "
 
-        NiceCounter ->
-            "Compteur Sympa: "
-
         NoImageYet ->
-            "Pas encore d'image! Cliquez sur Télécharger une Image pour commencer!"
+            "Pas encore d'image! Cliquez sur Telecharger une Image pour commencer!"
 
         LanguageLabel ->
             "Langue:"
 
-        FileOperations ->
-            "Commencez ici"
-
-        GridParameters ->
-            "Personnalisez la grille pour la voir correctement sur votre image"
-
-        Actions ->
-            "🐸 🐸 🐸"
-
         AppSubtitle ->
-            "Bonjour. Ceci vous aide à créer une grille rectiligne sur une image de votre choix"
-
-        GridPreviewPlaceholder ->
-            "Votre image avec grille apparaîtra ici"
+            "Bonjour. Ceci vous aide a creer une grille rectiligne sur une image de votre choix"
 
         UploadPlaceholder ->
-            "Téléchargez une image pour commencer"
-
-        StatusReady ->
-            "Status: Prêt"
-
-        ShowDiagonals ->
-            "Ajouter des diagonales"
-
-        Download ->
-            "Télécharger"
-
-        Share ->
-            "Partager"
-
-        UploadNew ->
-            "Télécharger Nouveau"
-
-        UploadPrompt ->
-            "Télécharger une Image"
-
-        UploadDescription ->
-            "Choisissez un fichier ou glissez-déposez ici"
+            "Telechargez une image pour commencer"
 
         ChooseFile ->
             "Choisir Fichier"
 
         GridSettings ->
-            "Paramètres de Grille"
+            "Parametres de Grille"
 
-        DiagonalGrid ->
-            "Grille Diagonale"
-
-        WhatsThisAbout ->
-            "De quoi s'agit-il?"
+        DownloadStep ->
+            "Telecharger"
 
         WhatsThisDescription ->
-            "Gridit Baby! vous aide à appliquer des grilles parfaites à vos images - comme les grenouilles disent \"gridit gridit\"! Téléchargez n'importe quelle image, ajustez la taille et l'opacité de la grille, puis utilisez-la comme guide pour la composition, le dessin ou le design."
-
-        PerfectForArtists ->
-            "Parfait pour les artistes, photographes et tous ceux qui aiment les mises en page précises!"
+            "Gridit, baby! Telechargez n'importe quelle image, superposez une grille et utilisez-la pour mettre a l'echelle votre dessin sur toile. Les artistes utilisent cette technique depuis des siecles \u{2014} des maitres de la Renaissance aux illustrateurs modernes \u{2014} pour transferer et agrandir des compositions avec precision."
 
         MaxFileSize ->
             "Max 5Mo"
 
         SupportedFormats ->
-            "JPG, PNG, GIF supportés"
-
-        GriditScores ->
-            "Scores Gridit"
-
-        YourScore ->
-            "Votre score:"
-
-        ThatsNiceGridit ->
-            "C'est sympa! Gridit!"
+            "JPG, PNG, GIF supportes"
 
         MadeInArgentina ->
             "Fait en Argentine avec"
@@ -922,30 +583,39 @@ frenchTranslations key =
             "C'est quoi Gridit?"
 
         FooterTooltip ->
-            "Salut! Je suis une développeuse qui aime coder et peindre. Gridit m'aide à transférer des croquis sur toile en utilisant des grilles. J'espère que ça vous aide aussi!"
+            "Salut! Je suis une developpeuse qui aime coder et peindre. Gridit m'aide a transferer des croquis sur toile en utilisant des grilles. J'espere que ca vous aide aussi!"
 
+        ImagePrivacy ->
+            "Votre image ne quitte jamais votre appareil"
 
+        Downloaded ->
+            "Telecharge!"
 
--- ASTURIANO TRANSLATIONS
+        ToggleGridView ->
+            "Basculer la Grille"
+
+        ShowGrid ->
+            "Afficher la Grille"
+
+        HideGrid ->
+            "Masquer la Grille"
+
+        AddDiagonalLines ->
+            "Ajouter des lignes diagonales a la grille"
+
+        CuriousAboutGrids ->
+            "Curieux ? Decouvrez cette methode seculaire sur Wikipedia :"
+
+        ChangeImage ->
+            "Choisir une autre image"
 
 
 asturianoTranslations : TranslationKey -> String
 asturianoTranslations key =
     case key of
-        AppTitle ->
-            "Gridit! 🐸"
-
-        UploadImage ->
-            "Xubir Imaxe"
-
-        CustomizeIt ->
-            "¡Personalízalu!"
 
         GridSize ->
-            "Tamañu"
-
-        Rectangles ->
-            " rectángulos."
+            "Tamanu"
 
         GridColor ->
             "Color"
@@ -954,132 +624,84 @@ asturianoTranslations key =
             "Grosor"
 
         GridOpacity ->
-            "Opacidá"
-
-        OriginalImage ->
-            "Imaxe Orixinal"
-
-        GriddedImage ->
-            "Imaxe con Cuadrícula"
+            "Opacida"
 
         DownloadGriddedImage ->
-            "¡Descarga la to Imaxe con Cuadrícula!"
+            "Descarga la to Imaxe con Cuadricula!"
 
         Nice ->
-            "¡Guapu! "
-
-        NiceCounter ->
-            "Contador Guapu: "
+            "Guapu! "
 
         NoImageYet ->
-            "¡Entá nun hai imaxe! ¡Fai clic en Xubir Imaxe pa entamar!"
+            "Enta nun hai imaxe! Fai clic en Xubir Imaxe pa entamar!"
 
         LanguageLabel ->
             "Llingua:"
 
-        FileOperations ->
-            "Empieza equí"
-
-        GridParameters ->
-            "Personaliza la cuadrícula pa vela correutamente sobro la to imaxen"
-
-        Actions ->
-            "🐸 🐸 🐸"
-
         AppSubtitle ->
-            "Hola. Esto ayúdate a crear una cuadrícula retilínia sobro una imaxen de la to eleición"
-
-        GridPreviewPlaceholder ->
-            "La to imaxe con cuadrícula apaecerá equí"
+            "Hola. Esto ayudate a crear una cuadricula retilinia sobro una imaxen de la to eleicion"
 
         UploadPlaceholder ->
             "Xube una imaxe pa entamar"
-
-        StatusReady ->
-            "Status: Llistu"
-
-        ShowDiagonals ->
-            "Añader diagonales"
-
-        Download ->
-            "Descargar"
-
-        Share ->
-            "Compartir"
-
-        UploadNew ->
-            "Xubir Nuevu"
-
-        UploadPrompt ->
-            "Xubir una Imaxe"
-
-        UploadDescription ->
-            "Escueyi un ficheru o arrastra y suelta equí"
 
         ChooseFile ->
             "Escueyi Ficheru"
 
         GridSettings ->
-            "Axustes de Cuadrícula"
+            "Axustes de Cuadricula"
 
-        DiagonalGrid ->
-            "Cuadrícula Diagonal"
-
-        WhatsThisAbout ->
-            "¿De qué va eso?"
+        DownloadStep ->
+            "Descarga"
 
         WhatsThisDescription ->
-            "¡Gridit Baby! ayúdate a aplicar cuadrícules perfectes a les tos imaxes - ¡como cuando les ranes dicen \"gridit gridit\"! Xube cualquier imaxe, axusta'l tamañu y opacidá de la cuadrícula, y úsala como guía pa composición, dibuxu o diseñu."
-
-        PerfectForArtists ->
-            "¡Perfectu pa artistes, fotógrafos y cualquiera que-y gusten los diseños precisos!"
+            "Gridit, baby! Xube cualquier imaxe, superpone una cuadricula y usala pa escalar el to dibuxu al llenzu. Los artistes usaron esta tecnica durante sieglos \u{2014} dende los maestros del Renacimientu hasta los ilustradores modernos \u{2014} pa transferir y ampliar composiciones con precision."
 
         MaxFileSize ->
-            "Máx 5MB"
+            "Max 5MB"
 
         SupportedFormats ->
             "JPG, PNG, GIF soportaos"
-
-        GriditScores ->
-            "Puntuaciones Gridit"
-
-        YourScore ->
-            "La to puntuación:"
-
-        ThatsNiceGridit ->
-            "¡Qué guapu! ¡Gridit!"
 
         MadeInArgentina ->
             "Fechu n'Arxentina con"
 
         WhatsGridit ->
-            "¿Qué ye Gridit?"
+            "Que ye Gridit?"
 
         FooterTooltip ->
-            "¡Hola! Soi una desarrolladora que-y presta programar y pintar. Gridit ayúdame a tresferir bocetos al llienzu usando cuadrícules. ¡Espero que te sirva tamién!"
+            "Hola! Soi una desarrolladora que-y presta programar y pintar. Gridit ayudame a tresferir bocetos al llienzu usando cuadricules. Espero que te sirva tambien!"
 
+        ImagePrivacy ->
+            "La to imaxe nunca sal del to dispositivu"
 
+        Downloaded ->
+            "Descargau!"
 
--- GAELIC TRANSLATIONS
+        ToggleGridView ->
+            "Alternar Cuadricula"
+
+        ShowGrid ->
+            "Amosar Cuadricula"
+
+        HideGrid ->
+            "Anubrir Cuadricula"
+
+        AddDiagonalLines ->
+            "Amestar llinies diagonales a la cuadricula"
+
+        CuriousAboutGrids ->
+            "Curiosu? Llee mas sobre esti metodu centenariu na Wikipedia:"
+
+        ChangeImage ->
+            "Escueyi otra imaxe"
 
 
 gaelicTranslations : TranslationKey -> String
 gaelicTranslations key =
     case key of
-        AppTitle ->
-            "Gridit! 🐸"
-
-        UploadImage ->
-            "Luchdaich Dealbh"
-
-        CustomizeIt ->
-            "Gnàthaich e!"
 
         GridSize ->
             "Meud"
-
-        Rectangles ->
-            " ceart-chearnagan."
 
         GridColor ->
             "Dath"
@@ -1090,65 +712,23 @@ gaelicTranslations key =
         GridOpacity ->
             "Dorchadas"
 
-        OriginalImage ->
-            "Dealbh Tùsail"
-
-        GriddedImage ->
-            "Dealbh le Griod"
-
         DownloadGriddedImage ->
-            "Luchdaich sìos do Dhealbh le Griod!"
+            "Luchdaich sios do Dhealbh le Griod!"
 
         Nice ->
             "Sgoinneil! "
 
-        NiceCounter ->
-            "Cunntair Sgoinneil: "
-
         NoImageYet ->
-            "Chan eil dealbh ann fhathast! Cliog air Luchdaich Dealbh gus tòiseachadh!"
+            "Chan eil dealbh ann fhathast! Cliog air Luchdaich Dealbh gus toiseachadh!"
 
         LanguageLabel ->
-            "Cànan:"
-
-        FileOperations ->
-            "Tòisich an seo"
-
-        GridParameters ->
-            "Gnàthaich an griod gus am faic thu e gu ceart thar do dhealbh"
-
-        Actions ->
-            "🐸 🐸 🐸"
+            "Canan:"
 
         AppSubtitle ->
-            "Halò. Bidh seo a' cuideachadh thu le bhith a' cruthachadh griod dìreach air ìomhaigh de do roghainn"
-
-        GridPreviewPlaceholder ->
-            "Nochdaidh do dhealbh le griod an seo"
+            "Halo. Bidh seo a' cuideachadh thu le bhith a' cruthachadh griod direach air iomhaigh de do roghainn"
 
         UploadPlaceholder ->
-            "Luchdaich dealbh gus tòiseachadh"
-
-        StatusReady ->
-            "Status: Deiseil"
-
-        ShowDiagonals ->
-            "Cuir trasnanan ris"
-
-        Download ->
-            "Luchdaich sìos"
-
-        Share ->
-            "Co-roinn"
-
-        UploadNew ->
-            "Luchdaich Ùr"
-
-        UploadPrompt ->
-            "Luchdaich Dealbh"
-
-        UploadDescription ->
-            "Tagh faidhle no tarraing is leig às an seo"
+            "Luchdaich dealbh gus toiseachadh"
 
         ChooseFile ->
             "Tagh Faidhle"
@@ -1156,17 +736,11 @@ gaelicTranslations key =
         GridSettings ->
             "Suidheachaidhean Griod"
 
-        DiagonalGrid ->
-            "Griod Trasnach"
-
-        WhatsThisAbout ->
-            "Dè tha seo mu dheidhinn?"
+        DownloadStep ->
+            "Luchdaich sios"
 
         WhatsThisDescription ->
-            "Tha Gridit Baby! a' cuideachadh thu le bhith a' cur griodaichean foirfe air na dealbhan agad - dìreach mar a chanas losgannan \"gridit gridit\"! Luchdaich dealbh sam bith, atharraich meud agus dorchadas a' ghriod, an uairsin cleachd e mar stiùireadh airson co-dhèanamh, tarraing no obair dealbhaidh."
-
-        PerfectForArtists ->
-            "Foirfe airson luchd-ealain, dealbhadairean, agus duine sam bith a tha gràdhach air co-dhealbhaidhean mionaideach!"
+            "Gridit, baby! Luchdaich dealbh sam bith, cuir griod air a mhuin agus cleachd e gus do dhealbh a sgaladh air canabhas. Tha luchd-ealain air an doigh seo a chleachdadh fad linntean \u{2014} bho mhaighstirean an Ath-bheothachaidh gu dealbhadairean an latha an-diugh \u{2014} gus co-dhealbhaidhean a ghluasad agus a mheudachadh le cinnt."
 
         MaxFileSize ->
             "Max 5MB"
@@ -1174,46 +748,46 @@ gaelicTranslations key =
         SupportedFormats ->
             "JPG, PNG, GIF le taic"
 
-        GriditScores ->
-            "Sgòran Gridit"
-
-        YourScore ->
-            "Do sgòr:"
-
-        ThatsNiceGridit ->
-            "Tha sin sgoinneil! Gridit!"
-
         MadeInArgentina ->
-            "Air a dhèanamh ann an Argentina le"
+            "Air a dheanamh ann an Argentina le"
 
         WhatsGridit ->
-            "Dè th' ann an Gridit?"
+            "De th' ann an Gridit?"
 
         FooterTooltip ->
-            "Halò! Is mise leasaichear a tha gaolach air còdadh agus peantadh. Tha Gridit gam chuideachadh gus sgeidseachan a ghluasad gu canabhas le griodaichean. Tha mi an dòchas gun cuidich e thu cuideachd!"
+            "Halo! Is mise leasaichear a tha gaolach air codadh agus peantadh. Tha Gridit gam chuideachadh gus sgeidseachan a ghluasad gu canabhas le griodaichean. Tha mi an dochas gun cuidich e thu cuideachd!"
 
+        ImagePrivacy ->
+            "Chan fhag an dealbh agad an t-inneal agad gu brath"
 
+        Downloaded ->
+            "Air a luchdachadh sios!"
 
--- EUSKARA TRANSLATIONS
+        ToggleGridView ->
+            "Tionndaidh Griod"
+
+        ShowGrid ->
+            "Seall Griod"
+
+        HideGrid ->
+            "Falaich Griod"
+
+        AddDiagonalLines ->
+            "Cuir loidhnichean trasna ris a' ghriod"
+
+        CuriousAboutGrids ->
+            "An e rud ur a tha seo? Leugh barrachd mu dheidhinn an doigh linntean a dh'aois seo air Wikipedia:"
+
+        ChangeImage ->
+            "Tagh dealbh eile"
 
 
 euskaraTranslations : TranslationKey -> String
 euskaraTranslations key =
     case key of
-        AppTitle ->
-            "Gridit! 🐸"
-
-        UploadImage ->
-            "Irudia Igo"
-
-        CustomizeIt ->
-            "Pertsonalizatu!"
 
         GridSize ->
             "Tamaina"
-
-        Rectangles ->
-            " laukizuzenak."
 
         GridColor ->
             "Kolorea"
@@ -1224,20 +798,11 @@ euskaraTranslations key =
         GridOpacity ->
             "Opakutasuna"
 
-        OriginalImage ->
-            "Jatorrizko Irudia"
-
-        GriddedImage ->
-            "Saretadun Irudia"
-
         DownloadGriddedImage ->
             "Zure Saretadun Irudia Deskargatu!"
 
         Nice ->
             "Bikain! "
-
-        NiceCounter ->
-            "Bikain Kontagailua: "
 
         NoImageYet ->
             "Oraindik ez dago irudirik! Egin klik Irudia Igo botoian hasteko!"
@@ -1245,44 +810,11 @@ euskaraTranslations key =
         LanguageLabel ->
             "Hizkuntza:"
 
-        FileOperations ->
-            "Hasi hemen"
-
-        GridParameters ->
-            "Pertsonalizatu sareta zure irudian behar bezala ikusteko"
-
-        Actions ->
-            "🐸 🐸 🐸"
-
         AppSubtitle ->
             "Kaixo. Honek hautatutako irudi baten gainean sareta zuzen bat sortzen laguntzen dizu"
 
-        GridPreviewPlaceholder ->
-            "Zure saretadun irudia hemen agertuko da"
-
         UploadPlaceholder ->
             "Igo irudi bat hasteko"
-
-        StatusReady ->
-            "Egoera: Prest"
-
-        ShowDiagonals ->
-            "Diagonalak gehitu"
-
-        Download ->
-            "Deskargatu"
-
-        Share ->
-            "Partekatu"
-
-        UploadNew ->
-            "Igo Berria"
-
-        UploadPrompt ->
-            "Igo Irudia"
-
-        UploadDescription ->
-            "Aukeratu fitxategia edo arrastatu eta jaregin hemen"
 
         ChooseFile ->
             "Fitxategia Aukeratu"
@@ -1290,32 +822,17 @@ euskaraTranslations key =
         GridSettings ->
             "Sareta Ezarpenak"
 
-        DiagonalGrid ->
-            "Sareta Diagonala"
-
-        WhatsThisAbout ->
-            "Zer da hau?"
+        DownloadStep ->
+            "Deskargatu"
 
         WhatsThisDescription ->
-            "Gridit Baby!-k sareta perfektuak aplikatzen laguntzen dizu zure irudiei - igelak \"gridit gridit\" esaten duten bezala! Igo edozein irudi, doitu saretaren tamaina eta opakutasuna, eta gero erabili gida gisa konposiziorako, marrazkirako edo diseinurako."
-
-        PerfectForArtists ->
-            "Artista, argazkilari eta diseinu zehatzak maite dituen edonorentzat perfektua!"
+            "Gridit, baby! Igo edozein irudi, gainjarri sareta bat eta erabili zure marrazkia mihisera eskalatzeko. Artistek teknika hau mendeetan zehar erabili dute \u{2014} Pizkundeko maisuengandik egungo ilustratzaileetara \u{2014} konposizioak zehaztasunez transferitzeko eta handitzeko."
 
         MaxFileSize ->
             "Gehienez 5MB"
 
         SupportedFormats ->
             "JPG, PNG, GIF onartuta"
-
-        GriditScores ->
-            "Gridit Puntuazioak"
-
-        YourScore ->
-            "Zure puntuazioa:"
-
-        ThatsNiceGridit ->
-            "Polita da! Gridit!"
 
         MadeInArgentina ->
             "Argentinan egina honekin"
@@ -1326,28 +843,37 @@ euskaraTranslations key =
         FooterTooltip ->
             "Kaixo! Programatzea eta margotzea maite duen garatzailea naiz. Gridit-ek zirriborroak oihalera transferitzen laguntzen dit saretak erabiliz. Espero dut zuri ere laguntzea!"
 
+        ImagePrivacy ->
+            "Zure irudia ez da inoiz zure gailutik ateratzen"
 
+        Downloaded ->
+            "Deskargatuta!"
 
--- JAPANESE TRANSLATIONS
+        ToggleGridView ->
+            "Sareta Txandakatu"
+
+        ShowGrid ->
+            "Sareta Erakutsi"
+
+        HideGrid ->
+            "Sareta Ezkutatu"
+
+        AddDiagonalLines ->
+            "Lerro diagonalak gehitu saretari"
+
+        CuriousAboutGrids ->
+            "Jakin-mina? Irakurri gehiago metodo mendetako honi buruz Wikipedian:"
+
+        ChangeImage ->
+            "Beste irudi bat aukeratu"
 
 
 japaneseTranslations : TranslationKey -> String
 japaneseTranslations key =
     case key of
-        AppTitle ->
-            "Gridit! 🐸"
-
-        UploadImage ->
-            "画像をアップロード"
-
-        CustomizeIt ->
-            "カスタマイズしよう！"
 
         GridSize ->
             "サイズ"
-
-        Rectangles ->
-            " 長方形"
 
         GridColor ->
             "色"
@@ -1358,65 +884,23 @@ japaneseTranslations key =
         GridOpacity ->
             "不透明度"
 
-        OriginalImage ->
-            "元の画像"
-
-        GriddedImage ->
-            "グリッド付き画像"
-
         DownloadGriddedImage ->
-            "グリッド付き画像をダウンロード！"
+            "グリッド付き画像をダウンロード!"
 
         Nice ->
-            "いいね！ "
-
-        NiceCounter ->
-            "いいねカウンター: "
+            "いいね! "
 
         NoImageYet ->
-            "まだ画像がありません！画像をアップロードをクリックして始めましょう！"
+            "まだ画像がありません!画像をアップロードをクリックして始めましょう!"
 
         LanguageLabel ->
             "言語:"
 
-        FileOperations ->
-            "ここから始める"
-
-        GridParameters ->
-            "画像上で適切に表示できるようにグリッドをカスタマイズする"
-
-        Actions ->
-            "🐸 🐸 🐸"
-
         AppSubtitle ->
             "こんにちは。これはあなたが選んだ画像上に直線グリッドを作成するのに役立ちます"
 
-        GridPreviewPlaceholder ->
-            "グリッド付き画像がここに表示されます"
-
         UploadPlaceholder ->
             "画像をアップロードして始めましょう"
-
-        StatusReady ->
-            "ステータス: 準備完了"
-
-        ShowDiagonals ->
-            "対角線を追加"
-
-        Download ->
-            "ダウンロード"
-
-        Share ->
-            "共有"
-
-        UploadNew ->
-            "新しくアップロード"
-
-        UploadPrompt ->
-            "画像をアップロード"
-
-        UploadDescription ->
-            "ファイルを選択するか、ここにドラッグ＆ドロップしてください"
 
         ChooseFile ->
             "ファイル選択"
@@ -1424,17 +908,11 @@ japaneseTranslations key =
         GridSettings ->
             "グリッド設定"
 
-        DiagonalGrid ->
-            "対角線グリッド"
-
-        WhatsThisAbout ->
-            "これは何？"
+        DownloadStep ->
+            "ダウンロード"
 
         WhatsThisDescription ->
-            "Gridit Baby!は、あなたの画像に完璧なグリッドを適用するのを助けます - カエルが「gridit gridit」と言うように！どんな画像でもアップロードし、グリッドのサイズと不透明度を調整し、構図、描画、デザイン作業のガイドとして使用してください。"
-
-        PerfectForArtists ->
-            "アーティスト、写真家、そして正確なレイアウトを愛するすべての人に最適！"
+            "Gridit, baby! 画像をアップロードし、グリッドを重ねて、キャンバスへの拡大に活用しましょう。ルネサンスの巨匠から現代のイラストレーターまで、何世紀にもわたってアーティストたちが使ってきた技法です。"
 
         MaxFileSize ->
             "最大5MB"
@@ -1442,46 +920,46 @@ japaneseTranslations key =
         SupportedFormats ->
             "JPG、PNG、GIF対応"
 
-        GriditScores ->
-            "Griditスコア"
-
-        YourScore ->
-            "あなたのスコア："
-
-        ThatsNiceGridit ->
-            "いいね！Gridit！"
-
         MadeInArgentina ->
             "アルゼンチン製"
 
         WhatsGridit ->
-            "Griditとは？"
+            "Griditとは?"
 
         FooterTooltip ->
-            "こんにちは！プログラミングと絵を描くことが大好きな開発者です。Griditはグリッドを使ってスケッチをキャンバスに転写するのに役立ちます。あなたにも役立つことを願っています！"
+            "こんにちは!プログラミングと絵を描くことが大好きな開発者です。Griditはグリッドを使ってスケッチをキャンバスに転写するのに役立ちます。あなたにも役立つことを願っています!"
 
+        ImagePrivacy ->
+            "画像はデバイスから離れません"
 
+        Downloaded ->
+            "ダウンロード完了!"
 
--- RUSSIAN TRANSLATIONS
+        ToggleGridView ->
+            "グリッド切替"
+
+        ShowGrid ->
+            "グリッド表示"
+
+        HideGrid ->
+            "グリッド非表示"
+
+        AddDiagonalLines ->
+            "グリッドに対角線を追加"
+
+        CuriousAboutGrids ->
+            "\u{3082}\u{3063}\u{3068}\u{77E5}\u{308A}\u{305F}\u{3044}\u{FF1F}\u{3053}\u{306E}\u{4F55}\u{4E16}\u{7D00}\u{3082}\u{306E}\u{6B74}\u{53F2}\u{3042}\u{308B}\u{624B}\u{6CD5}\u{306B}\u{3064}\u{3044}\u{3066}Wikipedia\u{3067}\u{8AAD}\u{3080}\u{FF1A}"
+
+        ChangeImage ->
+            "\u{5225}\u{306E}\u{753B}\u{50CF}\u{3092}\u{9078}\u{629E}"
 
 
 russianTranslations : TranslationKey -> String
 russianTranslations key =
     case key of
-        AppTitle ->
-            "Gridit! 🐸"
-
-        UploadImage ->
-            "Загрузить изображение"
-
-        CustomizeIt ->
-            "Настроить!"
 
         GridSize ->
             "Размер"
-
-        Rectangles ->
-            " прямоугольников"
 
         GridColor ->
             "Цвет"
@@ -1492,20 +970,11 @@ russianTranslations key =
         GridOpacity ->
             "Прозрачность"
 
-        OriginalImage ->
-            "Исходное изображение"
-
-        GriddedImage ->
-            "Изображение с сеткой"
-
         DownloadGriddedImage ->
             "Скачать изображение с сеткой!"
 
         Nice ->
             "Отлично! "
-
-        NiceCounter ->
-            "Счетчик отлично: "
 
         NoImageYet ->
             "Изображения пока нет! Нажмите Загрузить изображение, чтобы начать!"
@@ -1513,44 +982,11 @@ russianTranslations key =
         LanguageLabel ->
             "Язык:"
 
-        FileOperations ->
-            "Начните здесь"
-
-        GridParameters ->
-            "Настройте сетку, чтобы она хорошо отображалась на вашем изображении"
-
-        Actions ->
-            "🐸 🐸 🐸"
-
         AppSubtitle ->
             "Здравствуйте. Это поможет вам создать прямоугольную сетку поверх выбранного вами изображения"
 
-        GridPreviewPlaceholder ->
-            "Ваше изображение с сеткой появится здесь"
-
         UploadPlaceholder ->
             "Загрузите изображение, чтобы начать"
-
-        StatusReady ->
-            "Статус: Готово"
-
-        ShowDiagonals ->
-            "Добавить диагонали"
-
-        Download ->
-            "Скачать"
-
-        Share ->
-            "Поделиться"
-
-        UploadNew ->
-            "Загрузить новое"
-
-        UploadPrompt ->
-            "Загрузить изображение"
-
-        UploadDescription ->
-            "Выберите файл или перетащите его сюда"
 
         ChooseFile ->
             "Выбрать Файл"
@@ -1558,32 +994,17 @@ russianTranslations key =
         GridSettings ->
             "Настройки Сетки"
 
-        DiagonalGrid ->
-            "Диагональная Сетка"
-
-        WhatsThisAbout ->
-            "О чём это?"
+        DownloadStep ->
+            "Скачать"
 
         WhatsThisDescription ->
-            "Gridit Baby! помогает применять идеальные сетки к вашим изображениям - как лягушки говорят \"gridit gridit\"! Загрузите любое изображение, настройте размер и прозрачность сетки, затем используйте её как руководство для композиции, рисования или дизайна."
-
-        PerfectForArtists ->
-            "Идеально для художников, фотографов и всех, кто любит точные макеты!"
+            "Gridit, baby! Загрузите любое изображение, наложите сетку и используйте её для масштабирования рисунка на холст. Художники используют эту технику веками \u{2014} от мастеров Ренессанса до современных иллюстраторов \u{2014} для точного переноса и увеличения композиций."
 
         MaxFileSize ->
             "Макс 5МБ"
 
         SupportedFormats ->
             "JPG, PNG, GIF поддерживаются"
-
-        GriditScores ->
-            "Очки Gridit"
-
-        YourScore ->
-            "Ваш счёт:"
-
-        ThatsNiceGridit ->
-            "Это круто! Gridit!"
 
         MadeInArgentina ->
             "Сделано в Аргентине с"
@@ -1594,97 +1015,64 @@ russianTranslations key =
         FooterTooltip ->
             "Привет! Я разработчик, который любит программировать и рисовать. Gridit помогает мне переносить эскизы на холст с помощью сеток. Надеюсь, вам тоже пригодится!"
 
+        ImagePrivacy ->
+            "Ваше изображение никогда не покидает ваше устройство"
 
+        Downloaded ->
+            "Скачано!"
 
--- TUVAN TRANSLATIONS
+        ToggleGridView ->
+            "Переключить сетку"
+
+        ShowGrid ->
+            "Показать сетку"
+
+        HideGrid ->
+            "Скрыть сетку"
+
+        AddDiagonalLines ->
+            "Добавить диагональные линии к сетке"
+
+        CuriousAboutGrids ->
+            "\u{041B}\u{044E}\u{0431}\u{043E}\u{043F}\u{044B}\u{0442}\u{043D}\u{043E}? \u{0427}\u{0438}\u{0442}\u{0430}\u{0439}\u{0442}\u{0435} \u{0431}\u{043E}\u{043B}\u{044C}\u{0448}\u{0435} \u{043E}\u{0431} \u{044D}\u{0442}\u{043E}\u{043C} \u{0432}\u{0435}\u{043A}\u{043E}\u{0432}\u{043E}\u{043C} \u{043C}\u{0435}\u{0442}\u{043E}\u{0434}\u{0435} \u{0432} \u{0412}\u{0438}\u{043A}\u{0438}\u{043F}\u{0435}\u{0434}\u{0438}\u{0438}:"
+
+        ChangeImage ->
+            "\u{0412}\u{044B}\u{0431}\u{0440}\u{0430}\u{0442}\u{044C} \u{0434}\u{0440}\u{0443}\u{0433}\u{043E}\u{0435} \u{0438}\u{0437}\u{043E}\u{0431}\u{0440}\u{0430}\u{0436}\u{0435}\u{043D}\u{0438}\u{0435}"
 
 
 tuvanTranslations : TranslationKey -> String
 tuvanTranslations key =
     case key of
-        AppTitle ->
-            "Gridit! 🐸"
-
-        UploadImage ->
-            "Чурукту киирер"
-
-        CustomizeIt ->
-            "Таарыштырар!"
 
         GridSize ->
             "Хемчээл"
 
-        Rectangles ->
-            " дөрбелчиннер"
-
         GridColor ->
-            "Өң"
+            "Он"
 
         GridThickness ->
             "Кылын"
 
         GridOpacity ->
-            "Көскүзү"
-
-        OriginalImage ->
-            "Баштайгы чурук"
-
-        GriddedImage ->
-            "Шыйыглыг чурук"
+            "Коскузу"
 
         DownloadGriddedImage ->
-            "Шыйыглыг чурукту чүдүрүп алыр!"
+            "Шыйыглыг чурукту чудуруп алыр!"
 
         Nice ->
             "Эки! "
 
-        NiceCounter ->
-            "Эки саналга: "
-
         NoImageYet ->
-            "Чурук чок! Эгелээр дээш Чурукту киирер деп базыңар!"
+            "Чурук чок! Эгелээр дээш Чурукту киирер деп базынар!"
 
         LanguageLabel ->
             "Дыл:"
 
-        FileOperations ->
-            "Мындан эгелеңер"
-
-        GridParameters ->
-            "Шыйыгны чурукка эки көстүр кылдыр таарыштырыңар"
-
-        Actions ->
-            "🐸 🐸 🐸"
-
         AppSubtitle ->
-            "Экии. Бо дээрге силерниң шилип алган чурууңарга дорт шыйыглар кылырынга дузалаар"
-
-        GridPreviewPlaceholder ->
-            "Силерниң шыйыглыг чурууңар мында көстүп кээр"
+            "Экии. Бо дээрге силерниин шилип алган чуруунарга дорт шыйыглар кылырынга дузалаар"
 
         UploadPlaceholder ->
-            "Эгелээр дээш чурукту киириңер"
-
-        StatusReady ->
-            "Байдал: Белен"
-
-        ShowDiagonals ->
-            "Диагоналдар немээр"
-
-        Download ->
-            "Чүдүрүп алыр"
-
-        Share ->
-            "Үлежир"
-
-        UploadNew ->
-            "Чаа чүдүрер"
-
-        UploadPrompt ->
-            "Чурукту киирер"
-
-        UploadDescription ->
-            "Файлды шилиңер азы бээр чыгып каапкаш, салып каар"
+            "Эгелээр дээш чурукту киирингер"
 
         ChooseFile ->
             "Файл Шилиир"
@@ -1692,64 +1080,58 @@ tuvanTranslations key =
         GridSettings ->
             "Шыйыг Тургузуглары"
 
-        DiagonalGrid ->
-            "Кыйгаар Шыйыглар"
-
-        WhatsThisAbout ->
-            "Бо чүү дугайында?"
+        DownloadStep ->
+            "Чүдүрүп алыр"
 
         WhatsThisDescription ->
-            "Gridit Baby! силерниң чуруктарыңарга эки шыйыглар кылырынга дузалаар - пагалар \"gridit gridit\" дээн ышкаш! Кандыг-даа чурук киирип, шыйыгның хемчээлин болгаш көскүзүн таарыштырыңар, оон ону композиция, чурулга азы дизайн кылырынга удуртулга кылып ажыглаңар."
-
-        PerfectForArtists ->
-            "Чурукчуларга, фото тырттырыкчыларга болгаш шын чуруктар ынак улуска дыка эки!"
+            "Gridit, baby! Кандыг-даа чурук киирип, шыйыгны углааш, холстуже чуруунарны улгаттырарынга ажыглаңар. Чурукчулар бо аргатты чүс-чүс чылдар дургузунда ажыглап келгеннер \u{2014} Ренессанстың улуг мастерлеринден амгы үениң иллюстраторларынга чедир."
 
         MaxFileSize ->
-            "Эң хөйү 5MB"
+            "Эн хойу 5MB"
 
         SupportedFormats ->
             "JPG, PNG, GIF ажыглаттынар"
-
-        GriditScores ->
-            "Gridit Санаашкыннары"
-
-        YourScore ->
-            "Силерниң санаашкыныңар:"
-
-        ThatsNiceGridit ->
-            "Эки! Gridit!"
 
         MadeInArgentina ->
             "Аргентинага кылган"
 
         WhatsGridit ->
-            "Gridit деп чүү?"
+            "Gridit деп чуу?"
 
         FooterTooltip ->
-            "Экии! Мен программировать база чуруур ынак программист мен. Gridit меңээ шыйыглар ажыглап скетчтерни холстче көжүрерге дузалаар. Силерге база дузалаар деп идегеп тур мен!"
+            "Экии! Мен программировать база чуруур ынак программист мен. Gridit менээ шыйыглар ажыглап скетчтерни холстче кожуреерге дузалаар. Силерге база дузалаар деп идегеп тур мен!"
 
+        ImagePrivacy ->
+            "Силерниин чуруунар силерниин херекселинерден кажан-даа унмес"
 
+        Downloaded ->
+            "Чудурген!"
 
--- AMHARIC TRANSLATIONS
+        ToggleGridView ->
+            "Шыйыгны солуур"
+
+        ShowGrid ->
+            "Шыйыгны коргузер"
+
+        HideGrid ->
+            "Шыйыгны чажырар"
+
+        AddDiagonalLines ->
+            "Шыйыгга кыйгаар шыйыглар немээр"
+
+        CuriousAboutGrids ->
+            "\u{0421}\u{043E}\u{043D}\u{0443}\u{0443}\u{0440}\u{0433}\u{0430}\u{043B}\u{0434}\u{044B}\u{0433} \u{0431}\u{0435}? \u{0411}\u{043E} \u{044D}\u{0440}\u{0433}\u{0438} \u{0430}\u{0440}\u{0433}\u{0430} \u{0434}\u{0443}\u{0433}\u{0430}\u{0439}\u{044B}\u{043D}\u{0434}\u{0430} \u{0412}\u{0438}\u{043A}\u{0438}\u{043F}\u{0435}\u{0434}\u{0438}\u{044F}\u{0434}\u{0430} \u{043D}\u{043E}\u{043C}\u{0447}\u{0443}\u{04A3}\u{0430}\u{0440}:"
+
+        ChangeImage ->
+            "\u{04E8}\u{0441}\u{043A}\u{0435} \u{0447}\u{0443}\u{0440}\u{0443}\u{043A}\u{0442}\u{0443} \u{0448}\u{0438}\u{043B}\u{0438}\u{0438}\u{0440}"
 
 
 amharicTranslations : TranslationKey -> String
 amharicTranslations key =
     case key of
-        AppTitle ->
-            "Gridit! 🐸"
-
-        UploadImage ->
-            "ምስል ይጫኑ"
-
-        CustomizeIt ->
-            "ያስተካክሉት!"
 
         GridSize ->
             "መጠን"
-
-        Rectangles ->
-            " አራት ማዕዘኖች"
 
         GridColor ->
             "ቀለም"
@@ -1760,20 +1142,11 @@ amharicTranslations key =
         GridOpacity ->
             "ግልጽነት"
 
-        OriginalImage ->
-            "ዋናው ምስል"
-
-        GriddedImage ->
-            "ፍርግርግ ያለው ምስል"
-
         DownloadGriddedImage ->
-            "የፍርግርግ ምስልዎን ያውርዱ!!!"
+            "የፍርግርግ ምስልዎን ያውርዱ!"
 
         Nice ->
             "ጥሩ! "
-
-        NiceCounter ->
-            "ጥሩ ቆጣሪ: "
 
         NoImageYet ->
             "እስካሁን ምንም ምስል የለም! ለመጀመር ምስል ይጫኑ ጠቅ ያድርጉ!"
@@ -1781,44 +1154,11 @@ amharicTranslations key =
         LanguageLabel ->
             "ቋንቋ:"
 
-        FileOperations ->
-            "እዚህ ይጀምሩ"
-
-        GridParameters ->
-            "ፍርግርጉን በምስልዎ ላይ በትክክል እንዲታይ ያስተካክሉት"
-
-        Actions ->
-            "🐸 🐸 🐸"
-
         AppSubtitle ->
             "ሰላም። ይህ በእርስዎ ምርጫ ምስል ላይ አራት ማዕዘናዊ ፍርግርግ እንዲፈጥሩ ይረዳዎታል"
 
-        GridPreviewPlaceholder ->
-            "የፍርግርግ ምስልዎ እዚህ ይታያል"
-
         UploadPlaceholder ->
             "ለመጀመር ምስል ይጫኑ"
-
-        StatusReady ->
-            "ሁኔታ: ዝግጁ"
-
-        ShowDiagonals ->
-            "ሰማያዊ መስመሮችን አክል"
-
-        Download ->
-            "አውርድ"
-
-        Share ->
-            "አጋራ"
-
-        UploadNew ->
-            "አዲስ ይጹኑ"
-
-        UploadPrompt ->
-            "ምስል ይጹኑ"
-
-        UploadDescription ->
-            "ፋይል ይምረፑ ወይም እዒህ ይገትቱ እና ይጣሉ"
 
         ChooseFile ->
             "ፋይል ይምረጡ"
@@ -1826,32 +1166,17 @@ amharicTranslations key =
         GridSettings ->
             "የፍርግርግ ቅንብሮች"
 
-        DiagonalGrid ->
-            "ሰማያዊ ፍርግርግ"
-
-        WhatsThisAbout ->
-            "ይህ ስለ ምን ነው?"
+        DownloadStep ->
+            "አውርድ"
 
         WhatsThisDescription ->
-            "Gridit Baby! ፍፁም ፍርግርጎችን በምስሎችዎ ላይ እንዲተገብሩ ይረዳዎታል - እንቁራሪቶች \"gridit gridit\" እንደሚሉት! ማንኛውንም ምስል ይጫኑ፣ የፍርግርጉን መጠን እና ግልጽነት ያስተካክሉ፣ ከዚያም ለስብጥር፣ ስእል ወይም ዲዛይን ስራ እንደ መመሪያ ይጠቀሙበት።"
-
-        PerfectForArtists ->
-            "ለአርቲስቶች፣ ፎቶግራፍ አንሺዎች እና ትክክለኛ ንድፎችን ለሚወዱ ሁሉ ፍፁም!"
+            "Gridit, baby! ማንኛውንም ምስል ይጫኑ፣ ፍርግርግ ያስቀምጡ እና ስዕልዎን ወደ ሸራ ለማስፋት ይጠቀሙበት። ከህዳሴው ጌቶች እስከ ዘመናዊ ሥዕላውያን ድረስ አርቲስቶች ይህን ዘዴ ለምዕተ ዓመታት ተጠቅመውበታል \u{2014} ቅንብሮችን በትክክል ለማስተላለፍ እና ለማስፋት።"
 
         MaxFileSize ->
             "ከፍተኛ 5MB"
 
         SupportedFormats ->
             "JPG፣ PNG፣ GIF ይደገፋል"
-
-        GriditScores ->
-            "የGridit ውጤቶች"
-
-        YourScore ->
-            "ውጤትዎ:"
-
-        ThatsNiceGridit ->
-            "ጥሩ ነው! Gridit!"
 
         MadeInArgentina ->
             "በአርጀንቲና ተሰርቷል በ"
@@ -1862,28 +1187,37 @@ amharicTranslations key =
         FooterTooltip ->
             "ሰላም! ኮድ መጻፍ እና መሳል የሚወድ ገንቢ ነኝ። Gridit ፍርግርጎችን በመጠቀም ስዕሎችን ወደ ሸራ ለማስተላለፍ ይረዳኛል። ለእርስዎም እንደሚረዳ ተስፋ አደርጋለሁ!"
 
+        ImagePrivacy ->
+            "ምስልዎ መሳሪያዎን ፈጽሞ አይለቅም"
 
+        Downloaded ->
+            "ወርዷል!"
 
--- HEBREW TRANSLATIONS
+        ToggleGridView ->
+            "ፍርግርግ ቀያይር"
+
+        ShowGrid ->
+            "ፍርግርግ አሳይ"
+
+        HideGrid ->
+            "ፍርግርግ ደብቅ"
+
+        AddDiagonalLines ->
+            "ወደ ፍርግርግ ሰያፍ መስመሮችን ጨምር"
+
+        CuriousAboutGrids ->
+            "\u{1309}\u{1309}\u{1275} \u{12A0}\u{1208}\u{1205}? \u{1235}\u{1208}\u{12DA}\u{1205} \u{12E8}\u{12D8}\u{1218}\u{1293}\u{1275} \u{12D8}\u{12F4} \u{1260}\u{12CA}\u{12AA}\u{1354}\u{12F2}\u{12EB} \u{120B}\u{12ED} \u{1270}\u{132B}\u{121B}\u{122A} \u{12EB}\u{1295}\u{1265}\u{1261}:"
+
+        ChangeImage ->
+            "\u{120C}\u{120B} \u{121D}\u{1235}\u{120D} \u{12ED}\u{121D}\u{1228}\u{1321}"
 
 
 hebrewTranslations : TranslationKey -> String
 hebrewTranslations key =
     case key of
-        AppTitle ->
-            "Gridit! 🐸"
-
-        UploadImage ->
-            "העלאת תמונה"
-
-        CustomizeIt ->
-            "התאם אישית!"
 
         GridSize ->
             "גודל"
-
-        Rectangles ->
-            " מלבנים"
 
         GridColor ->
             "צבע"
@@ -1894,20 +1228,11 @@ hebrewTranslations key =
         GridOpacity ->
             "שקיפות"
 
-        OriginalImage ->
-            "תמונה מקורית"
-
-        GriddedImage ->
-            "תמונה עם רשת"
-
         DownloadGriddedImage ->
-            "הורד את התמונה עם הרשת!!!"
+            "הורד את התמונה עם הרשת!"
 
         Nice ->
             "יפה! "
-
-        NiceCounter ->
-            "מונה יפה: "
 
         NoImageYet ->
             "אין תמונה עדיין! לחץ על העלאת תמונה כדי להתחיל!"
@@ -1915,44 +1240,11 @@ hebrewTranslations key =
         LanguageLabel ->
             "שפה:"
 
-        FileOperations ->
-            "התחל כאן"
-
-        GridParameters ->
-            "התאם את הרשת כדי שתוכל לראות אותה כראוי על התמונה שלך"
-
-        Actions ->
-            "🐸 🐸 🐸"
-
         AppSubtitle ->
             "שלום. זה עוזר לך ליצור רשת מלבנית על תמונה לבחירתך"
 
-        GridPreviewPlaceholder ->
-            "התמונה עם הרשת תופיע כאן"
-
         UploadPlaceholder ->
             "העלה תמונה כדי להתחיל"
-
-        StatusReady ->
-            "סטטוס: מוכן"
-
-        ShowDiagonals ->
-            "הוסף אלכסונים"
-
-        Download ->
-            "הורדה"
-
-        Share ->
-            "שיתוף"
-
-        UploadNew ->
-            "העלאה חדשה"
-
-        UploadPrompt ->
-            "העלאת תמונה"
-
-        UploadDescription ->
-            "בחר קובץ או גרור ושחרר כאן"
 
         ChooseFile ->
             "בחר קובץ"
@@ -1960,32 +1252,17 @@ hebrewTranslations key =
         GridSettings ->
             "הגדרות רשת"
 
-        DiagonalGrid ->
-            "רשת אלכסונית"
-
-        WhatsThisAbout ->
-            "במה מדובר?"
+        DownloadStep ->
+            "הורדה"
 
         WhatsThisDescription ->
-            "Gridit Baby! עוזר לך ליישם רשתות מושלמות על התמונות שלך - בדיוק כמו שצפרדעים אומרות \"gridit gridit\"! העלה כל תמונה, התאם את גודל הרשת והאטימות, ואז השתמש בה כמדריך לקומפוזיציה, ציור או עיצוב."
-
-        PerfectForArtists ->
-            "מושלם לאמנים, צלמים וכל מי שאוהב פריסות מדויקות!"
+            "Gridit, baby! העלו כל תמונה, הניחו רשת ושימשו בה כדי להגדיל את הציור על הבד. אמנים השתמשו בטכניקה הזו במשך מאות שנים \u{2014} ממאסטרי הרנסנס ועד מאיירים מודרניים \u{2014} כדי להעביר ולהגדיל קומפוזיציות בדיוק."
 
         MaxFileSize ->
             "מקסימום 5MB"
 
         SupportedFormats ->
             "JPG, PNG, GIF נתמכים"
-
-        GriditScores ->
-            "ניקוד Gridit"
-
-        YourScore ->
-            "הניקוד שלך:"
-
-        ThatsNiceGridit ->
-            "זה יפה! Gridit!"
 
         MadeInArgentina ->
             "נעשה בארגנטינה עם"
@@ -1996,137 +1273,26 @@ hebrewTranslations key =
         FooterTooltip ->
             "שלום! אני מפתחת שאוהבת לתכנת ולצייר. Gridit עוזר לי להעביר סקיצות לקנבס באמצעות רשתות. מקווה שזה יעזור גם לך!"
 
+        ImagePrivacy ->
+            "התמונה שלך אף פעם לא עוזבת את המכשיר שלך"
 
-tuvinianTranslations : TranslationKey -> String
-tuvinianTranslations key =
-    case key of
-        AppTitle ->
-            "Gridit! 🐸"
+        Downloaded ->
+            "!הורד בהצלחה"
 
-        UploadImage ->
-            "Фото хүнү"
+        ToggleGridView ->
+            "הצג/הסתר רשת"
 
-        CustomizeIt ->
-            "Өөрчүлээр!"
+        ShowGrid ->
+            "הצג רשת"
 
-        GridSize ->
-            "Хемчээл"
+        HideGrid ->
+            "הסתר רשת"
 
-        Rectangles ->
-            " Чарыкчылар"
+        AddDiagonalLines ->
+            "הוסף קווים אלכסוניים לרשת"
 
-        GridColor ->
-            "Өң"
+        CuriousAboutGrids ->
+            "\u{05E1}\u{05E7}\u{05E8}\u{05E0}\u{05D9}\u{05DD}? \u{05E7}\u{05E8}\u{05D0}\u{05D5} \u{05E2}\u{05D5}\u{05D3} \u{05E2}\u{05DC} \u{05D4}\u{05E9}\u{05D9}\u{05D8}\u{05D4} \u{05D4}\u{05E2}\u{05EA}\u{05D9}\u{05E7}\u{05D4} \u{05D4}\u{05D6}\u{05D5} \u{05D1}\u{05D5}\u{05D5}\u{05D9}\u{05E7}\u{05D9}\u{05E4}\u{05D3}\u{05D9}\u{05D4}:"
 
-        GridThickness ->
-            "Калыңы"
-
-        GridOpacity ->
-            "Шынарлыг"
-
-        OriginalImage ->
-            "Эгелээр фото"
-
-        GriddedImage ->
-            "Чарыкчыларлыг фото"
-
-        DownloadGriddedImage ->
-            "Чарыкчыларлыг фотону хүлээ!!!"
-
-        Nice ->
-            "Чүрек! "
-
-        NiceCounter ->
-            "Чүрек санаашкын: "
-
-        NoImageYet ->
-            "Хүнүн эгелээр фото чок! Эгелээр фото хүнүп киир, шинчилээр!"
-
-        LanguageLabel ->
-            "Дыл:"
-
-        FileOperations ->
-            "Шинчилээр"
-
-        GridParameters ->
-            "Чарыкчыларны өөрчүлээр, фотоңарга дүгжүп турар"
-
-        Actions ->
-            "🐸 🐸 🐸"
-
-        AppSubtitle ->
-            "Сайын! Сен өөрүнүң фотоңарга чарыкчыларлыг тургузарынга дуза көргүзер."
-
-        GridPreviewPlaceholder ->
-            "Чарыкчыларлыг фотоңар эрге көстүр"
-
-        UploadPlaceholder ->
-            "Эгелээр фото хүнү"
-
-        StatusReady ->
-            "Тургустуң: дээди"
-
-        ShowDiagonals ->
-            "Диагоналдыг чарыкчыларны көргүзү"
-
-        Download ->
-            "Хүлээ"
-
-        Share ->
-            "Хөйүлдү"
-
-        UploadNew ->
-            "Чаңгыс фото хүнү"
-
-        UploadPrompt ->
-            "Фото хүнү"
-
-        UploadDescription ->
-            "Файлны сонуургаар, эскели эрге халдыр"
-
-        ChooseFile ->
-            "Файлны сонуургаар"
-
-        GridSettings ->
-            "Чарыкчыларның тургузуу"
-
-        DiagonalGrid ->
-            "Диагоналдыг чарыкчылар"
-
-        WhatsThisAbout ->
-            "Бо чүү дугайында?"
-
-        WhatsThisDescription ->
-            "Gridit Baby! силерниң чуруктарыңарга эки шыйыглар кылырынга дузалаар!"
-
-        PerfectForArtists ->
-            "Чурукчуларга болгаш фото тырттырыкчыларга дыка эки!"
-
-        MaxFileSize ->
-            "Эң хөйү 5MB"
-
-        SupportedFormats ->
-            "JPG, PNG, GIF"
-
-        GriditScores ->
-            "Gridit Санаашкыннары"
-
-        YourScore ->
-            "Санаашкын:"
-
-        ThatsNiceGridit ->
-            "Эки! Gridit!"
-
-        MadeInArgentina ->
-            "Аргентинага кылган"
-
-        WhatsGridit ->
-            "Gridit деп чүү?"
-
-        FooterTooltip ->
-            "Экии! Мен код бижиир база чуруур ынак программист мен. Gridit меңээ шыйыглар ажыглап скетчтерни холстче көжүрерге дузалаар!"
-
-
-translate : Language -> TranslationKey -> String
-translate language key =
-    translations language key
+        ChangeImage ->
+            "\u{05D1}\u{05D7}\u{05E8} \u{05EA}\u{05DE}\u{05D5}\u{05E0}\u{05D4} \u{05D0}\u{05D7}\u{05E8}\u{05EA}"

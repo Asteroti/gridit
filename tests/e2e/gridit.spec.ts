@@ -1,9 +1,18 @@
 import { test, expect } from '@playwright/test';
 
+async function uploadImage(page) {
+  const [fileChooser] = await Promise.all([
+    page.waitForEvent('filechooser'),
+    page.locator('[data-testid="upload-button"]').click()
+  ]);
+  await fileChooser.setFiles('./tests/fixtures/test-image.png');
+}
+
 test.describe('Gridit Application', () => {
 
   test.beforeEach(async ({ page }) => {
     await page.goto('http://localhost:8000/public/index.html');
+    await page.waitForLoadState('networkidle');
   });
 
   test.describe('Page Load', () => {
@@ -26,105 +35,94 @@ test.describe('Gridit Application', () => {
 
   test.describe('Image Upload', () => {
     test('accepts image file upload', async ({ page }) => {
-      const fileInput = page.locator('input[type="file"]');
-      await fileInput.setInputFiles('./tests/fixtures/test-image.png');
-      await page.waitForTimeout(500); // Wait for image processing
-      await expect(page.locator('.preview-image, .uploaded-image, canvas')).toBeVisible();
+      await uploadImage(page);
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
     });
 
     test('shows grid controls after upload', async ({ page }) => {
-      const fileInput = page.locator('input[type="file"]');
-      await fileInput.setInputFiles('./tests/fixtures/test-image.png');
-      await page.waitForTimeout(500);
-      await expect(page.locator('#grid-size-slider, input[type="range"]')).toBeVisible();
+      await uploadImage(page);
+      await expect(page.locator('input[type="range"]').first()).toBeVisible({ timeout: 5000 });
     });
   });
 
   test.describe('Grid Controls', () => {
     test.beforeEach(async ({ page }) => {
-      const fileInput = page.locator('input[type="file"]');
-      await fileInput.setInputFiles('./tests/fixtures/test-image.png');
-      await page.waitForTimeout(500);
+      await uploadImage(page);
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
     });
 
     test('grid size slider adjusts value', async ({ page }) => {
       const slider = page.locator('input[type="range"]').first();
       await slider.fill('20');
-      await page.waitForTimeout(200);
-      // Value should be updated in the UI
+      await expect(slider).toHaveValue('20');
     });
 
     test('grid color picker changes color', async ({ page }) => {
       const colorInput = page.locator('input[type="color"]');
-      if (await colorInput.count() > 0) {
-        await colorInput.fill('#ff0000');
-        await page.waitForTimeout(200);
-      }
+      await expect(colorInput).toBeVisible();
+      await colorInput.fill('#ff0000');
+      await expect(colorInput).toHaveValue('#ff0000');
     });
 
     test('diagonal checkbox toggles diagonals', async ({ page }) => {
-      const checkbox = page.locator('input[type="checkbox"]');
-      if (await checkbox.count() > 0) {
-        await checkbox.first().check();
-        await expect(checkbox.first()).toBeChecked();
-      }
+      const checkbox = page.locator('#diagonals');
+      await expect(checkbox).not.toBeChecked();
+      await checkbox.check();
+      await expect(checkbox).toBeChecked();
     });
   });
 
   test.describe('Download Functionality', () => {
-    test('download button disabled without image', async ({ page }) => {
-      const downloadBtn = page.locator('button').filter({ hasText: /download|descargar/i });
-      if (await downloadBtn.count() > 0) {
-        await expect(downloadBtn.first()).toBeDisabled();
-      }
+    test('download button not visible without image', async ({ page }) => {
+      await expect(page.locator('.button-download')).not.toBeVisible();
     });
 
     test('download button enabled with image', async ({ page }) => {
-      const fileInput = page.locator('input[type="file"]');
-      await fileInput.setInputFiles('./tests/fixtures/test-image.png');
-      await page.waitForTimeout(500);
-      const downloadBtn = page.locator('button').filter({ hasText: /download|descargar/i });
-      if (await downloadBtn.count() > 0) {
-        await expect(downloadBtn.first()).toBeEnabled();
-      }
+      await uploadImage(page);
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+      const downloadBtn = page.locator('.button-download');
+      await expect(downloadBtn.first()).toBeEnabled();
     });
 
     test('downloads gridded image', async ({ page }) => {
-      const fileInput = page.locator('input[type="file"]');
-      await fileInput.setInputFiles('./tests/fixtures/test-image.png');
-      await page.waitForTimeout(500);
+      await uploadImage(page);
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
 
-      const downloadBtn = page.locator('button').filter({ hasText: /download|descargar/i }).first();
+      const downloadBtn = page.locator('.button-download').first();
 
       const [download] = await Promise.all([
         page.waitForEvent('download'),
         downloadBtn.click()
       ]);
 
-      expect(download.suggestedFilename()).toBe('gridded-image.png');
+      expect(download.suggestedFilename()).toMatch(/gridded.*\.png$/);
     });
   });
 
   test.describe('Internationalization', () => {
     test('switches to Spanish', async ({ page }) => {
-      const langSelect = page.locator('select').first();
-      await langSelect.selectOption('es');
-      await page.waitForTimeout(300);
-      // Spanish text should appear
-      const bodyText = await page.textContent('body');
-      expect(bodyText).toMatch(/Tamaño|Grosor|Opacidad/);
+      const langSelect = page.locator('#language-select');
+      await langSelect.selectOption('spanish');
+      await expect(page.locator('body')).toContainText(/Elegir Archivo|Subi una imagen/);
     });
 
     test('all 14 languages load without error', async ({ page }) => {
-      const languages = ['en', 'es', 'la', 'it', 'pt', 'fr', 'ast',
-                         'ga', 'eu', 'ja', 'ru', 'tyv', 'am', 'he'];
-      const langSelect = page.locator('select').first();
+      const errors: string[] = [];
+      page.on('pageerror', err => errors.push(err.message));
+
+      const languages = [
+        'english', 'spanish', 'latin', 'italian', 'portuguese', 'french',
+        'asturiano', 'gaelic', 'euskara', 'japanese', 'russian', 'tuvan',
+        'amharic', 'hebrew'
+      ];
+      const langSelect = page.locator('#language-select');
 
       for (const lang of languages) {
         await langSelect.selectOption(lang);
-        await page.waitForLoadState('networkidle');
-        // No errors thrown
+        await expect(page.locator('h1')).toContainText('Gridit');
       }
+
+      expect(errors).toHaveLength(0);
     });
   });
 
@@ -132,51 +130,56 @@ test.describe('Gridit Application', () => {
     test('renders correctly on mobile viewport', async ({ page }) => {
       await page.setViewportSize({ width: 375, height: 667 });
       await page.waitForLoadState('networkidle');
-      await expect(page.locator('body')).toBeVisible();
+      await expect(page.locator('h1')).toBeVisible();
+      await expect(page.locator('.main-content')).toBeVisible();
     });
 
     test('touch targets have minimum 44px size', async ({ page }) => {
       await page.setViewportSize({ width: 375, height: 667 });
-      const buttons = page.locator('button');
+      // Exclude inline buttons (like collapsible headers) that inherit parent sizing
+      const buttons = page.locator('button:visible:not(.card-title-collapsible):not([aria-expanded])');
       const count = await buttons.count();
 
-      let violations = 0;
-      for (let i = 0; i < Math.min(count, 10); i++) { // Check first 10 buttons
+      for (let i = 0; i < count; i++) {
         const box = await buttons.nth(i).boundingBox();
-        if (box && box.height < 44) {
-          violations++;
+        if (box) {
+          expect(box.height).toBeGreaterThanOrEqual(44);
         }
       }
-      expect(violations).toBeLessThan(3); // Allow some violations for hidden elements
     });
   });
 
   test.describe('Grid Rendering', () => {
     test('grid preview shows SVG lines', async ({ page }) => {
-      const fileInput = page.locator('input[type="file"]');
-      await fileInput.setInputFiles('./tests/fixtures/test-image.png');
-      await page.waitForTimeout(500);
+      await uploadImage(page);
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
 
-      const svgLines = page.locator('svg line');
-      const count = await svgLines.count();
-      expect(count).toBeGreaterThan(0);
+      // Use .grid-overlay to avoid matching SVG icon lines
+      await expect(async () => {
+        const count = await page.locator('.grid-overlay line').count();
+        expect(count).toBeGreaterThan(0);
+      }).toPass({ timeout: 5000 });
     });
 
     test('diagonal lines appear when enabled', async ({ page }) => {
-      const fileInput = page.locator('input[type="file"]');
-      await fileInput.setInputFiles('./tests/fixtures/test-image.png');
-      await page.waitForTimeout(500);
+      await uploadImage(page);
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
 
-      const initialLineCount = await page.locator('svg line').count();
+      await expect(async () => {
+        const count = await page.locator('.grid-overlay line').count();
+        expect(count).toBeGreaterThan(0);
+      }).toPass({ timeout: 5000 });
 
-      const checkbox = page.locator('input[type="checkbox"]').first();
-      if (await checkbox.count() > 0 && !await checkbox.isChecked()) {
-        await checkbox.check();
-        await page.waitForTimeout(300);
-      }
+      const initialLineCount = await page.locator('.grid-overlay line').count();
 
-      const afterLineCount = await page.locator('svg line').count();
-      expect(afterLineCount).toBeGreaterThanOrEqual(initialLineCount);
+      const checkbox = page.locator('#diagonals');
+      await checkbox.check();
+      await expect(checkbox).toBeChecked();
+
+      await expect(async () => {
+        const afterLineCount = await page.locator('.grid-overlay line').count();
+        expect(afterLineCount).toBeGreaterThan(initialLineCount);
+      }).toPass({ timeout: 5000 });
     });
   });
 });
