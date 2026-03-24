@@ -1,22 +1,144 @@
 port module Main exposing (..)
 
-import Base64
 import Browser
-import Bytes exposing (Bytes)
-import Bytes.Decode as BD
-import Bytes.Encode as BE
 import File exposing (File)
 import File.Download
 import File.Select as Select
-import Html exposing (Html, button, canvas, div, h1, h2, h3, img, input, label, option, p, select, span, text)
-import Html.Attributes exposing (class, disabled, for, id, max, min, placeholder, selected, src, step, style, type_, value)
+import Html exposing (Html, a, button, canvas, div, h1, h2, h3, img, input, label, option, p, select, span, text)
+import Html.Attributes exposing (attribute, class, disabled, for, href, id, max, min, placeholder, rel, selected, src, step, style, target, type_, value)
 import Html.Events exposing (on, onClick, onInput)
-import I18n exposing (Language(..), TranslationKey(..), translate)
+import I18n exposing (Language(..), TranslationKey, translate)
 import Json.Decode
 import Process
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
 import Task
+
+
+
+-- SVG ICON HELPERS
+
+
+svgIcon : List (Html.Attribute msg) -> List (Svg msg) -> Html msg
+svgIcon extraAttrs children =
+    Svg.svg
+        ([ SvgAttr.viewBox "0 0 20 20"
+         , SvgAttr.width "20"
+         , SvgAttr.height "20"
+         , SvgAttr.fill "none"
+         , SvgAttr.stroke "currentColor"
+         , SvgAttr.strokeWidth "1.5"
+         , attribute "aria-hidden" "true"
+         , SvgAttr.style "display:inline-block;vertical-align:middle"
+         ]
+            ++ extraAttrs
+        )
+        children
+
+
+iconFrogSized : String -> Html Msg
+iconFrogSized size =
+    svgIcon [ SvgAttr.width size, SvgAttr.height size ]
+        [ Svg.circle [ SvgAttr.cx "6", SvgAttr.cy "6", SvgAttr.r "3" ] []
+        , Svg.circle [ SvgAttr.cx "14", SvgAttr.cy "6", SvgAttr.r "3" ] []
+        , Svg.circle [ SvgAttr.cx "6", SvgAttr.cy "6", SvgAttr.r "1", SvgAttr.fill "currentColor" ] []
+        , Svg.circle [ SvgAttr.cx "14", SvgAttr.cy "6", SvgAttr.r "1", SvgAttr.fill "currentColor" ] []
+        , Svg.path [ SvgAttr.d "M4 12 Q10 18 16 12", SvgAttr.strokeLinecap "round" ] []
+        , Svg.line [ SvgAttr.x1 "0", SvgAttr.y1 "10", SvgAttr.x2 "20", SvgAttr.y2 "10", SvgAttr.opacity "0.6" ] []
+        , Svg.line [ SvgAttr.x1 "10", SvgAttr.y1 "0", SvgAttr.x2 "10", SvgAttr.y2 "20", SvgAttr.opacity "0.6" ] []
+        ]
+
+
+iconFrog : Html Msg
+iconFrog =
+    iconFrogSized "20"
+
+
+iconFrogLarge : Html Msg
+iconFrogLarge =
+    iconFrogSized "48"
+
+
+iconUpload : Html Msg
+iconUpload =
+    svgIcon []
+        [ Svg.path [ SvgAttr.d "M10 3 L10 13", SvgAttr.strokeLinecap "round" ] []
+        , Svg.path [ SvgAttr.d "M6 7 L10 3 L14 7", SvgAttr.strokeLinecap "round", SvgAttr.strokeLinejoin "round" ] []
+        , Svg.path [ SvgAttr.d "M3 12 L3 16 Q3 17 4 17 L16 17 Q17 17 17 16 L17 12", SvgAttr.strokeLinecap "round", SvgAttr.strokeLinejoin "round" ] []
+        ]
+
+
+iconDownload : Html Msg
+iconDownload =
+    svgIcon []
+        [ Svg.line [ SvgAttr.x1 "10", SvgAttr.y1 "3", SvgAttr.x2 "10", SvgAttr.y2 "13" ] []
+        , Svg.polyline [ SvgAttr.points "6,10 10,14 14,10" ] []
+        , Svg.line [ SvgAttr.x1 "4", SvgAttr.y1 "17", SvgAttr.x2 "16", SvgAttr.y2 "17" ] []
+        ]
+
+
+iconHeart : Html Msg
+iconHeart =
+    svgIcon []
+        [ Svg.path [ SvgAttr.d "M10 17 C4 12 1 8 4 5 Q7 2 10 6 Q13 2 16 5 C19 8 16 12 10 17 Z" ] [] ]
+
+
+iconGlobe : Html Msg
+iconGlobe =
+    svgIcon []
+        [ Svg.circle [ SvgAttr.cx "10", SvgAttr.cy "10", SvgAttr.r "8" ] []
+        , Svg.ellipse [ SvgAttr.cx "10", SvgAttr.cy "10", SvgAttr.rx "4", SvgAttr.ry "8" ] []
+        , Svg.line [ SvgAttr.x1 "2", SvgAttr.y1 "10", SvgAttr.x2 "18", SvgAttr.y2 "10" ] []
+        ]
+
+
+iconLock : Html Msg
+iconLock =
+    svgIcon []
+        [ Svg.rect [ SvgAttr.x "4", SvgAttr.y "9", SvgAttr.width "12", SvgAttr.height "9", SvgAttr.rx "2" ] []
+        , Svg.path [ SvgAttr.d "M7 9 V6 Q7 2 10 2 Q13 2 13 6 V9" ] []
+        , Svg.circle [ SvgAttr.cx "10", SvgAttr.cy "14", SvgAttr.r "1.5", SvgAttr.fill "currentColor" ] []
+        ]
+
+
+iconGrid : Html Msg
+iconGrid =
+    svgIcon []
+        [ Svg.rect [ SvgAttr.x "2", SvgAttr.y "2", SvgAttr.width "16", SvgAttr.height "16" ] []
+        , Svg.line [ SvgAttr.x1 "2", SvgAttr.y1 "7", SvgAttr.x2 "18", SvgAttr.y2 "7" ] []
+        , Svg.line [ SvgAttr.x1 "2", SvgAttr.y1 "13", SvgAttr.x2 "18", SvgAttr.y2 "13" ] []
+        , Svg.line [ SvgAttr.x1 "7", SvgAttr.y1 "2", SvgAttr.x2 "7", SvgAttr.y2 "18" ] []
+        , Svg.line [ SvgAttr.x1 "13", SvgAttr.y1 "2", SvgAttr.x2 "13", SvgAttr.y2 "18" ] []
+        ]
+
+
+iconCheck : Html Msg
+iconCheck =
+    svgIcon []
+        [ Svg.polyline [ SvgAttr.points "4,10 8,15 16,5", SvgAttr.strokeLinecap "round", SvgAttr.strokeLinejoin "round" ] [] ]
+
+
+iconClose : Html Msg
+iconClose =
+    svgIcon []
+        [ Svg.line [ SvgAttr.x1 "4", SvgAttr.y1 "4", SvgAttr.x2 "16", SvgAttr.y2 "16" ] []
+        , Svg.line [ SvgAttr.x1 "16", SvgAttr.y1 "4", SvgAttr.x2 "4", SvgAttr.y2 "16" ] []
+        ]
+
+
+iconShare : Html Msg
+iconShare =
+    svgIcon []
+        [ Svg.path [ SvgAttr.d "M4 12 V16 Q4 17 5 17 L15 17 Q16 17 16 16 L16 12", SvgAttr.strokeLinecap "round", SvgAttr.strokeLinejoin "round" ] []
+        , Svg.path [ SvgAttr.d "M10 3 L10 12", SvgAttr.strokeLinecap "round" ] []
+        , Svg.path [ SvgAttr.d "M7 6 L10 3 L13 6", SvgAttr.strokeLinecap "round", SvgAttr.strokeLinejoin "round" ] []
+        ]
+
+
+iconGreenHeart : Html Msg
+iconGreenHeart =
+    svgIcon [ SvgAttr.fill "currentColor", SvgAttr.stroke "none" ]
+        [ Svg.path [ SvgAttr.d "M10 17 C4 12 1 8 4 5 Q7 2 10 6 Q13 2 16 5 C19 8 16 12 10 17 Z" ] [] ]
 
 
 
@@ -35,7 +157,11 @@ type alias Model =
     , language : Language
     , downloadSuccess : Bool
     , showDiagonals : Bool
-    , drawerExpanded : Bool
+    , showGrid : Bool
+    , isProcessing : Bool
+    , imageName : String
+    , canShare : Bool
+    , shareAfterProcess : Bool
     }
 
 
@@ -58,7 +184,15 @@ type Msg
     | LanguageChanged Language
     | ResetDownloadSuccess
     | ToggleDiagonals Bool
-    | ToggleDrawer
+    | ToggleGridView
+    | ProcessingStarted
+    | ImageNameSet String
+    | SettingsLoaded { gridSize : Int, gridColor : String, gridThickness : Int, gridOpacity : Float, showDiagonals : Bool }
+    | ResetProcessing
+    | BrowserLanguageReceived String
+    | ResetToUpload
+    | ShareClicked
+    | ShareSupportReceived Bool
 
 
 
@@ -136,22 +270,37 @@ allGridLines config dims =
 
 
 
--- Debug port for logging
-
-
-port debug : String -> Cmd msg
-
-
 port requestPng : { url : String, width : Int, height : Int, grid : Int, color : String, thickness : Int, opacity : Float, showDiagonals : Bool } -> Cmd msg
 
 
 port receivePng : (String -> msg) -> Sub msg
 
 
-port downloadImage : { dataUrl : String } -> Cmd msg
+port downloadImage : { dataUrl : String, fileName : String } -> Cmd msg
 
 
 port setHtmlLang : String -> Cmd msg
+
+
+port setHtmlDir : String -> Cmd msg
+
+
+port saveSettings : { gridSize : Int, gridColor : String, gridThickness : Int, gridOpacity : Float, showDiagonals : Bool } -> Cmd msg
+
+
+port loadSettings : ({ gridSize : Int, gridColor : String, gridThickness : Int, gridOpacity : Float, showDiagonals : Bool } -> msg) -> Sub msg
+
+
+port resetProcessing : (() -> msg) -> Sub msg
+
+
+port getBrowserLanguage : (String -> msg) -> Sub msg
+
+
+port shareImageData : { dataUrl : String, fileName : String } -> Cmd msg
+
+
+port receiveShareSupport : (Bool -> msg) -> Sub msg
 
 
 
@@ -171,7 +320,11 @@ init _ =
       , language = Spanish
       , downloadSuccess = False
       , showDiagonals = False
-      , drawerExpanded = False
+      , showGrid = True
+      , isProcessing = False
+      , imageName = "image"
+      , canShare = False
+      , shareAfterProcess = False
       }
     , Cmd.none
     )
@@ -179,53 +332,84 @@ init _ =
 
 
 -- HELPERS
--- | Convert a Language to its ISO language code
 
 
-languageToCode : Language -> String
-languageToCode language =
+settingsFromModel : Model -> { gridSize : Int, gridColor : String, gridThickness : Int, gridOpacity : Float, showDiagonals : Bool }
+settingsFromModel m =
+    { gridSize = m.gridSize, gridColor = m.gridColor, gridThickness = m.gridThickness, gridOpacity = m.gridOpacity, showDiagonals = m.showDiagonals }
+
+
+triggerProcessing : Bool -> Model -> ( Model, Cmd Msg )
+triggerProcessing shareAfterProcess model =
+    case ( model.uploadedImage, model.imageWidth, model.imageHeight ) of
+        ( Just url, Just w, Just h ) ->
+            ( { model | isProcessing = True, shareAfterProcess = shareAfterProcess }
+            , requestPng { url = url, width = w, height = h, grid = model.gridSize, color = model.gridColor, thickness = model.gridThickness, opacity = model.gridOpacity, showDiagonals = model.showDiagonals }
+            )
+
+        _ ->
+            ( model, Cmd.none )
+
+
+type alias LanguageInfo =
+    { code : String
+    , id : String
+    , displayName : String
+    , dir : String
+    }
+
+
+languageMeta : Language -> LanguageInfo
+languageMeta language =
     case language of
         English ->
-            "en"
+            { code = "en", id = "english", displayName = "English", dir = "ltr" }
 
         Spanish ->
-            "es"
+            { code = "es", id = "spanish", displayName = "Español", dir = "ltr" }
 
         Latin ->
-            "la"
+            { code = "la", id = "latin", displayName = "Latin", dir = "ltr" }
 
         Italian ->
-            "it"
+            { code = "it", id = "italian", displayName = "Italiano", dir = "ltr" }
 
         Portuguese ->
-            "pt"
+            { code = "pt", id = "portuguese", displayName = "Português", dir = "ltr" }
 
         French ->
-            "fr"
+            { code = "fr", id = "french", displayName = "Français", dir = "ltr" }
 
         Asturiano ->
-            "ast"
+            { code = "ast", id = "asturiano", displayName = "Asturianu", dir = "ltr" }
 
         Gaelic ->
-            "gd"
+            { code = "gd", id = "gaelic", displayName = "Gàidhlig", dir = "ltr" }
 
         Euskara ->
-            "eu"
+            { code = "eu", id = "euskara", displayName = "Euskara", dir = "ltr" }
 
         Japanese ->
-            "ja"
+            { code = "ja", id = "japanese", displayName = "日本語", dir = "ltr" }
 
         Russian ->
-            "ru"
+            { code = "ru", id = "russian", displayName = "Русский", dir = "ltr" }
 
         Tuvan ->
-            "tyv"
+            { code = "tyv", id = "tuvan", displayName = "Тыва дыл", dir = "ltr" }
 
         Amharic ->
-            "am"
+            { code = "am", id = "amharic", displayName = "አማርኛ", dir = "ltr" }
 
         Hebrew ->
-            "he"
+            { code = "he", id = "hebrew", displayName = "עברית", dir = "rtl" }
+
+
+isValidHexColor : String -> Bool
+isValidHexColor s =
+    String.length s == 7
+        && String.startsWith "#" s
+        && String.all Char.isHexDigit (String.dropLeft 1 s)
 
 
 
@@ -239,22 +423,39 @@ update msg model =
             ( model, Select.file [ "image/*" ] ImageSelected )
 
         ImageSelected file ->
-            ( model, Task.perform ImageLoaded (File.toUrl file) )
+            ( { model | imageName = File.name file }
+            , Task.perform ImageLoaded (File.toUrl file)
+            )
 
         ImageLoaded url ->
             ( { model | uploadedImage = Just url, imageWidth = Nothing, imageHeight = Nothing }, Cmd.none )
 
         GridSizeChanged size ->
-            ( { model | gridSize = size }, Cmd.none )
+            let
+                newModel = { model | gridSize = size }
+            in
+            ( newModel, saveSettings (settingsFromModel newModel) )
 
         GridColorChanged color ->
-            ( { model | gridColor = color }, Cmd.none )
+            if isValidHexColor color then
+                let
+                    newModel = { model | gridColor = color }
+                in
+                ( newModel, saveSettings (settingsFromModel newModel) )
+            else
+                ( model, Cmd.none )
 
         GridThicknessChanged thickness ->
-            ( { model | gridThickness = thickness }, Cmd.none )
+            let
+                newModel = { model | gridThickness = thickness }
+            in
+            ( newModel, saveSettings (settingsFromModel newModel) )
 
         GridOpacityChanged opacity ->
-            ( { model | gridOpacity = opacity }, Cmd.none )
+            let
+                newModel = { model | gridOpacity = opacity }
+            in
+            ( newModel, saveSettings (settingsFromModel newModel) )
 
         NiceButtonClicked ->
             ( { model | niceCounter = model.niceCounter + 1 }, Cmd.none )
@@ -263,61 +464,102 @@ update msg model =
             ( { model | imageWidth = Just width, imageHeight = Just height }, Cmd.none )
 
         LanguageChanged newLanguage ->
-            ( { model | language = newLanguage }, setHtmlLang (languageToCode newLanguage) )
+            let
+                meta = languageMeta newLanguage
+            in
+            ( { model | language = newLanguage }
+            , Cmd.batch [ setHtmlLang meta.code, setHtmlDir meta.dir ]
+            )
 
         ResetDownloadSuccess ->
             ( { model | downloadSuccess = False }, Cmd.none )
 
         ToggleDiagonals value ->
-            ( { model | showDiagonals = value }, Cmd.none )
+            let
+                newModel = { model | showDiagonals = value }
+            in
+            ( newModel, saveSettings (settingsFromModel newModel) )
 
-        ToggleDrawer ->
-            ( { model | drawerExpanded = not model.drawerExpanded }, Cmd.none )
+        ToggleGridView ->
+            ( { model | showGrid = not model.showGrid }, Cmd.none )
+
+        ProcessingStarted ->
+            ( { model | isProcessing = True }, Cmd.none )
+
+        ImageNameSet name ->
+            ( { model | imageName = name }, Cmd.none )
+
+        SettingsLoaded settings ->
+            ( { model | gridSize = settings.gridSize, gridColor = settings.gridColor, gridThickness = settings.gridThickness, gridOpacity = settings.gridOpacity, showDiagonals = settings.showDiagonals }, Cmd.none )
+
+        ResetProcessing ->
+            ( { model | isProcessing = False }, Cmd.none )
+
+        BrowserLanguageReceived langCode ->
+            let
+                detectedLanguage =
+                    allLanguages
+                        |> List.filter (\lang -> String.startsWith (languageMeta lang).code langCode)
+                        |> List.head
+                        |> Maybe.withDefault Spanish
+
+                meta = languageMeta detectedLanguage
+            in
+            ( { model | language = detectedLanguage }
+            , Cmd.batch [ setHtmlLang meta.code, setHtmlDir meta.dir ]
+            )
 
         DownloadClicked ->
-            case ( model.uploadedImage, model.imageWidth, model.imageHeight ) of
-                ( Just url, Just w, Just h ) ->
-                    let
-                        _ =
-                            debug ("Elm: DownloadClicked with valid image data. Width: " ++ String.fromInt w ++ ", Height: " ++ String.fromInt h)
+            triggerProcessing False model
 
-                        requestParams =
-                            { url = url, width = w, height = h, grid = model.gridSize, color = model.gridColor, thickness = model.gridThickness, opacity = model.gridOpacity, showDiagonals = model.showDiagonals }
-                    in
-                    ( model, Cmd.batch [ debug "Elm: Sending requestPng command", requestPng requestParams ] )
-
-                _ ->
-                    ( model, debug "Elm: DownloadClicked but missing image data" )
+        ShareClicked ->
+            triggerProcessing True model
 
         GriddedReady dataUrl ->
-            -- Use JavaScript port to trigger download
             let
-                _ =
-                    debug ("Elm: GriddedReady received data URL of length: " ++ String.fromInt (String.length dataUrl))
-
-                _ =
-                    debug "Elm: Triggering download via downloadImage port"
-
-                -- Set downloadSuccess to true to trigger animation
-                updatedModel =
-                    { model | downloadSuccess = True }
+                fileName = model.imageName ++ "-gridded.png"
+                action =
+                    if model.shareAfterProcess then
+                        shareImageData { dataUrl = dataUrl, fileName = fileName }
+                    else
+                        downloadImage { dataUrl = dataUrl, fileName = fileName }
             in
-            ( updatedModel
+            ( { model | downloadSuccess = True, isProcessing = False, shareAfterProcess = False }
             , Cmd.batch
-                [ debug "Elm: Starting download..."
-                , downloadImage { dataUrl = dataUrl }
-                , -- Reset animation after 2 seconds
-                  Task.perform (\_ -> ResetDownloadSuccess) (Process.sleep 2000)
+                [ action
+                , Task.perform (\_ -> ResetDownloadSuccess) (Process.sleep 2000)
                 ]
             )
+
+        ResetToUpload ->
+            ( { model
+                | uploadedImage = Nothing
+                , imageWidth = Nothing
+                , imageHeight = Nothing
+                , isProcessing = False
+                , downloadSuccess = False
+                , shareAfterProcess = False
+              }
+            , Cmd.none
+            )
+
+        ShareSupportReceived supported ->
+            ( { model | canShare = supported }, Cmd.none )
 
 
 
 -- SUBSCRIPTIONS
 
 
+subscriptions : Model -> Sub Msg
 subscriptions _ =
-    receivePng GriddedReady
+    Sub.batch
+        [ receivePng GriddedReady
+        , loadSettings SettingsLoaded
+        , resetProcessing (\_ -> ResetProcessing)
+        , getBrowserLanguage BrowserLanguageReceived
+        , receiveShareSupport ShareSupportReceived
+        ]
 
 
 
@@ -326,21 +568,16 @@ subscriptions _ =
 
 view : Model -> Html Msg
 view model =
-    div [ class "app-container" ]
-        [ viewHeader model
-        , div [ class "main-content" ]
-            [ viewLeftColumn model
-            , viewCenterColumn model
-            , viewRightColumn model
+    div [ class "page-wrapper" ]
+        [ div [ class "app-container" ]
+            [ viewHeader model
+            , Html.node "main" [ class "main-content", id "main-content" ]
+                [ viewPreviewRegion model
+                , viewCardRegion model
+                ]
+            , viewWhatsThisAbout model
             ]
         , viewFooter model
-        , input
-            [ type_ "file"
-            , id "file-input"
-            , class "hidden-file-input"
-            , Html.Attributes.attribute "accept" "image/*"
-            ]
-            []
         ]
 
 
@@ -350,60 +587,89 @@ view model =
 
 viewHeader : Model -> Html Msg
 viewHeader model =
-    div [ class "app-header" ]
+    Html.node "header" [ class "app-header" ]
         [ div [ class "header-content" ]
-            [ h1 [ class "app-title" ] [ text "Gridit Baby! 🐸" ]
-            , p [ class "app-subtitle" ] [ text (translate model.language AppSubtitle) ]
+            [ h1 [ class "app-title" ] [ text "Gridit Baby! ", iconFrog ]
+            , p [ class "app-subtitle" ] [ text (translate model.language I18n.AppSubtitle) ]
             ]
         , viewLanguageSelector model.language
         ]
 
 
--- Left Column with What's This About and Upload Image
-
-
-viewLeftColumn : Model -> Html Msg
-viewLeftColumn model =
-    div [ class "left-column" ]
-        [ viewWhatsThisAbout model
-        , viewUploadCard model
-        ]
-
-
 viewWhatsThisAbout : Model -> Html Msg
 viewWhatsThisAbout model =
-    div [ class "card about-card" ]
-        [ h2 [ class "card-title" ] [ text ("🐸 " ++ translate model.language WhatsGridit) ]
-        , p [ class "card-text" ] [ text (translate model.language WhatsThisDescription) ]
+    div [ class "about-section" ]
+        [ h2 [ class "about-title" ] [ text (translate model.language I18n.WhatsGridit) ]
+        , p [ class "about-text" ] [ text (translate model.language I18n.WhatsThisDescription) ]
+        , p [ class "about-text about-curious" ]
+            [ text (translate model.language I18n.CuriousAboutGrids) ]
+        , p [ class "about-text about-links" ]
+            [ a
+                [ href "https://en.wikipedia.org/wiki/Grid_(graphic_design)"
+                , target "_blank"
+                , rel "noopener noreferrer"
+                ]
+                [ text "Grid in graphic design" ]
+            , text " \u{00B7} "
+            , a
+                [ href "https://en.wikipedia.org/wiki/Grid_method"
+                , target "_blank"
+                , rel "noopener noreferrer"
+                ]
+                [ text "The grid method" ]
+            , text " \u{00B7} "
+            , a
+                [ href "https://en.wikipedia.org/wiki/Scaling_(geometry)"
+                , target "_blank"
+                , rel "noopener noreferrer"
+                ]
+                [ text "Scaling in geometry" ]
+            , text " \u{00B7} "
+            , a
+                [ href "https://gurneyjourney.blogspot.com/2009/11/scaling-up-with-grid.html"
+                , target "_blank"
+                , rel "noopener noreferrer"
+                ]
+                [ text "Gurney Journey: Scaling up" ]
+            , text " \u{00B7} "
+            , a
+                [ href "https://www.gadsbys.co.uk/drawing-scaling-up-an-image-using-a-grid/"
+                , target "_blank"
+                , rel "noopener noreferrer"
+                ]
+                [ text "Gadsbys: Using a grid" ]
+            ]
         ]
 
 
-viewUploadCard : Model -> Html Msg
-viewUploadCard model =
-    div [ class "card" ]
-        [ div [ class "step-indicator" ]
-            [ span [ class "step-badge" ] [ text "1" ]
-            , span [ class "step-title" ] [ text (translate model.language UploadImage) ]
-            ]
-        , button
-            [ class "button button-upload"
-            , onClick PickImage
-            ]
-            [ text (translate model.language ChooseFile ++ " 📷") ]
-        , p [ class "card-text-small" ]
-            [ text (translate model.language MaxFileSize ++ " • " ++ translate model.language SupportedFormats) ]
-        ]
+
+-- PREVIEW REGION (always visible)
 
 
-
--- Center Column with Preview and Grid Controls
-
-
-viewCenterColumn : Model -> Html Msg
-viewCenterColumn model =
-    div [ class "center-column" ]
+viewPreviewRegion : Model -> Html Msg
+viewPreviewRegion model =
+    div [ class "preview-region" ]
         [ viewGridPreview model
-        , viewGridControlsCard model
+        , case model.uploadedImage of
+            Just _ ->
+                div [ class "grid-toggle-container" ]
+                    [ label [ class "light-switch" ]
+                        [ input
+                            [ type_ "checkbox"
+                            , Html.Attributes.checked model.showGrid
+                            , onClick ToggleGridView
+                            , class "light-switch-input sr-only"
+                            , attribute "aria-label" (if model.showGrid then translate model.language I18n.HideGrid else translate model.language I18n.ShowGrid)
+                            ]
+                            []
+                        , span [ class "light-switch-track" ]
+                            [ span [ class "light-switch-thumb" ] [ iconGrid ] ]
+                        , span [ class "light-switch-label" ] [ text (if model.showGrid then translate model.language I18n.HideGrid else translate model.language I18n.ShowGrid) ]
+                        ]
+                    ]
+
+            Nothing ->
+                text ""
         ]
 
 
@@ -411,7 +677,7 @@ viewGridPreview : Model -> Html Msg
 viewGridPreview model =
     div [ class "preview-card" ]
         [ case model.uploadedImage of
-            Just url ->
+            Just _ ->
                 viewGriddedImage model
 
             Nothing ->
@@ -421,6 +687,7 @@ viewGridPreview model =
                         , SvgAttr.width "100%"
                         , SvgAttr.height "100%"
                         , SvgAttr.preserveAspectRatio "xMidYMid slice"
+                        , attribute "aria-hidden" "true"
                         ]
                         [ Svg.defs []
                             [ Svg.pattern
@@ -447,138 +714,226 @@ viewGridPreview model =
                             []
                         ]
                     , div [ class "placeholder-content" ]
-                        [ span [ class "placeholder-icon" ] [ text ":)" ]
-                        , p [ class "placeholder-text" ] [ text (translate model.language UploadPlaceholder) ]
+                        [ span [ class "placeholder-icon" ] [ iconFrogLarge ]
+                        , p [ class "placeholder-text" ] [ text (translate model.language I18n.UploadPlaceholder) ]
                         ]
                     ]
         ]
 
 
-viewGridControlsCard : Model -> Html Msg
-viewGridControlsCard model =
-    div [ class "card" ]
-        [ div [ class "step-indicator" ]
-            [ span [ class "step-badge" ] [ text "2" ]
-            , span [ class "step-title" ] [ text (translate model.language GridSettings) ]
+
+-- CARD REGION (single card, cross-fades between upload and controls)
+
+
+viewCardRegion : Model -> Html Msg
+viewCardRegion model =
+    div [ class "card-region" ]
+        [ case model.uploadedImage of
+            Nothing ->
+                viewUploadFace model
+
+            Just _ ->
+                viewControlsFace model
+        ]
+
+
+viewUploadFace : Model -> Html Msg
+viewUploadFace model =
+    div [ class "card card-face" ]
+        [ button
+            [ class "button button-upload button-upload--prominent"
+            , onClick PickImage
+            , attribute "data-testid" "upload-button"
             ]
+            [ text (translate model.language I18n.ChooseFile), text " ", iconUpload ]
+        , p [ class "card-text-small" ]
+            [ text (translate model.language I18n.MaxFileSize ++ " \u{2022} " ++ translate model.language I18n.SupportedFormats) ]
+        , p [ class "privacy-note" ] [ iconLock, text " ", text (translate model.language I18n.ImagePrivacy) ]
+        ]
+
+
+viewControlsFace : Model -> Html Msg
+viewControlsFace model =
+    div [ class "card card-face" ]
+        [ h3 [ class "card-section-title" ] [ text (translate model.language I18n.GridSettings) ]
         , div [ class "grid-controls-grid" ]
-            [ -- Size control
-              div [ class "control-group" ]
-                [ div [ class "control-header" ]
-                    [ label [ class "control-label" ] [ text (translate model.language GridSize) ]
-                    , span [ class "control-value" ] [ text (String.fromInt model.gridSize ++ "x" ++ String.fromInt model.gridSize) ]
-                    ]
-                , input
-                    [ type_ "range"
-                    , Html.Attributes.min "2"
-                    , Html.Attributes.max "32"
-                    , value (String.fromInt model.gridSize)
-                    , onInput (\s -> GridSizeChanged (Maybe.withDefault 10 (String.toInt s)))
-                    , class "slider"
-                    ]
-                    []
-                ]
+            [ viewSizeControl model
+            , viewOpacityControl model
+            , viewThicknessControl model
+            , viewColorControl model
+            , viewDiagonalsToggle model
+            ]
+        , viewActionButtons model
+        , button
+            [ class "change-image-link"
+            , onClick PickImage
+            ]
+            [ iconUpload, text (" " ++ translate model.language I18n.ChangeImage) ]
+        ]
 
-            -- Opacity control
-            , div [ class "control-group" ]
-                [ div [ class "control-header" ]
-                    [ label [ class "control-label" ] [ text (translate model.language GridOpacity) ]
-                    , span [ class "control-value" ] [ text (String.fromInt (round (model.gridOpacity * 100)) ++ "%") ]
-                    ]
-                , input
-                    [ type_ "range"
-                    , Html.Attributes.min "0.1"
-                    , Html.Attributes.max "1"
-                    , step "0.1"
-                    , value (String.fromFloat model.gridOpacity)
-                    , onInput (\s -> GridOpacityChanged (Maybe.withDefault 0.5 (String.toFloat s)))
-                    , class "slider"
-                    ]
-                    []
-                ]
 
-            -- Thickness control
-            , div [ class "control-group" ]
-                [ div [ class "control-header" ]
-                    [ label [ class "control-label" ] [ text (translate model.language GridThickness) ]
-                    , span [ class "control-value" ] [ text (String.fromInt model.gridThickness ++ "px") ]
-                    ]
-                , input
-                    [ type_ "range"
-                    , Html.Attributes.min "1"
-                    , Html.Attributes.max "5"
-                    , value (String.fromInt model.gridThickness)
-                    , onInput (\s -> GridThicknessChanged (Maybe.withDefault 1 (String.toInt s)))
-                    , class "slider"
-                    ]
-                    []
-                ]
+viewSizeControl : Model -> Html Msg
+viewSizeControl model =
+    div [ class "control-group" ]
+        [ div [ class "control-header" ]
+            [ label [ class "control-label", for "grid-size-input" ] [ text (translate model.language I18n.GridSize) ]
+            , span [ class "control-value" ] [ text (String.fromInt model.gridSize ++ "x" ++ String.fromInt model.gridSize) ]
+            ]
+        , input
+            [ type_ "range"
+            , id "grid-size-input"
+            , Html.Attributes.min "2"
+            , Html.Attributes.max "32"
+            , value (String.fromInt model.gridSize)
+            , onInput (\s -> GridSizeChanged (Maybe.withDefault 10 (String.toInt s)))
+            , class "slider"
+            ]
+            []
+        ]
 
-            -- Color control
-            , div [ class "control-group" ]
-                [ div [ class "control-header" ]
-                    [ label [ class "control-label" ] [ text (translate model.language GridColor) ]
-                    , div
-                        [ class "color-preview"
-                        , style "background-color" model.gridColor
+
+viewOpacityControl : Model -> Html Msg
+viewOpacityControl model =
+    div [ class "control-group" ]
+        [ div [ class "control-header" ]
+            [ label [ class "control-label", for "grid-opacity-input" ] [ text (translate model.language I18n.GridOpacity) ]
+            , span [ class "control-value" ] [ text (String.fromInt (round (model.gridOpacity * 100)) ++ "%") ]
+            ]
+        , input
+            [ type_ "range"
+            , id "grid-opacity-input"
+            , Html.Attributes.min "0.1"
+            , Html.Attributes.max "1"
+            , step "0.1"
+            , value (String.fromFloat model.gridOpacity)
+            , onInput (\s -> GridOpacityChanged (Maybe.withDefault 0.5 (String.toFloat s)))
+            , class "slider"
+            ]
+            []
+        ]
+
+
+viewThicknessControl : Model -> Html Msg
+viewThicknessControl model =
+    div [ class "control-group" ]
+        [ div [ class "control-header" ]
+            [ label [ class "control-label", for "grid-thickness-input" ] [ text (translate model.language I18n.GridThickness) ]
+            , span [ class "control-value" ] [ text (String.fromInt model.gridThickness ++ "px") ]
+            ]
+        , input
+            [ type_ "range"
+            , id "grid-thickness-input"
+            , Html.Attributes.min "1"
+            , Html.Attributes.max "5"
+            , value (String.fromInt model.gridThickness)
+            , onInput (\s -> GridThicknessChanged (Maybe.withDefault 1 (String.toInt s)))
+            , class "slider"
+            ]
+            []
+        ]
+
+
+viewColorControl : Model -> Html Msg
+viewColorControl model =
+    div [ class "control-group" ]
+        [ div [ class "control-header" ]
+            [ label [ class "control-label", for "grid-color-input" ] [ text (translate model.language I18n.GridColor) ]
+            ]
+        , div [ class "color-input-row" ]
+            [ input
+                [ type_ "color"
+                , id "grid-color-input"
+                , value model.gridColor
+                , onInput GridColorChanged
+                , class "color-input"
+                ]
+                []
+            , input
+                [ type_ "text"
+                , value model.gridColor
+                , onInput GridColorChanged
+                , class "hex-text-input"
+                , placeholder "#80ED99"
+                , Html.Attributes.maxlength 7
+                , attribute "aria-label" "Hex color value"
+                ]
+                []
+            ]
+        , div [ class "color-presets" ]
+            (List.map
+                (\color ->
+                    button
+                        [ class
+                            (if String.toUpper model.gridColor == String.toUpper color then
+                                "color-swatch color-swatch--selected"
+                             else
+                                "color-swatch"
+                            )
+                        , style "background-color" color
+                        , onClick (GridColorChanged color)
+                        , attribute "aria-label" ("Color " ++ color)
                         ]
                         []
-                    ]
-                , input
-                    [ type_ "color"
-                    , value model.gridColor
-                    , onInput GridColorChanged
-                    , class "color-input"
-                    ]
-                    []
-                ]
-
-            -- Diagonal toggle
-            , div [ class "toggle-row" ]
-                [ input
-                    [ type_ "checkbox"
-                    , Html.Events.onCheck ToggleDiagonals
-                    , Html.Attributes.checked model.showDiagonals
-                    , class "toggle-checkbox"
-                    , id "diagonals"
-                    ]
-                    []
-                , label [ class "toggle-label", for "diagonals" ] [ text (translate model.language DiagonalGrid) ]
-                ]
-            ]
+                )
+                [ "#000000", "#FFFFFF", "#FF0000", "#0066FF", "#FFD700" ]
+            )
         ]
 
 
--- Right Column with Actions and Scores
+viewDiagonalsToggle : Model -> Html Msg
+viewDiagonalsToggle model =
+    div [ class "toggle-row" ]
+        [ input
+            [ type_ "checkbox"
+            , Html.Events.onCheck ToggleDiagonals
+            , Html.Attributes.checked model.showDiagonals
+            , class "toggle-checkbox"
+            , id "diagonals"
+            ]
+            []
+        , label [ class "toggle-label", for "diagonals" ] [ text (translate model.language I18n.AddDiagonalLines) ]
+        ]
 
 
-viewRightColumn : Model -> Html Msg
-viewRightColumn model =
-    div [ class "right-column" ]
-        [ div [ class "card download-card" ]
-            [ div [ class "step-indicator" ]
-                [ span [ class "step-badge" ] [ text "3" ]
-                , span [ class "step-title" ] [ text (translate model.language DownloadGriddedImage) ]
-                ]
-            , button
+viewActionButtons : Model -> Html Msg
+viewActionButtons model =
+    div [ class "action-buttons-wrapper" ]
+        [ div [ class "action-buttons" ]
+            [ button
                 [ class "button button-primary button-download"
                 , onClick DownloadClicked
-                , disabled (model.uploadedImage == Nothing)
+                , disabled (model.uploadedImage == Nothing || model.isProcessing)
                 ]
-                [ span [ class "button-icon" ] [ text "⬇️" ]
-                , text (translate model.language DownloadGriddedImage)
+                [ span [ class "button-icon" ] [ if model.downloadSuccess then iconCheck else iconDownload ]
+                , text
+                    (if model.downloadSuccess then
+                        translate model.language I18n.Downloaded
+                     else if model.isProcessing then
+                        "..."
+                     else
+                        translate model.language I18n.DownloadGriddedImage
+                    )
                 ]
+            , if model.canShare then
+                button
+                    [ class "button button-share"
+                    , onClick ShareClicked
+                    , disabled (model.uploadedImage == Nothing || model.isProcessing)
+                    ]
+                    [ span [ class "button-icon" ] [ iconShare ]
+                    ]
+              else
+                text ""
             ]
         , div [ class "nice-section" ]
             [ button
                 [ class "button button-nice"
                 , onClick NiceButtonClicked
+                , attribute "aria-label" (translate model.language I18n.Nice)
                 ]
-                [ span [ class "button-icon" ] [ text "♡" ]
-                , text (translate model.language Nice)
-                ]
+                [ iconHeart ]
             , if model.niceCounter > 0 then
-                span [ class "nice-counter" ] [ text ("×" ++ String.fromInt model.niceCounter) ]
+                span [ class "nice-counter" ] [ text ("\u{00D7}" ++ String.fromInt model.niceCounter) ]
               else
                 text ""
             ]
@@ -587,11 +942,11 @@ viewRightColumn model =
 
 viewFooter : Model -> Html Msg
 viewFooter model =
-    div [ class "app-footer" ]
+    Html.node "footer" [ class "app-footer" ]
         [ div [ class "footer-content" ]
-            [ div [ class "tooltip-container" ]
-                [ span [ class "footer-text-main" ] [ text (translate model.language MadeInArgentina ++ " 💚 (╹◡╹๑)") ]
-                , span [ class "tooltip-content" ] [ text (translate model.language FooterTooltip) ]
+            [ div [ class "tooltip-container", attribute "aria-describedby" "footer-tooltip" ]
+                [ span [ class "footer-text-main" ] [ text (translate model.language I18n.MadeInArgentina ++ " "), span [ style "color" "#4ade80" ] [ iconGreenHeart ], text " (\u{2579}\u{25E1}\u{2579}\u{0E51})" ]
+                , span [ class "tooltip-content", Html.Attributes.tabindex 0, id "footer-tooltip", attribute "role" "tooltip" ] [ text (translate model.language I18n.FooterTooltip) ]
                 ]
             ]
         ]
@@ -601,204 +956,52 @@ viewFooter model =
 -- LANGUAGE SELECTOR HELPERS
 
 
--- | Convert a Language to a string identifier for the dropdown
-
-
-languageToString : Language -> String
-languageToString language =
-    case language of
-        English ->
-            "english"
-
-        Spanish ->
-            "spanish"
-
-        Latin ->
-            "latin"
-
-        Italian ->
-            "italian"
-
-        Portuguese ->
-            "portuguese"
-
-        French ->
-            "french"
-
-        Asturiano ->
-            "asturiano"
-
-        Gaelic ->
-            "gaelic"
-
-        Euskara ->
-            "euskara"
-
-        Japanese ->
-            "japanese"
-
-        Russian ->
-            "russian"
-
-        Tuvan ->
-            "tuvan"
-
-        Amharic ->
-            "amharic"
-
-        Hebrew ->
-            "hebrew"
-
-
-
--- | Get flag emoji for a language
-
-
-languageFlag : Language -> String
-languageFlag language =
-    case language of
-        English ->
-            "🇬🇧🇺🇸 "
-
-        Spanish ->
-            "🇪🇸🇦🇷 "
-
-        Latin ->
-            "🇮🇹 "
-
-        Italian ->
-            "🇮🇹 "
-
-        Portuguese ->
-            "🇧🇷🇵🇹 "
-
-        French ->
-            "🇫🇷 "
-
-        Asturiano ->
-            "🇪🇸 "
-
-        Gaelic ->
-            "🇮🇪🏴\u{E0067}\u{E0062}\u{E0073}\u{E0063}\u{E0074}\u{E007F} "
-
-        Euskara ->
-            "🇪🇸 "
-
-        Japanese ->
-            "🇯🇵 "
-
-        Russian ->
-            "🇷🇺 "
-
-        Tuvan ->
-            "🇷🇺 "
-
-        Amharic ->
-            "🇪🇹 "
-
-        Hebrew ->
-            "🇮🇱 "
-
-
-
--- | Parse a language string from the dropdown to a Language type
+allLanguages : List Language
+allLanguages =
+    [ English, Spanish, Latin, Italian, Portuguese, French
+    , Asturiano, Gaelic, Euskara, Japanese, Russian, Tuvan, Amharic, Hebrew
+    ]
 
 
 parseLanguage : String -> Language
-parseLanguage value =
-    case value of
-        "english" ->
-            English
-
-        "spanish" ->
-            Spanish
-
-        "latin" ->
-            Latin
-
-        "italian" ->
-            Italian
-
-        "portuguese" ->
-            Portuguese
-
-        "french" ->
-            French
-
-        "asturiano" ->
-            Asturiano
-
-        "gaelic" ->
-            Gaelic
-
-        "euskara" ->
-            Euskara
-
-        "japanese" ->
-            Japanese
-
-        "russian" ->
-            Russian
-
-        "tuvan" ->
-            Tuvan
-
-        "amharic" ->
-            Amharic
-
-        "hebrew" ->
-            Hebrew
-
-        _ ->
-            English
+parseLanguage langValue =
+    allLanguages
+        |> List.filter (\lang -> (languageMeta lang).id == langValue)
+        |> List.head
+        |> Maybe.withDefault English
 
 
 viewLanguageSelector : Language -> Html Msg
 viewLanguageSelector currentLanguage =
     let
-        -- Compact option shows flag + 2-letter code
-        languageOption language displayName code =
+        languageOption language =
+            let
+                meta = languageMeta language
+            in
             option
-                [ value (languageToString language)
+                [ value meta.id
                 , selected (currentLanguage == language)
-                , Html.Attributes.attribute "aria-label" displayName
+                , attribute "aria-label" meta.displayName
                 ]
-                [ text (languageFlag language ++ String.toUpper code) ]
+                [ text (meta.displayName ++ " (" ++ String.toUpper meta.code ++ ")") ]
 
-        handleLanguageChange value =
-            LanguageChanged (parseLanguage value)
-
-        _ =
-            debug ("lang:" ++ languageToCode currentLanguage)
+        handleLanguageChange langValue =
+            LanguageChanged (parseLanguage langValue)
     in
     div [ class "language-selector compact" ]
-        [ span [ class "globe-icon" ] [ text "🌐" ]
+        [ span [ class "globe-icon" ] [ iconGlobe ]
         , label
             [ for "language-select"
             , class "sr-only"
             ]
-            [ text (translate currentLanguage LanguageLabel) ]
+            [ text (translate currentLanguage I18n.LanguageLabel) ]
         , select
             [ id "language-select"
             , on "change" (Json.Decode.map handleLanguageChange (Json.Decode.at [ "target", "value" ] Json.Decode.string))
             , class "language-dropdown compact"
-            , Html.Attributes.attribute "aria-label" (translate currentLanguage LanguageLabel)
+            , attribute "aria-label" (translate currentLanguage I18n.LanguageLabel)
             ]
-            [ languageOption English "English" "en"
-            , languageOption Spanish "Español" "es"
-            , languageOption Latin "Latin" "la"
-            , languageOption Italian "Italiano" "it"
-            , languageOption Portuguese "Português" "pt"
-            , languageOption French "Français" "fr"
-            , languageOption Asturiano "Asturianu" "ast"
-            , languageOption Gaelic "Gàidhlig" "gd"
-            , languageOption Euskara "Euskara" "eu"
-            , languageOption Japanese "日本語" "ja"
-            , languageOption Russian "Русский" "ru"
-            , languageOption Tuvan "Тыва дыл" "tyv"
-            , languageOption Amharic "አማርኛ" "am"
-            , languageOption Hebrew "עברית" "he"
-            ]
+            (List.map languageOption allLanguages)
         ]
 
 
@@ -815,15 +1018,20 @@ viewGriddedImage model =
                 [ img
                     [ src url
                     , class "gridded-base-image"
+                    , Html.Attributes.alt "Uploaded image with grid overlay"
                     ]
                     []
-                , Svg.svg
-                    [ SvgAttr.width (String.fromInt width)
-                    , SvgAttr.height (String.fromInt height)
-                    , SvgAttr.viewBox ("0 0 " ++ String.fromInt width ++ " " ++ String.fromInt height)
-                    , SvgAttr.class "grid-overlay"
-                    ]
-                    gridLines
+                , if model.showGrid then
+                    Svg.svg
+                        [ SvgAttr.width (String.fromInt width)
+                        , SvgAttr.height (String.fromInt height)
+                        , SvgAttr.viewBox ("0 0 " ++ String.fromInt width ++ " " ++ String.fromInt height)
+                        , SvgAttr.class "grid-overlay"
+                        , attribute "aria-hidden" "true"
+                        ]
+                        gridLines
+                  else
+                    text ""
                 ]
 
         ( Just url, _, _ ) ->
@@ -832,44 +1040,15 @@ viewGriddedImage model =
                 [ img
                     [ src url
                     , class "gridded-base-image loading"
+                    , Html.Attributes.alt "Uploaded image with grid overlay"
                     , on "load" (decodeImageSize ImageSizeLoaded)
                     ]
                     []
                 ]
 
         _ ->
-            text (translate model.language NoImageYet)
+            text (translate model.language I18n.NoImageYet)
 
-
-dataUrlToBytes : String -> Maybe Bytes
-dataUrlToBytes dataUrl =
-    -- Extract the base64 data from the data URL
-    case String.split "," dataUrl of
-        -- Data URLs have the format: data:[<mediatype>][;base64],<data>
-        [ _, base64Data ] ->
-            case Base64.decode base64Data of
-                Ok decodedString ->
-                    -- Convert the decoded string to bytes
-                    let
-                        -- Get string length
-                        length =
-                            String.length decodedString
-
-                        -- Convert each character to its byte value
-                        bytes =
-                            String.toList decodedString
-                                |> List.map (\c -> Char.toCode c)
-                                |> List.map BE.unsignedInt8
-                                |> BE.sequence
-                                |> BE.encode
-                    in
-                    Just bytes
-
-                Err _ ->
-                    Nothing
-
-        _ ->
-            Nothing
 
 
 decodeImageSize : (Int -> Int -> Msg) -> Json.Decode.Decoder Msg
@@ -879,6 +1058,7 @@ decodeImageSize tagger =
         (Json.Decode.at [ "target", "naturalHeight" ] Json.Decode.int)
 
 
+main : Program () Model Msg
 main =
     Browser.element
         { init = init

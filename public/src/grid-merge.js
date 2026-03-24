@@ -1,71 +1,105 @@
-// DOM Element Cache - cache frequently accessed elements
-const DOMCache = {
+var DOMCache = {
   _cache: {},
-  get(id) {
+  get: function(id) {
     if (!this._cache[id]) {
       this._cache[id] = document.getElementById(id);
     }
     return this._cache[id];
-  },
-  // Commonly used elements as properties
-  get progressContainer() { return this.get('progress-container'); },
-  get progressMessage() { return this.get('progress-message'); },
-  get progressBar() { return this.get('progress-bar'); },
-  get errorContainer() { return this.get('error-container'); },
-  get errorTitle() { return this.get('error-title'); },
-  get errorMessage() { return this.get('error-message'); },
-  get elmApp() { return this.get('elm-app'); }
+  }
 };
 
-// Progress indicator functions
+Object.defineProperty(DOMCache, 'progressContainer', {
+  get: function() { return this.get('progress-container'); }
+});
+Object.defineProperty(DOMCache, 'progressMessage', {
+  get: function() { return this.get('progress-message'); }
+});
+Object.defineProperty(DOMCache, 'progressBar', {
+  get: function() { return this.get('progress-bar'); }
+});
+Object.defineProperty(DOMCache, 'errorContainer', {
+  get: function() { return this.get('error-container'); }
+});
+Object.defineProperty(DOMCache, 'errorTitle', {
+  get: function() { return this.get('error-title'); }
+});
+Object.defineProperty(DOMCache, 'errorMessage', {
+  get: function() { return this.get('error-message'); }
+});
+Object.defineProperty(DOMCache, 'elmApp', {
+  get: function() { return this.get('elm-app'); }
+});
+
+var PROGRESS_MESSAGES = [
+  { threshold: 10, message: "Loading image..." },
+  { threshold: 30, message: "Processing image..." },
+  { threshold: 50, message: "Drawing grid overlay..." },
+  { threshold: 75, message: "Rendering final image..." },
+  { threshold: 90, message: "Finalizing..." },
+  { threshold: 100, message: "Done!" }
+];
+
+// ~15MB image as base64
+var MAX_BASE64_URL_LENGTH = 20000000;
+
+function getProgressMessage(percent) {
+  for (var i = PROGRESS_MESSAGES.length - 1; i >= 0; i--) {
+    if (percent >= PROGRESS_MESSAGES[i].threshold) {
+      return PROGRESS_MESSAGES[i].message;
+    }
+  }
+  return "Loading image...";
+}
+
 function showProgress(message, percent) {
-  DOMCache.progressMessage.textContent = message || 'Processing image...';
-  DOMCache.progressBar.style.width = (percent || 0) + '%';
+  var pct = percent || 0;
+  DOMCache.progressMessage.textContent = message || getProgressMessage(pct);
+  DOMCache.progressBar.style.width = pct + '%';
   DOMCache.progressContainer.style.display = 'block';
 }
 
 function updateProgress(message, percent) {
+  if (percent !== undefined) {
+    DOMCache.progressBar.style.width = percent + '%';
+    if (!message) {
+      DOMCache.progressMessage.textContent = getProgressMessage(percent);
+    }
+  }
   if (message) DOMCache.progressMessage.textContent = message;
-  if (percent !== undefined) DOMCache.progressBar.style.width = percent + '%';
 }
 
 function hideProgress() {
   DOMCache.progressContainer.style.display = 'none';
 }
 
-// Error handling function
 function showError(title, message) {
-  console.error(title + ": " + message);
-
   DOMCache.errorTitle.textContent = title;
   DOMCache.errorMessage.textContent = message;
   DOMCache.errorContainer.style.display = 'flex';
-
-  // Auto-hide after 5 seconds
-  setTimeout(() => {
+  setTimeout(function() {
     DOMCache.errorContainer.style.display = 'none';
   }, 5000);
 }
 
-// Unified error handler - shows error and hides progress
 function handleError(title, message) {
   showError(title, message);
   hideProgress();
+  resetElmProcessing();
 }
 
-// Send-to-Elm helper function
-/**
- * Sends image data URL to Elm application via receivePng port
- * @param {Object} app - Elm application instance
- * @param {string} dataUrl - The image data URL to send
- * @returns {boolean} - Whether the send was successful
- */
+var _elmApp = null;
+
+function resetElmProcessing() {
+  if (_elmApp && _elmApp.ports && _elmApp.ports.resetProcessing) {
+    _elmApp.ports.resetProcessing.send(null);
+  }
+}
+
 function sendToElm(app, dataUrl) {
-  updateProgress("Sending to Elm...", 100);
+  updateProgress("Done!", 100);
 
   if (app.ports.receivePng) {
     app.ports.receivePng.send(dataUrl);
-    // Hide progress after a short delay to ensure the user sees 100%
     setTimeout(hideProgress, 500);
     return true;
   } else {
@@ -74,291 +108,309 @@ function sendToElm(app, dataUrl) {
   }
 }
 
-// Grid drawing helper functions
-/**
- * Draws a series of lines on a canvas context using a generator function
- * @param {CanvasRenderingContext2D} ctx - Canvas context
- * @param {Function} lineGenerator - Function(i) returning {x1, y1, x2, y2}
- * @param {number} count - Number of lines to draw
- */
+function dataUrlToBlob(dataUrl) {
+  return fetch(dataUrl).then(function(res) { return res.blob(); });
+}
+
 function drawLines(ctx, lineGenerator, count) {
-  for (let i = 0; i <= count; i++) {
-    const { x1, y1, x2, y2 } = lineGenerator(i);
+  for (var i = 0; i <= count; i++) {
+    var coords = lineGenerator(i);
     ctx.beginPath();
-    ctx.moveTo(x1, y1);
-    ctx.lineTo(x2, y2);
+    ctx.moveTo(coords.x1, coords.y1);
+    ctx.lineTo(coords.x2, coords.y2);
     ctx.stroke();
   }
 }
 
-/**
- * Draws a complete grid with optional diagonals on a canvas context
- * @param {CanvasRenderingContext2D} ctx - Canvas context
- * @param {Object} params - Grid parameters
- */
-function drawGrid(ctx, { width, height, gridSize, color, thickness, opacity, showDiagonals }) {
-  const cellW = width / gridSize;
-  const cellH = height / gridSize;
+function drawGrid(ctx, params) {
+  var width = params.width;
+  var height = params.height;
+  var gridSize = params.gridSize;
+  var cellW = width / gridSize;
+  var cellH = height / gridSize;
 
-  // Set grid drawing properties
-  ctx.strokeStyle = color;
-  ctx.lineWidth = thickness;
-  ctx.globalAlpha = opacity;
+  ctx.strokeStyle = params.color;
+  ctx.lineWidth = params.thickness;
+  ctx.globalAlpha = params.opacity;
 
-  // Draw vertical lines
-  drawLines(ctx, i => ({ x1: i * cellW, y1: 0, x2: i * cellW, y2: height }), gridSize);
+  drawLines(ctx, function(i) { return { x1: i * cellW, y1: 0, x2: i * cellW, y2: height }; }, gridSize);
+  drawLines(ctx, function(i) { return { x1: 0, y1: i * cellH, x2: width, y2: i * cellH }; }, gridSize);
 
-  // Draw horizontal lines
-  drawLines(ctx, i => ({ x1: 0, y1: i * cellH, x2: width, y2: i * cellH }), gridSize);
-
-  // Draw diagonals if requested
-  if (showDiagonals) {
+  if (params.showDiagonals) {
     ctx.save();
-
-    // Diagonal lines (top-left to bottom-right direction)
-    drawLines(ctx, i => ({ x1: 0, y1: i * cellH, x2: i * cellW, y2: 0 }), gridSize * 2);
-
-    // Diagonal lines (top-right to bottom-left direction)
-    drawLines(ctx, i => ({ x1: width, y1: i * cellH, x2: width - i * cellW, y2: 0 }), gridSize * 2);
-
+    drawLines(ctx, function(i) { return { x1: 0, y1: i * cellH, x2: i * cellW, y2: 0 }; }, gridSize * 2);
+    drawLines(ctx, function(i) { return { x1: width, y1: i * cellH, x2: width - i * cellW, y2: 0 }; }, gridSize * 2);
     ctx.restore();
   }
 }
 
-// Enhanced functionality for better mobile experience
-function enhanceMobileExperience() {
-  // Add touch-friendly interactions to existing Elm UI
-  const panels = document.querySelectorAll('.panel');
-  panels.forEach(panel => {
-    panel.style.minHeight = '44px'; // Ensure touch targets are large enough
-  });
-  
-  // Improve form controls for mobile
-  const inputs = document.querySelectorAll('input[type="range"]');
-  inputs.forEach(input => {
-    input.style.minHeight = '44px';
-    input.addEventListener('touchstart', function() {
-      this.style.transform = 'scale(1.1)';
+
+function setupLanguagePorts(app) {
+  if (app.ports.setHtmlLang) {
+    app.ports.setHtmlLang.subscribe(function(langCode) {
+      document.documentElement.lang = langCode;
     });
-    input.addEventListener('touchend', function() {
-      this.style.transform = 'scale(1)';
+  }
+
+  if (app.ports.setHtmlDir) {
+    app.ports.setHtmlDir.subscribe(function(dir) {
+      document.documentElement.dir = dir;
+    });
+  }
+
+  if (app.ports.getBrowserLanguage) {
+    var browserLang = navigator.language || navigator.userLanguage || 'en';
+    app.ports.getBrowserLanguage.send(browserLang);
+  }
+}
+
+
+function setupDownloadPort(app) {
+  if (!app.ports.downloadImage) return;
+
+  app.ports.downloadImage.subscribe(function(params) {
+    showProgress(null, 50);
+
+    if (!params.dataUrl.startsWith('data:image/png;base64,')) {
+      handleError("Format Error", "Invalid data URL format. Expected PNG base64 data URL.");
+      return;
+    }
+
+    updateProgress(null, 70);
+
+    dataUrlToBlob(params.dataUrl).then(function(blob) {
+      updateProgress(null, 90);
+      var blobUrl = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = blobUrl;
+      a.download = params.fileName || 'gridded-image.png';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function() {
+        URL.revokeObjectURL(blobUrl);
+        hideProgress();
+      }, 100);
+    }).catch(function() {
+      handleError("Download Error", "Failed to create image data for download. Please try again or use a different image.");
     });
   });
-  
-  // Improve button touch targets
-  const buttons = document.querySelectorAll('button');
-  buttons.forEach(button => {
-    if (button.offsetHeight < 44) {
-      button.style.minHeight = '44px';
-      button.style.padding = '12px 16px';
+}
+
+
+function setupPngRequestPort(app) {
+  if (!app.ports.requestPng) return;
+
+  app.ports.requestPng.subscribe(function(params) {
+    if (params.url.length > MAX_BASE64_URL_LENGTH) {
+      handleError("File Too Large", "This image is too large to process. Please use an image under 15MB.");
+      return;
+    }
+
+    showProgress(null, 10);
+
+    var processingTimeout = setTimeout(function() {
+      handleError("Timeout", "Image processing took too long. Please try a smaller image.");
+    }, 30000);
+
+    var img = new Image();
+    img.crossOrigin = "anonymous";
+
+    img.onload = function() {
+      updateProgress(null, 30);
+
+      var c = document.createElement("canvas");
+      var canvasWidth = img.naturalWidth || params.width;
+      var canvasHeight = img.naturalHeight || params.height;
+      c.width = canvasWidth;
+      c.height = canvasHeight;
+      var ctx = c.getContext("2d");
+
+      ctx.fillStyle = "white";
+      ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+      try {
+        ctx.drawImage(img, 0, 0, canvasWidth, canvasHeight);
+        updateProgress(null, 50);
+      } catch (e) {
+        handleError("Canvas Error", "Failed to process the image. This might be due to CORS restrictions or an invalid image format.");
+        return;
+      }
+
+      drawGrid(ctx, {
+        width: canvasWidth,
+        height: canvasHeight,
+        gridSize: params.grid,
+        color: params.color,
+        thickness: params.thickness,
+        opacity: params.opacity,
+        showDiagonals: params.showDiagonals
+      });
+
+      updateProgress(null, 75);
+
+      c.toBlob(function(blob) {
+        if (!blob) {
+          clearTimeout(processingTimeout);
+          handleError("Download Error", "Failed to create image data for download. Please try again or use a different image.");
+          return;
+        }
+
+        updateProgress(null, 90);
+
+        var reader = new FileReader();
+        reader.onloadend = function() {
+          clearTimeout(processingTimeout);
+          sendToElm(app, reader.result);
+        };
+        reader.readAsDataURL(blob);
+      }, 'image/png', 1.0);
+    };
+
+    img.onerror = function() {
+      clearTimeout(processingTimeout);
+      handleError("Image Load Error", "Failed to load the image. Please check that the image URL is valid and accessible.");
+    };
+
+    img.src = params.url;
+  });
+}
+
+
+function setupSharePort(app) {
+  if (app.ports.receiveShareSupport) {
+    var canShare = typeof navigator.share === 'function';
+    app.ports.receiveShareSupport.send(canShare);
+  }
+
+  if (!app.ports.shareImageData) return;
+
+  app.ports.shareImageData.subscribe(function(params) {
+    dataUrlToBlob(params.dataUrl).then(function(blob) {
+      var file = new File([blob], params.fileName || 'gridded-image.png', { type: 'image/png' });
+      return navigator.share({ files: [file] });
+    }).catch(function() {
+      // User cancelled or share failed
+    });
+  });
+}
+
+
+function setupSettingsPersistence(app) {
+  var SETTINGS_KEY = 'gridit-settings';
+
+  if (app.ports.saveSettings) {
+    app.ports.saveSettings.subscribe(function(settings) {
+      try {
+        localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+      } catch (e) {
+        console.warn('Settings could not be saved (private browsing?)');
+      }
+    });
+  }
+
+  try {
+    var saved = localStorage.getItem(SETTINGS_KEY);
+    if (saved && app.ports.loadSettings) {
+      var settings = JSON.parse(saved);
+      if (settings.gridSize && settings.gridColor && settings.gridThickness !== undefined && settings.gridOpacity !== undefined && settings.showDiagonals !== undefined) {
+        app.ports.loadSettings.send(settings);
+      }
+    }
+  } catch (e) {
+    console.warn('Settings could not be loaded (private browsing?)');
+  }
+}
+
+
+function setupConfetti() {
+  var confettiColors = [
+    'hsl(22, 68%, 58%)',
+    'hsl(16, 62%, 50%)',
+    'hsl(30, 75%, 65%)',
+    'hsl(10, 58%, 62%)',
+    'hsl(38, 80%, 72%)',
+    'hsl(25, 50%, 75%)'
+  ];
+
+  function createConfetti() {
+    var container = document.createElement('div');
+    container.className = 'confetti-container';
+    document.body.appendChild(container);
+
+    for (var i = 0; i < 35; i++) {
+      var roll = Math.random();
+      var confetti = document.createElement('div');
+      confetti.className = 'confetti-piece';
+
+      if (roll < 0.25) {
+        var size = Math.random() * 10 + 10;
+        confetti.innerHTML = '\u2665';
+        confetti.style.cssText =
+          'left: ' + (Math.random() * 100) + '%;' +
+          'font-size: ' + size + 'px;' +
+          'color: ' + confettiColors[Math.floor(Math.random() * confettiColors.length)] + ';' +
+          'line-height: 1;' +
+          'animation-delay: ' + (Math.random() * 0.5) + 's;' +
+          'animation-duration: ' + (Math.random() * 1 + 1.5) + 's;';
+      } else {
+        var w = Math.random() * 10 + 6;
+        var h = roll < 0.65 ? w : w * (0.5 + Math.random() * 0.4);
+        confetti.style.cssText =
+          'left: ' + (Math.random() * 100) + '%;' +
+          'width: ' + w + 'px;' +
+          'height: ' + h + 'px;' +
+          'background: ' + confettiColors[Math.floor(Math.random() * confettiColors.length)] + ';' +
+          'border-radius: 50%;' +
+          'animation-delay: ' + (Math.random() * 0.5) + 's;' +
+          'animation-duration: ' + (Math.random() * 1 + 1.5) + 's;';
+      }
+      container.appendChild(confetti);
+    }
+
+    setTimeout(function() { container.remove(); }, 2500);
+  }
+
+  document.addEventListener('click', function(e) {
+    if (e.target.closest('.button-nice')) {
+      createConfetti();
     }
   });
 }
 
-// Initialize the Elm application and set up port handlers
+
 function initializeElmApp() {
-  // Initialize the Elm application
   var app = Elm.Main.init({
     node: document.getElementById('elm-app')
   });
-  
-  if (app.ports.setHtmlLang) {
-    app.ports.setHtmlLang.subscribe(function(langCode) {
-      console.log("Changing language to: " + langCode);
-      document.documentElement.lang = langCode;
-    });
-  }
-  
-  // Set up the debug port
-  if (app.ports.debug) {
-    app.ports.debug.subscribe(function(message) {
-      console.log(message);
-    });
-  }
-  
-  // Add downloadImage port handler
-  if (app.ports.downloadImage) {
-    app.ports.downloadImage.subscribe(function(params) {
-      const { dataUrl } = params;
-      // Show progress indicator for download process
-      showProgress("Preparing download...", 50);
-      
-      // Check if the data URL starts with the correct prefix
-      if (!dataUrl.startsWith('data:image/png;base64,')) {
-        handleError("Format Error", "Invalid data URL format. Expected PNG base64 data URL.");
-        return;
-      }
-      
-      // Create a temporary image to verify the data URL is valid
-      const tempImg = new Image();
-      
-      // Update progress indicator
-      updateProgress("Validating image data...", 70);
-      
-      tempImg.onload = function() {
-        updateProgress("Processing image...", 80);
-        
-        // Create a canvas to draw the image
-        const canvas = document.createElement('canvas');
-        canvas.width = tempImg.width;
-        canvas.height = tempImg.height;
-        const ctx = canvas.getContext('2d');
-        
-        // Draw the image to canvas
-        ctx.drawImage(tempImg, 0, 0);
-        
-        // Use toBlob instead of toDataURL for better handling
-        canvas.toBlob(function(blob) {
-          if (!blob) {
-            handleError("Download Error", "Failed to create image data for download. Please try again or use a different image.");
-            return;
-          }
-          
-          // Create object URL from blob
-          const blobUrl = URL.createObjectURL(blob);
-          
-          // Create download link
-          const a = document.createElement('a');
-          a.href = blobUrl;
-          a.download = 'gridded-image.png';
-          document.body.appendChild(a);
-          
-          // Trigger download
-          a.click();
-          
-          // Clean up
-          document.body.removeChild(a);
-          setTimeout(() => {
-            URL.revokeObjectURL(blobUrl);
-            hideProgress();
-          }, 100);
-        }, 'image/png');
-      };
-      
-      tempImg.onerror = function() {
-        handleError("Image Error", "Failed to load the processed image. The image data may be corrupted.");
-      };
-      
-      tempImg.src = dataUrl;
-    });
-  }
-  
-  // Handle the requestPng port for grid overlay
-  if (app.ports.requestPng) {
-    app.ports.requestPng.subscribe(function(params) {
-      console.log("JS: Received requestPng with params:", params);
-      
-      const { url, width, height, grid, color, thickness, opacity, showDiagonals } = params;
-      
-      // Show progress indicator
-      showProgress("Loading image...", 10);
-      
-      const img = new Image();
-      img.crossOrigin = "anonymous"; // Enable CORS
-      
-      // Handle image load event
-      img.onload = function() {
-        // Update progress
-        updateProgress("Creating canvas...", 30);
-        
-        // Create canvas with the image's natural dimensions
-        const c = document.createElement("canvas");
-        
-        // Use natural dimensions if available, otherwise use provided dimensions
-        const canvasWidth = img.naturalWidth || width;
-        const canvasHeight = img.naturalHeight || height;
-        
-        c.width = canvasWidth;
-        c.height = canvasHeight;
-        
-        const ctx = c.getContext("2d");
-        
-        // Clear canvas with white background
-        ctx.fillStyle = "white";
-        ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-        
-        // Draw image to canvas
-        try {
-          ctx.drawImage(img, 0, 0, canvasWidth, canvasHeight);
-          updateProgress("Drawing grid...", 50);
-        } catch (e) {
-          handleError("Canvas Error", "Failed to process the image. This might be due to CORS restrictions or an invalid image format.");
-          return;
-        }
-        
-        // Draw grid using helper function
-        drawGrid(ctx, {
-          width: canvasWidth,
-          height: canvasHeight,
-          gridSize: grid,
-          color: color,
-          thickness: thickness,
-          opacity: opacity,
-          showDiagonals: showDiagonals
-        });
-        
-        updateProgress("Preparing download...", 75);
-        
-        // Use toBlob for direct download
-        c.toBlob(function(blob) {
-          if (!blob) {
-            handleError("Download Error", "Failed to create image data for download. Please try again or use a different image.");
-            // Fallback to data URL
-            generateDataUrl();
-            return;
-          }
-          
-          updateProgress("Generating data URL...", 90);
-          
-          // Send the data URL back to Elm for the download process
-          const reader = new FileReader();
-          reader.onloadend = function() {
-            sendToElm(app, reader.result);
-          };
-          reader.readAsDataURL(blob);
-          
-        }, 'image/png', 1.0);
-        
-        // Fallback function to generate data URL if blob creation fails
-        function generateDataUrl() {
-          try {
-            updateProgress("Generating fallback data URL...", 80);
-            const dataUrl = c.toDataURL("image/png");
-            sendToElm(app, dataUrl);
-          } catch (e) {
-            handleError("Processing Error", "Failed to create image data. The image might be too large or corrupted.");
-          }
-        }
-      };
-      
-      // Handle image load errors
-      img.onerror = function(err) {
-        console.error("JS: Error loading image:", err);
-        handleError("Image Load Error", "Failed to load the image. Please check that the image URL is valid and accessible.");
-      };
-      
-      console.log("JS: Setting image source");
-      img.src = url;
-    });
-  }
-  
-  // Enhance mobile experience after Elm app loads
-  setTimeout(enhanceMobileExperience, 1000);
-  
+
+  _elmApp = app;
+
+  setupLanguagePorts(app);
+  setupDownloadPort(app);
+  setupPngRequestPort(app);
+  setupSharePort(app);
+  setupSettingsPersistence(app);
+
   return app;
 }
 
-// Wait for DOM content to be loaded before initializing
 document.addEventListener('DOMContentLoaded', function() {
-  // Create cache-busting URL for elm.js
+  var closeBtn = document.getElementById('close-error-button');
+  if (closeBtn) {
+    closeBtn.addEventListener('click', function() {
+      DOMCache.errorContainer.style.display = 'none';
+    });
+  }
+
+  setupConfetti();
+
   var elmScriptUrl = "elm.js?v=" + new Date().getTime();
   var elmScript = document.createElement('script');
   elmScript.src = elmScriptUrl;
   document.head.appendChild(elmScript);
-  
-  // Initialize Elm only after the script has loaded
+
   elmScript.onload = function() {
-    console.log("Elm.js loaded successfully with cache-busting");
     initializeElmApp();
   };
 });
