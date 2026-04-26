@@ -1,34 +1,4 @@
-var DOMCache = {
-  _cache: {},
-  get: function(id) {
-    if (!this._cache[id]) {
-      this._cache[id] = document.getElementById(id);
-    }
-    return this._cache[id];
-  }
-};
-
-Object.defineProperty(DOMCache, 'progressContainer', {
-  get: function() { return this.get('progress-container'); }
-});
-Object.defineProperty(DOMCache, 'progressMessage', {
-  get: function() { return this.get('progress-message'); }
-});
-Object.defineProperty(DOMCache, 'progressBar', {
-  get: function() { return this.get('progress-bar'); }
-});
-Object.defineProperty(DOMCache, 'errorContainer', {
-  get: function() { return this.get('error-container'); }
-});
-Object.defineProperty(DOMCache, 'errorTitle', {
-  get: function() { return this.get('error-title'); }
-});
-Object.defineProperty(DOMCache, 'errorMessage', {
-  get: function() { return this.get('error-message'); }
-});
-Object.defineProperty(DOMCache, 'elmApp', {
-  get: function() { return this.get('elm-app'); }
-});
+function el(id) { return document.getElementById(id); }
 
 var PROGRESS_MESSAGES = [
   { threshold: 10, message: "Loading image..." },
@@ -41,6 +11,13 @@ var PROGRESS_MESSAGES = [
 
 // ~15MB image as base64
 var MAX_BASE64_URL_LENGTH = 20000000;
+var PROCESSING_TIMEOUT_MS = 30000;
+var ERROR_DISPLAY_MS = 5000;
+var DOWNLOAD_RESET_MS = 500;
+var ANCHOR_CLEANUP_MS = 200;
+var WINDOW_BLOB_TTL_MS = 60000;
+var CONFETTI_COUNT = 35;
+var CONFETTI_TTL_MS = 2500;
 
 function getProgressMessage(percent) {
   for (var i = PROGRESS_MESSAGES.length - 1; i >= 0; i--) {
@@ -53,32 +30,32 @@ function getProgressMessage(percent) {
 
 function showProgress(message, percent) {
   var pct = percent || 0;
-  DOMCache.progressMessage.textContent = message || getProgressMessage(pct);
-  DOMCache.progressBar.style.width = pct + '%';
-  DOMCache.progressContainer.style.display = 'block';
+  el('progress-message').textContent = message || getProgressMessage(pct);
+  el('progress-bar').style.width = pct + '%';
+  el('progress-container').style.display = 'block';
 }
 
 function updateProgress(message, percent) {
   if (percent !== undefined) {
-    DOMCache.progressBar.style.width = percent + '%';
+    el('progress-bar').style.width = percent + '%';
     if (!message) {
-      DOMCache.progressMessage.textContent = getProgressMessage(percent);
+      el('progress-message').textContent = getProgressMessage(percent);
     }
   }
-  if (message) DOMCache.progressMessage.textContent = message;
+  if (message) el('progress-message').textContent = message;
 }
 
 function hideProgress() {
-  DOMCache.progressContainer.style.display = 'none';
+  el('progress-container').style.display = 'none';
 }
 
 function showError(title, message) {
-  DOMCache.errorTitle.textContent = title;
-  DOMCache.errorMessage.textContent = message;
-  DOMCache.errorContainer.style.display = 'flex';
+  el('error-title').textContent = title;
+  el('error-message').textContent = message;
+  el('error-container').style.display = 'flex';
   setTimeout(function() {
-    DOMCache.errorContainer.style.display = 'none';
-  }, 5000);
+    el('error-container').style.display = 'none';
+  }, ERROR_DISPLAY_MS);
 }
 
 function handleError(title, message) {
@@ -100,7 +77,7 @@ function sendToElm(app, dataUrl) {
 
   if (app.ports.receivePng) {
     app.ports.receivePng.send(dataUrl);
-    setTimeout(hideProgress, 500);
+    setTimeout(hideProgress, DOWNLOAD_RESET_MS);
     return true;
   } else {
     handleError("Port Error", "The receivePng port is not available. Please refresh the page and try again.");
@@ -112,36 +89,77 @@ function dataUrlToBlob(dataUrl) {
   return fetch(dataUrl).then(function(res) { return res.blob(); });
 }
 
-function drawLines(ctx, lineGenerator, count) {
-  for (var i = 0; i <= count; i++) {
-    var coords = lineGenerator(i);
-    ctx.beginPath();
-    ctx.moveTo(coords.x1, coords.y1);
-    ctx.lineTo(coords.x2, coords.y2);
-    ctx.stroke();
-  }
+function computeEntropyGrid(imageUrl, gridSize, width, height, callback) {
+  var img = new Image();
+  img.crossOrigin = "anonymous";
+
+  img.onload = function() {
+    var canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+    var ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0, width, height);
+
+    var cellW = width / gridSize;
+    var cellH = height / gridSize;
+    var entropyList = [];
+
+    for (var row = 0; row < gridSize; row++) {
+      for (var col = 0; col < gridSize; col++) {
+        var x = Math.floor(col * cellW);
+        var y = Math.floor(row * cellH);
+        var w = Math.ceil(cellW);
+        var h = Math.ceil(cellH);
+
+        if (x + w > width) w = width - x;
+        if (y + h > height) h = height - y;
+
+        var imageData = ctx.getImageData(x, y, w, h);
+        var pixels = imageData.data;
+        var histogram = new Array(256).fill(0);
+        var totalPixels = w * h;
+
+        for (var p = 0; p < pixels.length; p += 4) {
+          var luminance = Math.round(0.299 * pixels[p] + 0.587 * pixels[p + 1] + 0.114 * pixels[p + 2]);
+          histogram[luminance]++;
+        }
+
+        var entropy = 0;
+        for (var b = 0; b < 256; b++) {
+          if (histogram[b] > 0) {
+            var prob = histogram[b] / totalPixels;
+            entropy -= prob * Math.log2(prob);
+          }
+        }
+
+        entropyList.push(entropy);
+      }
+    }
+
+    callback(entropyList);
+  };
+
+  img.onerror = function() {
+    callback([]);
+  };
+
+  img.src = imageUrl;
 }
 
-function drawGrid(ctx, params) {
-  var width = params.width;
-  var height = params.height;
-  var gridSize = params.gridSize;
-  var cellW = width / gridSize;
-  var cellH = height / gridSize;
-
-  ctx.strokeStyle = params.color;
-  ctx.lineWidth = params.thickness;
-  ctx.globalAlpha = params.opacity;
-
-  drawLines(ctx, function(i) { return { x1: i * cellW, y1: 0, x2: i * cellW, y2: height }; }, gridSize);
-  drawLines(ctx, function(i) { return { x1: 0, y1: i * cellH, x2: width, y2: i * cellH }; }, gridSize);
-
-  if (params.showDiagonals) {
-    ctx.save();
-    drawLines(ctx, function(i) { return { x1: 0, y1: i * cellH, x2: i * cellW, y2: 0 }; }, gridSize * 2);
-    drawLines(ctx, function(i) { return { x1: width, y1: i * cellH, x2: width - i * cellW, y2: 0 }; }, gridSize * 2);
-    ctx.restore();
+function compositeOverlay(ctx, w, h, callback) {
+  var overlay = document.querySelector('.grid-overlay');
+  if (!overlay) {
+    callback();
+    return;
   }
+  var svgString = new XMLSerializer().serializeToString(overlay);
+  var svgImage = new Image();
+  svgImage.onload = function() {
+    ctx.drawImage(svgImage, 0, 0, w, h);
+    callback();
+  };
+  svgImage.onerror = function() { callback(); };
+  svgImage.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgString)));
 }
 
 
@@ -165,6 +183,26 @@ function setupLanguagePorts(app) {
 }
 
 
+function downloadViaAnchor(blob, fileName) {
+  var blobUrl = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = blobUrl;
+  a.download = fileName;
+  a.style.display = 'none';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(function() {
+    document.body.removeChild(a);
+    URL.revokeObjectURL(blobUrl);
+  }, ANCHOR_CLEANUP_MS);
+}
+
+function downloadViaWindow(blob) {
+  var blobUrl = URL.createObjectURL(blob);
+  window.open(blobUrl, '_blank');
+  setTimeout(function() { URL.revokeObjectURL(blobUrl); }, WINDOW_BLOB_TTL_MS);
+}
+
 function setupDownloadPort(app) {
   if (!app.ports.downloadImage) return;
 
@@ -177,20 +215,19 @@ function setupDownloadPort(app) {
     }
 
     updateProgress(null, 70);
+    var fileName = params.fileName || 'gridded-image.png';
 
     dataUrlToBlob(params.dataUrl).then(function(blob) {
       updateProgress(null, 90);
-      var blobUrl = URL.createObjectURL(blob);
-      var a = document.createElement('a');
-      a.href = blobUrl;
-      a.download = params.fileName || 'gridded-image.png';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      setTimeout(function() {
-        URL.revokeObjectURL(blobUrl);
-        hideProgress();
-      }, 100);
+
+      // Try anchor download first, fall back to window.open for iOS Safari
+      try {
+        downloadViaAnchor(blob, fileName);
+      } catch (e) {
+        downloadViaWindow(blob);
+      }
+
+      setTimeout(hideProgress, DOWNLOAD_RESET_MS);
     }).catch(function() {
       handleError("Download Error", "Failed to create image data for download. Please try again or use a different image.");
     });
@@ -211,7 +248,7 @@ function setupPngRequestPort(app) {
 
     var processingTimeout = setTimeout(function() {
       handleError("Timeout", "Image processing took too long. Please try a smaller image.");
-    }, 30000);
+    }, PROCESSING_TIMEOUT_MS);
 
     var img = new Image();
     img.crossOrigin = "anonymous";
@@ -219,12 +256,12 @@ function setupPngRequestPort(app) {
     img.onload = function() {
       updateProgress(null, 30);
 
-      var c = document.createElement("canvas");
+      var canvas = document.createElement("canvas");
       var canvasWidth = img.naturalWidth || params.width;
       var canvasHeight = img.naturalHeight || params.height;
-      c.width = canvasWidth;
-      c.height = canvasHeight;
-      var ctx = c.getContext("2d");
+      canvas.width = canvasWidth;
+      canvas.height = canvasHeight;
+      var ctx = canvas.getContext("2d");
 
       ctx.fillStyle = "white";
       ctx.fillRect(0, 0, canvasWidth, canvasHeight);
@@ -233,38 +270,31 @@ function setupPngRequestPort(app) {
         ctx.drawImage(img, 0, 0, canvasWidth, canvasHeight);
         updateProgress(null, 50);
       } catch (e) {
+        clearTimeout(processingTimeout);
         handleError("Canvas Error", "Failed to process the image. This might be due to CORS restrictions or an invalid image format.");
         return;
       }
 
-      drawGrid(ctx, {
-        width: canvasWidth,
-        height: canvasHeight,
-        gridSize: params.grid,
-        color: params.color,
-        thickness: params.thickness,
-        opacity: params.opacity,
-        showDiagonals: params.showDiagonals
+      compositeOverlay(ctx, canvasWidth, canvasHeight, function() {
+        updateProgress(null, 75);
+
+        canvas.toBlob(function(blob) {
+          if (!blob) {
+            clearTimeout(processingTimeout);
+            handleError("Download Error", "Failed to create image data for download. Please try again or use a different image.");
+            return;
+          }
+
+          updateProgress(null, 90);
+
+          var reader = new FileReader();
+          reader.onloadend = function() {
+            clearTimeout(processingTimeout);
+            sendToElm(app, reader.result);
+          };
+          reader.readAsDataURL(blob);
+        }, 'image/png', 1.0);
       });
-
-      updateProgress(null, 75);
-
-      c.toBlob(function(blob) {
-        if (!blob) {
-          clearTimeout(processingTimeout);
-          handleError("Download Error", "Failed to create image data for download. Please try again or use a different image.");
-          return;
-        }
-
-        updateProgress(null, 90);
-
-        var reader = new FileReader();
-        reader.onloadend = function() {
-          clearTimeout(processingTimeout);
-          sendToElm(app, reader.result);
-        };
-        reader.readAsDataURL(blob);
-      }, 'image/png', 1.0);
     };
 
     img.onerror = function() {
@@ -279,18 +309,37 @@ function setupPngRequestPort(app) {
 
 function setupSharePort(app) {
   if (app.ports.receiveShareSupport) {
-    var canShare = typeof navigator.share === 'function';
+    var canShare = false;
+    try {
+      if (typeof navigator.share === 'function' && typeof navigator.canShare === 'function') {
+        var testFile = new File(['test'], 'test.png', { type: 'image/png' });
+        canShare = navigator.canShare({ files: [testFile] });
+      }
+    } catch (e) {
+      canShare = false;
+    }
     app.ports.receiveShareSupport.send(canShare);
   }
 
   if (!app.ports.shareImageData) return;
 
   app.ports.shareImageData.subscribe(function(params) {
+    var fileName = params.fileName || 'gridded-image.png';
+
     dataUrlToBlob(params.dataUrl).then(function(blob) {
-      var file = new File([blob], params.fileName || 'gridded-image.png', { type: 'image/png' });
-      return navigator.share({ files: [file] });
-    }).catch(function() {
-      // User cancelled or share failed
+      var file = new File([blob], fileName, { type: 'image/png' });
+      var shareData = { files: [file] };
+
+      if (navigator.canShare && navigator.canShare(shareData)) {
+        return navigator.share(shareData);
+      } else {
+        // Fallback: trigger download instead
+        downloadViaAnchor(blob, fileName);
+      }
+    }).catch(function(err) {
+      if (err && err.name !== 'AbortError') {
+        handleError("Share Error", "Could not share the image. Try downloading instead.");
+      }
     });
   });
 }
@@ -338,14 +387,14 @@ function setupConfetti() {
     container.className = 'confetti-container';
     document.body.appendChild(container);
 
-    for (var i = 0; i < 35; i++) {
+    for (var i = 0; i < CONFETTI_COUNT; i++) {
       var roll = Math.random();
       var confetti = document.createElement('div');
       confetti.className = 'confetti-piece';
 
       if (roll < 0.25) {
         var size = Math.random() * 10 + 10;
-        confetti.innerHTML = '\u2665';
+        confetti.textContent = '\u2665';
         confetti.style.cssText =
           'left: ' + (Math.random() * 100) + '%;' +
           'font-size: ' + size + 'px;' +
@@ -368,13 +417,60 @@ function setupConfetti() {
       container.appendChild(confetti);
     }
 
-    setTimeout(function() { container.remove(); }, 2500);
+    setTimeout(function() { container.remove(); }, CONFETTI_TTL_MS);
   }
 
   document.addEventListener('click', function(e) {
     if (e.target.closest('.button-nice')) {
       createConfetti();
     }
+  });
+}
+
+
+function setupEntropyPort(app) {
+  if (!app.ports.requestEntropyAnalysis) return;
+
+  app.ports.requestEntropyAnalysis.subscribe(function(params) {
+    computeEntropyGrid(params.url, params.grid, params.width, params.height, function(entropyList) {
+      if (app.ports.receiveEntropyData) {
+        app.ports.receiveEntropyData.send(entropyList);
+      }
+    });
+  });
+}
+
+
+function setupErrorPort(app) {
+  if (!app.ports.showFileError) return;
+
+  app.ports.showFileError.subscribe(function(params) {
+    showError(params.title, params.message);
+  });
+}
+
+
+function setupFilePickerPort(app) {
+  if (!app.ports.pickImageFile) return;
+
+  app.ports.pickImageFile.subscribe(function() {
+    var input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.addEventListener('change', function(e) {
+      var f = e.target.files && e.target.files[0];
+      if (!f) return;
+      var reader = new FileReader();
+      reader.onload = function() {
+        app.ports.receivePickedImage.send({
+          name: f.name,
+          size: f.size,
+          dataUrl: reader.result
+        });
+      };
+      reader.readAsDataURL(f);
+    });
+    input.click();
   });
 }
 
@@ -391,6 +487,9 @@ function initializeElmApp() {
   setupPngRequestPort(app);
   setupSharePort(app);
   setupSettingsPersistence(app);
+  setupEntropyPort(app);
+  setupErrorPort(app);
+  setupFilePickerPort(app);
 
   return app;
 }
@@ -399,7 +498,7 @@ document.addEventListener('DOMContentLoaded', function() {
   var closeBtn = document.getElementById('close-error-button');
   if (closeBtn) {
     closeBtn.addEventListener('click', function() {
-      DOMCache.errorContainer.style.display = 'none';
+      el('error-container').style.display = 'none';
     });
   }
 
