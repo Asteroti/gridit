@@ -1,10 +1,7 @@
 port module Main exposing (..)
 
 import Browser
-import File exposing (File)
-import File.Download
-import File.Select as Select
-import Html exposing (Html, a, button, canvas, div, h1, h2, h3, img, input, label, option, p, select, span, text)
+import Html exposing (Html, a, button, div, h1, h2, h3, img, input, label, option, p, select, span, text)
 import Html.Attributes exposing (attribute, class, disabled, for, href, id, max, min, placeholder, rel, selected, src, step, style, target, type_, value)
 import Html.Events exposing (on, onClick, onInput)
 import I18n exposing (Language(..), TranslationKey, translate)
@@ -29,7 +26,7 @@ svgIcon extraAttrs children =
          , SvgAttr.stroke "currentColor"
          , SvgAttr.strokeWidth "1.5"
          , attribute "aria-hidden" "true"
-         , SvgAttr.style "display:inline-block;vertical-align:middle"
+         , SvgAttr.class "svg-icon"
          ]
             ++ extraAttrs
         )
@@ -47,11 +44,6 @@ iconFrogSized size =
         , Svg.line [ SvgAttr.x1 "0", SvgAttr.y1 "10", SvgAttr.x2 "20", SvgAttr.y2 "10", SvgAttr.opacity "0.6" ] []
         , Svg.line [ SvgAttr.x1 "10", SvgAttr.y1 "0", SvgAttr.x2 "10", SvgAttr.y2 "20", SvgAttr.opacity "0.6" ] []
         ]
-
-
-iconFrog : Html Msg
-iconFrog =
-    iconFrogSized "20"
 
 
 iconFrogLarge : Html Msg
@@ -112,6 +104,15 @@ iconGrid =
         ]
 
 
+iconDiagonals : Html Msg
+iconDiagonals =
+    svgIcon []
+        [ Svg.rect [ SvgAttr.x "2", SvgAttr.y "2", SvgAttr.width "16", SvgAttr.height "16" ] []
+        , Svg.line [ SvgAttr.x1 "2", SvgAttr.y1 "2", SvgAttr.x2 "18", SvgAttr.y2 "18", SvgAttr.strokeLinecap "round" ] []
+        , Svg.line [ SvgAttr.x1 "18", SvgAttr.y1 "2", SvgAttr.x2 "2", SvgAttr.y2 "18", SvgAttr.strokeLinecap "round" ] []
+        ]
+
+
 iconCheck : Html Msg
 iconCheck =
     svgIcon []
@@ -129,9 +130,16 @@ iconClose =
 iconShare : Html Msg
 iconShare =
     svgIcon []
-        [ Svg.path [ SvgAttr.d "M4 12 V16 Q4 17 5 17 L15 17 Q16 17 16 16 L16 12", SvgAttr.strokeLinecap "round", SvgAttr.strokeLinejoin "round" ] []
-        , Svg.path [ SvgAttr.d "M10 3 L10 12", SvgAttr.strokeLinecap "round" ] []
-        , Svg.path [ SvgAttr.d "M7 6 L10 3 L13 6", SvgAttr.strokeLinecap "round", SvgAttr.strokeLinejoin "round" ] []
+        [ Svg.path
+            [ SvgAttr.d "M18 2 L2 8 L9 11 L12 18 Z"
+            , SvgAttr.strokeLinejoin "round"
+            ]
+            []
+        , Svg.path
+            [ SvgAttr.d "M18 2 L9 11"
+            , SvgAttr.strokeLinecap "round"
+            ]
+            []
         ]
 
 
@@ -162,6 +170,10 @@ type alias Model =
     , imageName : String
     , canShare : Bool
     , shareAfterProcess : Bool
+    , adaptiveSensitivity : Float
+    , entropyData : Maybe (List Float)
+    , isAnalyzing : Bool
+    , gridHue : Int
     }
 
 
@@ -169,38 +181,40 @@ type alias Model =
 -- MESSAGES
 
 
+type alias PickedImage =
+    { name : String, size : Int, dataUrl : String }
+
+
 type Msg
     = PickImage
-    | ImageSelected File
-    | ImageLoaded String
+    | ImagePicked PickedImage
     | GridSizeChanged Int
     | NiceButtonClicked
     | ImageSizeLoaded Int Int
     | DownloadClicked
     | GriddedReady String
     | GridColorChanged String
+    | GridHueChanged Int
     | GridThicknessChanged Int
     | GridOpacityChanged Float
     | LanguageChanged Language
     | ResetDownloadSuccess
     | ToggleDiagonals Bool
     | ToggleGridView
-    | ProcessingStarted
-    | ImageNameSet String
-    | SettingsLoaded { gridSize : Int, gridColor : String, gridThickness : Int, gridOpacity : Float, showDiagonals : Bool }
+    | SettingsLoaded Settings
     | ResetProcessing
     | BrowserLanguageReceived String
-    | ResetToUpload
     | ShareClicked
     | ShareSupportReceived Bool
+    | AdaptiveSensitivityChanged Float
+    | EntropyDataReceived (List Float)
 
 
 
 -- GRID HELPER TYPES AND FUNCTIONS
 
 
--- Grid configuration type for helper functions
-type alias GridConfig =
+type alias Settings =
     { gridSize : Int
     , gridColor : String
     , gridThickness : Int
@@ -208,14 +222,15 @@ type alias GridConfig =
     , showDiagonals : Bool
     }
 
+
 type alias Dimensions =
     { width : Int
     , height : Int
     }
 
--- Helper function to create grid config from Model
-gridConfigFromModel : Model -> GridConfig
-gridConfigFromModel model =
+
+settingsFromModel : Model -> Settings
+settingsFromModel model =
     { gridSize = model.gridSize
     , gridColor = model.gridColor
     , gridThickness = model.gridThickness
@@ -223,8 +238,61 @@ gridConfigFromModel model =
     , showDiagonals = model.showDiagonals
     }
 
--- Create SVG line with grid attributes
-svgLine : GridConfig -> Float -> Float -> Float -> Float -> Svg msg
+type alias SubdividedCell =
+    { row : Int
+    , col : Int
+    }
+
+
+computeSubdividedCells : Int -> Float -> List Float -> List SubdividedCell
+computeSubdividedCells gridSize sensitivity entropyList =
+    let
+        minE = List.minimum entropyList |> Maybe.withDefault 0
+        maxE = List.maximum entropyList |> Maybe.withDefault 1
+        range = maxE - minE
+        threshold = 1.0 - sensitivity
+
+        indexedEntropy =
+            List.indexedMap Tuple.pair entropyList
+    in
+    if range < 0.01 then
+        []
+    else
+        indexedEntropy
+            |> List.filterMap
+                (\( idx, e ) ->
+                    let
+                        normalized = (e - minE) / range
+                    in
+                    if normalized > threshold then
+                        Just { row = idx // gridSize, col = modBy gridSize idx }
+                    else
+                        Nothing
+                )
+
+
+subdivisionLines : Settings -> Dimensions -> List SubdividedCell -> List (Svg msg)
+subdivisionLines config dims cells =
+    let
+        cellWidth = toFloat dims.width / toFloat config.gridSize
+        cellHeight = toFloat dims.height / toFloat config.gridSize
+    in
+    List.concatMap
+        (\cell ->
+            let
+                x0 = toFloat cell.col * cellWidth
+                y0 = toFloat cell.row * cellHeight
+                midX = x0 + cellWidth / 2
+                midY = y0 + cellHeight / 2
+            in
+            [ svgLine config midX y0 midX (y0 + cellHeight)
+            , svgLine config x0 midY (x0 + cellWidth) midY
+            ]
+        )
+        cells
+
+
+svgLine : Settings -> Float -> Float -> Float -> Float -> Svg msg
 svgLine config x1 y1 x2 y2 =
     Svg.line
         [ SvgAttr.x1 (String.fromFloat x1)
@@ -238,8 +306,8 @@ svgLine config x1 y1 x2 y2 =
         []
 
 -- Generate all grid lines (vertical, horizontal, and optionally diagonal)
-allGridLines : GridConfig -> Dimensions -> List (Svg msg)
-allGridLines config dims =
+allGridLines : Settings -> Dimensions -> List SubdividedCell -> List (Svg msg)
+allGridLines config dims adaptiveCells =
     let
         cellWidth = toFloat dims.width / toFloat config.gridSize
         cellHeight = toFloat dims.height / toFloat config.gridSize
@@ -252,25 +320,33 @@ allGridLines config dims =
             List.range 0 config.gridSize
                 |> List.map (\i -> svgLine config 0 (toFloat i * cellHeight) (toFloat dims.width) (toFloat i * cellHeight))
 
-        diagonal1 =
+        diagonals =
             if config.showDiagonals then
-                List.range 0 (config.gridSize * 2)
-                    |> List.map (\i -> svgLine config (toFloat i * cellWidth) 0 0 (toFloat i * cellHeight))
-            else
-                []
-
-        diagonal2 =
-            if config.showDiagonals then
-                List.range 0 (config.gridSize * 2)
-                    |> List.map (\i -> svgLine config (toFloat (config.gridSize - i) * cellWidth) 0 (toFloat dims.width) (toFloat i * cellHeight))
+                List.range 0 (config.gridSize - 1)
+                    |> List.concatMap
+                        (\row ->
+                            List.range 0 (config.gridSize - 1)
+                                |> List.concatMap
+                                    (\col ->
+                                        let
+                                            x0 = toFloat col * cellWidth
+                                            y0 = toFloat row * cellHeight
+                                            x1 = x0 + cellWidth
+                                            y1 = y0 + cellHeight
+                                        in
+                                        [ svgLine config x0 y0 x1 y1
+                                        , svgLine config x1 y0 x0 y1
+                                        ]
+                                    )
+                        )
             else
                 []
     in
-    verticalLines ++ horizontalLines ++ diagonal1 ++ diagonal2
+    verticalLines ++ horizontalLines ++ diagonals ++ subdivisionLines config dims adaptiveCells
 
 
 
-port requestPng : { url : String, width : Int, height : Int, grid : Int, color : String, thickness : Int, opacity : Float, showDiagonals : Bool } -> Cmd msg
+port requestPng : { url : String, width : Int, height : Int } -> Cmd msg
 
 
 port receivePng : (String -> msg) -> Sub msg
@@ -285,10 +361,10 @@ port setHtmlLang : String -> Cmd msg
 port setHtmlDir : String -> Cmd msg
 
 
-port saveSettings : { gridSize : Int, gridColor : String, gridThickness : Int, gridOpacity : Float, showDiagonals : Bool } -> Cmd msg
+port saveSettings : Settings -> Cmd msg
 
 
-port loadSettings : ({ gridSize : Int, gridColor : String, gridThickness : Int, gridOpacity : Float, showDiagonals : Bool } -> msg) -> Sub msg
+port loadSettings : (Settings -> msg) -> Sub msg
 
 
 port resetProcessing : (() -> msg) -> Sub msg
@@ -301,6 +377,31 @@ port shareImageData : { dataUrl : String, fileName : String } -> Cmd msg
 
 
 port receiveShareSupport : (Bool -> msg) -> Sub msg
+
+
+port requestEntropyAnalysis : { url : String, width : Int, height : Int, grid : Int } -> Cmd msg
+
+
+port receiveEntropyData : (List Float -> msg) -> Sub msg
+
+
+port showFileError : { title : String, message : String } -> Cmd msg
+
+
+port pickImageFile : () -> Cmd msg
+
+
+port receivePickedImage : (PickedImage -> msg) -> Sub msg
+
+
+maxImageBytes : Int
+maxImageBytes =
+    15 * 1024 * 1024
+
+
+downloadSuccessHoldMs : Float
+downloadSuccessHoldMs =
+    2000
 
 
 
@@ -317,7 +418,7 @@ init _ =
       , gridColor = "#80ED99"
       , gridThickness = 1
       , gridOpacity = 1
-      , language = Spanish
+      , language = English
       , downloadSuccess = False
       , showDiagonals = False
       , showGrid = True
@@ -325,6 +426,10 @@ init _ =
       , imageName = "image"
       , canShare = False
       , shareAfterProcess = False
+      , adaptiveSensitivity = 0
+      , entropyData = Nothing
+      , isAnalyzing = False
+      , gridHue = 180
       }
     , Cmd.none
     )
@@ -334,9 +439,29 @@ init _ =
 -- HELPERS
 
 
-settingsFromModel : Model -> { gridSize : Int, gridColor : String, gridThickness : Int, gridOpacity : Float, showDiagonals : Bool }
-settingsFromModel m =
-    { gridSize = m.gridSize, gridColor = m.gridColor, gridThickness = m.gridThickness, gridOpacity = m.gridOpacity, showDiagonals = m.showDiagonals }
+withSave : Model -> ( Model, Cmd Msg )
+withSave model =
+    ( model, saveSettings (settingsFromModel model) )
+
+
+canAnalyze : Model -> Bool
+canAnalyze model =
+    case ( model.uploadedImage, model.imageWidth, model.imageHeight ) of
+        ( Just _, Just _, Just _ ) ->
+            True
+
+        _ ->
+            False
+
+
+requestEntropy : Model -> Cmd Msg
+requestEntropy model =
+    case ( model.uploadedImage, model.imageWidth, model.imageHeight ) of
+        ( Just url, Just w, Just h ) ->
+            requestEntropyAnalysis { url = url, width = w, height = h, grid = model.gridSize }
+
+        _ ->
+            Cmd.none
 
 
 triggerProcessing : Bool -> Model -> ( Model, Cmd Msg )
@@ -344,7 +469,7 @@ triggerProcessing shareAfterProcess model =
     case ( model.uploadedImage, model.imageWidth, model.imageHeight ) of
         ( Just url, Just w, Just h ) ->
             ( { model | isProcessing = True, shareAfterProcess = shareAfterProcess }
-            , requestPng { url = url, width = w, height = h, grid = model.gridSize, color = model.gridColor, thickness = model.gridThickness, opacity = model.gridOpacity, showDiagonals = model.showDiagonals }
+            , requestPng { url = url, width = w, height = h }
             )
 
         _ ->
@@ -412,6 +537,111 @@ isValidHexColor s =
         && String.all Char.isHexDigit (String.dropLeft 1 s)
 
 
+hexDigitValue : Char -> Int
+hexDigitValue c =
+    case Char.toUpper c of
+        '0' -> 0
+        '1' -> 1
+        '2' -> 2
+        '3' -> 3
+        '4' -> 4
+        '5' -> 5
+        '6' -> 6
+        '7' -> 7
+        '8' -> 8
+        '9' -> 9
+        'A' -> 10
+        'B' -> 11
+        'C' -> 12
+        'D' -> 13
+        'E' -> 14
+        'F' -> 15
+        _ -> 0
+
+
+parseHexByte : String -> Int
+parseHexByte s =
+    case String.toList s of
+        [ hi, lo ] ->
+            hexDigitValue hi * 16 + hexDigitValue lo
+
+        _ ->
+            0
+
+
+hexToHue : String -> Maybe Int
+hexToHue hex =
+    if not (isValidHexColor hex) then
+        Nothing
+    else
+        let
+            r = toFloat (parseHexByte (String.slice 1 3 hex)) / 255
+            g = toFloat (parseHexByte (String.slice 3 5 hex)) / 255
+            b = toFloat (parseHexByte (String.slice 5 7 hex)) / 255
+            cmax = Basics.max r (Basics.max g b)
+            cmin = Basics.min r (Basics.min g b)
+            delta = cmax - cmin
+        in
+        if delta == 0 then
+            Nothing
+        else
+            let
+                rawHue =
+                    if cmax == r then
+                        60 * ((g - b) / delta)
+                    else if cmax == g then
+                        60 * ((b - r) / delta + 2)
+                    else
+                        60 * ((r - g) / delta + 4)
+            in
+            Just (round (if rawHue < 0 then rawHue + 360 else rawHue))
+
+
+hslToHex : Int -> String
+hslToHex hue =
+    let
+        hueNorm = toFloat hue / 360
+        sat = 0.85
+        light = 0.55
+
+        hueToChannel lo hi hueOffset =
+            let
+                wrapped =
+                    if hueOffset < 0 then hueOffset + 1
+                    else if hueOffset > 1 then hueOffset - 1
+                    else hueOffset
+            in
+            if wrapped < 1 / 6 then lo + (hi - lo) * 6 * wrapped
+            else if wrapped < 1 / 2 then hi
+            else if wrapped < 2 / 3 then lo + (hi - lo) * (2 / 3 - wrapped) * 6
+            else lo
+
+        upper = if light < 0.5 then light * (1 + sat) else light + sat - light * sat
+        lower = 2 * light - upper
+
+        r = round (hueToChannel lower upper (hueNorm + 1 / 3) * 255)
+        g = round (hueToChannel lower upper hueNorm * 255)
+        b = round (hueToChannel lower upper (hueNorm - 1 / 3) * 255)
+
+        toHex2 n =
+            let
+                hexChar c = String.slice c (c + 1) "0123456789ABCDEF"
+            in
+            hexChar (n // 16) ++ hexChar (modBy 16 n)
+    in
+    "#" ++ toHex2 r ++ toHex2 g ++ toHex2 b
+
+
+currentAdaptiveCells : Model -> List SubdividedCell
+currentAdaptiveCells model =
+    if model.adaptiveSensitivity > 0 then
+        model.entropyData
+            |> Maybe.map (computeSubdividedCells model.gridSize model.adaptiveSensitivity)
+            |> Maybe.withDefault []
+    else
+        []
+
+
 
 -- UPDATE
 
@@ -420,48 +650,71 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         PickImage ->
-            ( model, Select.file [ "image/*" ] ImageSelected )
+            ( model, pickImageFile () )
 
-        ImageSelected file ->
-            ( { model | imageName = File.name file }
-            , Task.perform ImageLoaded (File.toUrl file)
-            )
-
-        ImageLoaded url ->
-            ( { model | uploadedImage = Just url, imageWidth = Nothing, imageHeight = Nothing }, Cmd.none )
+        ImagePicked picked ->
+            if picked.size > maxImageBytes then
+                ( model
+                , showFileError
+                    { title = "File Too Large"
+                    , message = translate model.language I18n.FileTooLarge
+                    }
+                )
+            else
+                ( { model
+                    | uploadedImage = Just picked.dataUrl
+                    , imageName = picked.name
+                    , imageWidth = Nothing
+                    , imageHeight = Nothing
+                    , entropyData = Nothing
+                  }
+                , Cmd.none
+                )
 
         GridSizeChanged size ->
             let
-                newModel = { model | gridSize = size }
+                willAnalyze = model.adaptiveSensitivity > 0 && canAnalyze model
+                newModel = { model | gridSize = size, entropyData = Nothing, isAnalyzing = willAnalyze }
+                entropyCmd =
+                    if willAnalyze then
+                        requestEntropy newModel
+                    else
+                        Cmd.none
             in
-            ( newModel, saveSettings (settingsFromModel newModel) )
+            ( newModel, Cmd.batch [ saveSettings (settingsFromModel newModel), entropyCmd ] )
 
         GridColorChanged color ->
             if isValidHexColor color then
                 let
-                    newModel = { model | gridColor = color }
+                    syncedHue = Maybe.withDefault model.gridHue (hexToHue color)
                 in
-                ( newModel, saveSettings (settingsFromModel newModel) )
+                withSave { model | gridColor = color, gridHue = syncedHue }
             else
                 ( model, Cmd.none )
 
+        GridHueChanged hue ->
+            withSave { model | gridColor = hslToHex hue, gridHue = hue }
+
         GridThicknessChanged thickness ->
-            let
-                newModel = { model | gridThickness = thickness }
-            in
-            ( newModel, saveSettings (settingsFromModel newModel) )
+            withSave { model | gridThickness = thickness }
 
         GridOpacityChanged opacity ->
-            let
-                newModel = { model | gridOpacity = opacity }
-            in
-            ( newModel, saveSettings (settingsFromModel newModel) )
+            withSave { model | gridOpacity = opacity }
 
         NiceButtonClicked ->
             ( { model | niceCounter = model.niceCounter + 1 }, Cmd.none )
 
         ImageSizeLoaded width height ->
-            ( { model | imageWidth = Just width, imageHeight = Just height }, Cmd.none )
+            let
+                newModel = { model | imageWidth = Just width, imageHeight = Just height }
+                willAnalyze = model.adaptiveSensitivity > 0 && canAnalyze newModel
+                entropyCmd =
+                    if willAnalyze then
+                        requestEntropy newModel
+                    else
+                        Cmd.none
+            in
+            ( { newModel | isAnalyzing = willAnalyze }, entropyCmd )
 
         LanguageChanged newLanguage ->
             let
@@ -475,22 +728,22 @@ update msg model =
             ( { model | downloadSuccess = False }, Cmd.none )
 
         ToggleDiagonals value ->
-            let
-                newModel = { model | showDiagonals = value }
-            in
-            ( newModel, saveSettings (settingsFromModel newModel) )
+            withSave { model | showDiagonals = value }
 
         ToggleGridView ->
             ( { model | showGrid = not model.showGrid }, Cmd.none )
 
-        ProcessingStarted ->
-            ( { model | isProcessing = True }, Cmd.none )
-
-        ImageNameSet name ->
-            ( { model | imageName = name }, Cmd.none )
-
         SettingsLoaded settings ->
-            ( { model | gridSize = settings.gridSize, gridColor = settings.gridColor, gridThickness = settings.gridThickness, gridOpacity = settings.gridOpacity, showDiagonals = settings.showDiagonals }, Cmd.none )
+            ( { model
+                | gridSize = settings.gridSize
+                , gridColor = settings.gridColor
+                , gridThickness = settings.gridThickness
+                , gridOpacity = settings.gridOpacity
+                , showDiagonals = settings.showDiagonals
+                , gridHue = Maybe.withDefault model.gridHue (hexToHue settings.gridColor)
+              }
+            , Cmd.none
+            )
 
         ResetProcessing ->
             ( { model | isProcessing = False }, Cmd.none )
@@ -501,7 +754,7 @@ update msg model =
                     allLanguages
                         |> List.filter (\lang -> String.startsWith (languageMeta lang).code langCode)
                         |> List.head
-                        |> Maybe.withDefault Spanish
+                        |> Maybe.withDefault English
 
                 meta = languageMeta detectedLanguage
             in
@@ -527,24 +780,27 @@ update msg model =
             ( { model | downloadSuccess = True, isProcessing = False, shareAfterProcess = False }
             , Cmd.batch
                 [ action
-                , Task.perform (\_ -> ResetDownloadSuccess) (Process.sleep 2000)
+                , Task.perform (\_ -> ResetDownloadSuccess) (Process.sleep downloadSuccessHoldMs)
                 ]
-            )
-
-        ResetToUpload ->
-            ( { model
-                | uploadedImage = Nothing
-                , imageWidth = Nothing
-                , imageHeight = Nothing
-                , isProcessing = False
-                , downloadSuccess = False
-                , shareAfterProcess = False
-              }
-            , Cmd.none
             )
 
         ShareSupportReceived supported ->
             ( { model | canShare = supported }, Cmd.none )
+
+        AdaptiveSensitivityChanged value ->
+            if value > 0 then
+                let
+                    willAnalyze = model.entropyData == Nothing && canAnalyze model
+                    newModel = { model | adaptiveSensitivity = value, isAnalyzing = willAnalyze }
+                in
+                ( newModel
+                , if willAnalyze then requestEntropy newModel else Cmd.none
+                )
+            else
+                ( { model | adaptiveSensitivity = 0, entropyData = Nothing, isAnalyzing = False }, Cmd.none )
+
+        EntropyDataReceived data ->
+            ( { model | entropyData = Just data, isAnalyzing = False }, Cmd.none )
 
 
 
@@ -559,6 +815,8 @@ subscriptions _ =
         , resetProcessing (\_ -> ResetProcessing)
         , getBrowserLanguage BrowserLanguageReceived
         , receiveShareSupport ShareSupportReceived
+        , receiveEntropyData EntropyDataReceived
+        , receivePickedImage ImagePicked
         ]
 
 
@@ -589,7 +847,7 @@ viewHeader : Model -> Html Msg
 viewHeader model =
     Html.node "header" [ class "app-header" ]
         [ div [ class "header-content" ]
-            [ h1 [ class "app-title" ] [ text "Gridit Baby! ", iconFrog ]
+            [ h1 [ class "app-title" ] [ text "Gridit, baby! ", iconFrogSized "30" ]
             , p [ class "app-subtitle" ] [ text (translate model.language I18n.AppSubtitle) ]
             ]
         , viewLanguageSelector model.language
@@ -758,10 +1016,11 @@ viewControlsFace model =
         [ h3 [ class "card-section-title" ] [ text (translate model.language I18n.GridSettings) ]
         , div [ class "grid-controls-grid" ]
             [ viewSizeControl model
+            , viewDiagonalsToggle model
+            , viewColorControl model
             , viewOpacityControl model
             , viewThicknessControl model
-            , viewColorControl model
-            , viewDiagonalsToggle model
+            , viewAdaptiveControl model
             ]
         , viewActionButtons model
         , button
@@ -772,127 +1031,186 @@ viewControlsFace model =
         ]
 
 
+type alias SliderControl =
+    { id : String
+    , labelContent : List (Html Msg)
+    , value : String
+    , min : String
+    , max : String
+    , maybeStep : Maybe String
+    , onChange : String -> Msg
+    , sliderClass : String
+    , valueDisplay : Html Msg
+    , extra : List (Html Msg)
+    }
+
+
+viewSliderControl : SliderControl -> Html Msg
+viewSliderControl c =
+    let
+        baseAttrs =
+            [ type_ "range"
+            , id c.id
+            , Html.Attributes.min c.min
+            , Html.Attributes.max c.max
+            , value c.value
+            , onInput c.onChange
+            , class c.sliderClass
+            ]
+
+        attrs =
+            case c.maybeStep of
+                Just s -> baseAttrs ++ [ step s ]
+                Nothing -> baseAttrs
+    in
+    div [ class "control-group" ]
+        ([ div [ class "control-header" ]
+            [ label [ class "control-label", for c.id ] c.labelContent
+            , c.valueDisplay
+            ]
+         , input attrs []
+         ]
+            ++ c.extra
+        )
+
+
 viewSizeControl : Model -> Html Msg
 viewSizeControl model =
-    div [ class "control-group" ]
-        [ div [ class "control-header" ]
-            [ label [ class "control-label", for "grid-size-input" ] [ text (translate model.language I18n.GridSize) ]
-            , span [ class "control-value" ] [ text (String.fromInt model.gridSize ++ "x" ++ String.fromInt model.gridSize) ]
-            ]
-        , input
-            [ type_ "range"
-            , id "grid-size-input"
-            , Html.Attributes.min "2"
-            , Html.Attributes.max "32"
-            , value (String.fromInt model.gridSize)
-            , onInput (\s -> GridSizeChanged (Maybe.withDefault 10 (String.toInt s)))
-            , class "slider"
-            ]
-            []
-        ]
+    viewSliderControl
+        { id = "grid-size-input"
+        , labelContent = [ text (translate model.language I18n.GridSize) ]
+        , value = String.fromInt model.gridSize
+        , min = "2"
+        , max = "32"
+        , maybeStep = Nothing
+        , onChange = \s -> GridSizeChanged (Maybe.withDefault 10 (String.toInt s))
+        , sliderClass = "slider"
+        , valueDisplay = span [ class "control-value" ] [ text (String.fromInt model.gridSize ++ "x" ++ String.fromInt model.gridSize) ]
+        , extra = []
+        }
 
 
 viewOpacityControl : Model -> Html Msg
 viewOpacityControl model =
-    div [ class "control-group" ]
-        [ div [ class "control-header" ]
-            [ label [ class "control-label", for "grid-opacity-input" ] [ text (translate model.language I18n.GridOpacity) ]
-            , span [ class "control-value" ] [ text (String.fromInt (round (model.gridOpacity * 100)) ++ "%") ]
-            ]
-        , input
-            [ type_ "range"
-            , id "grid-opacity-input"
-            , Html.Attributes.min "0.1"
-            , Html.Attributes.max "1"
-            , step "0.1"
-            , value (String.fromFloat model.gridOpacity)
-            , onInput (\s -> GridOpacityChanged (Maybe.withDefault 0.5 (String.toFloat s)))
-            , class "slider"
-            ]
-            []
-        ]
+    viewSliderControl
+        { id = "grid-opacity-input"
+        , labelContent = [ text (translate model.language I18n.GridOpacity) ]
+        , value = String.fromFloat model.gridOpacity
+        , min = "0.1"
+        , max = "1"
+        , maybeStep = Just "0.1"
+        , onChange = \s -> GridOpacityChanged (Maybe.withDefault 0.5 (String.toFloat s))
+        , sliderClass = "slider"
+        , valueDisplay = span [ class "control-value" ] [ text (String.fromInt (round (model.gridOpacity * 100)) ++ "%") ]
+        , extra = []
+        }
 
 
 viewThicknessControl : Model -> Html Msg
 viewThicknessControl model =
-    div [ class "control-group" ]
-        [ div [ class "control-header" ]
-            [ label [ class "control-label", for "grid-thickness-input" ] [ text (translate model.language I18n.GridThickness) ]
-            , span [ class "control-value" ] [ text (String.fromInt model.gridThickness ++ "px") ]
-            ]
-        , input
-            [ type_ "range"
-            , id "grid-thickness-input"
-            , Html.Attributes.min "1"
-            , Html.Attributes.max "5"
-            , value (String.fromInt model.gridThickness)
-            , onInput (\s -> GridThicknessChanged (Maybe.withDefault 1 (String.toInt s)))
-            , class "slider"
-            ]
-            []
+    viewSliderControl
+        { id = "grid-thickness-input"
+        , labelContent = [ text (translate model.language I18n.GridThickness) ]
+        , value = String.fromInt model.gridThickness
+        , min = "1"
+        , max = "5"
+        , maybeStep = Nothing
+        , onChange = \s -> GridThicknessChanged (Maybe.withDefault 1 (String.toInt s))
+        , sliderClass = "slider"
+        , valueDisplay = span [ class "control-value" ] [ text (String.fromInt model.gridThickness ++ "px") ]
+        , extra = []
+        }
+
+
+colorPreset : String -> String -> String -> Html Msg
+colorPreset hex ariaLabel currentColor =
+    let
+        selected =
+            String.toUpper currentColor == hex
+
+        classes =
+            if selected then
+                "color-swatch color-swatch--selected"
+            else
+                "color-swatch"
+    in
+    button
+        [ class classes
+        , style "background-color" hex
+        , onClick (GridColorChanged hex)
+        , attribute "aria-label" ariaLabel
         ]
+        []
 
 
 viewColorControl : Model -> Html Msg
 viewColorControl model =
-    div [ class "control-group" ]
-        [ div [ class "control-header" ]
-            [ label [ class "control-label", for "grid-color-input" ] [ text (translate model.language I18n.GridColor) ]
-            ]
-        , div [ class "color-input-row" ]
-            [ input
-                [ type_ "color"
-                , id "grid-color-input"
-                , value model.gridColor
-                , onInput GridColorChanged
-                , class "color-input"
+    viewSliderControl
+        { id = "grid-color-input"
+        , labelContent = [ text (translate model.language I18n.GridColor) ]
+        , value = String.fromInt model.gridHue
+        , min = "0"
+        , max = "360"
+        , maybeStep = Nothing
+        , onChange = \s -> GridHueChanged (Maybe.withDefault 180 (String.toInt s))
+        , sliderClass = "slider slider--hue"
+        , valueDisplay = span [ class "color-preview", style "background-color" model.gridColor ] []
+        , extra =
+            [ div [ class "color-presets" ]
+                [ colorPreset "#000000" "Black" model.gridColor
+                , colorPreset "#FFFFFF" "White" model.gridColor
                 ]
-                []
-            , input
-                [ type_ "text"
-                , value model.gridColor
-                , onInput GridColorChanged
-                , class "hex-text-input"
-                , placeholder "#80ED99"
-                , Html.Attributes.maxlength 7
-                , attribute "aria-label" "Hex color value"
-                ]
-                []
             ]
-        , div [ class "color-presets" ]
-            (List.map
-                (\color ->
-                    button
-                        [ class
-                            (if String.toUpper model.gridColor == String.toUpper color then
-                                "color-swatch color-swatch--selected"
-                             else
-                                "color-swatch"
-                            )
-                        , style "background-color" color
-                        , onClick (GridColorChanged color)
-                        , attribute "aria-label" ("Color " ++ color)
-                        ]
-                        []
-                )
-                [ "#000000", "#FFFFFF", "#FF0000", "#0066FF", "#FFD700" ]
-            )
-        ]
+        }
 
 
 viewDiagonalsToggle : Model -> Html Msg
 viewDiagonalsToggle model =
-    div [ class "toggle-row" ]
-        [ input
-            [ type_ "checkbox"
-            , Html.Events.onCheck ToggleDiagonals
-            , Html.Attributes.checked model.showDiagonals
-            , class "toggle-checkbox"
-            , id "diagonals"
+    div [ class "control-group" ]
+        [ label [ class "light-switch" ]
+            [ input
+                [ type_ "checkbox"
+                , Html.Attributes.checked model.showDiagonals
+                , Html.Events.onCheck ToggleDiagonals
+                , class "light-switch-input sr-only"
+                , id "diagonals"
+                ]
+                []
+            , span [ class "light-switch-track" ]
+                [ span [ class "light-switch-thumb" ] [ iconDiagonals ] ]
+            , span [ class "light-switch-label" ] [ text (translate model.language I18n.AddDiagonalLines) ]
             ]
-            []
-        , label [ class "toggle-label", for "diagonals" ] [ text (translate model.language I18n.AddDiagonalLines) ]
         ]
+
+
+viewAdaptiveControl : Model -> Html Msg
+viewAdaptiveControl model =
+    let
+        analyzingIndicator =
+            if model.isAnalyzing then
+                span [ class "analyzing-indicator" ]
+                    [ text (" " ++ translate model.language I18n.AnalyzingImage) ]
+            else
+                text ""
+
+        valueText =
+            if model.adaptiveSensitivity == 0 then
+                translate model.language I18n.OffLabel
+            else
+                String.fromInt (round (model.adaptiveSensitivity * 100)) ++ "%"
+    in
+    viewSliderControl
+        { id = "adaptive-density-input"
+        , labelContent = [ text (translate model.language I18n.AdaptiveGridDensity), analyzingIndicator ]
+        , value = String.fromFloat model.adaptiveSensitivity
+        , min = "0"
+        , max = "1"
+        , maybeStep = Just "0.1"
+        , onChange = \s -> AdaptiveSensitivityChanged (Maybe.withDefault 0 (String.toFloat s))
+        , sliderClass = "slider"
+        , valueDisplay = span [ class "control-value" ] [ text valueText ]
+        , extra = []
+        }
 
 
 viewActionButtons : Model -> Html Msg
@@ -945,7 +1263,7 @@ viewFooter model =
     Html.node "footer" [ class "app-footer" ]
         [ div [ class "footer-content" ]
             [ div [ class "tooltip-container", attribute "aria-describedby" "footer-tooltip" ]
-                [ span [ class "footer-text-main" ] [ text (translate model.language I18n.MadeInArgentina ++ " "), span [ style "color" "#4ade80" ] [ iconGreenHeart ], text " (\u{2579}\u{25E1}\u{2579}\u{0E51})" ]
+                [ span [ class "footer-text-main" ] [ text (translate model.language I18n.MadeInArgentina ++ " "), span [ class "heart-success" ] [ iconGreenHeart ], text " (\u{2579}\u{25E1}\u{2579}\u{0E51})" ]
                 , span [ class "tooltip-content", Html.Attributes.tabindex 0, id "footer-tooltip", attribute "role" "tooltip" ] [ text (translate model.language I18n.FooterTooltip) ]
                 ]
             ]
@@ -1010,9 +1328,9 @@ viewGriddedImage model =
     case ( model.uploadedImage, model.imageWidth, model.imageHeight ) of
         ( Just url, Just width, Just height ) ->
             let
-                config = gridConfigFromModel model
+                config = settingsFromModel model
                 dims = { width = width, height = height }
-                gridLines = allGridLines config dims
+                gridLines = allGridLines config dims (currentAdaptiveCells model)
             in
             div [ class "gridded-image-container" ]
                 [ img
@@ -1021,17 +1339,19 @@ viewGriddedImage model =
                     , Html.Attributes.alt "Uploaded image with grid overlay"
                     ]
                     []
-                , if model.showGrid then
-                    Svg.svg
-                        [ SvgAttr.width (String.fromInt width)
-                        , SvgAttr.height (String.fromInt height)
-                        , SvgAttr.viewBox ("0 0 " ++ String.fromInt width ++ " " ++ String.fromInt height)
-                        , SvgAttr.class "grid-overlay"
-                        , attribute "aria-hidden" "true"
-                        ]
-                        gridLines
-                  else
-                    text ""
+                , Svg.svg
+                    [ SvgAttr.width (String.fromInt width)
+                    , SvgAttr.height (String.fromInt height)
+                    , SvgAttr.viewBox ("0 0 " ++ String.fromInt width ++ " " ++ String.fromInt height)
+                    , SvgAttr.class
+                        (if model.showGrid then
+                            "grid-overlay"
+                         else
+                            "grid-overlay grid-overlay--hidden"
+                        )
+                    , attribute "aria-hidden" "true"
+                    ]
+                    gridLines
                 ]
 
         ( Just url, _, _ ) ->

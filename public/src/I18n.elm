@@ -46,6 +46,10 @@ type TranslationKey
     | AddDiagonalLines
     | CuriousAboutGrids
     | ChangeImage
+    | AdaptiveGridDensity
+    | AnalyzingImage
+    | OffLabel
+    | FileTooLarge
 
 
 translate : Language -> TranslationKey -> String
@@ -123,7 +127,7 @@ englishTranslations key =
             "Language:"
 
         AppSubtitle ->
-            "Grid your reference image the way artists do \u{2014} private, free, in 14 languages"
+            "Hi. This helps you create a rectilinear grid over an image of your choice"
 
         UploadPlaceholder ->
             "Upload an image to begin"
@@ -141,7 +145,7 @@ englishTranslations key =
             "Gridit, baby! Upload any image, overlay a grid, and use it to scale your drawing onto canvas. Artists have used this technique for centuries \u{2014} from Renaissance masters to modern illustrators \u{2014} to transfer and enlarge compositions with precision."
 
         MaxFileSize ->
-            "Max 5MB"
+            "Max 15MB"
 
         SupportedFormats ->
             "JPG, PNG, GIF supported"
@@ -178,6 +182,18 @@ englishTranslations key =
 
         ChangeImage ->
             "Choose another image"
+
+        AdaptiveGridDensity ->
+            "Adaptive density"
+
+        AnalyzingImage ->
+            "Analyzing..."
+
+        OffLabel ->
+            "Off"
+
+        FileTooLarge ->
+            "Image too large. Please use an image under 15MB."
 
 
 spanishTranslations : TranslationKey -> String
@@ -227,7 +243,7 @@ spanishTranslations key =
             "Gridit, baby! Sub\u{00ED} cualquier imagen, superpon\u{00E9} una grilla rectilinear y utilizala para escalar tu dibujo al medio que prefieras. Esta t\u{00E9}cnica es antiqu\u{00ED}sima y se mantiene fuerte como uno de los m\u{00E9}todos m\u{00E1}s confiables para escalar y traspasar composiciones con precisi\u{00F3}n."
 
         MaxFileSize ->
-            "Max 5MB"
+            "Max 15MB"
 
         SupportedFormats ->
             "JPG, PNG, GIF soportados"
@@ -264,6 +280,18 @@ spanishTranslations key =
 
         ChangeImage ->
             "Elegir otra imagen"
+
+        AdaptiveGridDensity ->
+            "Densidad adaptativa"
+
+        AnalyzingImage ->
+            "Analizando..."
+
+        OffLabel ->
+            "Apagado"
+
+        FileTooLarge ->
+            "Imagen demasiado grande. Usa una imagen menor a 15MB."
 
 
 latinTranslations : TranslationKey -> String
@@ -313,7 +341,7 @@ latinTranslations key =
             "Gridit, infans! Quamlibet imaginem submitte, reticulum superpone, et eo utere ut picturam tuam in tabulam transferas. Artifices hanc artem per saecula adhibuerunt \u{2014} a magistris Renascentiae ad illustratores modernos \u{2014} ut compositiones cum praecisione transferant et amplificent."
 
         MaxFileSize ->
-            "Max 5MB"
+            "Max 15MB"
 
         SupportedFormats ->
             "JPG, PNG, GIF sustinetur"
@@ -350,6 +378,18 @@ latinTranslations key =
 
         ChangeImage ->
             "Aliam imaginem eligere"
+
+        AdaptiveGridDensity ->
+            "Densitas adaptiva"
+
+        AnalyzingImage ->
+            "Analysi..."
+
+        OffLabel ->
+            "Inactivum"
+
+        FileTooLarge ->
+            "Imago nimium magna est. Utere imagine minore quam 15MB."
 
 
 italianTranslations : TranslationKey -> String
@@ -399,7 +439,7 @@ italianTranslations key =
             "Gridit, baby! Carica qualsiasi immagine, sovrapponi una griglia e usala per scalare il tuo disegno sulla tela. Gli artisti hanno usato questa tecnica per secoli \u{2014} dai maestri del Rinascimento agli illustratori moderni \u{2014} per trasferire e ingrandire composizioni con precisione."
 
         MaxFileSize ->
-            "Max 5MB"
+            "Max 15MB"
 
         SupportedFormats ->
             "JPG, PNG, GIF supportati"
@@ -436,6 +476,18 @@ italianTranslations key =
 
         ChangeImage ->
             "Scegli un'altra immagine"
+
+        AdaptiveGridDensity ->
+            "Densit\u{00E0} adattiva"
+
+        AnalyzingImage ->
+            "Analisi..."
+
+        OffLabel ->
+            "Disattivo"
+
+        FileTooLarge ->
+            "Immagine troppo grande. Usa un'immagine sotto i 15MB."
 
 
 portugueseTranslations : TranslationKey -> String
@@ -485,7 +537,7 @@ portugueseTranslations key =
             "Gridit, baby! Carrega qualquer imagem, sobrepe uma grelha e usa-a para escalar o teu desenho para a tela. Os artistas usam esta tecnica ha seculos \u{2014} dos mestres do Renascimento aos ilustradores modernos \u{2014} para transferir e ampliar composicoes com precisao."
 
         MaxFileSize ->
-            "Max 5MB"
+            "Max 15MB"
 
         SupportedFormats ->
             "JPG, PNG, GIF suportados"
@@ -522,6 +574,18 @@ portugueseTranslations key =
 
         ChangeImage ->
             "Escolher outra imagem"
+
+        AdaptiveGridDensity ->
+            "Densidade adaptativa"
+
+        AnalyzingImage ->
+            "Analisando..."
+
+        OffLabel ->
+            "Desligado"
+
+        FileTooLarge ->
+            "Imagem muito grande. Use uma imagem com menos de 15MB."
 
 
 frenchTranslations : TranslationKey -> String
@@ -571,7 +635,7 @@ frenchTranslations key =
             "Gridit, baby! Telechargez n'importe quelle image, superposez une grille et utilisez-la pour mettre a l'echelle votre dessin sur toile. Les artistes utilisent cette technique depuis des siecles \u{2014} des maitres de la Renaissance aux illustrateurs modernes \u{2014} pour transferer et agrandir des compositions avec precision."
 
         MaxFileSize ->
-            "Max 5Mo"
+            "Max 15Mo"
 
         SupportedFormats ->
             "JPG, PNG, GIF supportes"
@@ -608,6 +672,18 @@ frenchTranslations key =
 
         ChangeImage ->
             "Choisir une autre image"
+
+        AdaptiveGridDensity ->
+            "Densit\u{00E9} adaptative"
+
+        AnalyzingImage ->
+            "Analyse..."
+
+        OffLabel ->
+            "Désactivé"
+
+        FileTooLarge ->
+            "Image trop grande. Utilisez une image de moins de 15 Mo."
 
 
 asturianoTranslations : TranslationKey -> String
@@ -657,7 +733,7 @@ asturianoTranslations key =
             "Gridit, baby! Xube cualquier imaxe, superpone una cuadricula y usala pa escalar el to dibuxu al llenzu. Los artistes usaron esta tecnica durante sieglos \u{2014} dende los maestros del Renacimientu hasta los ilustradores modernos \u{2014} pa transferir y ampliar composiciones con precision."
 
         MaxFileSize ->
-            "Max 5MB"
+            "Max 15MB"
 
         SupportedFormats ->
             "JPG, PNG, GIF soportaos"
@@ -694,6 +770,18 @@ asturianoTranslations key =
 
         ChangeImage ->
             "Escueyi otra imaxe"
+
+        AdaptiveGridDensity ->
+            "Densid\u{00E1} adaptativa"
+
+        AnalyzingImage ->
+            "Analizando..."
+
+        OffLabel ->
+            "Apagáu"
+
+        FileTooLarge ->
+            "Imaxe enforma grande. Usa una imaxe menor de 15MB."
 
 
 gaelicTranslations : TranslationKey -> String
@@ -743,7 +831,7 @@ gaelicTranslations key =
             "Gridit, baby! Luchdaich dealbh sam bith, cuir griod air a mhuin agus cleachd e gus do dhealbh a sgaladh air canabhas. Tha luchd-ealain air an doigh seo a chleachdadh fad linntean \u{2014} bho mhaighstirean an Ath-bheothachaidh gu dealbhadairean an latha an-diugh \u{2014} gus co-dhealbhaidhean a ghluasad agus a mheudachadh le cinnt."
 
         MaxFileSize ->
-            "Max 5MB"
+            "Max 15MB"
 
         SupportedFormats ->
             "JPG, PNG, GIF le taic"
@@ -780,6 +868,18 @@ gaelicTranslations key =
 
         ChangeImage ->
             "Tagh dealbh eile"
+
+        AdaptiveGridDensity ->
+            "Adaptive density"
+
+        AnalyzingImage ->
+            "Analyzing..."
+
+        OffLabel ->
+            "Dheth"
+
+        FileTooLarge ->
+            "Tha an dealbh ro mhòr. Cleachd dealbh nas lugha na 15MB."
 
 
 euskaraTranslations : TranslationKey -> String
@@ -829,7 +929,7 @@ euskaraTranslations key =
             "Gridit, baby! Igo edozein irudi, gainjarri sareta bat eta erabili zure marrazkia mihisera eskalatzeko. Artistek teknika hau mendeetan zehar erabili dute \u{2014} Pizkundeko maisuengandik egungo ilustratzaileetara \u{2014} konposizioak zehaztasunez transferitzeko eta handitzeko."
 
         MaxFileSize ->
-            "Gehienez 5MB"
+            "Gehienez 15MB"
 
         SupportedFormats ->
             "JPG, PNG, GIF onartuta"
@@ -866,6 +966,18 @@ euskaraTranslations key =
 
         ChangeImage ->
             "Beste irudi bat aukeratu"
+
+        AdaptiveGridDensity ->
+            "Dentsitate moldagarria"
+
+        AnalyzingImage ->
+            "Aztertzen..."
+
+        OffLabel ->
+            "Itzalita"
+
+        FileTooLarge ->
+            "Irudia handiegia da. Erabili 15MB baino txikiagoa den irudia."
 
 
 japaneseTranslations : TranslationKey -> String
@@ -915,7 +1027,7 @@ japaneseTranslations key =
             "Gridit, baby! 画像をアップロードし、グリッドを重ねて、キャンバスへの拡大に活用しましょう。ルネサンスの巨匠から現代のイラストレーターまで、何世紀にもわたってアーティストたちが使ってきた技法です。"
 
         MaxFileSize ->
-            "最大5MB"
+            "最大15MB"
 
         SupportedFormats ->
             "JPG、PNG、GIF対応"
@@ -952,6 +1064,18 @@ japaneseTranslations key =
 
         ChangeImage ->
             "\u{5225}\u{306E}\u{753B}\u{50CF}\u{3092}\u{9078}\u{629E}"
+
+        AdaptiveGridDensity ->
+            "\u{9069}\u{5FDC}\u{5BC6}\u{5EA6}"
+
+        AnalyzingImage ->
+            "\u{5206}\u{6790}\u{4E2D}..."
+
+        OffLabel ->
+            "\u{30AA}\u{30D5}"
+
+        FileTooLarge ->
+            "\u{753B}\u{50CF}\u{304C}\u{5927}\u{304D}\u{3059}\u{304E}\u{307E}\u{3059}\u{3002}15MB\u{4EE5}\u{4E0B}\u{306E}\u{753B}\u{50CF}\u{3092}\u{4F7F}\u{7528}\u{3057}\u{3066}\u{304F}\u{3060}\u{3055}\u{3044}\u{3002}"
 
 
 russianTranslations : TranslationKey -> String
@@ -1001,7 +1125,7 @@ russianTranslations key =
             "Gridit, baby! Загрузите любое изображение, наложите сетку и используйте её для масштабирования рисунка на холст. Художники используют эту технику веками \u{2014} от мастеров Ренессанса до современных иллюстраторов \u{2014} для точного переноса и увеличения композиций."
 
         MaxFileSize ->
-            "Макс 5МБ"
+            "Макс 15МБ"
 
         SupportedFormats ->
             "JPG, PNG, GIF поддерживаются"
@@ -1038,6 +1162,18 @@ russianTranslations key =
 
         ChangeImage ->
             "\u{0412}\u{044B}\u{0431}\u{0440}\u{0430}\u{0442}\u{044C} \u{0434}\u{0440}\u{0443}\u{0433}\u{043E}\u{0435} \u{0438}\u{0437}\u{043E}\u{0431}\u{0440}\u{0430}\u{0436}\u{0435}\u{043D}\u{0438}\u{0435}"
+
+        AdaptiveGridDensity ->
+            "\u{0410}\u{0434}\u{0430}\u{043F}\u{0442}\u{0438}\u{0432}\u{043D}\u{0430}\u{044F} \u{043F}\u{043B}\u{043E}\u{0442}\u{043D}\u{043E}\u{0441}\u{0442}\u{044C}"
+
+        AnalyzingImage ->
+            "\u{0410}\u{043D}\u{0430}\u{043B}\u{0438}\u{0437}..."
+
+        OffLabel ->
+            "\u{0412}\u{044B}\u{043A}\u{043B}."
+
+        FileTooLarge ->
+            "\u{0418}\u{0437}\u{043E}\u{0431}\u{0440}\u{0430}\u{0436}\u{0435}\u{043D}\u{0438}\u{0435} \u{0441}\u{043B}\u{0438}\u{0448}\u{043A}\u{043E}\u{043C} \u{0431}\u{043E}\u{043B}\u{044C}\u{0448}\u{043E}\u{0435}. \u{0418}\u{0441}\u{043F}\u{043E}\u{043B}\u{044C}\u{0437}\u{0443}\u{0439}\u{0442}\u{0435} \u{0438}\u{0437}\u{043E}\u{0431}\u{0440}\u{0430}\u{0436}\u{0435}\u{043D}\u{0438}\u{0435} \u{043C}\u{0435}\u{043D}\u{0435}\u{0435} 15\u{041C}\u{0411}."
 
 
 tuvanTranslations : TranslationKey -> String
@@ -1087,7 +1223,7 @@ tuvanTranslations key =
             "Gridit, baby! Кандыг-даа чурук киирип, шыйыгны углааш, холстуже чуруунарны улгаттырарынга ажыглаңар. Чурукчулар бо аргатты чүс-чүс чылдар дургузунда ажыглап келгеннер \u{2014} Ренессанстың улуг мастерлеринден амгы үениң иллюстраторларынга чедир."
 
         MaxFileSize ->
-            "Эн хойу 5MB"
+            "Эн хойу 15MB"
 
         SupportedFormats ->
             "JPG, PNG, GIF ажыглаттынар"
@@ -1124,6 +1260,18 @@ tuvanTranslations key =
 
         ChangeImage ->
             "\u{04E8}\u{0441}\u{043A}\u{0435} \u{0447}\u{0443}\u{0440}\u{0443}\u{043A}\u{0442}\u{0443} \u{0448}\u{0438}\u{043B}\u{0438}\u{0438}\u{0440}"
+
+        AdaptiveGridDensity ->
+            "Adaptive density"
+
+        AnalyzingImage ->
+            "Analyzing..."
+
+        OffLabel ->
+            "Off"
+
+        FileTooLarge ->
+            "Image too large. Please use an image under 15MB."
 
 
 amharicTranslations : TranslationKey -> String
@@ -1173,7 +1321,7 @@ amharicTranslations key =
             "Gridit, baby! ማንኛውንም ምስል ይጫኑ፣ ፍርግርግ ያስቀምጡ እና ስዕልዎን ወደ ሸራ ለማስፋት ይጠቀሙበት። ከህዳሴው ጌቶች እስከ ዘመናዊ ሥዕላውያን ድረስ አርቲስቶች ይህን ዘዴ ለምዕተ ዓመታት ተጠቅመውበታል \u{2014} ቅንብሮችን በትክክል ለማስተላለፍ እና ለማስፋት።"
 
         MaxFileSize ->
-            "ከፍተኛ 5MB"
+            "ከፍተኛ 15MB"
 
         SupportedFormats ->
             "JPG፣ PNG፣ GIF ይደገፋል"
@@ -1210,6 +1358,18 @@ amharicTranslations key =
 
         ChangeImage ->
             "\u{120C}\u{120B} \u{121D}\u{1235}\u{120D} \u{12ED}\u{121D}\u{1228}\u{1321}"
+
+        AdaptiveGridDensity ->
+            "Adaptive density"
+
+        AnalyzingImage ->
+            "Analyzing..."
+
+        OffLabel ->
+            "Off"
+
+        FileTooLarge ->
+            "Image too large. Please use an image under 15MB."
 
 
 hebrewTranslations : TranslationKey -> String
@@ -1259,7 +1419,7 @@ hebrewTranslations key =
             "Gridit, baby! העלו כל תמונה, הניחו רשת ושימשו בה כדי להגדיל את הציור על הבד. אמנים השתמשו בטכניקה הזו במשך מאות שנים \u{2014} ממאסטרי הרנסנס ועד מאיירים מודרניים \u{2014} כדי להעביר ולהגדיל קומפוזיציות בדיוק."
 
         MaxFileSize ->
-            "מקסימום 5MB"
+            "מקסימום 15MB"
 
         SupportedFormats ->
             "JPG, PNG, GIF נתמכים"
@@ -1296,3 +1456,15 @@ hebrewTranslations key =
 
         ChangeImage ->
             "\u{05D1}\u{05D7}\u{05E8} \u{05EA}\u{05DE}\u{05D5}\u{05E0}\u{05D4} \u{05D0}\u{05D7}\u{05E8}\u{05EA}"
+
+        AdaptiveGridDensity ->
+            "\u{05E6}\u{05E4}\u{05D9}\u{05E4}\u{05D5}\u{05EA} \u{05DE}\u{05EA}\u{05D0}\u{05D9}\u{05DE}\u{05D4}"
+
+        AnalyzingImage ->
+            "\u{05DE}\u{05E0}\u{05EA}\u{05D7}..."
+
+        OffLabel ->
+            "\u{05DB}\u{05D1}\u{05D5}\u{05D9}"
+
+        FileTooLarge ->
+            "\u{05D4}\u{05EA}\u{05DE}\u{05D5}\u{05E0}\u{05D4} \u{05D2}\u{05D3}\u{05D5}\u{05DC}\u{05D4} \u{05DE}\u{05D3}\u{05D9}. \u{05D4}\u{05E9}\u{05EA}\u{05DE}\u{05E9} \u{05D1}\u{05EA}\u{05DE}\u{05D5}\u{05E0}\u{05D4} \u{05E7}\u{05D8}\u{05E0}\u{05D4} \u{05DE}\u{05A2} 15MB."
