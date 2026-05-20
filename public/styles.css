@@ -759,13 +759,26 @@ input[type="range"]::-moz-range-thumb:hover {
   line-height: 1.5;
 }
 
-.about-links a {
+.about-links a,
+.external-link {
   color: var(--primary-dark);
-  text-decoration: none;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+  font-weight: 500;
 }
 
-.about-links a:hover {
-  text-decoration: underline;
+.about-links a:hover,
+.external-link:hover {
+  text-decoration-thickness: 2px;
+  color: var(--primary);
+}
+
+.link-external {
+  width: 12px;
+  height: 12px;
+  margin-left: 3px;
+  opacity: 0.7;
 }
 
 .footer-content {
@@ -784,6 +797,146 @@ input[type="range"]::-moz-range-thumb:hover {
 
 .footer-text-main:hover {
   color: var(--on-background);
+}
+
+.community-card {
+  max-width: 720px;
+  margin: var(--spacing-lg) auto var(--spacing-sm) auto;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--glass-primary);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-glass);
+  text-align: center;
+  position: relative;
+}
+
+.community-frog {
+  position: absolute;
+  top: -20px;
+  right: 16px;
+  width: 40px;
+  height: 40px;
+  background: var(--card);
+  border: 1px solid var(--glass-border);
+  border-radius: 50%;
+  padding: 2px;
+  color: var(--primary);
+  box-shadow: var(--shadow-subtle);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.community-total {
+  font-size: var(--font-body);
+  color: var(--on-background);
+  margin: 0 0 var(--spacing-xs) 0;
+  line-height: 1.5;
+}
+
+.community-total strong {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--primary-dark);
+}
+
+.community-strip {
+  font-size: var(--font-caption);
+  color: var(--muted-foreground);
+  margin: var(--spacing-xs) 0 0 0;
+  line-height: 1.8;
+}
+
+.community-flags {
+  display: inline;
+}
+
+.community-flag {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.community-spotlight {
+  font-size: var(--font-caption);
+  color: var(--on-background);
+  margin: var(--spacing-xs) 0 0 0;
+}
+
+.community-disclaimer {
+  font-size: var(--font-small);
+  color: var(--muted-foreground);
+  text-align: left;
+}
+
+.community-disclaimer-toggle {
+  position: absolute;
+  top: -14px;
+  left: 16px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--card);
+  border: 1px solid var(--glass-border);
+  color: var(--muted-foreground);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: ui-serif, Georgia, "Times New Roman", serif;
+  cursor: pointer;
+  list-style: none;
+  box-shadow: var(--shadow-subtle);
+  transition: background 0.15s var(--ease-out-cubic), color 0.15s var(--ease-out-cubic);
+}
+
+.community-disclaimer-toggle::-webkit-details-marker { display: none; }
+.community-disclaimer-toggle::marker { content: ""; }
+
+.community-disclaimer-toggle:hover {
+  background: var(--accent);
+  color: var(--primary-dark);
+}
+
+.community-disclaimer-toggle:focus-visible {
+  outline: none;
+  box-shadow: var(--ring-focus);
+}
+
+.community-disclaimer-body {
+  margin: var(--spacing-sm) 0 0 0;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-style: italic;
+  line-height: 1.6;
+  border-left: 2px solid var(--accent);
+}
+
+.rate-limit-toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--card);
+  color: var(--primary-dark);
+  border: 1px solid var(--glass-border);
+  padding: 12px 20px;
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-elevated);
+  font-size: var(--font-caption);
+  font-weight: 500;
+  z-index: 1000;
+  pointer-events: none;
+  animation: rate-limit-pop 4s var(--ease-out-cubic);
+  max-width: calc(100vw - 32px);
+  text-align: center;
+}
+
+@keyframes rate-limit-pop {
+  0%   { opacity: 0; transform: translate(-50%, 24px); }
+  10%  { opacity: 1; transform: translate(-50%, 0); }
+  90%  { opacity: 1; transform: translate(-50%, 0); }
+  100% { opacity: 0; transform: translate(-50%, 24px); }
 }
 
 .app-footer {

@@ -7,6 +7,23 @@ main = "./_worker.js"        # ← satisfies the "entry-point" check
 [site]
 bucket = "./public"          # ← folder containing built files
 
+# Community counter: aggregates by country, no PII, free tier.
+# Create with: wrangler d1 create gridit-counters
+# Then paste the returned database_id here, and run:
+#   wrangler d1 execute gridit-counters --file=./scripts/schema.sql
+[[d1_databases]]
+binding       = "DB"
+database_name = "gridit-counters"
+database_id   = "REPLACE_AFTER_wrangler_d1_create"
+
+# Rate limit bucket: stores {count, resetAt} per session token (or hashed IP)
+# with 60s TTL. Nothing persists. Create with:
+#   wrangler kv:namespace create RL
+# Then paste the returned id here.
+[[kv_namespaces]]
+binding = "RL"
+id      = "REPLACE_AFTER_wrangler_kv_create"
+
 # Enable logging for debugging
 [logs]
 fatal = true
