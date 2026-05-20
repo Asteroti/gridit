@@ -229,6 +229,8 @@ test.describe('Gridit Application', () => {
           el.dispatchEvent(new Event('change', { bubbles: true }));
         }, lang);
         await expect(page.locator('html')).toHaveAttribute('lang', langCodes[lang], { timeout: 2000 });
+        // Poll until Elm has finished re-rendering the card under the new locale.
+        await expect(page.locator('.card-section-title')).not.toHaveText('Grid Settings', { timeout: 2000 });
         const card = await page.locator('.card-face').innerText();
         const allow = skipForLang[lang] || [];
         for (const word of englishLeakWords) {
@@ -236,6 +238,132 @@ test.describe('Gridit Application', () => {
           expect(card, `'${word}' leaked into ${lang} card`).not.toContain(word);
         }
       }
+    });
+  });
+
+  test.describe('Community counter', () => {
+    const sampleCounters = (yourCountry = 'AR') => ({
+      totalDownloaded: 100,
+      totalHearted: 200,
+      totalCountries: 5,
+      heartsByCountry: [
+        { country: 'AR', count: 50 },
+        { country: 'JP', count: 30 },
+        { country: 'ES', count: 25 }
+      ],
+      spotlight: { country: 'AR', count: 50 },
+      yourCountry
+    });
+
+    async function sendCounters(page, counters) {
+      await page.evaluate((c) => {
+        window._elmApp.ports.receiveCounters.send(c);
+      }, counters);
+    }
+
+    test('community card is absent before counters load', async ({ page }) => {
+      await expect(page.locator('.community-card')).toHaveCount(0);
+    });
+
+    test('community card renders when counters arrive', async ({ page }) => {
+      await sendCounters(page, sampleCounters());
+      await expect(page.locator('.community-card')).toBeVisible();
+      const totals = await page.locator('.community-total strong').allTextContents();
+      expect(totals).toEqual(['100', '5', '200']);
+    });
+
+    test('heart click ticks total and your-country row optimistically', async ({ page }) => {
+      await uploadImage(page);
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+      await sendCounters(page, sampleCounters('AR'));
+
+      await page.locator('.button-nice').click();
+
+      const totals = await page.locator('.community-total strong').allTextContents();
+      expect(totals[2]).toBe('201');
+      const arRow = await page.locator('.community-strip .community-flag').first().innerText();
+      expect(arRow).toMatch(/51$/);
+    });
+
+    test('heart from a country not in the strip appends it at rank-last', async ({ page }) => {
+      await uploadImage(page);
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+      await sendCounters(page, sampleCounters('WS'));
+
+      await page.locator('.button-nice').click();
+
+      const lastFlag = await page.locator('.community-strip .community-flag').last().innerText();
+      expect(lastFlag).toMatch(/1$/);
+    });
+
+    test('heart with empty yourCountry does not corrupt the strip', async ({ page }) => {
+      await uploadImage(page);
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+      await sendCounters(page, sampleCounters(''));
+      await expect(page.locator('.community-strip .community-flag')).toHaveCount(3);
+
+      await page.locator('.button-nice').click();
+
+      await expect(page.locator('.community-strip .community-flag')).toHaveCount(3);
+      const totals = await page.locator('.community-total strong').allTextContents();
+      expect(totals[2]).toBe('201');
+    });
+
+    test('download click ticks the download total', async ({ page }) => {
+      await uploadImage(page);
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+      await sendCounters(page, sampleCounters());
+
+      await page.locator('.button-download').click();
+      await page.waitForTimeout(800);
+
+      const totals = await page.locator('.community-total strong').allTextContents();
+      expect(totals[0]).toBe('101');
+    });
+
+    test('disclaimer expands on click', async ({ page }) => {
+      await sendCounters(page, sampleCounters());
+      const body = page.locator('.community-disclaimer-body');
+      await expect(body).not.toBeVisible();
+      await page.locator('.community-disclaimer summary').click();
+      await expect(body).toBeVisible();
+    });
+
+    test('rate-limit toast appears when receiveRateLimit fires', async ({ page }) => {
+      await sendCounters(page, sampleCounters());
+      await expect(page.locator('.rate-limit-toast')).toHaveCount(0);
+
+      await page.evaluate(() => window._elmApp.ports.receiveRateLimit.send(null));
+      await expect(page.locator('.rate-limit-toast')).toBeVisible();
+      await expect(page.locator('.rate-limit-toast')).toContainText(/cowboy/i);
+    });
+
+    test('community strings localized across all 14 languages', async ({ page }) => {
+      await sendCounters(page, sampleCounters());
+      const langCodes: Record<string, string> = {
+        english: 'en', spanish: 'es', latin: 'la', italian: 'it', portuguese: 'pt',
+        french: 'fr', asturiano: 'ast', gaelic: 'gd', euskara: 'eu', japanese: 'ja',
+        russian: 'ru', tuvan: 'tyv', amharic: 'am', hebrew: 'he'
+      };
+      const langSelect = page.locator('#language-select');
+      for (const [lang, code] of Object.entries(langCodes)) {
+        await langSelect.evaluate((el: HTMLSelectElement, v: string) => {
+          el.value = v;
+          el.dispatchEvent(new Event('change', { bubbles: true }));
+        }, lang);
+        await expect(page.locator('html')).toHaveAttribute('lang', code, { timeout: 2000 });
+        await expect(page.locator('.community-card')).toBeVisible();
+      }
+    });
+  });
+
+  test.describe('External links', () => {
+    test('Wikipedia links have external icon and underline', async ({ page }) => {
+      const firstLink = page.locator('.about-links a').first();
+      const decoration = await firstLink.evaluate(el => getComputedStyle(el).textDecorationLine);
+      expect(decoration).toContain('underline');
+      const iconCount = await page.locator('.about-links a .link-external').count();
+      expect(iconCount).toBe(5);
     });
   });
 

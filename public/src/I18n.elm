@@ -50,6 +50,15 @@ type TranslationKey
     | AnalyzingImage
     | OffLabel
     | FileTooLarge
+    | CommunityImagesGridded
+    | CommunityCountriesWith
+    | CommunityHearts
+    | CommunityHeartsFrom
+    | CommunitySpotlight
+    | CommunitySentMost
+    | CommunityWhatsThis
+    | CommunityDisclaimerBody
+    | RateLimitMessage
 
 
 translate : Language -> TranslationKey -> String
@@ -195,6 +204,33 @@ englishTranslations key =
         FileTooLarge ->
             "Image too large. Please use an image under 15MB."
 
+        CommunityImagesGridded ->
+            "images gridded across"
+
+        CommunityCountriesWith ->
+            "countries, with"
+
+        CommunityHearts ->
+            "hearts"
+
+        CommunityHeartsFrom ->
+            "Hearts from around the world:"
+
+        CommunitySpotlight ->
+            "This week's spotlight:"
+
+        CommunitySentMost ->
+            "sent the most"
+
+        CommunityWhatsThis ->
+            "what's this counter?"
+
+        CommunityDisclaimerBody ->
+            "when you download or heart, i log \"someone in [country] did the thing\". i dont use it for anything, just to show counters. when i was little, websites had visitor counters per country that made me feel i was not alone in the world. its my turn to pull my weight! — t"
+
+        RateLimitMessage ->
+            "whoa easy there cowboy — let the hearts catch their breath"
+
 
 spanishTranslations : TranslationKey -> String
 spanishTranslations key =
@@ -292,6 +328,33 @@ spanishTranslations key =
 
         FileTooLarge ->
             "Imagen demasiado grande. Usa una imagen menor a 15MB."
+
+        CommunityImagesGridded ->
+            "imágenes con grilla en"
+
+        CommunityCountriesWith ->
+            "países, con"
+
+        CommunityHearts ->
+            "corazones"
+
+        CommunityHeartsFrom ->
+            "Corazones desde todo el mundo:"
+
+        CommunitySpotlight ->
+            "Spotlight de la semana:"
+
+        CommunitySentMost ->
+            "mandó los más"
+
+        CommunityWhatsThis ->
+            "¿qué es este contador?"
+
+        CommunityDisclaimerBody ->
+            "cuando descargas o le pones un corazón, registro \"alguien en [país] hizo la cosa\". no lo uso para nada, solo para mostrar contadores. cuando era chica, las webs tenían contadores de visitas por país que me hacían sentir que no estaba sola en el mundo. me toca a mí devolver la gauchada! — t"
+
+        RateLimitMessage ->
+            "tranqui pibe — dejá que los corazones tomen aire"
 
 
 latinTranslations : TranslationKey -> String
@@ -391,6 +454,33 @@ latinTranslations key =
         FileTooLarge ->
             "Imago nimium magna est. Utere imagine minore quam 15MB."
 
+        CommunityImagesGridded ->
+            "imagines cum craticula in"
+
+        CommunityCountriesWith ->
+            "civitatibus, cum"
+
+        CommunityHearts ->
+            "cordibus"
+
+        CommunityHeartsFrom ->
+            "Corda ex toto orbe:"
+
+        CommunitySpotlight ->
+            "Lumen huius hebdomadae:"
+
+        CommunitySentMost ->
+            "misit plurima"
+
+        CommunityWhatsThis ->
+            "quid est hic numerator?"
+
+        CommunityDisclaimerBody ->
+            "cum discaricas vel cor das, scribo \"aliquis in [civitate] hoc fecit\". nullo modo eo utor, solum ut numeratores ostendam. cum parva eram, telae habebant numeratores visitatorum per civitates qui me sentire faciebant me non solam in mundo esse. nunc mei est vicem reddere! — t"
+
+        RateLimitMessage ->
+            "lente lente, eques — sine corda spirare"
+
 
 italianTranslations : TranslationKey -> String
 italianTranslations key =
@@ -488,6 +578,33 @@ italianTranslations key =
 
         FileTooLarge ->
             "Immagine troppo grande. Usa un'immagine sotto i 15MB."
+
+        CommunityImagesGridded ->
+            "immagini con griglia in"
+
+        CommunityCountriesWith ->
+            "paesi, con"
+
+        CommunityHearts ->
+            "cuori"
+
+        CommunityHeartsFrom ->
+            "Cuori da tutto il mondo:"
+
+        CommunitySpotlight ->
+            "Spotlight della settimana:"
+
+        CommunitySentMost ->
+            "ha mandato di più"
+
+        CommunityWhatsThis ->
+            "cos'è questo contatore?"
+
+        CommunityDisclaimerBody ->
+            "quando scarichi o metti un cuore, registro \"qualcuno in [paese] ha fatto la cosa\". non lo uso per niente, solo per mostrare i contatori. quando ero piccola, i siti avevano contatori di visite per paese che mi facevano sentire che non ero sola al mondo. tocca a me restituire il favore! — t"
+
+        RateLimitMessage ->
+            "calma cowboy — fai respirare i cuori"
 
 
 portugueseTranslations : TranslationKey -> String
@@ -587,6 +704,33 @@ portugueseTranslations key =
         FileTooLarge ->
             "Imagem muito grande. Use uma imagem com menos de 15MB."
 
+        CommunityImagesGridded ->
+            "imagens com grelha em"
+
+        CommunityCountriesWith ->
+            "países, com"
+
+        CommunityHearts ->
+            "corações"
+
+        CommunityHeartsFrom ->
+            "Corações de todo o mundo:"
+
+        CommunitySpotlight ->
+            "Destaque da semana:"
+
+        CommunitySentMost ->
+            "enviou mais"
+
+        CommunityWhatsThis ->
+            "o que é este contador?"
+
+        CommunityDisclaimerBody ->
+            "quando descarregas ou dás um coração, registo \"alguém em [país] fez a coisa\". não uso para nada, só para mostrar contadores. quando eu era pequena, os sites tinham contadores de visitas por país que me faziam sentir que não estava sozinha no mundo. é a minha vez de retribuir! — t"
+
+        RateLimitMessage ->
+            "calma parceiro — deixa os corações respirarem"
+
 
 frenchTranslations : TranslationKey -> String
 frenchTranslations key =
@@ -684,6 +828,33 @@ frenchTranslations key =
 
         FileTooLarge ->
             "Image trop grande. Utilisez une image de moins de 15 Mo."
+
+        CommunityImagesGridded ->
+            "images avec grille dans"
+
+        CommunityCountriesWith ->
+            "pays, avec"
+
+        CommunityHearts ->
+            "cœurs"
+
+        CommunityHeartsFrom ->
+            "Cœurs du monde entier :"
+
+        CommunitySpotlight ->
+            "Pleins feux cette semaine :"
+
+        CommunitySentMost ->
+            "en a envoyé le plus"
+
+        CommunityWhatsThis ->
+            "c'est quoi ce compteur ?"
+
+        CommunityDisclaimerBody ->
+            "quand tu télécharges ou tu mets un cœur, je note \"quelqu'un en [pays] a fait le truc\". je m'en sers pour rien, juste pour montrer les compteurs. quand j'étais petite, les sites avaient des compteurs de visites par pays qui me faisaient sentir que je n'étais pas seule au monde. à mon tour de rendre la pareille ! — t"
+
+        RateLimitMessage ->
+            "doucement cowboy — laisse les cœurs souffler"
 
 
 asturianoTranslations : TranslationKey -> String
@@ -783,6 +954,33 @@ asturianoTranslations key =
         FileTooLarge ->
             "Imaxe enforma grande. Usa una imaxe menor de 15MB."
 
+        CommunityImagesGridded ->
+            "imáxenes con cuadrícula en"
+
+        CommunityCountriesWith ->
+            "países, con"
+
+        CommunityHearts ->
+            "corazones"
+
+        CommunityHeartsFrom ->
+            "Corazones de tol mundu:"
+
+        CommunitySpotlight ->
+            "Espoxigada esta selmana:"
+
+        CommunitySentMost ->
+            "mandó los más"
+
+        CommunityWhatsThis ->
+            "¿qué ye esti contador?"
+
+        CommunityDisclaimerBody ->
+            "cuando descargues o-y pongas un corazón, rexistro \"daquien en [país] fizo la cosa\". nun lu uso pa nada, namai pa amosar contadores. cuando yera neña, les webs tenían contadores de visites per país que me facían sentir que nun taba sola nel mundu. tocame a mi tornalo! — t"
+
+        RateLimitMessage ->
+            "tranqui vaqueru — dexa que los corazones respiren"
+
 
 gaelicTranslations : TranslationKey -> String
 gaelicTranslations key =
@@ -880,6 +1078,33 @@ gaelicTranslations key =
 
         FileTooLarge ->
             "Tha an dealbh ro mhòr. Cleachd dealbh nas lugha na 15MB."
+
+        CommunityImagesGridded ->
+            "dè ideàlan air an cliath, ann an"
+
+        CommunityCountriesWith ->
+            "dùthchannan, le"
+
+        CommunityHearts ->
+            "cridheachan"
+
+        CommunityHeartsFrom ->
+            "Cridheachan bhon t-saoghal:"
+
+        CommunitySpotlight ->
+            "Solas na seachdain seo:"
+
+        CommunitySentMost ->
+            "chuir am pàirt as motha"
+
+        CommunityWhatsThis ->
+            "dè an cunntair seo?"
+
+        CommunityDisclaimerBody ->
+            "nuair a luchdaicheas tu sios no a chuireas tu cridhe, sgriobhainn \"chuir cuideigin ann an [duthaich] an rud\". cha bhi mi 'ga chleachdadh airson rud sam bith, dim ach airson na cunntairean a shealltainn. nuair a bha mi beag, bha cunntairean luchd-tadhail aig laraichean-lin gach duthaich a thug orm faireachdainn nach robh mi nam aonar san t-saoghal. tha e ann an cuid mo cheart dhomh-sa! — t"
+
+        RateLimitMessage ->
+            "gabh socair a charaid — leig leis na cridheachan anail a tharraing"
 
 
 euskaraTranslations : TranslationKey -> String
@@ -979,6 +1204,33 @@ euskaraTranslations key =
         FileTooLarge ->
             "Irudia handiegia da. Erabili 15MB baino txikiagoa den irudia."
 
+        CommunityImagesGridded ->
+            "irudi sareta-rekin"
+
+        CommunityCountriesWith ->
+            "herrialdetan, eta"
+
+        CommunityHearts ->
+            "bihotz"
+
+        CommunityHeartsFrom ->
+            "Bihotzak mundu osotik:"
+
+        CommunitySpotlight ->
+            "Asteko izarra:"
+
+        CommunitySentMost ->
+            "gehien bidali ditu"
+
+        CommunityWhatsThis ->
+            "zer da kontagailu hau?"
+
+        CommunityDisclaimerBody ->
+            "deskargatzen edo bihotza jartzen duzunean, \"norbaitek [herrialdean] hori egin zuen\" idazten dut. ez dut ezertarako erabiltzen, kontagailuak erakusteko bakarrik. txikia nintzenean, webguneek herrialdeko bisita-kontagailuak zituzten, eta horrek munduan bakarrik ez nengoela sentiarazi zidaten. niri tokatzen zait orain itzultzea! — t"
+
+        RateLimitMessage ->
+            "lasai cowboy — utzi bihotzei arnasa hartzen"
+
 
 japaneseTranslations : TranslationKey -> String
 japaneseTranslations key =
@@ -1076,6 +1328,33 @@ japaneseTranslations key =
 
         FileTooLarge ->
             "\u{753B}\u{50CF}\u{304C}\u{5927}\u{304D}\u{3059}\u{304E}\u{307E}\u{3059}\u{3002}15MB\u{4EE5}\u{4E0B}\u{306E}\u{753B}\u{50CF}\u{3092}\u{4F7F}\u{7528}\u{3057}\u{3066}\u{304F}\u{3060}\u{3055}\u{3044}\u{3002}"
+
+        CommunityImagesGridded ->
+            "枚の画像が"
+
+        CommunityCountriesWith ->
+            "ヶ国でグリッドされ、"
+
+        CommunityHearts ->
+            "個のハート"
+
+        CommunityHeartsFrom ->
+            "世界中からのハート："
+
+        CommunitySpotlight ->
+            "今週のスポットライト："
+
+        CommunitySentMost ->
+            "が一番送った"
+
+        CommunityWhatsThis ->
+            "このカウンターは何？"
+
+        CommunityDisclaimerBody ->
+            "ダウンロードしたりハートを押したりすると、「[国名]の誰かがそれをした」と記録します。何にも使いません、カウンターを見せるだけです。小さい頃、ウェブサイトにあった国別訪問者カウンターを見て、世界でひとりじゃないと感じていました。今度は私がその番です！ — t"
+
+        RateLimitMessage ->
+            "おっとカウボーイ、落ち着いて — ハートを休ませてあげて"
 
 
 russianTranslations : TranslationKey -> String
@@ -1175,6 +1454,33 @@ russianTranslations key =
         FileTooLarge ->
             "\u{0418}\u{0437}\u{043E}\u{0431}\u{0440}\u{0430}\u{0436}\u{0435}\u{043D}\u{0438}\u{0435} \u{0441}\u{043B}\u{0438}\u{0448}\u{043A}\u{043E}\u{043C} \u{0431}\u{043E}\u{043B}\u{044C}\u{0448}\u{043E}\u{0435}. \u{0418}\u{0441}\u{043F}\u{043E}\u{043B}\u{044C}\u{0437}\u{0443}\u{0439}\u{0442}\u{0435} \u{0438}\u{0437}\u{043E}\u{0431}\u{0440}\u{0430}\u{0436}\u{0435}\u{043D}\u{0438}\u{0435} \u{043C}\u{0435}\u{043D}\u{0435}\u{0435} 15\u{041C}\u{0411}."
 
+        CommunityImagesGridded ->
+            "изображений с сеткой в"
+
+        CommunityCountriesWith ->
+            "странах, с"
+
+        CommunityHearts ->
+            "сердечек"
+
+        CommunityHeartsFrom ->
+            "Сердечки со всего мира:"
+
+        CommunitySpotlight ->
+            "Прожектор недели:"
+
+        CommunitySentMost ->
+            "прислало больше всего"
+
+        CommunityWhatsThis ->
+            "что это за счётчик?"
+
+        CommunityDisclaimerBody ->
+            "когда ты скачиваешь или ставишь сердечко, я записываю \"кто-то в [стране] сделал вещь\". я это ни для чего не использую, просто чтобы показать счётчики. когда я была маленькой, сайты имели счётчики посетителей по странам, и они давали мне ощущение, что я не одна в этом мире. теперь моя очередь внести свой вклад! — t"
+
+        RateLimitMessage ->
+            "эй ковбой, помедленнее — дай сердечкам отдышаться"
+
 
 tuvanTranslations : TranslationKey -> String
 tuvanTranslations key =
@@ -1272,6 +1578,35 @@ tuvanTranslations key =
 
         FileTooLarge ->
             "Image too large. Please use an image under 15MB."
+
+        CommunityImagesGridded ->
+            "көргүзAr дугайлалгалыг"
+
+        CommunityCountriesWith ->
+            "чурттарда,"
+
+        CommunityHearts ->
+            "чүрек"
+
+        CommunityHeartsFrom ->
+            "Бо delgemnin чүректери:"
+
+        CommunitySpotlight ->
+            "Бо хөвсреҢ чарыгы:"
+
+        CommunitySentMost ->
+            "энө хөй чорутпан"
+
+        CommunityWhatsThis ->
+            "бо кандыы сан-чанаг чугаа?"
+
+        CommunityDisclaimerBody ->
+            -- TODO: native Tuvan translation needed; English fallback for now.
+            "when you download or heart, i log \"someone in [country] did the thing\". i dont use it for anything, just to show counters. when i was little, websites had visitor counters per country that made me feel i was not alone in the world. its my turn to pull my weight! — t"
+
+        RateLimitMessage ->
+            -- TODO: native tuvan translation; English fallback for now.
+            "whoa easy there cowboy — let the hearts catch their breath"
 
 
 amharicTranslations : TranslationKey -> String
@@ -1371,6 +1706,35 @@ amharicTranslations key =
         FileTooLarge ->
             "Image too large. Please use an image under 15MB."
 
+        CommunityImagesGridded ->
+            "ምስሎች ግርድ በ"
+
+        CommunityCountriesWith ->
+            "ጀንቶች, ጋር"
+
+        CommunityHearts ->
+            "ልብ"
+
+        CommunityHeartsFrom ->
+            "ከዓለም አቀፍ ልብ ሞች:"
+
+        CommunitySpotlight ->
+            "የዝህ ሳምንት ወርዋሉ:"
+
+        CommunitySentMost ->
+            "በበለጠ ልብ ላዪ"
+
+        CommunityWhatsThis ->
+            "ዪህ ቀጠሪ ምንድን ነው?"
+
+        CommunityDisclaimerBody ->
+            -- TODO: native Amharic translation needed; English fallback for now.
+            "when you download or heart, i log \"someone in [country] did the thing\". i dont use it for anything, just to show counters. when i was little, websites had visitor counters per country that made me feel i was not alone in the world. its my turn to pull my weight! — t"
+
+        RateLimitMessage ->
+            -- TODO: native amharic translation; English fallback for now.
+            "whoa easy there cowboy — let the hearts catch their breath"
+
 
 hebrewTranslations : TranslationKey -> String
 hebrewTranslations key =
@@ -1468,3 +1832,30 @@ hebrewTranslations key =
 
         FileTooLarge ->
             "\u{05D4}\u{05EA}\u{05DE}\u{05D5}\u{05E0}\u{05D4} \u{05D2}\u{05D3}\u{05D5}\u{05DC}\u{05D4} \u{05DE}\u{05D3}\u{05D9}. \u{05D4}\u{05E9}\u{05EA}\u{05DE}\u{05E9} \u{05D1}\u{05EA}\u{05DE}\u{05D5}\u{05E0}\u{05D4} \u{05E7}\u{05D8}\u{05E0}\u{05D4} \u{05DE}\u{05A2} 15MB."
+
+        CommunityImagesGridded ->
+            "תמונות עם רשת בתוך"
+
+        CommunityCountriesWith ->
+            "מדינות, עם"
+
+        CommunityHearts ->
+            "לבות"
+
+        CommunityHeartsFrom ->
+            "לבות מכל העולם:"
+
+        CommunitySpotlight ->
+            "זרקור השבוע:"
+
+        CommunitySentMost ->
+            "שלחה את הכי הרבה"
+
+        CommunityWhatsThis ->
+            "מה זה המונה הזה?"
+
+        CommunityDisclaimerBody ->
+            "כשאת מורידה או נותנת לב, אני מתעדת \"מישהו ב[מדינה] עשה את זה\". אני לא משתמשת בזה לשום דבר, רק להציג מונים. כשהייתי קטנה, היו אתרים עם מוני מבקרים לפי מדינה שגרמו לי להרגיש שאני לא לבד בעולם. עכשיו תורי להחזיר! — t"
+
+        RateLimitMessage ->
+            "וואו לאט לך קאובוי — תן ללבבות לתפוס אוויר"

@@ -387,32 +387,55 @@ function setupConfetti() {
     container.className = 'confetti-container';
     document.body.appendChild(container);
 
+    var frogSvg =
+      '<svg viewBox="0 0 20 20" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">' +
+      '<circle cx="6" cy="6" r="3"/>' +
+      '<circle cx="14" cy="6" r="3"/>' +
+      '<circle cx="6" cy="6" r="1" fill="currentColor"/>' +
+      '<circle cx="14" cy="6" r="1" fill="currentColor"/>' +
+      '<path d="M4 12 Q10 18 16 12" stroke-linecap="round"/>' +
+      '</svg>';
+
     for (var i = 0; i < CONFETTI_COUNT; i++) {
       var roll = Math.random();
       var confetti = document.createElement('div');
       confetti.className = 'confetti-piece';
+      var color = confettiColors[Math.floor(Math.random() * confettiColors.length)];
+      var delay = Math.random() * 0.5;
+      var duration = Math.random() * 1 + 1.5;
 
-      if (roll < 0.25) {
+      if (roll < 0.15) {
+        // Frog: subtle, ~15% of pieces, rendered in primary green for "Gridit DNA".
+        var fsize = Math.random() * 8 + 14;
+        confetti.innerHTML = frogSvg;
+        confetti.style.cssText =
+          'left: ' + (Math.random() * 100) + '%;' +
+          'width: ' + fsize + 'px;' +
+          'height: ' + fsize + 'px;' +
+          'color: hsl(152, 40%, 45%);' +
+          'animation-delay: ' + delay + 's;' +
+          'animation-duration: ' + duration + 's;';
+      } else if (roll < 0.40) {
         var size = Math.random() * 10 + 10;
         confetti.textContent = '\u2665';
         confetti.style.cssText =
           'left: ' + (Math.random() * 100) + '%;' +
           'font-size: ' + size + 'px;' +
-          'color: ' + confettiColors[Math.floor(Math.random() * confettiColors.length)] + ';' +
+          'color: ' + color + ';' +
           'line-height: 1;' +
-          'animation-delay: ' + (Math.random() * 0.5) + 's;' +
-          'animation-duration: ' + (Math.random() * 1 + 1.5) + 's;';
+          'animation-delay: ' + delay + 's;' +
+          'animation-duration: ' + duration + 's;';
       } else {
         var w = Math.random() * 10 + 6;
-        var h = roll < 0.65 ? w : w * (0.5 + Math.random() * 0.4);
+        var h = roll < 0.70 ? w : w * (0.5 + Math.random() * 0.4);
         confetti.style.cssText =
           'left: ' + (Math.random() * 100) + '%;' +
           'width: ' + w + 'px;' +
           'height: ' + h + 'px;' +
-          'background: ' + confettiColors[Math.floor(Math.random() * confettiColors.length)] + ';' +
+          'background: ' + color + ';' +
           'border-radius: 50%;' +
-          'animation-delay: ' + (Math.random() * 0.5) + 's;' +
-          'animation-duration: ' + (Math.random() * 1 + 1.5) + 's;';
+          'animation-delay: ' + delay + 's;' +
+          'animation-duration: ' + duration + 's;';
       }
       container.appendChild(confetti);
     }
@@ -475,12 +498,62 @@ function setupFilePickerPort(app) {
 }
 
 
+function getSessionToken() {
+  try {
+    var stored = localStorage.getItem('gridit-session');
+    if (stored && /^[a-zA-Z0-9_-]{8,128}$/.test(stored)) return stored;
+  } catch (e) {}
+  var fresh = (typeof crypto !== 'undefined' && crypto.randomUUID)
+    ? crypto.randomUUID()
+    : 'st-' + Math.random().toString(36).slice(2) + Date.now().toString(36);
+  try { localStorage.setItem('gridit-session', fresh); } catch (e) {}
+  return fresh;
+}
+
+
+function setupCommunityPort(app) {
+  var sessionToken = getSessionToken();
+
+  if (app.ports.reportEvent) {
+    app.ports.reportEvent.subscribe(function(event) {
+      fetch('/api/event', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Session-Token': sessionToken
+        },
+        body: JSON.stringify({ event: event }),
+        keepalive: true
+      })
+        .then(function(r) {
+          if (r.status === 429 && app.ports.receiveRateLimit) {
+            app.ports.receiveRateLimit.send(null);
+          }
+        })
+        .catch(function() {});
+    });
+  }
+
+  if (app.ports.receiveCounters) {
+    fetch('/api/counters')
+      .then(function(r) { return r.ok ? r.json() : null; })
+      .then(function(data) {
+        if (data && typeof data.totalDownloaded === 'number') {
+          app.ports.receiveCounters.send(data);
+        }
+      })
+      .catch(function() {});
+  }
+}
+
+
 function initializeElmApp() {
   var app = Elm.Main.init({
     node: document.getElementById('elm-app')
   });
 
   _elmApp = app;
+  if (typeof window !== 'undefined') window._elmApp = app;
 
   setupLanguagePorts(app);
   setupDownloadPort(app);
@@ -490,6 +563,7 @@ function initializeElmApp() {
   setupEntropyPort(app);
   setupErrorPort(app);
   setupFilePickerPort(app);
+  setupCommunityPort(app);
 
   return app;
 }

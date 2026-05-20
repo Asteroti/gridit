@@ -1,7 +1,7 @@
 port module Main exposing (..)
 
 import Browser
-import Html exposing (Html, a, button, div, h1, h2, h3, img, input, label, option, p, select, span, text)
+import Html exposing (Html, a, button, div, h1, h2, h3, img, input, label, option, p, select, span, strong, text)
 import Html.Attributes exposing (attribute, class, disabled, for, href, id, max, min, placeholder, rel, selected, src, step, style, target, type_, value)
 import Html.Events exposing (on, onClick, onInput)
 import I18n exposing (Language(..), TranslationKey, translate)
@@ -143,6 +143,19 @@ iconShare =
         ]
 
 
+iconExternal : Html msg
+iconExternal =
+    svgIcon
+        [ SvgAttr.width "12"
+        , SvgAttr.height "12"
+        , SvgAttr.class "svg-icon link-external"
+        ]
+        [ Svg.path [ SvgAttr.d "M9 4 H4 V16 H16 V11", SvgAttr.strokeLinecap "round", SvgAttr.strokeLinejoin "round" ] []
+        , Svg.path [ SvgAttr.d "M11 3 H17 V9", SvgAttr.strokeLinecap "round", SvgAttr.strokeLinejoin "round" ] []
+        , Svg.path [ SvgAttr.d "M10 10 L17 3", SvgAttr.strokeLinecap "round" ] []
+        ]
+
+
 iconGreenHeart : Html Msg
 iconGreenHeart =
     svgIcon [ SvgAttr.fill "currentColor", SvgAttr.stroke "none" ]
@@ -174,6 +187,22 @@ type alias Model =
     , entropyData : Maybe (List Float)
     , isAnalyzing : Bool
     , gridHue : Int
+    , counters : Maybe Counters
+    , showRateLimitToast : Bool
+    }
+
+
+type alias CountryCount =
+    { country : String, count : Int }
+
+
+type alias Counters =
+    { totalDownloaded : Int
+    , totalHearted : Int
+    , totalCountries : Int
+    , heartsByCountry : List CountryCount
+    , spotlight : CountryCount
+    , yourCountry : String
     }
 
 
@@ -208,6 +237,9 @@ type Msg
     | ShareSupportReceived Bool
     | AdaptiveSensitivityChanged Float
     | EntropyDataReceived (List Float)
+    | CountersReceived Counters
+    | RateLimited
+    | DismissRateLimit
 
 
 
@@ -394,6 +426,15 @@ port pickImageFile : () -> Cmd msg
 port receivePickedImage : (PickedImage -> msg) -> Sub msg
 
 
+port reportEvent : String -> Cmd msg
+
+
+port receiveCounters : (Counters -> msg) -> Sub msg
+
+
+port receiveRateLimit : (() -> msg) -> Sub msg
+
+
 maxImageBytes : Int
 maxImageBytes =
     15 * 1024 * 1024
@@ -430,6 +471,8 @@ init _ =
       , entropyData = Nothing
       , isAnalyzing = False
       , gridHue = 180
+      , counters = Nothing
+      , showRateLimitToast = False
       }
     , Cmd.none
     )
@@ -442,6 +485,61 @@ init _ =
 withSave : Model -> ( Model, Cmd Msg )
 withSave model =
     ( model, saveSettings (settingsFromModel model) )
+
+
+bumpCounter : String -> Maybe Counters -> Maybe Counters
+bumpCounter event maybeCounters =
+    Maybe.map
+        (\c ->
+            if event == "downloaded" then
+                { c | totalDownloaded = c.totalDownloaded + 1 }
+            else if event == "hearted" then
+                { c
+                    | totalHearted = c.totalHearted + 1
+                    , heartsByCountry = bumpCountryRow c.yourCountry c.heartsByCountry
+                }
+            else
+                c
+        )
+        maybeCounters
+
+
+bumpCountryRow : String -> List CountryCount -> List CountryCount
+bumpCountryRow country rows =
+    if country == "" then
+        rows
+    else
+        let
+            ( seen, bumped ) =
+                List.foldr
+                    (\r ( found, acc ) ->
+                        if r.country == country then
+                            ( True, { r | count = r.count + 1 } :: acc )
+                        else
+                            ( found, r :: acc )
+                    )
+                    ( False, [] )
+                    rows
+        in
+        if seen then
+            bumped
+        else
+            -- New country with count=1 always sits at the bottom of a descending list;
+            -- next /api/counters fetch will reorder authoritatively.
+            rows ++ [ { country = country, count = 1 } ]
+
+
+countryFlag : String -> String
+countryFlag code =
+    case String.toList (String.toUpper code) of
+        [ a, b ] ->
+            String.fromList
+                [ Char.fromCode (Char.toCode a - Char.toCode 'A' + 0x0001F1E6)
+                , Char.fromCode (Char.toCode b - Char.toCode 'A' + 0x0001F1E6)
+                ]
+
+        _ ->
+            "\u{1F3F3}"
 
 
 canAnalyze : Model -> Bool
@@ -702,7 +800,12 @@ update msg model =
             withSave { model | gridOpacity = opacity }
 
         NiceButtonClicked ->
-            ( { model | niceCounter = model.niceCounter + 1 }, Cmd.none )
+            ( { model
+                | niceCounter = model.niceCounter + 1
+                , counters = bumpCounter "hearted" model.counters
+              }
+            , reportEvent "hearted"
+            )
 
         ImageSizeLoaded width height ->
             let
@@ -777,9 +880,15 @@ update msg model =
                     else
                         downloadImage { dataUrl = dataUrl, fileName = fileName }
             in
-            ( { model | downloadSuccess = True, isProcessing = False, shareAfterProcess = False }
+            ( { model
+                | downloadSuccess = True
+                , isProcessing = False
+                , shareAfterProcess = False
+                , counters = bumpCounter "downloaded" model.counters
+              }
             , Cmd.batch
                 [ action
+                , reportEvent "downloaded"
                 , Task.perform (\_ -> ResetDownloadSuccess) (Process.sleep downloadSuccessHoldMs)
                 ]
             )
@@ -802,6 +911,17 @@ update msg model =
         EntropyDataReceived data ->
             ( { model | entropyData = Just data, isAnalyzing = False }, Cmd.none )
 
+        CountersReceived c ->
+            ( { model | counters = Just c }, Cmd.none )
+
+        RateLimited ->
+            ( { model | showRateLimitToast = True }
+            , Task.perform (\_ -> DismissRateLimit) (Process.sleep 4000)
+            )
+
+        DismissRateLimit ->
+            ( { model | showRateLimitToast = False }, Cmd.none )
+
 
 
 -- SUBSCRIPTIONS
@@ -817,6 +937,8 @@ subscriptions _ =
         , receiveShareSupport ShareSupportReceived
         , receiveEntropyData EntropyDataReceived
         , receivePickedImage ImagePicked
+        , receiveCounters CountersReceived
+        , receiveRateLimit (\_ -> RateLimited)
         ]
 
 
@@ -834,9 +956,24 @@ view model =
                 , viewCardRegion model
                 ]
             , viewWhatsThisAbout model
+            , viewCommunityCard model
             ]
         , viewFooter model
+        , viewRateLimitToast model
         ]
+
+
+viewRateLimitToast : Model -> Html Msg
+viewRateLimitToast model =
+    if model.showRateLimitToast then
+        div
+            [ class "rate-limit-toast"
+            , attribute "role" "status"
+            , attribute "aria-live" "polite"
+            ]
+            [ text (translate model.language I18n.RateLimitMessage) ]
+    else
+        text ""
 
 
 
@@ -862,41 +999,14 @@ viewWhatsThisAbout model =
         , p [ class "about-text about-curious" ]
             [ text (translate model.language I18n.CuriousAboutGrids) ]
         , p [ class "about-text about-links" ]
-            [ a
-                [ href "https://en.wikipedia.org/wiki/Grid_(graphic_design)"
-                , target "_blank"
-                , rel "noopener noreferrer"
+            (List.intersperse (text " \u{00B7} ")
+                [ externalLink "https://en.wikipedia.org/wiki/Grid_(graphic_design)" "Grid in graphic design"
+                , externalLink "https://en.wikipedia.org/wiki/Grid_method" "The grid method"
+                , externalLink "https://en.wikipedia.org/wiki/Scaling_(geometry)" "Scaling in geometry"
+                , externalLink "https://gurneyjourney.blogspot.com/2009/11/scaling-up-with-grid.html" "Gurney Journey: Scaling up"
+                , externalLink "https://www.gadsbys.co.uk/drawing-scaling-up-an-image-using-a-grid/" "Gadsbys: Using a grid"
                 ]
-                [ text "Grid in graphic design" ]
-            , text " \u{00B7} "
-            , a
-                [ href "https://en.wikipedia.org/wiki/Grid_method"
-                , target "_blank"
-                , rel "noopener noreferrer"
-                ]
-                [ text "The grid method" ]
-            , text " \u{00B7} "
-            , a
-                [ href "https://en.wikipedia.org/wiki/Scaling_(geometry)"
-                , target "_blank"
-                , rel "noopener noreferrer"
-                ]
-                [ text "Scaling in geometry" ]
-            , text " \u{00B7} "
-            , a
-                [ href "https://gurneyjourney.blogspot.com/2009/11/scaling-up-with-grid.html"
-                , target "_blank"
-                , rel "noopener noreferrer"
-                ]
-                [ text "Gurney Journey: Scaling up" ]
-            , text " \u{00B7} "
-            , a
-                [ href "https://www.gadsbys.co.uk/drawing-scaling-up-an-image-using-a-grid/"
-                , target "_blank"
-                , rel "noopener noreferrer"
-                ]
-                [ text "Gadsbys: Using a grid" ]
-            ]
+            )
         ]
 
 
@@ -1122,6 +1232,17 @@ viewThicknessControl model =
         }
 
 
+externalLink : String -> String -> Html msg
+externalLink url label_ =
+    a
+        [ href url
+        , target "_blank"
+        , rel "noopener noreferrer"
+        , class "external-link"
+        ]
+        [ text label_, iconExternal ]
+
+
 colorPreset : String -> String -> String -> Html Msg
 colorPreset hex ariaLabel currentColor =
     let
@@ -1255,6 +1376,81 @@ viewActionButtons model =
               else
                 text ""
             ]
+        ]
+
+
+viewCommunityCard : Model -> Html Msg
+viewCommunityCard model =
+    case model.counters of
+        Nothing ->
+            text ""
+
+        Just c ->
+            div [ class "community-card" ]
+                [ span [ class "community-frog", attribute "aria-hidden" "true" ] [ iconFrogSized "36" ]
+                , p [ class "community-total" ]
+                    [ strong [] [ text (String.fromInt c.totalDownloaded) ]
+                    , text (" " ++ translate model.language I18n.CommunityImagesGridded ++ " ")
+                    , strong [] [ text (String.fromInt c.totalCountries) ]
+                    , text (" " ++ translate model.language I18n.CommunityCountriesWith ++ " ")
+                    , strong [] [ text (String.fromInt c.totalHearted) ]
+                    , text (" " ++ translate model.language I18n.CommunityHearts ++ " ")
+                    , span [ class "heart-success" ] [ iconGreenHeart ]
+                    ]
+                , viewHeartsStrip model c
+                , viewSpotlight model c
+                , viewCommunityDisclaimer model
+                ]
+
+
+viewHeartsStrip : Model -> Counters -> Html Msg
+viewHeartsStrip model c =
+    if List.isEmpty c.heartsByCountry then
+        text ""
+    else
+        p [ class "community-strip" ]
+            [ text (translate model.language I18n.CommunityHeartsFrom ++ " ")
+            , span [ class "community-flags" ]
+                (List.intersperse
+                    (text " · ")
+                    (List.map renderFlagCount c.heartsByCountry)
+                )
+            ]
+
+
+renderFlagCount : CountryCount -> Html Msg
+renderFlagCount cc =
+    span [ class "community-flag", attribute "title" cc.country ]
+        [ text (countryFlag cc.country)
+        , text " "
+        , text (String.fromInt cc.count)
+        ]
+
+
+viewSpotlight : Model -> Counters -> Html Msg
+viewSpotlight model c =
+    if c.spotlight.country == "" then
+        text ""
+    else
+        p [ class "community-spotlight" ]
+            [ text (translate model.language I18n.CommunitySpotlight ++ " ")
+            , span [ class "community-flag" ] [ text (countryFlag c.spotlight.country) ]
+            , text (" " ++ translate model.language I18n.CommunitySentMost ++ " ")
+            , span [ class "heart-success" ] [ iconGreenHeart ]
+            ]
+
+
+viewCommunityDisclaimer : Model -> Html Msg
+viewCommunityDisclaimer model =
+    Html.details [ class "community-disclaimer" ]
+        [ Html.summary
+            [ class "community-disclaimer-toggle"
+            , attribute "aria-label" (translate model.language I18n.CommunityWhatsThis)
+            , attribute "title" (translate model.language I18n.CommunityWhatsThis)
+            ]
+            [ text "?" ]
+        , p [ class "community-disclaimer-body" ]
+            [ text (translate model.language I18n.CommunityDisclaimerBody) ]
         ]
 
 
