@@ -14,7 +14,7 @@ bucket = "./public"          # ← folder containing built files
 [[d1_databases]]
 binding       = "DB"
 database_name = "gridit-counters"
-database_id   = "REPLACE_AFTER_wrangler_d1_create"
+database_id   = "7fd52255-bc81-4f9b-881a-38085d35ea3a"
 
 # Rate limit bucket: stores {count, resetAt} per session token (or hashed IP)
 # with 60s TTL. Nothing persists. Create with:
@@ -22,7 +22,7 @@ database_id   = "REPLACE_AFTER_wrangler_d1_create"
 # Then paste the returned id here.
 [[kv_namespaces]]
 binding = "RL"
-id      = "REPLACE_AFTER_wrangler_kv_create"
+id      = "273627878e3d427d83f9737fb8de7e03"
 
 # Enable logging for debugging
 [logs]
