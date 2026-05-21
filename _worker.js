@@ -129,12 +129,16 @@ async function handleCounters(request, env) {
 
   const week = currentISOWeek();
 
-  const [totals, countries, byCountryHearted, weeklyHearted] = await Promise.all([
+  const [totals, countries, byCountryHearted, byCountryGridded, weeklyHearted] = await Promise.all([
     env.DB.prepare("SELECT event, SUM(count) AS c FROM counters GROUP BY event").all(),
     env.DB.prepare("SELECT COUNT(DISTINCT country) AS c FROM counters").first(),
     env.DB.prepare(
       "SELECT country, SUM(count) AS c FROM counters " +
       "WHERE event='hearted' GROUP BY country ORDER BY c DESC LIMIT ?"
+    ).bind(TOP_COUNTRY_LIMIT).all(),
+    env.DB.prepare(
+      "SELECT country, SUM(count) AS c FROM counters " +
+      "WHERE event='downloaded' GROUP BY country ORDER BY c DESC LIMIT ?"
     ).bind(TOP_COUNTRY_LIMIT).all(),
     env.DB.prepare(
       "SELECT country, SUM(count) AS c FROM counters " +
@@ -150,6 +154,7 @@ async function handleCounters(request, env) {
     totalHearted: totalsMap.hearted || 0,
     totalCountries: (countries && countries.c) || 0,
     heartsByCountry: byCountryHearted.results.map(r => ({ country: r.country, count: r.c })),
+    griddersByCountry: byCountryGridded.results.map(r => ({ country: r.country, count: r.c })),
     spotlight: weeklyHearted
       ? { country: weeklyHearted.country, count: weeklyHearted.c }
       : { country: '', count: 0 },

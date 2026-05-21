@@ -201,6 +201,7 @@ type alias Counters =
     , totalHearted : Int
     , totalCountries : Int
     , heartsByCountry : List CountryCount
+    , griddersByCountry : List CountryCount
     , spotlight : CountryCount
     , yourCountry : String
     }
@@ -492,7 +493,10 @@ bumpCounter event maybeCounters =
     Maybe.map
         (\c ->
             if event == "downloaded" then
-                { c | totalDownloaded = c.totalDownloaded + 1 }
+                { c
+                    | totalDownloaded = c.totalDownloaded + 1
+                    , griddersByCountry = bumpCountryRow c.yourCountry c.griddersByCountry
+                }
             else if event == "hearted" then
                 { c
                     | totalHearted = c.totalHearted + 1
@@ -1397,23 +1401,24 @@ viewCommunityCard model =
                     , text (" " ++ translate model.language I18n.CommunityHearts ++ " ")
                     , span [ class "heart-success" ] [ iconGreenHeart ]
                     ]
-                , viewHeartsStrip model c
+                , viewCountryStrip model "community-strip--gridders" I18n.CommunityGriddersFrom c.griddersByCountry
+                , viewCountryStrip model "community-strip--hearts" I18n.CommunityHeartsFrom c.heartsByCountry
                 , viewSpotlight model c
                 , viewCommunityDisclaimer model
                 ]
 
 
-viewHeartsStrip : Model -> Counters -> Html Msg
-viewHeartsStrip model c =
-    if List.isEmpty c.heartsByCountry then
+viewCountryStrip : Model -> String -> I18n.TranslationKey -> List CountryCount -> Html Msg
+viewCountryStrip model flavorClass labelKey rows =
+    if List.isEmpty rows then
         text ""
     else
-        p [ class "community-strip" ]
-            [ text (translate model.language I18n.CommunityHeartsFrom ++ " ")
+        p [ class ("community-strip " ++ flavorClass) ]
+            [ text (translate model.language labelKey ++ " ")
             , span [ class "community-flags" ]
                 (List.intersperse
                     (text " · ")
-                    (List.map renderFlagCount c.heartsByCountry)
+                    (List.map renderFlagCount rows)
                 )
             ]
 
