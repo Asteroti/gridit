@@ -179,7 +179,7 @@ test.describe('Gridit Application', () => {
     test('switches to Spanish', async ({ page }) => {
       const langSelect = page.locator('#language-select');
       await langSelect.selectOption('spanish');
-      await expect(page.locator('body')).toContainText(/Elegir Archivo|Subi una imagen/);
+      await expect(page.locator('body')).toContainText(/Elegir imagen|Sub\u00ED una imagen/);
     });
 
     test('all 14 languages load without error', async ({ page }) => {
@@ -251,6 +251,11 @@ test.describe('Gridit Application', () => {
         { country: 'JP', count: 30 },
         { country: 'ES', count: 25 }
       ],
+      griddersByCountry: [
+        { country: 'AR', count: 40 },
+        { country: 'HK', count: 5 },
+        { country: 'US', count: 3 }
+      ],
       spotlight: { country: 'AR', count: 50 },
       yourCountry
     });
@@ -281,7 +286,7 @@ test.describe('Gridit Application', () => {
 
       const totals = await page.locator('.community-total strong').allTextContents();
       expect(totals[2]).toBe('201');
-      const arRow = await page.locator('.community-strip .community-flag').first().innerText();
+      const arRow = await page.locator('.community-strip--hearts .community-flag').first().innerText();
       expect(arRow).toMatch(/51$/);
     });
 
@@ -292,7 +297,7 @@ test.describe('Gridit Application', () => {
 
       await page.locator('.button-nice').click();
 
-      const lastFlag = await page.locator('.community-strip .community-flag').last().innerText();
+      const lastFlag = await page.locator('.community-strip--hearts .community-flag').last().innerText();
       expect(lastFlag).toMatch(/1$/);
     });
 
@@ -300,25 +305,37 @@ test.describe('Gridit Application', () => {
       await uploadImage(page);
       await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
       await sendCounters(page, sampleCounters(''));
-      await expect(page.locator('.community-strip .community-flag')).toHaveCount(3);
+      await expect(page.locator('.community-strip--hearts .community-flag')).toHaveCount(3);
 
       await page.locator('.button-nice').click();
 
-      await expect(page.locator('.community-strip .community-flag')).toHaveCount(3);
+      await expect(page.locator('.community-strip--hearts .community-flag')).toHaveCount(3);
       const totals = await page.locator('.community-total strong').allTextContents();
       expect(totals[2]).toBe('201');
     });
 
-    test('download click ticks the download total', async ({ page }) => {
+    test('download click ticks the download total and gridders row', async ({ page }) => {
       await uploadImage(page);
       await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
-      await sendCounters(page, sampleCounters());
+      await sendCounters(page, sampleCounters('AR'));
 
       await page.locator('.button-download').click();
       await page.waitForTimeout(800);
 
       const totals = await page.locator('.community-total strong').allTextContents();
       expect(totals[0]).toBe('101');
+      const arGridderRow = await page.locator('.community-strip--gridders .community-flag').first().innerText();
+      expect(arGridderRow).toMatch(/41$/);
+    });
+
+    test('gridders strip is independent of hearts strip', async ({ page }) => {
+      await sendCounters(page, sampleCounters());
+      await expect(page.locator('.community-strip--gridders .community-flag')).toHaveCount(3);
+      await expect(page.locator('.community-strip--hearts .community-flag')).toHaveCount(3);
+      const gridderTitles = await page.locator('.community-strip--gridders .community-flag').evaluateAll(
+        els => els.map((el: HTMLElement) => el.getAttribute('title'))
+      );
+      expect(gridderTitles).toEqual(['AR', 'HK', 'US']);
     });
 
     test('disclaimer expands on click', async ({ page }) => {

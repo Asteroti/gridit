@@ -54,6 +54,7 @@ type TranslationKey
     | CommunityCountriesWith
     | CommunityHearts
     | CommunityHeartsFrom
+    | CommunityGriddersFrom
     | CommunitySpotlight
     | CommunitySentMost
     | CommunityWhatsThis
@@ -213,6 +214,9 @@ englishTranslations key =
         CommunityHearts ->
             "hearts"
 
+        CommunityGriddersFrom ->
+            "People griddin' it around the globe:"
+
         CommunityHeartsFrom ->
             "Hearts from around the world:"
 
@@ -264,7 +268,7 @@ spanishTranslations key =
             "Buenas. Agregale una grilla rectilinear a una imagen que elijas"
 
         UploadPlaceholder ->
-            "Subi una imagen para empezar"
+            "Sub\u{00ED} una imagen para empezar"
 
         ChooseFile ->
             "Elegir imagen"
@@ -291,7 +295,7 @@ spanishTranslations key =
             "Qu\u{00E9} es Gridit?"
 
         FooterTooltip ->
-            "Hola! Soy una desarrolladora que ama programar y pintar. Gridit me ayuda a transferir bocetos al lienzo usando grillas. Espero que te sirva tambi\u{00E9}n!"
+            "Hola! Soy una desarrolladora que ama programar y pintar. Gridit me ayuda a transferir bocetos al lienzo usando grillas. Espero que te sirva!"
 
         ImagePrivacy ->
             "Tu imagen nunca sale de tu dispositivo"
@@ -312,7 +316,7 @@ spanishTranslations key =
             "Agregar l\u{00ED}neas diagonales a la grilla"
 
         CuriousAboutGrids ->
-            "Si te pica la curiosidad, ac\u{00E1} te dejo unos links sobre este m\u{00E9}todo centenario:"
+            "Si quer\u{00E9}s saber m\u{00E1}s, ac\u{00E1} te dejo unos links sobre este m\u{00E9}todo centenario:"
 
         ChangeImage ->
             "Elegir otra imagen"
@@ -338,6 +342,9 @@ spanishTranslations key =
         CommunityHearts ->
             "corazones"
 
+        CommunityGriddersFrom ->
+            "Gente haciendo grillas alrededor del mundo:"
+
         CommunityHeartsFrom ->
             "Corazones desde todo el mundo:"
 
@@ -345,13 +352,13 @@ spanishTranslations key =
             "Spotlight de la semana:"
 
         CommunitySentMost ->
-            "mandó los más"
+            "mandó más"
 
         CommunityWhatsThis ->
             "¿qué es este contador?"
 
         CommunityDisclaimerBody ->
-            "cuando descargas o le pones un corazón, registro \"alguien en [país] hizo la cosa\". no lo uso para nada, solo para mostrar contadores. cuando era chica, las webs tenían contadores de visitas por país que me hacían sentir que no estaba sola en el mundo. me toca a mí devolver la gauchada! — t"
+            "Cuando descargás o clickeás el corazón, registro \"alguien en [país] hizo la cosa\". no lo uso para nada, solo para mostrar estos contadores. Cuando era chica, las webs tenían contadores de visitas por país que me hacían sentir que no estaba sola en el mundo. Ahora me toca a mí! - t"
 
         RateLimitMessage ->
             "tranqui pibe — dejá que los corazones tomen aire"
@@ -462,6 +469,9 @@ latinTranslations key =
 
         CommunityHearts ->
             "cordibus"
+
+        CommunityGriddersFrom ->
+            "Homines craticulantes per orbem:"
 
         CommunityHeartsFrom ->
             "Corda ex toto orbe:"
@@ -588,6 +598,9 @@ italianTranslations key =
         CommunityHearts ->
             "cuori"
 
+        CommunityGriddersFrom ->
+            "Gente che fa griglie in giro per il mondo:"
+
         CommunityHeartsFrom ->
             "Cuori da tutto il mondo:"
 
@@ -712,6 +725,9 @@ portugueseTranslations key =
 
         CommunityHearts ->
             "corações"
+
+        CommunityGriddersFrom ->
+            "Gente fazendo grelhas pelo mundo:"
 
         CommunityHeartsFrom ->
             "Corações de todo o mundo:"
@@ -838,6 +854,9 @@ frenchTranslations key =
         CommunityHearts ->
             "cœurs"
 
+        CommunityGriddersFrom ->
+            "Des gens qui font des grilles autour du globe :"
+
         CommunityHeartsFrom ->
             "Cœurs du monde entier :"
 
@@ -962,6 +981,9 @@ asturianoTranslations key =
 
         CommunityHearts ->
             "corazones"
+
+        CommunityGriddersFrom ->
+            "Xente faciendo grilles alredor del mundu:"
 
         CommunityHeartsFrom ->
             "Corazones de tol mundu:"
@@ -1088,6 +1110,9 @@ gaelicTranslations key =
         CommunityHearts ->
             "cridheachan"
 
+        CommunityGriddersFrom ->
+            "Daoine a' dèanamh chliathagan air feadh an t-saoghail:"
+
         CommunityHeartsFrom ->
             "Cridheachan bhon t-saoghal:"
 
@@ -1212,6 +1237,9 @@ euskaraTranslations key =
 
         CommunityHearts ->
             "bihotz"
+
+        CommunityGriddersFrom ->
+            "Munduan zehar saretak egiten dabilen jendea:"
 
         CommunityHeartsFrom ->
             "Bihotzak mundu osotik:"
@@ -1338,6 +1366,9 @@ japaneseTranslations key =
         CommunityHearts ->
             "個のハート"
 
+        CommunityGriddersFrom ->
+            "世界中でグリッドしてる人たち："
+
         CommunityHeartsFrom ->
             "世界中からのハート："
 
@@ -1463,6 +1494,9 @@ russianTranslations key =
         CommunityHearts ->
             "сердечек"
 
+        CommunityGriddersFrom ->
+            "Люди, делающие сетки по всему миру:"
+
         CommunityHeartsFrom ->
             "Сердечки со всего мира:"
 
@@ -1587,6 +1621,10 @@ tuvanTranslations key =
 
         CommunityHearts ->
             "чүрек"
+
+        CommunityGriddersFrom ->
+            -- TODO: native tuvan translation; English fallback for now.
+            "People griddin' it around the globe:"
 
         CommunityHeartsFrom ->
             "Бо delgemnin чүректери:"
@@ -1715,6 +1753,10 @@ amharicTranslations key =
         CommunityHearts ->
             "ልብ"
 
+        CommunityGriddersFrom ->
+            -- TODO: native amharic translation; English fallback for now.
+            "People griddin' it around the globe:"
+
         CommunityHeartsFrom ->
             "ከዓለም አቀፍ ልብ ሞች:"
 
@@ -1841,6 +1883,9 @@ hebrewTranslations key =
 
         CommunityHearts ->
             "לבות"
+
+        CommunityGriddersFrom ->
+            "אנשים שעושים רשתות מסביב לעולם:"
 
         CommunityHeartsFrom ->
             "לבות מכל העולם:"
