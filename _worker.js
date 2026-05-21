@@ -3,8 +3,7 @@ const manifest = JSON.parse(manifestJSON);
 
 const VALID_EVENTS = new Set(['downloaded', 'hearted']);
 const TOP_COUNTRY_LIMIT = 12;
-const COUNTERS_CACHE_TTL = 60;
-const RATE_LIMIT_MAX = 30;          // events per window per identity
+const RATE_LIMIT_MAX = 200;         // events per window per identity (absurd-clicker tier)
 const RATE_LIMIT_WINDOW_MS = 60_000;
 const RATE_LIMIT_SALT = 'gridit-rl-v1';
 
@@ -161,8 +160,9 @@ async function handleCounters(request, env) {
     yourCountry: (request.cf && request.cf.country) || ''
   };
 
-  // private cache so the user-specific yourCountry isn't shared via CDN
-  return jsonResponse(payload, 200, { 'Cache-Control': `private, max-age=${COUNTERS_CACHE_TTL}` });
+  // No cache: we want every refresh to reflect the latest state, so users see
+  // their own clicks persist immediately. D1 read load is trivial at our scale.
+  return jsonResponse(payload, 200, { 'Cache-Control': 'no-store' });
 }
 
 function jsonResponse(payload, status = 200, extraHeaders = {}) {
