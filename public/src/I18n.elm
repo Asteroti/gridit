@@ -54,11 +54,14 @@ type TranslationKey
     | CommunityCountriesWith
     | CommunityHearts
     | CommunityHeartsFrom
+    | CommunityGriddersFrom
     | CommunitySpotlight
     | CommunitySentMost
     | CommunityWhatsThis
     | CommunityDisclaimerBody
     | RateLimitMessage
+    | HeartLikedIt
+    | HeartThanks
 
 
 translate : Language -> TranslationKey -> String
@@ -213,6 +216,9 @@ englishTranslations key =
         CommunityHearts ->
             "hearts"
 
+        CommunityGriddersFrom ->
+            "People griddin' it around the globe:"
+
         CommunityHeartsFrom ->
             "Hearts from around the world:"
 
@@ -230,6 +236,12 @@ englishTranslations key =
 
         RateLimitMessage ->
             "whoa easy there cowboy — let the hearts catch their breath"
+
+        HeartLikedIt ->
+            "liked it?"
+
+        HeartThanks ->
+            "thankyouthankyouthankyou!!!!!!"
 
 
 spanishTranslations : TranslationKey -> String
@@ -264,7 +276,7 @@ spanishTranslations key =
             "Buenas. Agregale una grilla rectilinear a una imagen que elijas"
 
         UploadPlaceholder ->
-            "Subi una imagen para empezar"
+            "Sub\u{00ED} una imagen para empezar"
 
         ChooseFile ->
             "Elegir imagen"
@@ -291,7 +303,7 @@ spanishTranslations key =
             "Qu\u{00E9} es Gridit?"
 
         FooterTooltip ->
-            "Hola! Soy una desarrolladora que ama programar y pintar. Gridit me ayuda a transferir bocetos al lienzo usando grillas. Espero que te sirva tambi\u{00E9}n!"
+            "Hola! Soy una desarrolladora que ama programar y pintar. Gridit me ayuda a transferir bocetos al lienzo usando grillas. Espero que te sirva!"
 
         ImagePrivacy ->
             "Tu imagen nunca sale de tu dispositivo"
@@ -312,7 +324,7 @@ spanishTranslations key =
             "Agregar l\u{00ED}neas diagonales a la grilla"
 
         CuriousAboutGrids ->
-            "Si te pica la curiosidad, ac\u{00E1} te dejo unos links sobre este m\u{00E9}todo centenario:"
+            "Si quer\u{00E9}s saber m\u{00E1}s, ac\u{00E1} te dejo unos links sobre este m\u{00E9}todo centenario:"
 
         ChangeImage ->
             "Elegir otra imagen"
@@ -338,6 +350,9 @@ spanishTranslations key =
         CommunityHearts ->
             "corazones"
 
+        CommunityGriddersFrom ->
+            "Gente haciendo grillas alrededor del mundo:"
+
         CommunityHeartsFrom ->
             "Corazones desde todo el mundo:"
 
@@ -345,16 +360,22 @@ spanishTranslations key =
             "Spotlight de la semana:"
 
         CommunitySentMost ->
-            "mandó los más"
+            "mandó más"
 
         CommunityWhatsThis ->
             "¿qué es este contador?"
 
         CommunityDisclaimerBody ->
-            "cuando descargas o le pones un corazón, registro \"alguien en [país] hizo la cosa\". no lo uso para nada, solo para mostrar contadores. cuando era chica, las webs tenían contadores de visitas por país que me hacían sentir que no estaba sola en el mundo. me toca a mí devolver la gauchada! — t"
+            "Cuando descargás o clickeás el corazón, registro \"alguien en [país] hizo la cosa\". no lo uso para nada, solo para mostrar estos contadores. Cuando era chica, las webs tenían contadores de visitas por país que me hacían sentir que no estaba sola en el mundo. Ahora me toca a mí! - t"
 
         RateLimitMessage ->
             "tranqui pibe — dejá que los corazones tomen aire"
+
+        HeartLikedIt ->
+            "te gustó?"
+
+        HeartThanks ->
+            "graciasgraciasgracias!!!!!!"
 
 
 latinTranslations : TranslationKey -> String
@@ -463,6 +484,9 @@ latinTranslations key =
         CommunityHearts ->
             "cordibus"
 
+        CommunityGriddersFrom ->
+            "Homines craticulantes per orbem:"
+
         CommunityHeartsFrom ->
             "Corda ex toto orbe:"
 
@@ -480,6 +504,12 @@ latinTranslations key =
 
         RateLimitMessage ->
             "lente lente, eques — sine corda spirare"
+
+        HeartLikedIt ->
+            "placuit?"
+
+        HeartThanks ->
+            "gratiasgratiasgratias!!!!!!"
 
 
 italianTranslations : TranslationKey -> String
@@ -588,6 +618,9 @@ italianTranslations key =
         CommunityHearts ->
             "cuori"
 
+        CommunityGriddersFrom ->
+            "Gente che fa griglie in giro per il mondo:"
+
         CommunityHeartsFrom ->
             "Cuori da tutto il mondo:"
 
@@ -605,6 +638,12 @@ italianTranslations key =
 
         RateLimitMessage ->
             "calma cowboy — fai respirare i cuori"
+
+        HeartLikedIt ->
+            "ti è piaciuto?"
+
+        HeartThanks ->
+            "graziegraziegrazie!!!!!!"
 
 
 portugueseTranslations : TranslationKey -> String
@@ -713,6 +752,9 @@ portugueseTranslations key =
         CommunityHearts ->
             "corações"
 
+        CommunityGriddersFrom ->
+            "Gente fazendo grelhas pelo mundo:"
+
         CommunityHeartsFrom ->
             "Corações de todo o mundo:"
 
@@ -730,6 +772,12 @@ portugueseTranslations key =
 
         RateLimitMessage ->
             "calma parceiro — deixa os corações respirarem"
+
+        HeartLikedIt ->
+            "gostou?"
+
+        HeartThanks ->
+            "obrigadoobrigadoobrigado!!!!!!"
 
 
 frenchTranslations : TranslationKey -> String
@@ -838,6 +886,9 @@ frenchTranslations key =
         CommunityHearts ->
             "cœurs"
 
+        CommunityGriddersFrom ->
+            "Des gens qui font des grilles autour du globe :"
+
         CommunityHeartsFrom ->
             "Cœurs du monde entier :"
 
@@ -855,6 +906,12 @@ frenchTranslations key =
 
         RateLimitMessage ->
             "doucement cowboy — laisse les cœurs souffler"
+
+        HeartLikedIt ->
+            "ça t'a plu ?"
+
+        HeartThanks ->
+            "mercimercimerci!!!!!!"
 
 
 asturianoTranslations : TranslationKey -> String
@@ -963,6 +1020,9 @@ asturianoTranslations key =
         CommunityHearts ->
             "corazones"
 
+        CommunityGriddersFrom ->
+            "Xente faciendo grilles alredor del mundu:"
+
         CommunityHeartsFrom ->
             "Corazones de tol mundu:"
 
@@ -980,6 +1040,12 @@ asturianoTranslations key =
 
         RateLimitMessage ->
             "tranqui vaqueru — dexa que los corazones respiren"
+
+        HeartLikedIt ->
+            "gustóute?"
+
+        HeartThanks ->
+            "graciesgraciesgracies!!!!!!"
 
 
 gaelicTranslations : TranslationKey -> String
@@ -1068,9 +1134,11 @@ gaelicTranslations key =
             "Tagh dealbh eile"
 
         AdaptiveGridDensity ->
+            -- English fallback (no native Gaelic translation).
             "Adaptive density"
 
         AnalyzingImage ->
+            -- English fallback (no native Gaelic translation).
             "Analyzing..."
 
         OffLabel ->
@@ -1087,6 +1155,9 @@ gaelicTranslations key =
 
         CommunityHearts ->
             "cridheachan"
+
+        CommunityGriddersFrom ->
+            "Daoine a' dèanamh chliathagan air feadh an t-saoghail:"
 
         CommunityHeartsFrom ->
             "Cridheachan bhon t-saoghal:"
@@ -1105,6 +1176,12 @@ gaelicTranslations key =
 
         RateLimitMessage ->
             "gabh socair a charaid — leig leis na cridheachan anail a tharraing"
+
+        HeartLikedIt ->
+            "an do chòrd e?"
+
+        HeartThanks ->
+            "tapaleatapaleatapalea!!!!!!"
 
 
 euskaraTranslations : TranslationKey -> String
@@ -1213,6 +1290,9 @@ euskaraTranslations key =
         CommunityHearts ->
             "bihotz"
 
+        CommunityGriddersFrom ->
+            "Munduan zehar saretak egiten dabilen jendea:"
+
         CommunityHeartsFrom ->
             "Bihotzak mundu osotik:"
 
@@ -1230,6 +1310,12 @@ euskaraTranslations key =
 
         RateLimitMessage ->
             "lasai cowboy — utzi bihotzei arnasa hartzen"
+
+        HeartLikedIt ->
+            "gustatu zaizu?"
+
+        HeartThanks ->
+            "eskerrikaeskerrikaeskerrika!!!!!!"
 
 
 japaneseTranslations : TranslationKey -> String
@@ -1338,6 +1424,9 @@ japaneseTranslations key =
         CommunityHearts ->
             "個のハート"
 
+        CommunityGriddersFrom ->
+            "世界中でグリッドしてる人たち："
+
         CommunityHeartsFrom ->
             "世界中からのハート："
 
@@ -1355,6 +1444,12 @@ japaneseTranslations key =
 
         RateLimitMessage ->
             "おっとカウボーイ、落ち着いて — ハートを休ませてあげて"
+
+        HeartLikedIt ->
+            "気に入った？"
+
+        HeartThanks ->
+            "ありがとありがとありがと！！！！！！"
 
 
 russianTranslations : TranslationKey -> String
@@ -1463,6 +1558,9 @@ russianTranslations key =
         CommunityHearts ->
             "сердечек"
 
+        CommunityGriddersFrom ->
+            "Люди, делающие сетки по всему миру:"
+
         CommunityHeartsFrom ->
             "Сердечки со всего мира:"
 
@@ -1480,6 +1578,12 @@ russianTranslations key =
 
         RateLimitMessage ->
             "эй ковбой, помедленнее — дай сердечкам отдышаться"
+
+        HeartLikedIt ->
+            "понравилось?"
+
+        HeartThanks ->
+            "спасибоспасибоспасибо!!!!!!"
 
 
 tuvanTranslations : TranslationKey -> String
@@ -1568,15 +1672,19 @@ tuvanTranslations key =
             "\u{04E8}\u{0441}\u{043A}\u{0435} \u{0447}\u{0443}\u{0440}\u{0443}\u{043A}\u{0442}\u{0443} \u{0448}\u{0438}\u{043B}\u{0438}\u{0438}\u{0440}"
 
         AdaptiveGridDensity ->
+            -- English fallback (no native Tuvan translation).
             "Adaptive density"
 
         AnalyzingImage ->
+            -- English fallback (no native Tuvan translation).
             "Analyzing..."
 
         OffLabel ->
+            -- English fallback (no native Tuvan translation).
             "Off"
 
         FileTooLarge ->
+            -- English fallback (no native Tuvan translation).
             "Image too large. Please use an image under 15MB."
 
         CommunityImagesGridded ->
@@ -1587,6 +1695,10 @@ tuvanTranslations key =
 
         CommunityHearts ->
             "чүрек"
+
+        CommunityGriddersFrom ->
+            -- English fallback (no native Tuvan translation).
+            "People griddin' it around the globe:"
 
         CommunityHeartsFrom ->
             "Бо delgemnin чүректери:"
@@ -1601,12 +1713,20 @@ tuvanTranslations key =
             "бо кандыы сан-чанаг чугаа?"
 
         CommunityDisclaimerBody ->
-            -- TODO: native Tuvan translation needed; English fallback for now.
+            -- English fallback (no native Tuvan translation).
             "when you download or heart, i log \"someone in [country] did the thing\". i dont use it for anything, just to show counters. when i was little, websites had visitor counters per country that made me feel i was not alone in the world. its my turn to pull my weight! — t"
 
         RateLimitMessage ->
-            -- TODO: native tuvan translation; English fallback for now.
+            -- English fallback (no native Tuvan translation).
             "whoa easy there cowboy — let the hearts catch their breath"
+
+        HeartLikedIt ->
+            -- English fallback (no native Tuvan translation).
+            "liked it?"
+
+        HeartThanks ->
+            -- English fallback (no native Tuvan translation).
+            "thankyouthankyouthankyou!!!!!!"
 
 
 amharicTranslations : TranslationKey -> String
@@ -1695,15 +1815,19 @@ amharicTranslations key =
             "\u{120C}\u{120B} \u{121D}\u{1235}\u{120D} \u{12ED}\u{121D}\u{1228}\u{1321}"
 
         AdaptiveGridDensity ->
+            -- English fallback (no native Amharic translation).
             "Adaptive density"
 
         AnalyzingImage ->
+            -- English fallback (no native Amharic translation).
             "Analyzing..."
 
         OffLabel ->
+            -- English fallback (no native Amharic translation).
             "Off"
 
         FileTooLarge ->
+            -- English fallback (no native Amharic translation).
             "Image too large. Please use an image under 15MB."
 
         CommunityImagesGridded ->
@@ -1714,6 +1838,10 @@ amharicTranslations key =
 
         CommunityHearts ->
             "ልብ"
+
+        CommunityGriddersFrom ->
+            -- English fallback (no native Amharic translation).
+            "People griddin' it around the globe:"
 
         CommunityHeartsFrom ->
             "ከዓለም አቀፍ ልብ ሞች:"
@@ -1728,12 +1856,20 @@ amharicTranslations key =
             "ዪህ ቀጠሪ ምንድን ነው?"
 
         CommunityDisclaimerBody ->
-            -- TODO: native Amharic translation needed; English fallback for now.
+            -- English fallback (no native Amharic translation).
             "when you download or heart, i log \"someone in [country] did the thing\". i dont use it for anything, just to show counters. when i was little, websites had visitor counters per country that made me feel i was not alone in the world. its my turn to pull my weight! — t"
 
         RateLimitMessage ->
-            -- TODO: native amharic translation; English fallback for now.
+            -- English fallback (no native Amharic translation).
             "whoa easy there cowboy — let the hearts catch their breath"
+
+        HeartLikedIt ->
+            -- English fallback (no native Amharic translation).
+            "liked it?"
+
+        HeartThanks ->
+            -- English fallback (no native Amharic translation).
+            "thankyouthankyouthankyou!!!!!!"
 
 
 hebrewTranslations : TranslationKey -> String
@@ -1842,6 +1978,9 @@ hebrewTranslations key =
         CommunityHearts ->
             "לבות"
 
+        CommunityGriddersFrom ->
+            "אנשים שעושים רשתות מסביב לעולם:"
+
         CommunityHeartsFrom ->
             "לבות מכל העולם:"
 
@@ -1859,3 +1998,9 @@ hebrewTranslations key =
 
         RateLimitMessage ->
             "וואו לאט לך קאובוי — תן ללבבות לתפוס אוויר"
+
+        HeartLikedIt ->
+            "אהבת?"
+
+        HeartThanks ->
+            "תודהתודהתודה!!!!!!"

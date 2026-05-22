@@ -3,8 +3,7 @@ const manifest = JSON.parse(manifestJSON);
 
 const VALID_EVENTS = new Set(['downloaded', 'hearted']);
 const TOP_COUNTRY_LIMIT = 12;
-const COUNTERS_CACHE_TTL = 60;
-const RATE_LIMIT_MAX = 30;          // events per window per identity
+const RATE_LIMIT_MAX = 200;         // events per window per identity (absurd-clicker tier)
 const RATE_LIMIT_WINDOW_MS = 60_000;
 const RATE_LIMIT_SALT = 'gridit-rl-v1';
 
@@ -129,12 +128,16 @@ async function handleCounters(request, env) {
 
   const week = currentISOWeek();
 
-  const [totals, countries, byCountryHearted, weeklyHearted] = await Promise.all([
+  const [totals, countries, byCountryHearted, byCountryGridded, weeklyHearted] = await Promise.all([
     env.DB.prepare("SELECT event, SUM(count) AS c FROM counters GROUP BY event").all(),
     env.DB.prepare("SELECT COUNT(DISTINCT country) AS c FROM counters").first(),
     env.DB.prepare(
       "SELECT country, SUM(count) AS c FROM counters " +
       "WHERE event='hearted' GROUP BY country ORDER BY c DESC LIMIT ?"
+    ).bind(TOP_COUNTRY_LIMIT).all(),
+    env.DB.prepare(
+      "SELECT country, SUM(count) AS c FROM counters " +
+      "WHERE event='downloaded' GROUP BY country ORDER BY c DESC LIMIT ?"
     ).bind(TOP_COUNTRY_LIMIT).all(),
     env.DB.prepare(
       "SELECT country, SUM(count) AS c FROM counters " +
@@ -150,14 +153,16 @@ async function handleCounters(request, env) {
     totalHearted: totalsMap.hearted || 0,
     totalCountries: (countries && countries.c) || 0,
     heartsByCountry: byCountryHearted.results.map(r => ({ country: r.country, count: r.c })),
+    griddersByCountry: byCountryGridded.results.map(r => ({ country: r.country, count: r.c })),
     spotlight: weeklyHearted
       ? { country: weeklyHearted.country, count: weeklyHearted.c }
       : { country: '', count: 0 },
     yourCountry: (request.cf && request.cf.country) || ''
   };
 
-  // private cache so the user-specific yourCountry isn't shared via CDN
-  return jsonResponse(payload, 200, { 'Cache-Control': `private, max-age=${COUNTERS_CACHE_TTL}` });
+  // No cache: we want every refresh to reflect the latest state, so users see
+  // their own clicks persist immediately. D1 read load is trivial at our scale.
+  return jsonResponse(payload, 200, { 'Cache-Control': 'no-store' });
 }
 
 function jsonResponse(payload, status = 200, extraHeaders = {}) {
