@@ -60,6 +60,8 @@ type TranslationKey
     | CommunityWhatsThis
     | CommunityDisclaimerBody
     | RateLimitMessage
+    | HeartLikedIt
+    | HeartThanks
 
 
 translate : Language -> TranslationKey -> String
@@ -235,6 +237,12 @@ englishTranslations key =
         RateLimitMessage ->
             "whoa easy there cowboy — let the hearts catch their breath"
 
+        HeartLikedIt ->
+            "liked it?"
+
+        HeartThanks ->
+            "thankyouthankyouthankyou!!!!!!"
+
 
 spanishTranslations : TranslationKey -> String
 spanishTranslations key =
@@ -362,6 +370,12 @@ spanishTranslations key =
 
         RateLimitMessage ->
             "tranqui pibe — dejá que los corazones tomen aire"
+
+        HeartLikedIt ->
+            "te gustó?"
+
+        HeartThanks ->
+            "graciasgraciasgracias!!!!!!"
 
 
 latinTranslations : TranslationKey -> String
@@ -491,6 +505,12 @@ latinTranslations key =
         RateLimitMessage ->
             "lente lente, eques — sine corda spirare"
 
+        HeartLikedIt ->
+            "placuit?"
+
+        HeartThanks ->
+            "gratiasgratiasgratias!!!!!!"
+
 
 italianTranslations : TranslationKey -> String
 italianTranslations key =
@@ -618,6 +638,12 @@ italianTranslations key =
 
         RateLimitMessage ->
             "calma cowboy — fai respirare i cuori"
+
+        HeartLikedIt ->
+            "ti è piaciuto?"
+
+        HeartThanks ->
+            "graziegraziegrazie!!!!!!"
 
 
 portugueseTranslations : TranslationKey -> String
@@ -747,6 +773,12 @@ portugueseTranslations key =
         RateLimitMessage ->
             "calma parceiro — deixa os corações respirarem"
 
+        HeartLikedIt ->
+            "gostou?"
+
+        HeartThanks ->
+            "obrigadoobrigadoobrigado!!!!!!"
+
 
 frenchTranslations : TranslationKey -> String
 frenchTranslations key =
@@ -874,6 +906,12 @@ frenchTranslations key =
 
         RateLimitMessage ->
             "doucement cowboy — laisse les cœurs souffler"
+
+        HeartLikedIt ->
+            "ça t'a plu ?"
+
+        HeartThanks ->
+            "mercimercimerci!!!!!!"
 
 
 asturianoTranslations : TranslationKey -> String
@@ -1003,6 +1041,12 @@ asturianoTranslations key =
         RateLimitMessage ->
             "tranqui vaqueru — dexa que los corazones respiren"
 
+        HeartLikedIt ->
+            "gustóute?"
+
+        HeartThanks ->
+            "graciesgraciesgracies!!!!!!"
+
 
 gaelicTranslations : TranslationKey -> String
 gaelicTranslations key =
@@ -1090,9 +1134,11 @@ gaelicTranslations key =
             "Tagh dealbh eile"
 
         AdaptiveGridDensity ->
+            -- English fallback (no native Gaelic translation).
             "Adaptive density"
 
         AnalyzingImage ->
+            -- English fallback (no native Gaelic translation).
             "Analyzing..."
 
         OffLabel ->
@@ -1130,6 +1176,12 @@ gaelicTranslations key =
 
         RateLimitMessage ->
             "gabh socair a charaid — leig leis na cridheachan anail a tharraing"
+
+        HeartLikedIt ->
+            "an do chòrd e?"
+
+        HeartThanks ->
+            "tapaleatapaleatapalea!!!!!!"
 
 
 euskaraTranslations : TranslationKey -> String
@@ -1259,6 +1311,12 @@ euskaraTranslations key =
         RateLimitMessage ->
             "lasai cowboy — utzi bihotzei arnasa hartzen"
 
+        HeartLikedIt ->
+            "gustatu zaizu?"
+
+        HeartThanks ->
+            "eskerrikaeskerrikaeskerrika!!!!!!"
+
 
 japaneseTranslations : TranslationKey -> String
 japaneseTranslations key =
@@ -1386,6 +1444,12 @@ japaneseTranslations key =
 
         RateLimitMessage ->
             "おっとカウボーイ、落ち着いて — ハートを休ませてあげて"
+
+        HeartLikedIt ->
+            "気に入った？"
+
+        HeartThanks ->
+            "ありがとありがとありがと！！！！！！"
 
 
 russianTranslations : TranslationKey -> String
@@ -1515,6 +1579,12 @@ russianTranslations key =
         RateLimitMessage ->
             "эй ковбой, помедленнее — дай сердечкам отдышаться"
 
+        HeartLikedIt ->
+            "понравилось?"
+
+        HeartThanks ->
+            "спасибоспасибоспасибо!!!!!!"
+
 
 tuvanTranslations : TranslationKey -> String
 tuvanTranslations key =
@@ -1602,15 +1672,19 @@ tuvanTranslations key =
             "\u{04E8}\u{0441}\u{043A}\u{0435} \u{0447}\u{0443}\u{0440}\u{0443}\u{043A}\u{0442}\u{0443} \u{0448}\u{0438}\u{043B}\u{0438}\u{0438}\u{0440}"
 
         AdaptiveGridDensity ->
+            -- English fallback (no native Tuvan translation).
             "Adaptive density"
 
         AnalyzingImage ->
+            -- English fallback (no native Tuvan translation).
             "Analyzing..."
 
         OffLabel ->
+            -- English fallback (no native Tuvan translation).
             "Off"
 
         FileTooLarge ->
+            -- English fallback (no native Tuvan translation).
             "Image too large. Please use an image under 15MB."
 
         CommunityImagesGridded ->
@@ -1623,7 +1697,7 @@ tuvanTranslations key =
             "чүрек"
 
         CommunityGriddersFrom ->
-            -- TODO: native tuvan translation; English fallback for now.
+            -- English fallback (no native Tuvan translation).
             "People griddin' it around the globe:"
 
         CommunityHeartsFrom ->
@@ -1639,12 +1713,20 @@ tuvanTranslations key =
             "бо кандыы сан-чанаг чугаа?"
 
         CommunityDisclaimerBody ->
-            -- TODO: native Tuvan translation needed; English fallback for now.
+            -- English fallback (no native Tuvan translation).
             "when you download or heart, i log \"someone in [country] did the thing\". i dont use it for anything, just to show counters. when i was little, websites had visitor counters per country that made me feel i was not alone in the world. its my turn to pull my weight! — t"
 
         RateLimitMessage ->
-            -- TODO: native tuvan translation; English fallback for now.
+            -- English fallback (no native Tuvan translation).
             "whoa easy there cowboy — let the hearts catch their breath"
+
+        HeartLikedIt ->
+            -- English fallback (no native Tuvan translation).
+            "liked it?"
+
+        HeartThanks ->
+            -- English fallback (no native Tuvan translation).
+            "thankyouthankyouthankyou!!!!!!"
 
 
 amharicTranslations : TranslationKey -> String
@@ -1733,15 +1815,19 @@ amharicTranslations key =
             "\u{120C}\u{120B} \u{121D}\u{1235}\u{120D} \u{12ED}\u{121D}\u{1228}\u{1321}"
 
         AdaptiveGridDensity ->
+            -- English fallback (no native Amharic translation).
             "Adaptive density"
 
         AnalyzingImage ->
+            -- English fallback (no native Amharic translation).
             "Analyzing..."
 
         OffLabel ->
+            -- English fallback (no native Amharic translation).
             "Off"
 
         FileTooLarge ->
+            -- English fallback (no native Amharic translation).
             "Image too large. Please use an image under 15MB."
 
         CommunityImagesGridded ->
@@ -1754,7 +1840,7 @@ amharicTranslations key =
             "ልብ"
 
         CommunityGriddersFrom ->
-            -- TODO: native amharic translation; English fallback for now.
+            -- English fallback (no native Amharic translation).
             "People griddin' it around the globe:"
 
         CommunityHeartsFrom ->
@@ -1770,12 +1856,20 @@ amharicTranslations key =
             "ዪህ ቀጠሪ ምንድን ነው?"
 
         CommunityDisclaimerBody ->
-            -- TODO: native Amharic translation needed; English fallback for now.
+            -- English fallback (no native Amharic translation).
             "when you download or heart, i log \"someone in [country] did the thing\". i dont use it for anything, just to show counters. when i was little, websites had visitor counters per country that made me feel i was not alone in the world. its my turn to pull my weight! — t"
 
         RateLimitMessage ->
-            -- TODO: native amharic translation; English fallback for now.
+            -- English fallback (no native Amharic translation).
             "whoa easy there cowboy — let the hearts catch their breath"
+
+        HeartLikedIt ->
+            -- English fallback (no native Amharic translation).
+            "liked it?"
+
+        HeartThanks ->
+            -- English fallback (no native Amharic translation).
+            "thankyouthankyouthankyou!!!!!!"
 
 
 hebrewTranslations : TranslationKey -> String
@@ -1904,3 +1998,9 @@ hebrewTranslations key =
 
         RateLimitMessage ->
             "וואו לאט לך קאובוי — תן ללבבות לתפוס אוויר"
+
+        HeartLikedIt ->
+            "אהבת?"
+
+        HeartThanks ->
+            "תודהתודהתודה!!!!!!"

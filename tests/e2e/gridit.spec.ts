@@ -282,7 +282,7 @@ test.describe('Gridit Application', () => {
       await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
       await sendCounters(page, sampleCounters('AR'));
 
-      await page.locator('.button-nice').click();
+      await page.locator('.heart-pill').click();
 
       const totals = await page.locator('.community-total strong').allTextContents();
       expect(totals[2]).toBe('201');
@@ -295,7 +295,7 @@ test.describe('Gridit Application', () => {
       await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
       await sendCounters(page, sampleCounters('WS'));
 
-      await page.locator('.button-nice').click();
+      await page.locator('.heart-pill').click();
 
       const lastFlag = await page.locator('.community-strip--hearts .community-flag').last().innerText();
       expect(lastFlag).toMatch(/1$/);
@@ -307,7 +307,7 @@ test.describe('Gridit Application', () => {
       await sendCounters(page, sampleCounters(''));
       await expect(page.locator('.community-strip--hearts .community-flag')).toHaveCount(3);
 
-      await page.locator('.button-nice').click();
+      await page.locator('.heart-pill').click();
 
       await expect(page.locator('.community-strip--hearts .community-flag')).toHaveCount(3);
       const totals = await page.locator('.community-total strong').allTextContents();

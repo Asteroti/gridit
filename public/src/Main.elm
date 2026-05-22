@@ -1369,18 +1369,37 @@ viewActionButtons model =
                 text ""
             ]
         , div [ class "nice-section" ]
-            [ button
-                [ class "button button-nice"
+            [ p [ class "nice-prompt" ] [ text (nicePromptText model) ]
+            , button
+                [ class "heart-pill"
                 , onClick NiceButtonClicked
                 , attribute "aria-label" (translate model.language I18n.Nice)
                 ]
-                [ iconHeart ]
-            , if model.niceCounter > 0 then
-                span [ class "nice-counter" ] [ text ("\u{00D7}" ++ String.fromInt model.niceCounter) ]
-              else
-                text ""
+                [ iconHeart
+                , text " "
+                , text (translate model.language I18n.Nice)
+                , if model.niceCounter > 0 then
+                    text (" · " ++ String.fromInt model.niceCounter)
+                  else
+                    text ""
+                ]
             ]
         ]
+
+
+nicePromptText : Model -> String
+nicePromptText model =
+    let
+        n = model.niceCounter
+    in
+    if n == 0 then
+        translate model.language I18n.HeartLikedIt
+    else if n < 10 then
+        ":)"
+    else if n < 25 then
+        translate model.language I18n.HeartThanks
+    else
+        "aaaaaaaaaaaa!!!!!!"
 
 
 viewCommunityCard : Model -> Html Msg
@@ -1391,7 +1410,7 @@ viewCommunityCard model =
 
         Just c ->
             div [ class "community-card" ]
-                [ span [ class "community-frog", attribute "aria-hidden" "true" ] [ iconFrogSized "36" ]
+                [ span [ class "community-frog", attribute "aria-hidden" "true" ] [ iconFrogSized "22" ]
                 , p [ class "community-total" ]
                     [ strong [] [ text (String.fromInt c.totalDownloaded) ]
                     , text (" " ++ translate model.language I18n.CommunityImagesGridded ++ " ")

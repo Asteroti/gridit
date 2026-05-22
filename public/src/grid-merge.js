@@ -444,7 +444,7 @@ function setupConfetti() {
   }
 
   document.addEventListener('click', function(e) {
-    if (e.target.closest('.button-nice')) {
+    if (e.target.closest('.heart-pill')) {
       createConfetti();
     }
   });
@@ -540,11 +540,54 @@ function setupCommunityPort(app) {
       .then(function(data) {
         if (data && typeof data.totalDownloaded === 'number') {
           app.ports.receiveCounters.send(data);
+        } else if (isDemoMode()) {
+          app.ports.receiveCounters.send(DEMO_COUNTERS);
         }
       })
-      .catch(function() {});
+      .catch(function() {
+        if (isDemoMode()) {
+          app.ports.receiveCounters.send(DEMO_COUNTERS);
+        }
+      });
   }
 }
+
+
+// ============================================================
+// DEV-ONLY: demo-mode stub for the community card.
+// Ships in the production bundle (no build-time strip) but is
+// only activated when the URL contains `?demo`. That URL is
+// user-accessible — if someone shares a `?demo` link in the
+// wild, viewers will see fabricated counters. Live with that
+// trade-off or move this to a separate `mocks/` page later.
+// ============================================================
+function isDemoMode() {
+  return typeof location !== 'undefined' && /\bdemo\b/.test(location.search);
+}
+
+var DEMO_COUNTERS = {
+  totalDownloaded: 47,
+  totalHearted: 312,
+  totalCountries: 8,
+  griddersByCountry: [
+    { country: 'AR', count: 14 },
+    { country: 'JP', count: 9 },
+    { country: 'ES', count: 7 },
+    { country: 'BR', count: 6 },
+    { country: 'US', count: 5 },
+    { country: 'IT', count: 3 },
+    { country: 'WS', count: 2 },
+    { country: 'IE', count: 1 }
+  ],
+  heartsByCountry: [
+    { country: 'AR', count: 187 },
+    { country: 'JP', count: 64 },
+    { country: 'ES', count: 38 },
+    { country: 'WS', count: 23 }
+  ],
+  spotlight: { country: 'WS', count: 23 },
+  yourCountry: 'AR'
+};
 
 
 function initializeElmApp() {
