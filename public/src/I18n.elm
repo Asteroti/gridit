@@ -672,84 +672,64 @@ latinTranslations key =
             "auto"
 
         GridModeCustom ->
-            -- English fallback (translation TODO).
-            "custom"
+            "personalizatum"
 
         GridModeAutoExplain ->
-            -- English fallback (translation TODO).
-            "i pick one number, you get a square-ish grid."
+            "unum numerum eligo, craticulam quadratam fere accipis."
 
         GridModeCustomExplain ->
-            -- English fallback (translation TODO).
-            "you set rows and columns separately."
+            "ordines columnasque seorsum statuis."
 
         GroupSetUpGrid ->
-            -- English fallback (translation TODO).
-            "set up the grid"
+            "craticulam constitue"
 
         GroupStyle ->
-            -- English fallback (translation TODO).
-            "style"
+            "ornatus"
 
         AutoSimplifyExplain ->
-            -- English fallback (translation TODO).
-            "adds extra grid lines where the image is busy (faces, hands), keeps it simple where it's flat."
+            "lineas adicit ubi imago turbulenta est (vultus, manus), simplices retinet ubi plana est."
 
         ShowCellLabels ->
-            -- English fallback (translation TODO).
-            "show cell labels (A1, B2…)"
+            "monstra notas cellulae (A1, B2…)"
 
         GroupMatchCanvas ->
-            -- English fallback (translation TODO).
-            "match a canvas"
+            "telam aequa"
 
         GroupOptional ->
-            -- English fallback (translation TODO).
-            "(optional)"
+            "(per arbitrium)"
 
         MyCanvasIs ->
-            -- English fallback (translation TODO).
-            "my canvas is"
+            "tela mea est"
 
         CmWide ->
-            -- English fallback (translation TODO).
-            "cm wide"
+            "cm lata"
 
         CmTall ->
-            -- English fallback (translation TODO).
-            "cm tall"
+            "cm alta"
 
         EachCellApprox ->
-            -- English fallback (translation TODO).
-            "each cell ≈"
+            "cellula quaeque ≈"
 
         MakeFiveCmCells ->
-            -- English fallback (translation TODO).
-            "make 5 cm cells"
+            "cellulas V cm"
 
         HowShouldImageFit ->
-            -- English fallback (translation TODO).
-            "how should the image fit?"
+            "quomodo imago apta est?"
 
         FitToWidth ->
-            -- English fallback (translation TODO).
-            "fit to width"
+            "ad latitudinem"
 
         FitToHeight ->
-            -- English fallback (translation TODO).
-            "fit to height"
+            "ad altitudinem"
 
         FitInside ->
-            -- English fallback (translation TODO).
-            "fit inside"
+            "intra"
 
         SplitIntoTiles ->
-            -- English fallback (translation TODO).
-            "split into printable tiles"
+            "in lateres divide"
 
         SliceNone ->
-            -- English fallback (translation TODO).
-            "none"
+            "nulla"
 
 
 italianTranslations : TranslationKey -> String
@@ -895,80 +875,61 @@ italianTranslations key =
             "personalizzato"
 
         GridModeAutoExplain ->
-            -- English fallback (translation TODO).
-            "i pick one number, you get a square-ish grid."
+            "scelgo io un numero, ottieni una griglia quadrata."
 
         GridModeCustomExplain ->
-            -- English fallback (translation TODO).
-            "you set rows and columns separately."
+            "imposti righe e colonne separatamente."
 
         GroupSetUpGrid ->
-            -- English fallback (translation TODO).
-            "set up the grid"
+            "imposta la griglia"
 
         GroupStyle ->
-            -- English fallback (translation TODO).
-            "style"
+            "stile"
 
         AutoSimplifyExplain ->
-            -- English fallback (translation TODO).
-            "adds extra grid lines where the image is busy (faces, hands), keeps it simple where it's flat."
+            "aggiunge linee dove l'immagine è ricca (volti, mani), le lascia semplici dove è piatta."
 
         ShowCellLabels ->
-            -- English fallback (translation TODO).
-            "show cell labels (A1, B2…)"
+            "mostra etichette (A1, B2…)"
 
         GroupMatchCanvas ->
-            -- English fallback (translation TODO).
-            "match a canvas"
+            "adatta a una tela"
 
         GroupOptional ->
-            -- English fallback (translation TODO).
-            "(optional)"
+            "(opzionale)"
 
         MyCanvasIs ->
-            -- English fallback (translation TODO).
-            "my canvas is"
+            "la mia tela è"
 
         CmWide ->
-            -- English fallback (translation TODO).
-            "cm wide"
+            "cm di larghezza"
 
         CmTall ->
-            -- English fallback (translation TODO).
-            "cm tall"
+            "cm di altezza"
 
         EachCellApprox ->
-            -- English fallback (translation TODO).
-            "each cell ≈"
+            "ogni cella ≈"
 
         MakeFiveCmCells ->
-            -- English fallback (translation TODO).
-            "make 5 cm cells"
+            "celle da 5 cm"
 
         HowShouldImageFit ->
-            -- English fallback (translation TODO).
-            "how should the image fit?"
+            "come deve adattarsi l'immagine?"
 
         FitToWidth ->
-            -- English fallback (translation TODO).
-            "fit to width"
+            "alla larghezza"
 
         FitToHeight ->
-            -- English fallback (translation TODO).
-            "fit to height"
+            "all'altezza"
 
         FitInside ->
-            -- English fallback (translation TODO).
-            "fit inside"
+            "all'interno"
 
         SplitIntoTiles ->
-            -- English fallback (translation TODO).
-            "split into printable tiles"
+            "dividi in fogli per stampa"
 
         SliceNone ->
-            -- English fallback (translation TODO).
-            "none"
+            "nessuno"
 
 
 portugueseTranslations : TranslationKey -> String
@@ -1114,80 +1075,61 @@ portugueseTranslations key =
             "personalizado"
 
         GridModeAutoExplain ->
-            -- English fallback (translation TODO).
-            "i pick one number, you get a square-ish grid."
+            "escolho um número, você obtém uma grade quadrada."
 
         GridModeCustomExplain ->
-            -- English fallback (translation TODO).
-            "you set rows and columns separately."
+            "você define linhas e colunas separadamente."
 
         GroupSetUpGrid ->
-            -- English fallback (translation TODO).
-            "set up the grid"
+            "configure a grade"
 
         GroupStyle ->
-            -- English fallback (translation TODO).
-            "style"
+            "estilo"
 
         AutoSimplifyExplain ->
-            -- English fallback (translation TODO).
-            "adds extra grid lines where the image is busy (faces, hands), keeps it simple where it's flat."
+            "adiciona linhas onde a imagem é complexa (rostos, mãos), deixa simples onde é plana."
 
         ShowCellLabels ->
-            -- English fallback (translation TODO).
-            "show cell labels (A1, B2…)"
+            "mostrar etiquetas (A1, B2…)"
 
         GroupMatchCanvas ->
-            -- English fallback (translation TODO).
-            "match a canvas"
+            "ajustar a uma tela"
 
         GroupOptional ->
-            -- English fallback (translation TODO).
-            "(optional)"
+            "(opcional)"
 
         MyCanvasIs ->
-            -- English fallback (translation TODO).
-            "my canvas is"
+            "minha tela é"
 
         CmWide ->
-            -- English fallback (translation TODO).
-            "cm wide"
+            "cm de largura"
 
         CmTall ->
-            -- English fallback (translation TODO).
-            "cm tall"
+            "cm de altura"
 
         EachCellApprox ->
-            -- English fallback (translation TODO).
-            "each cell ≈"
+            "cada célula ≈"
 
         MakeFiveCmCells ->
-            -- English fallback (translation TODO).
-            "make 5 cm cells"
+            "células de 5 cm"
 
         HowShouldImageFit ->
-            -- English fallback (translation TODO).
-            "how should the image fit?"
+            "como a imagem deve caber?"
 
         FitToWidth ->
-            -- English fallback (translation TODO).
-            "fit to width"
+            "à largura"
 
         FitToHeight ->
-            -- English fallback (translation TODO).
-            "fit to height"
+            "à altura"
 
         FitInside ->
-            -- English fallback (translation TODO).
-            "fit inside"
+            "dentro"
 
         SplitIntoTiles ->
-            -- English fallback (translation TODO).
-            "split into printable tiles"
+            "dividir em folhas para impressão"
 
         SliceNone ->
-            -- English fallback (translation TODO).
-            "none"
+            "nenhum"
 
 
 frenchTranslations : TranslationKey -> String
@@ -1333,80 +1275,61 @@ frenchTranslations key =
             "perso"
 
         GridModeAutoExplain ->
-            -- English fallback (translation TODO).
-            "i pick one number, you get a square-ish grid."
+            "je choisis un nombre, tu obtiens une grille carrée."
 
         GridModeCustomExplain ->
-            -- English fallback (translation TODO).
-            "you set rows and columns separately."
+            "tu choisis lignes et colonnes séparément."
 
         GroupSetUpGrid ->
-            -- English fallback (translation TODO).
-            "set up the grid"
+            "configure la grille"
 
         GroupStyle ->
-            -- English fallback (translation TODO).
             "style"
 
         AutoSimplifyExplain ->
-            -- English fallback (translation TODO).
-            "adds extra grid lines where the image is busy (faces, hands), keeps it simple where it's flat."
+            "ajoute des lignes où l'image est complexe (visages, mains), reste simple où elle est plate."
 
         ShowCellLabels ->
-            -- English fallback (translation TODO).
-            "show cell labels (A1, B2…)"
+            "afficher les étiquettes (A1, B2…)"
 
         GroupMatchCanvas ->
-            -- English fallback (translation TODO).
-            "match a canvas"
+            "ajuster à une toile"
 
         GroupOptional ->
-            -- English fallback (translation TODO).
-            "(optional)"
+            "(optionnel)"
 
         MyCanvasIs ->
-            -- English fallback (translation TODO).
-            "my canvas is"
+            "ma toile est"
 
         CmWide ->
-            -- English fallback (translation TODO).
-            "cm wide"
+            "cm de large"
 
         CmTall ->
-            -- English fallback (translation TODO).
-            "cm tall"
+            "cm de haut"
 
         EachCellApprox ->
-            -- English fallback (translation TODO).
-            "each cell ≈"
+            "chaque cellule ≈"
 
         MakeFiveCmCells ->
-            -- English fallback (translation TODO).
-            "make 5 cm cells"
+            "cellules de 5 cm"
 
         HowShouldImageFit ->
-            -- English fallback (translation TODO).
-            "how should the image fit?"
+            "comment adapter l'image ?"
 
         FitToWidth ->
-            -- English fallback (translation TODO).
-            "fit to width"
+            "à la largeur"
 
         FitToHeight ->
-            -- English fallback (translation TODO).
-            "fit to height"
+            "à la hauteur"
 
         FitInside ->
-            -- English fallback (translation TODO).
-            "fit inside"
+            "à l'intérieur"
 
         SplitIntoTiles ->
-            -- English fallback (translation TODO).
-            "split into printable tiles"
+            "découper en feuilles imprimables"
 
         SliceNone ->
-            -- English fallback (translation TODO).
-            "none"
+            "aucun"
 
 
 asturianoTranslations : TranslationKey -> String
@@ -1552,80 +1475,61 @@ asturianoTranslations key =
             "personalizáu"
 
         GridModeAutoExplain ->
-            -- English fallback (translation TODO).
-            "i pick one number, you get a square-ish grid."
+            "yo eslixo un númberu, tu llogres una rexilla cuadrada."
 
         GridModeCustomExplain ->
-            -- English fallback (translation TODO).
-            "you set rows and columns separately."
+            "tu pones les fileres y columnes per separáu."
 
         GroupSetUpGrid ->
-            -- English fallback (translation TODO).
-            "set up the grid"
+            "configura la rexilla"
 
         GroupStyle ->
-            -- English fallback (translation TODO).
-            "style"
+            "estilu"
 
         AutoSimplifyExplain ->
-            -- English fallback (translation TODO).
-            "adds extra grid lines where the image is busy (faces, hands), keeps it simple where it's flat."
+            "amiesta llinies onde la imaxe ye complicada (cares, manes), déxala simple onde ye plana."
 
         ShowCellLabels ->
-            -- English fallback (translation TODO).
-            "show cell labels (A1, B2…)"
+            "amosar etiquetes (A1, B2…)"
 
         GroupMatchCanvas ->
-            -- English fallback (translation TODO).
-            "match a canvas"
+            "axustar a un llenzu"
 
         GroupOptional ->
-            -- English fallback (translation TODO).
-            "(optional)"
+            "(opcional)"
 
         MyCanvasIs ->
-            -- English fallback (translation TODO).
-            "my canvas is"
+            "el mio llenzu ye"
 
         CmWide ->
-            -- English fallback (translation TODO).
-            "cm wide"
+            "cm d'anchu"
 
         CmTall ->
-            -- English fallback (translation TODO).
-            "cm tall"
+            "cm d'altu"
 
         EachCellApprox ->
-            -- English fallback (translation TODO).
-            "each cell ≈"
+            "cada caxellu ≈"
 
         MakeFiveCmCells ->
-            -- English fallback (translation TODO).
-            "make 5 cm cells"
+            "caxellos de 5 cm"
 
         HowShouldImageFit ->
-            -- English fallback (translation TODO).
-            "how should the image fit?"
+            "cómo tien d'axustase la imaxe?"
 
         FitToWidth ->
-            -- English fallback (translation TODO).
-            "fit to width"
+            "al anchu"
 
         FitToHeight ->
-            -- English fallback (translation TODO).
-            "fit to height"
+            "al altu"
 
         FitInside ->
-            -- English fallback (translation TODO).
-            "fit inside"
+            "dientro"
 
         SplitIntoTiles ->
-            -- English fallback (translation TODO).
-            "split into printable tiles"
+            "partir en fueyes imprenties"
 
         SliceNone ->
-            -- English fallback (translation TODO).
-            "none"
+            "dengún"
 
 
 gaelicTranslations : TranslationKey -> String
@@ -1767,86 +1671,67 @@ gaelicTranslations key =
             "roinn íomhá"
 
         GridModeAuto ->
-            "auto"
+            "uathoibríoch"
 
         GridModeCustom ->
             "saincheaptha"
 
         GridModeAutoExplain ->
-            -- English fallback (translation TODO).
-            "i pick one number, you get a square-ish grid."
+            "roghnaím uimhir amháin, faigheann tú greille chearnach."
 
         GridModeCustomExplain ->
-            -- English fallback (translation TODO).
-            "you set rows and columns separately."
+            "socraíonn tú sraitheanna agus colúin ar leithligh."
 
         GroupSetUpGrid ->
-            -- English fallback (translation TODO).
-            "set up the grid"
+            "socraigh an ghreille"
 
         GroupStyle ->
-            -- English fallback (translation TODO).
-            "style"
+            "stíl"
 
         AutoSimplifyExplain ->
-            -- English fallback (translation TODO).
-            "adds extra grid lines where the image is busy (faces, hands), keeps it simple where it's flat."
+            "cuireann sé línte breise nuair a bhíonn an íomhá gnóthach (aghaidheanna, lámha), coinníonn é simplí nuair atá sé cothrom."
 
         ShowCellLabels ->
-            -- English fallback (translation TODO).
-            "show cell labels (A1, B2…)"
+            "taispeáin lipéid (A1, B2…)"
 
         GroupMatchCanvas ->
-            -- English fallback (translation TODO).
-            "match a canvas"
+            "oiriúnaigh do chanbhás"
 
         GroupOptional ->
-            -- English fallback (translation TODO).
-            "(optional)"
+            "(roghnach)"
 
         MyCanvasIs ->
-            -- English fallback (translation TODO).
-            "my canvas is"
+            "tá mo chanbhás"
 
         CmWide ->
-            -- English fallback (translation TODO).
-            "cm wide"
+            "cm ar leithead"
 
         CmTall ->
-            -- English fallback (translation TODO).
-            "cm tall"
+            "cm ar airde"
 
         EachCellApprox ->
-            -- English fallback (translation TODO).
-            "each cell ≈"
+            "gach cill ≈"
 
         MakeFiveCmCells ->
-            -- English fallback (translation TODO).
-            "make 5 cm cells"
+            "cealla 5 cm"
 
         HowShouldImageFit ->
-            -- English fallback (translation TODO).
-            "how should the image fit?"
+            "conas a oirfidh an íomhá?"
 
         FitToWidth ->
-            -- English fallback (translation TODO).
-            "fit to width"
+            "leis an leithead"
 
         FitToHeight ->
-            -- English fallback (translation TODO).
-            "fit to height"
+            "leis an airde"
 
         FitInside ->
-            -- English fallback (translation TODO).
-            "fit inside"
+            "istigh"
 
         SplitIntoTiles ->
-            -- English fallback (translation TODO).
-            "split into printable tiles"
+            "roinn ina leatháin chló"
 
         SliceNone ->
-            -- English fallback (translation TODO).
-            "none"
+            "ceann ar bith"
 
 
 euskaraTranslations : TranslationKey -> String
@@ -1992,80 +1877,61 @@ euskaraTranslations key =
             "pertsonalizatua"
 
         GridModeAutoExplain ->
-            -- English fallback (translation TODO).
-            "i pick one number, you get a square-ish grid."
+            "nik zenbaki bat aukeratzen dut, zuk sareta karratua jasotzen duzu."
 
         GridModeCustomExplain ->
-            -- English fallback (translation TODO).
-            "you set rows and columns separately."
+            "errenkadak eta zutabeak bereiz ezartzen dituzu."
 
         GroupSetUpGrid ->
-            -- English fallback (translation TODO).
-            "set up the grid"
+            "sareta ezarri"
 
         GroupStyle ->
-            -- English fallback (translation TODO).
-            "style"
+            "estiloa"
 
         AutoSimplifyExplain ->
-            -- English fallback (translation TODO).
-            "adds extra grid lines where the image is busy (faces, hands), keeps it simple where it's flat."
+            "lerro gehiago gehitzen ditu irudia korapilatsua denean (aurpegiak, eskuak), sinple uzten du laua denean."
 
         ShowCellLabels ->
-            -- English fallback (translation TODO).
-            "show cell labels (A1, B2…)"
+            "erakutsi etiketak (A1, B2…)"
 
         GroupMatchCanvas ->
-            -- English fallback (translation TODO).
-            "match a canvas"
+            "mihise batera egokitu"
 
         GroupOptional ->
-            -- English fallback (translation TODO).
-            "(optional)"
+            "(aukerakoa)"
 
         MyCanvasIs ->
-            -- English fallback (translation TODO).
-            "my canvas is"
+            "nire mihisea da"
 
         CmWide ->
-            -- English fallback (translation TODO).
-            "cm wide"
+            "cm zabal"
 
         CmTall ->
-            -- English fallback (translation TODO).
-            "cm tall"
+            "cm garai"
 
         EachCellApprox ->
-            -- English fallback (translation TODO).
-            "each cell ≈"
+            "gelaxka bakoitza ≈"
 
         MakeFiveCmCells ->
-            -- English fallback (translation TODO).
-            "make 5 cm cells"
+            "5 cm-ko gelaxkak"
 
         HowShouldImageFit ->
-            -- English fallback (translation TODO).
-            "how should the image fit?"
+            "nola egokitu behar da irudia?"
 
         FitToWidth ->
-            -- English fallback (translation TODO).
-            "fit to width"
+            "zabalerara"
 
         FitToHeight ->
-            -- English fallback (translation TODO).
-            "fit to height"
+            "altuerara"
 
         FitInside ->
-            -- English fallback (translation TODO).
-            "fit inside"
+            "barruan"
 
         SplitIntoTiles ->
-            -- English fallback (translation TODO).
-            "split into printable tiles"
+            "orri inprimagarriak banatu"
 
         SliceNone ->
-            -- English fallback (translation TODO).
-            "none"
+            "bat ere ez"
 
 
 japaneseTranslations : TranslationKey -> String
@@ -2211,80 +2077,61 @@ japaneseTranslations key =
             "カスタム"
 
         GridModeAutoExplain ->
-            -- English fallback (translation TODO).
-            "i pick one number, you get a square-ish grid."
+            "数字を一つ選ぶと、正方形に近いグリッドができます。"
 
         GridModeCustomExplain ->
-            -- English fallback (translation TODO).
-            "you set rows and columns separately."
+            "行と列を別々に設定します。"
 
         GroupSetUpGrid ->
-            -- English fallback (translation TODO).
-            "set up the grid"
+            "グリッドを設定"
 
         GroupStyle ->
-            -- English fallback (translation TODO).
-            "style"
+            "スタイル"
 
         AutoSimplifyExplain ->
-            -- English fallback (translation TODO).
-            "adds extra grid lines where the image is busy (faces, hands), keeps it simple where it's flat."
+            "画像が複雑な部分（顔、手）にはグリッド線を増やし、平らな部分はシンプルに保ちます。"
 
         ShowCellLabels ->
-            -- English fallback (translation TODO).
-            "show cell labels (A1, B2…)"
+            "セルラベルを表示 (A1, B2…)"
 
         GroupMatchCanvas ->
-            -- English fallback (translation TODO).
-            "match a canvas"
+            "キャンバスに合わせる"
 
         GroupOptional ->
-            -- English fallback (translation TODO).
-            "(optional)"
+            "(任意)"
 
         MyCanvasIs ->
-            -- English fallback (translation TODO).
-            "my canvas is"
+            "私のキャンバスは"
 
         CmWide ->
-            -- English fallback (translation TODO).
-            "cm wide"
+            "cm 幅"
 
         CmTall ->
-            -- English fallback (translation TODO).
-            "cm tall"
+            "cm 高さ"
 
         EachCellApprox ->
-            -- English fallback (translation TODO).
-            "each cell ≈"
+            "各セル ≈"
 
         MakeFiveCmCells ->
-            -- English fallback (translation TODO).
-            "make 5 cm cells"
+            "5cm のセルを作る"
 
         HowShouldImageFit ->
-            -- English fallback (translation TODO).
-            "how should the image fit?"
+            "画像をどう収める?"
 
         FitToWidth ->
-            -- English fallback (translation TODO).
-            "fit to width"
+            "幅に合わせる"
 
         FitToHeight ->
-            -- English fallback (translation TODO).
-            "fit to height"
+            "高さに合わせる"
 
         FitInside ->
-            -- English fallback (translation TODO).
-            "fit inside"
+            "枠内に収める"
 
         SplitIntoTiles ->
-            -- English fallback (translation TODO).
-            "split into printable tiles"
+            "印刷用に分割"
 
         SliceNone ->
-            -- English fallback (translation TODO).
-            "none"
+            "なし"
 
 
 russianTranslations : TranslationKey -> String
@@ -2427,83 +2274,64 @@ russianTranslations key =
             "авто"
 
         GridModeCustom ->
-            "свой"
+            "ручной"
 
         GridModeAutoExplain ->
-            -- English fallback (translation TODO).
-            "i pick one number, you get a square-ish grid."
+            "я выбираю одно число, ты получаешь почти квадратную сетку."
 
         GridModeCustomExplain ->
-            -- English fallback (translation TODO).
-            "you set rows and columns separately."
+            "ты задаёшь строки и столбцы отдельно."
 
         GroupSetUpGrid ->
-            -- English fallback (translation TODO).
-            "set up the grid"
+            "настройте сетку"
 
         GroupStyle ->
-            -- English fallback (translation TODO).
-            "style"
+            "стиль"
 
         AutoSimplifyExplain ->
-            -- English fallback (translation TODO).
-            "adds extra grid lines where the image is busy (faces, hands), keeps it simple where it's flat."
+            "добавляет линии там, где изображение сложное (лица, руки), упрощает там, где плоско."
 
         ShowCellLabels ->
-            -- English fallback (translation TODO).
-            "show cell labels (A1, B2…)"
+            "показать метки (A1, B2…)"
 
         GroupMatchCanvas ->
-            -- English fallback (translation TODO).
-            "match a canvas"
+            "подогнать к холсту"
 
         GroupOptional ->
-            -- English fallback (translation TODO).
-            "(optional)"
+            "(необязательно)"
 
         MyCanvasIs ->
-            -- English fallback (translation TODO).
-            "my canvas is"
+            "мой холст"
 
         CmWide ->
-            -- English fallback (translation TODO).
-            "cm wide"
+            "см в ширину"
 
         CmTall ->
-            -- English fallback (translation TODO).
-            "cm tall"
+            "см в высоту"
 
         EachCellApprox ->
-            -- English fallback (translation TODO).
-            "each cell ≈"
+            "каждая ячейка ≈"
 
         MakeFiveCmCells ->
-            -- English fallback (translation TODO).
-            "make 5 cm cells"
+            "ячейки по 5 см"
 
         HowShouldImageFit ->
-            -- English fallback (translation TODO).
-            "how should the image fit?"
+            "как вписать изображение?"
 
         FitToWidth ->
-            -- English fallback (translation TODO).
-            "fit to width"
+            "по ширине"
 
         FitToHeight ->
-            -- English fallback (translation TODO).
-            "fit to height"
+            "по высоте"
 
         FitInside ->
-            -- English fallback (translation TODO).
-            "fit inside"
+            "вписать"
 
         SplitIntoTiles ->
-            -- English fallback (translation TODO).
-            "split into printable tiles"
+            "разделить на листы для печати"
 
         SliceNone ->
-            -- English fallback (translation TODO).
-            "none"
+            "никак"
 
 
 tuvanTranslations : TranslationKey -> String
@@ -3109,77 +2937,58 @@ hebrewTranslations key =
             "מותאם"
 
         GridModeAutoExplain ->
-            -- English fallback (translation TODO).
-            "i pick one number, you get a square-ish grid."
+            "אני בוחר מספר אחד, אתה מקבל סריג מרובע בערך."
 
         GridModeCustomExplain ->
-            -- English fallback (translation TODO).
-            "you set rows and columns separately."
+            "אתה קובע שורות ועמודות בנפרד."
 
         GroupSetUpGrid ->
-            -- English fallback (translation TODO).
-            "set up the grid"
+            "הגדר את הסריג"
 
         GroupStyle ->
-            -- English fallback (translation TODO).
-            "style"
+            "סגנון"
 
         AutoSimplifyExplain ->
-            -- English fallback (translation TODO).
-            "adds extra grid lines where the image is busy (faces, hands), keeps it simple where it's flat."
+            "מוסיף קווי סריג היכן שהתמונה צפופה (פנים, ידיים), משאיר פשוט היכן שהיא שטוחה."
 
         ShowCellLabels ->
-            -- English fallback (translation TODO).
-            "show cell labels (A1, B2…)"
+            "הצג תוויות (A1, B2…)"
 
         GroupMatchCanvas ->
-            -- English fallback (translation TODO).
-            "match a canvas"
+            "התאם לבד"
 
         GroupOptional ->
-            -- English fallback (translation TODO).
-            "(optional)"
+            "(אופציונלי)"
 
         MyCanvasIs ->
-            -- English fallback (translation TODO).
-            "my canvas is"
+            "הבד שלי"
 
         CmWide ->
-            -- English fallback (translation TODO).
-            "cm wide"
+            "ס\"מ רוחב"
 
         CmTall ->
-            -- English fallback (translation TODO).
-            "cm tall"
+            "ס\"מ גובה"
 
         EachCellApprox ->
-            -- English fallback (translation TODO).
-            "each cell ≈"
+            "כל תא ≈"
 
         MakeFiveCmCells ->
-            -- English fallback (translation TODO).
-            "make 5 cm cells"
+            "תאים של 5 ס\"מ"
 
         HowShouldImageFit ->
-            -- English fallback (translation TODO).
-            "how should the image fit?"
+            "איך להתאים את התמונה?"
 
         FitToWidth ->
-            -- English fallback (translation TODO).
-            "fit to width"
+            "לרוחב"
 
         FitToHeight ->
-            -- English fallback (translation TODO).
-            "fit to height"
+            "לגובה"
 
         FitInside ->
-            -- English fallback (translation TODO).
-            "fit inside"
+            "בתוך"
 
         SplitIntoTiles ->
-            -- English fallback (translation TODO).
-            "split into printable tiles"
+            "חלק לדפי הדפסה"
 
         SliceNone ->
-            -- English fallback (translation TODO).
-            "none"
+            "ללא"
