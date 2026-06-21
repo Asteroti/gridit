@@ -1181,5 +1181,59 @@ test.describe('Gridit Application', () => {
       expect(out.canvasWidthCm).toBeNull();
       expect(out.canvasHeightCm).toBeNull();
     });
+
+    // bju.12: "make 5 cm cells" button — writes rows/cols based on cm dims,
+    // flips Auto → Custom.
+    test('snap button is disabled until both cm fields filled', async ({ page }) => {
+      await page.evaluate(() => {
+        (document.querySelector('.match-canvas') as HTMLDetailsElement).open = true;
+      });
+      await expect(page.locator('.snap-btn')).toBeDisabled();
+
+      // Only width filled — still disabled.
+      await page.locator('#canvas-width-cm').fill('60');
+      await expect(page.locator('.snap-btn')).toBeDisabled();
+
+      // Both filled — enabled.
+      await page.locator('#canvas-height-cm').fill('40');
+      await expect(page.locator('.snap-btn')).toBeEnabled();
+    });
+
+    test('clicking snap button sets rows/cols + flips to Custom mode', async ({ page }) => {
+      await page.evaluate(() => {
+        (document.querySelector('.match-canvas') as HTMLDetailsElement).open = true;
+      });
+      await page.locator('#canvas-width-cm').fill('60');
+      await page.locator('#canvas-height-cm').fill('40');
+      await page.locator('.snap-btn').click();
+
+      // 60/5 = 12 cols, 40/5 = 8 rows. Mode = Custom (visible by two number inputs).
+      await expect(page.locator('#grid-rows-input')).toHaveValue('8');
+      await expect(page.locator('#grid-cols-input')).toHaveValue('12');
+      await expect(page.locator('.seg-btn').nth(1)).toHaveClass(/seg-btn--active/);
+
+      // Persisted.
+      await expect(async () => {
+        const saved = await page.evaluate(() =>
+          JSON.parse(localStorage.getItem('gridit-settings') || '{}')
+        );
+        expect(saved.gridRows).toBe(8);
+        expect(saved.gridCols).toBe(12);
+        expect(saved.gridMode).toBe('Custom');
+      }).toPass({ timeout: 3000 });
+    });
+
+    test('snap clamps to grid range (very small canvas)', async ({ page }) => {
+      await page.evaluate(() => {
+        (document.querySelector('.match-canvas') as HTMLDetailsElement).open = true;
+      });
+      // 5cm × 5cm canvas → 1 col × 1 row, but min is 2.
+      await page.locator('#canvas-width-cm').fill('5');
+      await page.locator('#canvas-height-cm').fill('5');
+      await page.locator('.snap-btn').click();
+
+      await expect(page.locator('#grid-rows-input')).toHaveValue('2');
+      await expect(page.locator('#grid-cols-input')).toHaveValue('2');
+    });
   });
 });

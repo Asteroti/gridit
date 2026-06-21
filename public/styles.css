@@ -652,6 +652,37 @@ body::before {
   font-weight: 600;
 }
 
+/* Snap-to-N-cm shortcut button (bju.12). Subtle warm tint to read as a
+   convenience action, not a primary CTA. */
+.snap-btn {
+  appearance: none;
+  border: 1px solid var(--accent-warm-border);
+  background: var(--accent-warm-soft);
+  color: var(--accent-warm-dark);
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  align-self: flex-start;
+  font-family: inherit;
+  transition: background 0.15s var(--ease-out-cubic);
+}
+
+.snap-btn:hover:not(:disabled) {
+  background: var(--accent-warm-border);
+}
+
+.snap-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--ring-focus);
+}
+
+.snap-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .control-group {
   display: flex;
   flex-direction: column;

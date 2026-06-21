@@ -77,6 +77,7 @@ type TranslationKey
     | CmWide
     | CmTall
     | EachCellApprox
+    | MakeFiveCmCells
 
 
 translate : Language -> TranslationKey -> String
@@ -303,6 +304,9 @@ englishTranslations key =
         EachCellApprox ->
             "each cell ≈"
 
+        MakeFiveCmCells ->
+            "make 5 cm cells"
+
 
 spanishTranslations : TranslationKey -> String
 spanishTranslations key =
@@ -481,6 +485,9 @@ spanishTranslations key =
 
         EachCellApprox ->
             "cada celda ≈"
+
+        MakeFiveCmCells ->
+            "celdas de 5 cm"
 
 
 latinTranslations : TranslationKey -> String
@@ -674,6 +681,10 @@ latinTranslations key =
             -- English fallback (translation TODO).
             "each cell ≈"
 
+        MakeFiveCmCells ->
+            -- English fallback (translation TODO).
+            "make 5 cm cells"
+
 
 italianTranslations : TranslationKey -> String
 italianTranslations key =
@@ -864,6 +875,10 @@ italianTranslations key =
         EachCellApprox ->
             -- English fallback (translation TODO).
             "each cell ≈"
+
+        MakeFiveCmCells ->
+            -- English fallback (translation TODO).
+            "make 5 cm cells"
 
 
 portugueseTranslations : TranslationKey -> String
@@ -1056,6 +1071,10 @@ portugueseTranslations key =
             -- English fallback (translation TODO).
             "each cell ≈"
 
+        MakeFiveCmCells ->
+            -- English fallback (translation TODO).
+            "make 5 cm cells"
+
 
 frenchTranslations : TranslationKey -> String
 frenchTranslations key =
@@ -1247,6 +1266,10 @@ frenchTranslations key =
             -- English fallback (translation TODO).
             "each cell ≈"
 
+        MakeFiveCmCells ->
+            -- English fallback (translation TODO).
+            "make 5 cm cells"
+
 
 asturianoTranslations : TranslationKey -> String
 asturianoTranslations key =
@@ -1437,6 +1460,10 @@ asturianoTranslations key =
         EachCellApprox ->
             -- English fallback (translation TODO).
             "each cell ≈"
+
+        MakeFiveCmCells ->
+            -- English fallback (translation TODO).
+            "make 5 cm cells"
 
 
 gaelicTranslations : TranslationKey -> String
@@ -1631,6 +1658,10 @@ gaelicTranslations key =
             -- English fallback (translation TODO).
             "each cell ≈"
 
+        MakeFiveCmCells ->
+            -- English fallback (translation TODO).
+            "make 5 cm cells"
+
 
 euskaraTranslations : TranslationKey -> String
 euskaraTranslations key =
@@ -1821,6 +1852,10 @@ euskaraTranslations key =
         EachCellApprox ->
             -- English fallback (translation TODO).
             "each cell ≈"
+
+        MakeFiveCmCells ->
+            -- English fallback (translation TODO).
+            "make 5 cm cells"
 
 
 japaneseTranslations : TranslationKey -> String
@@ -2013,6 +2048,10 @@ japaneseTranslations key =
             -- English fallback (translation TODO).
             "each cell ≈"
 
+        MakeFiveCmCells ->
+            -- English fallback (translation TODO).
+            "make 5 cm cells"
+
 
 russianTranslations : TranslationKey -> String
 russianTranslations key =
@@ -2203,6 +2242,10 @@ russianTranslations key =
         EachCellApprox ->
             -- English fallback (translation TODO).
             "each cell ≈"
+
+        MakeFiveCmCells ->
+            -- English fallback (translation TODO).
+            "make 5 cm cells"
 
 
 tuvanTranslations : TranslationKey -> String
@@ -2406,6 +2449,10 @@ tuvanTranslations key =
             -- English fallback (no native Tuvan translation).
             "each cell ≈"
 
+        MakeFiveCmCells ->
+            -- English fallback (no native Tuvan translation).
+            "make 5 cm cells"
+
 
 amharicTranslations : TranslationKey -> String
 amharicTranslations key =
@@ -2608,6 +2655,10 @@ amharicTranslations key =
             -- English fallback (no native Amharic translation).
             "each cell ≈"
 
+        MakeFiveCmCells ->
+            -- English fallback (no native Amharic translation).
+            "make 5 cm cells"
+
 
 hebrewTranslations : TranslationKey -> String
 hebrewTranslations key =
@@ -2798,3 +2849,7 @@ hebrewTranslations key =
         EachCellApprox ->
             -- English fallback (translation TODO).
             "each cell ≈"
+
+        MakeFiveCmCells ->
+            -- English fallback (translation TODO).
+            "make 5 cm cells"

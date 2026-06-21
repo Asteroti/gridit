@@ -249,6 +249,7 @@ type Msg
     | ImageDisplaySizeReceived { width : Float, height : Float }
     | CanvasWidthCmChanged String
     | CanvasHeightCmChanged String
+    | SnapToFiveCmCells
     | ToggleGridView
     | SettingsLoaded Settings
     | ResetProcessing
@@ -970,6 +971,22 @@ update msg model =
         CanvasHeightCmChanged raw ->
             withSave { model | canvasHeightCm = parseCmInput raw }
 
+        SnapToFiveCmCells ->
+            -- Compute rows/cols so each cell ≈ 5cm on the canvas. Clamps to
+            -- the 2..64 range used elsewhere. Flips Auto → Custom so the
+            -- result sticks even if the user later moves the size slider.
+            case ( model.canvasWidthCm, model.canvasHeightCm ) of
+                ( Just w, Just h ) ->
+                    let
+                        snapCm = 5.0
+                        newCols = clamp 2 64 (round (w / snapCm))
+                        newRows = clamp 2 64 (round (h / snapCm))
+                    in
+                    withSave { model | gridRows = newRows, gridCols = newCols, gridMode = "Custom" }
+
+                _ ->
+                    ( model, Cmd.none )
+
         ToggleGridView ->
             ( { model | showGrid = not model.showGrid }, Cmd.none )
 
@@ -1558,6 +1575,15 @@ viewMatchCanvasSection model =
 
                 _ ->
                     text ""
+
+        snapButton =
+            button
+                [ class "snap-btn"
+                , type_ "button"
+                , onClick SnapToFiveCmCells
+                , disabled (not bothFilled)
+                ]
+                [ text (translate model.language I18n.MakeFiveCmCells) ]
     in
     Html.details [ class "match-canvas", attribute "data-bothfilled" (if bothFilled then "true" else "false") ]
         [ Html.summary [ class "match-canvas-summary" ]
@@ -1599,6 +1625,7 @@ viewMatchCanvasSection model =
                 , span [ class "cm-x" ] [ text (translate model.language I18n.CmTall) ]
                 ]
             , readoutLine
+            , snapButton
             ]
         ]
 
