@@ -1245,56 +1245,71 @@ input[type="range"]::-moz-range-thumb:hover {
   color: var(--on-background);
 }
 
-.community-card {
-  max-width: 720px;
+/* Community ticker — one line above the footer. Bigger frog badge,
+   totals + top country flags inline, "?" disclaimer pill at the end.
+   Replaces the older multi-row community-card. */
+.community-ticker {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  max-width: 900px;
   margin: var(--spacing-lg) auto var(--spacing-sm) auto;
-  padding: 14px 20px;
-  background: hsla(40, 50%, 99%, 0.5);
-  border: 1px solid var(--glass-border);
-  border-radius: var(--radius-md);
-  text-align: center;
-  position: relative;
-}
-
-.community-frog {
-  position: absolute;
-  top: -14px;
-  left: 16px;
-  width: 28px;
-  height: 28px;
+  padding: 10px 14px;
   background: var(--card);
   border: 1px solid var(--glass-border);
-  border-radius: 50%;
-  padding: 2px;
-  color: var(--primary);
+  border-radius: var(--radius-md);
   box-shadow: var(--shadow-subtle);
+}
+
+/* When the "?" details is open, its body flows to a new row inside the
+   ticker flex container, spanning full width. */
+.community-ticker .community-disclaimer[open] ~ * + .community-disclaimer-body,
+.community-ticker .community-disclaimer-body {
+  flex-basis: 100%;
+}
+
+.community-ticker__frog {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: hsla(148, 28%, 86%, 0.7);
+  border: 1px solid var(--glass-border);
+  color: var(--primary-dark);
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  box-shadow: var(--shadow-subtle);
 }
 
-.community-total {
-  font-size: var(--font-body);
-  color: var(--on-background);
-  margin: 0 0 var(--spacing-xs) 0;
-  line-height: 1.5;
-}
-
-.community-total strong {
-  font-variant-numeric: tabular-nums;
-  font-weight: 600;
-  color: var(--primary-dark);
-}
-
-.community-strip {
+.community-ticker__line {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
   font-size: var(--font-caption);
   color: var(--muted-foreground);
-  margin: var(--spacing-xs) 0 0 0;
-  line-height: 1.8;
+  line-height: 1.5;
+  /* Overflow gracefully on narrow viewports: scroll horizontally with
+     a hint of inertia rather than wrapping into a multi-row card. */
+  overflow-x: auto;
+  white-space: nowrap;
+  scrollbar-width: thin;
 }
 
-.community-flags {
-  display: inline;
+.community-ticker__line strong {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--on-background);
+}
+
+.community-ticker__sep {
+  color: var(--muted-foreground);
+  opacity: 0.5;
+}
+
+.community-ticker__flags {
+  font-variant-numeric: tabular-nums;
 }
 
 .community-flag {
@@ -1302,22 +1317,14 @@ input[type="range"]::-moz-range-thumb:hover {
   font-variant-numeric: tabular-nums;
 }
 
-.community-spotlight {
-  font-size: var(--font-caption);
-  color: var(--on-background);
-  margin: var(--spacing-xs) 0 0 0;
-}
-
 .community-disclaimer {
   font-size: var(--font-small);
   color: var(--muted-foreground);
   text-align: left;
+  flex-shrink: 0;
 }
 
 .community-disclaimer-toggle {
-  position: absolute;
-  top: -14px;
-  right: 16px;
   width: 26px;
   height: 26px;
   border-radius: 50%;
@@ -1334,6 +1341,17 @@ input[type="range"]::-moz-range-thumb:hover {
   list-style: none;
   box-shadow: var(--shadow-subtle);
   transition: background 0.15s var(--ease-out-cubic), color 0.15s var(--ease-out-cubic);
+}
+
+@media (max-width: 540px) {
+  .community-ticker {
+    gap: 10px;
+    padding: 8px 10px;
+  }
+  .community-ticker__frog {
+    width: 36px;
+    height: 36px;
+  }
 }
 
 .community-disclaimer-toggle::-webkit-details-marker { display: none; }

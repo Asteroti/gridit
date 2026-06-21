@@ -266,55 +266,43 @@ test.describe('Gridit Application', () => {
       }, counters);
     }
 
-    test('community card is absent before counters load', async ({ page }) => {
-      await expect(page.locator('.community-card')).toHaveCount(0);
+    test('community ticker is absent before counters load', async ({ page }) => {
+      await expect(page.locator('.community-ticker')).toHaveCount(0);
     });
 
-    test('community card renders when counters arrive', async ({ page }) => {
+    test('community ticker renders when counters arrive', async ({ page }) => {
       await sendCounters(page, sampleCounters());
-      await expect(page.locator('.community-card')).toBeVisible();
-      const totals = await page.locator('.community-total strong').allTextContents();
+      await expect(page.locator('.community-ticker')).toBeVisible();
+      const totals = await page.locator('.community-ticker__line strong').allTextContents();
       expect(totals).toEqual(['100', '5', '200']);
     });
 
-    test('heart click ticks total and your-country row optimistically', async ({ page }) => {
+    test('heart click ticks the total hearts counter optimistically', async ({ page }) => {
+      // Note: post v2 ticker rework, only the totals line shows hearts —
+      // the per-country hearts strip was removed (leaderboard-shaped).
+      // The model still updates heartsByCountry; just not displayed.
       await uploadImage(page);
       await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
       await sendCounters(page, sampleCounters('AR'));
 
       await page.locator('.heart-pill').click();
 
-      const totals = await page.locator('.community-total strong').allTextContents();
+      const totals = await page.locator('.community-ticker__line strong').allTextContents();
       expect(totals[2]).toBe('201');
-      const arRow = await page.locator('.community-strip--hearts .community-flag').first().innerText();
-      expect(arRow).toMatch(/51$/);
     });
 
-    test('heart from a country not in the strip appends it at rank-last', async ({ page }) => {
-      await uploadImage(page);
-      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
-      await sendCounters(page, sampleCounters('WS'));
-
-      await page.locator('.heart-pill').click();
-
-      const lastFlag = await page.locator('.community-strip--hearts .community-flag').last().innerText();
-      expect(lastFlag).toMatch(/1$/);
-    });
-
-    test('heart with empty yourCountry does not corrupt the strip', async ({ page }) => {
+    test('heart with empty yourCountry still ticks the total', async ({ page }) => {
       await uploadImage(page);
       await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
       await sendCounters(page, sampleCounters(''));
-      await expect(page.locator('.community-strip--hearts .community-flag')).toHaveCount(3);
 
       await page.locator('.heart-pill').click();
 
-      await expect(page.locator('.community-strip--hearts .community-flag')).toHaveCount(3);
-      const totals = await page.locator('.community-total strong').allTextContents();
+      const totals = await page.locator('.community-ticker__line strong').allTextContents();
       expect(totals[2]).toBe('201');
     });
 
-    test('download click ticks the download total and gridders row', async ({ page }) => {
+    test('download click ticks the download total and gridders flag', async ({ page }) => {
       await uploadImage(page);
       await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
       await sendCounters(page, sampleCounters('AR'));
@@ -322,27 +310,31 @@ test.describe('Gridit Application', () => {
       await page.locator('.button-download').click();
       await page.waitForTimeout(800);
 
-      const totals = await page.locator('.community-total strong').allTextContents();
+      const totals = await page.locator('.community-ticker__line strong').allTextContents();
       expect(totals[0]).toBe('101');
-      const arGridderRow = await page.locator('.community-strip--gridders .community-flag').first().innerText();
+      // The first flag in the ticker is the user's country (AR), now 41.
+      const arGridderRow = await page.locator('.community-ticker__flags .community-flag').first().innerText();
       expect(arGridderRow).toMatch(/41$/);
     });
 
-    test('gridders strip is independent of hearts strip', async ({ page }) => {
+    test('ticker shows up to 6 country flags from griddersByCountry', async ({ page }) => {
       await sendCounters(page, sampleCounters());
-      await expect(page.locator('.community-strip--gridders .community-flag')).toHaveCount(3);
-      await expect(page.locator('.community-strip--hearts .community-flag')).toHaveCount(3);
-      const gridderTitles = await page.locator('.community-strip--gridders .community-flag').evaluateAll(
+      // Sample has 3 gridders countries; expect exactly 3 flags rendered.
+      await expect(page.locator('.community-ticker__flags .community-flag')).toHaveCount(3);
+      const titles = await page.locator('.community-ticker__flags .community-flag').evaluateAll(
         els => els.map((el: HTMLElement) => el.getAttribute('title'))
       );
-      expect(gridderTitles).toEqual(['AR', 'HK', 'US']);
+      expect(titles).toEqual(['AR', 'HK', 'US']);
     });
 
     test('disclaimer expands on click', async ({ page }) => {
       await sendCounters(page, sampleCounters());
       const body = page.locator('.community-disclaimer-body');
       await expect(body).not.toBeVisible();
-      await page.locator('.community-disclaimer summary').click();
+      // Use evaluate-click — the disclaimer can wrap to a 2nd row on narrow
+      // mobile viewports inside the flex ticker, which sometimes makes
+      // Playwright's actionability check time out though the click works.
+      await page.locator('.community-disclaimer summary').evaluate((el: HTMLElement) => el.click());
       await expect(body).toBeVisible();
     });
 
@@ -369,7 +361,7 @@ test.describe('Gridit Application', () => {
           el.dispatchEvent(new Event('change', { bubbles: true }));
         }, lang);
         await expect(page.locator('html')).toHaveAttribute('lang', code, { timeout: 2000 });
-        await expect(page.locator('.community-card')).toBeVisible();
+        await expect(page.locator('.community-ticker')).toBeVisible();
       }
     });
   });

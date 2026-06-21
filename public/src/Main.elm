@@ -2016,6 +2016,10 @@ nicePromptText model =
         "aaaaaaaaaaaa!!!!!!"
 
 
+-- One-line community ticker (replaces the multi-line card). Bigger frog
+-- on the left (the brand's frog soul). Totals + top country flags in the
+-- middle. Disclaimer pill on the right. The Spotlight line is dropped
+-- (leaderboard-shaped — out of scope for "we're all making art together").
 viewCommunityCard : Model -> Html Msg
 viewCommunityCard model =
     case model.counters of
@@ -2023,37 +2027,32 @@ viewCommunityCard model =
             text ""
 
         Just c ->
-            div [ class "community-card" ]
-                [ span [ class "community-frog", attribute "aria-hidden" "true" ] [ iconFrogSized "22" ]
-                , p [ class "community-total" ]
+            div [ class "community-ticker", attribute "role" "region", attribute "aria-label" "community activity" ]
+                [ span [ class "community-ticker__frog", attribute "aria-hidden" "true" ] [ iconFrogSized "32" ]
+                , p [ class "community-ticker__line" ]
                     [ strong [] [ text (String.fromInt c.totalDownloaded) ]
-                    , text (" " ++ translate model.language I18n.CommunityImagesGridded ++ " ")
+                    , text (" " ++ translate model.language I18n.CommunityImagesGridded ++ " · ")
                     , strong [] [ text (String.fromInt c.totalCountries) ]
-                    , text (" " ++ translate model.language I18n.CommunityCountriesWith ++ " ")
+                    , text (" " ++ translate model.language I18n.CommunityCountriesWith ++ " · ")
                     , strong [] [ text (String.fromInt c.totalHearted) ]
                     , text (" " ++ translate model.language I18n.CommunityHearts ++ " ")
-                    , span [ class "heart-success" ] [ iconGreenHeart ]
+                    , span [ class "heart-warm" ] [ iconHeart ]
+                    , text " "
+                    , span [ class "community-ticker__sep" ] [ text "·" ]
+                    , text " "
+                    , viewFlagList c.griddersByCountry
                     ]
-                , viewCountryStrip model "community-strip--gridders" I18n.CommunityGriddersFrom c.griddersByCountry
-                , viewCountryStrip model "community-strip--hearts" I18n.CommunityHeartsFrom c.heartsByCountry
-                , viewSpotlight model c
                 , viewCommunityDisclaimer model
                 ]
 
 
-viewCountryStrip : Model -> String -> I18n.TranslationKey -> List CountryCount -> Html Msg
-viewCountryStrip model flavorClass labelKey rows =
-    if List.isEmpty rows then
-        text ""
-    else
-        p [ class ("community-strip " ++ flavorClass) ]
-            [ text (translate model.language labelKey ++ " ")
-            , span [ class "community-flags" ]
-                (List.intersperse
-                    (text " · ")
-                    (List.map renderFlagCount rows)
-                )
-            ]
+viewFlagList : List CountryCount -> Html Msg
+viewFlagList rows =
+    span [ class "community-ticker__flags" ]
+        (List.intersperse
+            (text " · ")
+            (List.map renderFlagCount (List.take 6 rows))
+        )
 
 
 renderFlagCount : CountryCount -> Html Msg
@@ -2063,19 +2062,6 @@ renderFlagCount cc =
         , text " "
         , text (String.fromInt cc.count)
         ]
-
-
-viewSpotlight : Model -> Counters -> Html Msg
-viewSpotlight model c =
-    if c.spotlight.country == "" then
-        text ""
-    else
-        p [ class "community-spotlight" ]
-            [ text (translate model.language I18n.CommunitySpotlight ++ " ")
-            , span [ class "community-flag" ] [ text (countryFlag c.spotlight.country) ]
-            , text (" " ++ translate model.language I18n.CommunitySentMost ++ " ")
-            , span [ class "heart-success" ] [ iconGreenHeart ]
-            ]
 
 
 viewCommunityDisclaimer : Model -> Html Msg
