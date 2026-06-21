@@ -347,6 +347,8 @@ function setupSharePort(app) {
 
 // Migrates pre-v2 settings (single `gridSize`) to the v2 shape
 // (`gridRows`/`gridCols`/`gridMode`). Mutates and returns the same object.
+// Also backfills new optional fields with safe defaults (showCellLabels)
+// so older saved payloads decode cleanly into the current Settings record.
 // Exposed on `window` for e2e testing.
 function migrateSettings(settings) {
   if (!settings || typeof settings !== 'object') return settings;
@@ -355,6 +357,9 @@ function migrateSettings(settings) {
     settings.gridCols = settings.gridSize;
     settings.gridMode = 'Auto';
     delete settings.gridSize;
+  }
+  if (settings.showCellLabels === undefined) {
+    settings.showCellLabels = false;
   }
   return settings;
 }
@@ -368,7 +373,8 @@ function isValidV2Settings(s) {
     && typeof s.gridColor === 'string'
     && typeof s.gridThickness === 'number'
     && typeof s.gridOpacity === 'number'
-    && typeof s.showDiagonals === 'boolean';
+    && typeof s.showDiagonals === 'boolean'
+    && typeof s.showCellLabels === 'boolean';
 }
 
 function setupSettingsPersistence(app) {

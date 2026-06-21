@@ -958,4 +958,101 @@ test.describe('Gridit Application', () => {
       await expect(page.locator('.mode-explain', { hasText: /busy.*flat/ })).toBeVisible();
     });
   });
+
+  // bju.6 + bju.7: cell labels feature.
+  test.describe('Cluster 2: cell labels', () => {
+    test.beforeEach(async ({ page }) => {
+      await uploadImage(page);
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+    });
+
+    test('toggle exists in group 2 (style) and is off by default', async ({ page }) => {
+      const toggle = page.locator('#cell-labels');
+      await expect(toggle).toBeAttached();
+      await expect(toggle).not.toBeChecked();
+      // No <text> labels in the overlay until toggled on.
+      await expect(page.locator('.grid-overlay text')).toHaveCount(0);
+    });
+
+    test('toggling on renders one label per cell (10×10 = 100 labels)', async ({ page }) => {
+      await page.locator('#cell-labels').evaluate((el: HTMLInputElement) => el.click());
+
+      await expect(async () => {
+        expect(await page.locator('.grid-overlay text').count()).toBe(100);
+      }).toPass({ timeout: 3000 });
+    });
+
+    test('labels use chess-style coordinates (first is A1, last is J10 for 10×10)', async ({ page }) => {
+      await page.locator('#cell-labels').evaluate((el: HTMLInputElement) => el.click());
+
+      await expect(async () => {
+        const labels = await page.locator('.grid-overlay text').allTextContents();
+        expect(labels[0]).toBe('A1');
+        expect(labels[labels.length - 1]).toBe('J10');
+      }).toPass({ timeout: 3000 });
+    });
+
+    test('changing grid size changes label count correspondingly', async ({ page }) => {
+      await page.locator('#cell-labels').evaluate((el: HTMLInputElement) => el.click());
+
+      const sizeSlider = page.locator('#grid-size-input');
+      await sizeSlider.fill('5');
+
+      // 5x5 = 25 labels
+      await expect(async () => {
+        expect(await page.locator('.grid-overlay text').count()).toBe(25);
+      }).toPass({ timeout: 3000 });
+    });
+
+    test('persists showCellLabels in localStorage', async ({ page }) => {
+      await page.locator('#cell-labels').evaluate((el: HTMLInputElement) => el.click());
+
+      await expect(async () => {
+        const saved = await page.evaluate(() =>
+          JSON.parse(localStorage.getItem('gridit-settings') || '{}')
+        );
+        expect(saved.showCellLabels).toBe(true);
+      }).toPass({ timeout: 3000 });
+    });
+
+    test('migration backfills showCellLabels=false for pre-cluster-2 v2 shape', async ({ page }) => {
+      // Inject a v2 shape WITHOUT showCellLabels (as if saved by an earlier
+      // version of this same branch).
+      await page.evaluate(() => {
+        localStorage.setItem('gridit-settings', JSON.stringify({
+          gridRows: 10,
+          gridCols: 10,
+          gridMode: 'Auto',
+          gridColor: '#80ED99',
+          gridThickness: 1,
+          gridOpacity: 1,
+          showDiagonals: false,
+        }));
+      });
+      await page.reload();
+      await page.waitForLoadState('networkidle');
+      await uploadImage(page);
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+
+      // Toggle should exist and be off (backfilled default).
+      await expect(page.locator('#cell-labels')).not.toBeChecked();
+      await expect(page.locator('.grid-overlay text')).toHaveCount(0);
+    });
+
+    test('migrateSettings backfills showCellLabels=false when missing', async ({ page }) => {
+      const out = await page.evaluate(() => {
+        // @ts-expect-error migrateSettings is global from grid-merge.js
+        return window.migrateSettings({
+          gridRows: 10,
+          gridCols: 10,
+          gridMode: 'Auto',
+          gridColor: '#80ED99',
+          gridThickness: 1,
+          gridOpacity: 1,
+          showDiagonals: false,
+        });
+      });
+      expect(out.showCellLabels).toBe(false);
+    });
+  });
 });

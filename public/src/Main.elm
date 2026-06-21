@@ -196,6 +196,7 @@ type alias Model =
     , gridHue : Int
     , counters : Maybe Counters
     , showRateLimitToast : Bool
+    , showCellLabels : Bool
     }
 
 
@@ -240,6 +241,7 @@ type Msg
     | LanguageChanged Language
     | ResetDownloadSuccess
     | ToggleDiagonals Bool
+    | ToggleCellLabels Bool
     | ToggleGridView
     | SettingsLoaded Settings
     | ResetProcessing
@@ -265,6 +267,7 @@ type alias Settings =
     , gridThickness : Int
     , gridOpacity : Float
     , showDiagonals : Bool
+    , showCellLabels : Bool
     }
 
 
@@ -283,6 +286,7 @@ settingsFromModel model =
     , gridThickness = model.gridThickness
     , gridOpacity = model.gridOpacity
     , showDiagonals = model.showDiagonals
+    , showCellLabels = model.showCellLabels
     }
 
 type alias SubdividedCell =
@@ -354,6 +358,53 @@ entropyGridSize =
     16
 
 
+-- Excel-style column letters: 0 → "A", 25 → "Z", 26 → "AA", 51 → "AZ", 52 → "BA".
+columnLetter : Int -> String
+columnLetter i =
+    if i < 26 then
+        String.fromChar (Char.fromCode (i + 65))
+    else
+        columnLetter ((i - 26) // 26) ++ String.fromChar (Char.fromCode (modBy 26 (i - 26) + 65))
+
+
+-- SVG <text> labels at the top-left of each cell when showCellLabels is on.
+-- Font size scales with the smaller cell dimension, clamped to a readable range.
+-- bju.8 will auto-hide entirely below ~18px on-screen cell size.
+cellLabelsSvg : Settings -> Dimensions -> List (Svg msg)
+cellLabelsSvg config dims =
+    if not config.showCellLabels then
+        []
+    else
+        let
+            cellWidth = toFloat dims.width / toFloat config.gridCols
+            cellHeight = toFloat dims.height / toFloat config.gridRows
+            fontSize = clamp 6 14 (round (Basics.min cellWidth cellHeight * 0.18))
+            padding = toFloat fontSize * 0.4
+        in
+        List.concatMap
+            (\row ->
+                List.map
+                    (\col ->
+                        let
+                            x = toFloat col * cellWidth + padding
+                            y = toFloat row * cellHeight + padding + toFloat fontSize
+                            labelText = columnLetter col ++ String.fromInt (row + 1)
+                        in
+                        Svg.text_
+                            [ SvgAttr.x (String.fromFloat x)
+                            , SvgAttr.y (String.fromFloat y)
+                            , SvgAttr.fontSize (String.fromInt fontSize)
+                            , SvgAttr.fill config.gridColor
+                            , SvgAttr.fontFamily "ui-monospace, SFMono-Regular, Menlo, monospace"
+                            , SvgAttr.opacity (String.fromFloat config.gridOpacity)
+                            ]
+                            [ Svg.text labelText ]
+                    )
+                    (List.range 0 (config.gridCols - 1))
+            )
+            (List.range 0 (config.gridRows - 1))
+
+
 svgLine : Settings -> Float -> Float -> Float -> Float -> Svg msg
 svgLine config x1 y1 x2 y2 =
     Svg.line
@@ -405,7 +456,7 @@ allGridLines config dims adaptiveCells =
             else
                 []
     in
-    verticalLines ++ horizontalLines ++ diagonals ++ subdivisionLines config dims adaptiveCells
+    verticalLines ++ horizontalLines ++ diagonals ++ subdivisionLines config dims adaptiveCells ++ cellLabelsSvg config dims
 
 
 
@@ -506,6 +557,7 @@ init _ =
       , gridHue = 180
       , counters = Nothing
       , showRateLimitToast = False
+      , showCellLabels = False
       }
     , Cmd.none
     )
@@ -873,6 +925,9 @@ update msg model =
         ToggleDiagonals value ->
             withSave { model | showDiagonals = value }
 
+        ToggleCellLabels value ->
+            withSave { model | showCellLabels = value }
+
         ToggleGridView ->
             ( { model | showGrid = not model.showGrid }, Cmd.none )
 
@@ -885,6 +940,7 @@ update msg model =
                 , gridThickness = settings.gridThickness
                 , gridOpacity = settings.gridOpacity
                 , showDiagonals = settings.showDiagonals
+                , showCellLabels = settings.showCellLabels
                 , gridHue = Maybe.withDefault model.gridHue (hexToHue settings.gridColor)
               }
             , Cmd.none
@@ -1183,7 +1239,8 @@ viewControlsFace model =
                     , text (translate model.language I18n.GroupStyle)
                     ]
                 , div [ class "group-controls" ]
-                    [ viewColorControl model
+                    [ viewCellLabelsToggle model
+                    , viewColorControl model
                     , viewThicknessControl model
                     , viewOpacityControl model
                     , viewDiagonalsToggle model
@@ -1423,6 +1480,25 @@ viewDiagonalsToggle model =
             , span [ class "light-switch-track" ]
                 [ span [ class "light-switch-thumb" ] [ iconDiagonals ] ]
             , span [ class "light-switch-label" ] [ text (translate model.language I18n.AddDiagonalLines) ]
+            ]
+        ]
+
+
+viewCellLabelsToggle : Model -> Html Msg
+viewCellLabelsToggle model =
+    div [ class "control-group" ]
+        [ label [ class "light-switch" ]
+            [ input
+                [ type_ "checkbox"
+                , Html.Attributes.checked model.showCellLabels
+                , Html.Events.onCheck ToggleCellLabels
+                , class "light-switch-input sr-only"
+                , id "cell-labels"
+                ]
+                []
+            , span [ class "light-switch-track" ]
+                [ span [ class "light-switch-thumb" ] [ text "A1" ] ]
+            , span [ class "light-switch-label" ] [ text (translate model.language I18n.ShowCellLabels) ]
             ]
         ]
 

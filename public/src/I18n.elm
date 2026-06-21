@@ -70,6 +70,7 @@ type TranslationKey
     | GroupSetUpGrid
     | GroupStyle
     | AutoSimplifyExplain
+    | ShowCellLabels
 
 
 translate : Language -> TranslationKey -> String
@@ -275,6 +276,9 @@ englishTranslations key =
         AutoSimplifyExplain ->
             "adds extra grid lines where the image is busy (faces, hands), keeps it simple where it's flat."
 
+        ShowCellLabels ->
+            "show cell labels (A1, B2…)"
+
 
 spanishTranslations : TranslationKey -> String
 spanishTranslations key =
@@ -432,6 +436,9 @@ spanishTranslations key =
 
         AutoSimplifyExplain ->
             "agrega más líneas donde la imagen es compleja (caras, manos), las deja simples donde es plana."
+
+        ShowCellLabels ->
+            "mostrar etiquetas (A1, B2…)"
 
 
 latinTranslations : TranslationKey -> String
@@ -597,6 +604,10 @@ latinTranslations key =
             -- English fallback (translation TODO).
             "adds extra grid lines where the image is busy (faces, hands), keeps it simple where it's flat."
 
+        ShowCellLabels ->
+            -- English fallback (translation TODO).
+            "show cell labels (A1, B2…)"
+
 
 italianTranslations : TranslationKey -> String
 italianTranslations key =
@@ -759,6 +770,10 @@ italianTranslations key =
         AutoSimplifyExplain ->
             -- English fallback (translation TODO).
             "adds extra grid lines where the image is busy (faces, hands), keeps it simple where it's flat."
+
+        ShowCellLabels ->
+            -- English fallback (translation TODO).
+            "show cell labels (A1, B2…)"
 
 
 portugueseTranslations : TranslationKey -> String
@@ -923,6 +938,10 @@ portugueseTranslations key =
             -- English fallback (translation TODO).
             "adds extra grid lines where the image is busy (faces, hands), keeps it simple where it's flat."
 
+        ShowCellLabels ->
+            -- English fallback (translation TODO).
+            "show cell labels (A1, B2…)"
+
 
 frenchTranslations : TranslationKey -> String
 frenchTranslations key =
@@ -1086,6 +1105,10 @@ frenchTranslations key =
             -- English fallback (translation TODO).
             "adds extra grid lines where the image is busy (faces, hands), keeps it simple where it's flat."
 
+        ShowCellLabels ->
+            -- English fallback (translation TODO).
+            "show cell labels (A1, B2…)"
+
 
 asturianoTranslations : TranslationKey -> String
 asturianoTranslations key =
@@ -1248,6 +1271,10 @@ asturianoTranslations key =
         AutoSimplifyExplain ->
             -- English fallback (translation TODO).
             "adds extra grid lines where the image is busy (faces, hands), keeps it simple where it's flat."
+
+        ShowCellLabels ->
+            -- English fallback (translation TODO).
+            "show cell labels (A1, B2…)"
 
 
 gaelicTranslations : TranslationKey -> String
@@ -1414,6 +1441,10 @@ gaelicTranslations key =
             -- English fallback (translation TODO).
             "adds extra grid lines where the image is busy (faces, hands), keeps it simple where it's flat."
 
+        ShowCellLabels ->
+            -- English fallback (translation TODO).
+            "show cell labels (A1, B2…)"
+
 
 euskaraTranslations : TranslationKey -> String
 euskaraTranslations key =
@@ -1576,6 +1607,10 @@ euskaraTranslations key =
         AutoSimplifyExplain ->
             -- English fallback (translation TODO).
             "adds extra grid lines where the image is busy (faces, hands), keeps it simple where it's flat."
+
+        ShowCellLabels ->
+            -- English fallback (translation TODO).
+            "show cell labels (A1, B2…)"
 
 
 japaneseTranslations : TranslationKey -> String
@@ -1740,6 +1775,10 @@ japaneseTranslations key =
             -- English fallback (translation TODO).
             "adds extra grid lines where the image is busy (faces, hands), keeps it simple where it's flat."
 
+        ShowCellLabels ->
+            -- English fallback (translation TODO).
+            "show cell labels (A1, B2…)"
+
 
 russianTranslations : TranslationKey -> String
 russianTranslations key =
@@ -1902,6 +1941,10 @@ russianTranslations key =
         AutoSimplifyExplain ->
             -- English fallback (translation TODO).
             "adds extra grid lines where the image is busy (faces, hands), keeps it simple where it's flat."
+
+        ShowCellLabels ->
+            -- English fallback (translation TODO).
+            "show cell labels (A1, B2…)"
 
 
 tuvanTranslations : TranslationKey -> String
@@ -2077,6 +2120,10 @@ tuvanTranslations key =
             -- English fallback (no native Tuvan translation).
             "adds extra grid lines where the image is busy (faces, hands), keeps it simple where it's flat."
 
+        ShowCellLabels ->
+            -- English fallback (no native Tuvan translation).
+            "show cell labels (A1, B2…)"
+
 
 amharicTranslations : TranslationKey -> String
 amharicTranslations key =
@@ -2251,6 +2298,10 @@ amharicTranslations key =
             -- English fallback (no native Amharic translation).
             "adds extra grid lines where the image is busy (faces, hands), keeps it simple where it's flat."
 
+        ShowCellLabels ->
+            -- English fallback (no native Amharic translation).
+            "show cell labels (A1, B2…)"
+
 
 hebrewTranslations : TranslationKey -> String
 hebrewTranslations key =
@@ -2413,3 +2464,7 @@ hebrewTranslations key =
         AutoSimplifyExplain ->
             -- English fallback (translation TODO).
             "adds extra grid lines where the image is busy (faces, hands), keeps it simple where it's flat."
+
+        ShowCellLabels ->
+            -- English fallback (translation TODO).
+            "show cell labels (A1, B2…)"
