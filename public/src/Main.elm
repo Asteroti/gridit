@@ -197,6 +197,8 @@ type alias Model =
     , counters : Maybe Counters
     , showRateLimitToast : Bool
     , showCellLabels : Bool
+    , imageDisplayedWidth : Maybe Float
+    , imageDisplayedHeight : Maybe Float
     }
 
 
@@ -242,6 +244,7 @@ type Msg
     | ResetDownloadSuccess
     | ToggleDiagonals Bool
     | ToggleCellLabels Bool
+    | ImageDisplaySizeReceived { width : Float, height : Float }
     | ToggleGridView
     | SettingsLoaded Settings
     | ResetProcessing
@@ -517,6 +520,9 @@ port receiveCounters : (Counters -> msg) -> Sub msg
 port receiveRateLimit : (() -> msg) -> Sub msg
 
 
+port receiveImageDisplaySize : ({ width : Float, height : Float } -> msg) -> Sub msg
+
+
 maxImageBytes : Int
 maxImageBytes =
     15 * 1024 * 1024
@@ -558,6 +564,8 @@ init _ =
       , counters = Nothing
       , showRateLimitToast = False
       , showCellLabels = False
+      , imageDisplayedWidth = Nothing
+      , imageDisplayedHeight = Nothing
       }
     , Cmd.none
     )
@@ -928,6 +936,9 @@ update msg model =
         ToggleCellLabels value ->
             withSave { model | showCellLabels = value }
 
+        ImageDisplaySizeReceived dims ->
+            ( { model | imageDisplayedWidth = Just dims.width, imageDisplayedHeight = Just dims.height }, Cmd.none )
+
         ToggleGridView ->
             ( { model | showGrid = not model.showGrid }, Cmd.none )
 
@@ -1037,6 +1048,7 @@ subscriptions _ =
         , receivePickedImage ImagePicked
         , receiveCounters CountersReceived
         , receiveRateLimit (\_ -> RateLimited)
+        , receiveImageDisplaySize ImageDisplaySizeReceived
         ]
 
 
@@ -1744,7 +1756,23 @@ viewGriddedImage model =
     case ( model.uploadedImage, model.imageWidth, model.imageHeight ) of
         ( Just url, Just width, Just height ) ->
             let
-                config = settingsFromModel model
+                -- Auto-hide cell labels when the on-screen cell size drops below 18px.
+                -- The natural-pixel SVG renders at any size; the threshold here is in
+                -- screen pixels, computed from JS-measured displayed dimensions.
+                labelsTooSmall =
+                    case ( model.imageDisplayedWidth, model.imageDisplayedHeight ) of
+                        ( Just dw, Just dh ) ->
+                            dw / toFloat model.gridCols < 18 || dh / toFloat model.gridRows < 18
+
+                        _ ->
+                            False
+
+                baseConfig = settingsFromModel model
+                config =
+                    if labelsTooSmall then
+                        { baseConfig | showCellLabels = False }
+                    else
+                        baseConfig
                 dims = { width = width, height = height }
                 gridLines = allGridLines config dims (currentAdaptiveCells model)
             in

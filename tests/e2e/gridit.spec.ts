@@ -1054,5 +1054,38 @@ test.describe('Gridit Application', () => {
       });
       expect(out.showCellLabels).toBe(false);
     });
+
+    // bju.8: auto-hide labels when on-screen cell size drops below 18px.
+    // The 200×200 test image renders at 200px wide on desktop, so cells
+    // are 200/N pixels. The threshold falls between 11×11 (18.18 px) and
+    // 12×12 (16.67 px). We test on both sides of the boundary.
+    test('labels auto-hide when on-screen cell drops below 18px', async ({ page }) => {
+      // Force a fresh image-size report into Elm (the auto-attach can race
+      // with image decode under headless; force-feed the settled rect).
+      await page.evaluate(() => {
+        const img = document.querySelector('.gridded-base-image') as HTMLImageElement;
+        const r = img.getBoundingClientRect();
+        // @ts-expect-error port exists on _elmApp
+        window._elmApp.ports.receiveImageDisplaySize.send({ width: r.width, height: r.height });
+      });
+
+      // Turn labels on at 10×10 — should render.
+      await page.locator('#cell-labels').evaluate((el: HTMLInputElement) => el.click());
+      await expect(async () => {
+        expect(await page.locator('.grid-overlay text').count()).toBe(100);
+      }).toPass({ timeout: 3000 });
+
+      // Bump to 32×32 — 200/32 = 6.25 px, well below 18 — should hide.
+      await page.locator('#grid-size-input').fill('32');
+      await expect(async () => {
+        expect(await page.locator('.grid-overlay text').count()).toBe(0);
+      }).toPass({ timeout: 3000 });
+
+      // Drop back to 8×8 — 200/8 = 25 px, above 18 — should re-show.
+      await page.locator('#grid-size-input').fill('8');
+      await expect(async () => {
+        expect(await page.locator('.grid-overlay text').count()).toBe(64);
+      }).toPass({ timeout: 3000 });
+    });
   });
 });

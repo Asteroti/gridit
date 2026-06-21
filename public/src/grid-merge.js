@@ -622,6 +622,50 @@ var DEMO_COUNTERS = {
 };
 
 
+// Reports the on-screen displayed size of the gridded image to Elm so the
+// view can auto-hide cell labels when cells get too small (bju.8). Uses
+// ResizeObserver on the image element; a MutationObserver wires it up
+// after the image first appears (post-upload).
+function setupImageSizeObserver(app) {
+  if (!app.ports.receiveImageDisplaySize) return;
+
+  function report(el) {
+    var rect = el.getBoundingClientRect();
+    app.ports.receiveImageDisplaySize.send({ width: rect.width, height: rect.height });
+  }
+
+  var ro = (typeof ResizeObserver !== 'undefined')
+    ? new ResizeObserver(function(entries) {
+        for (var i = 0; i < entries.length; i++) report(entries[i].target);
+      })
+    : null;
+
+  function attachToImage(el) {
+    if (el.dataset.gridditObserved === '1') return;
+    el.dataset.gridditObserved = '1';
+    if (ro) ro.observe(el);
+    // Initial measurement may be 0×0 if the image hasn't decoded yet
+    // (data: URLs settle asynchronously). Re-report on load + a couple of
+    // animation frames as a safety net for layout settling.
+    if (el.complete) {
+      report(el);
+    }
+    el.addEventListener('load', function() { report(el); });
+    requestAnimationFrame(function() { report(el); });
+  }
+
+  var root = document.getElementById('elm-app');
+  if (!root) return;
+  var mo = new MutationObserver(function() {
+    var imgs = document.querySelectorAll('.gridded-base-image');
+    for (var i = 0; i < imgs.length; i++) attachToImage(imgs[i]);
+  });
+  mo.observe(root, { childList: true, subtree: true });
+
+  document.querySelectorAll('.gridded-base-image').forEach(attachToImage);
+}
+
+
 function initializeElmApp() {
   var app = Elm.Main.init({
     node: document.getElementById('elm-app')
@@ -639,6 +683,7 @@ function initializeElmApp() {
   setupErrorPort(app);
   setupFilePickerPort(app);
   setupCommunityPort(app);
+  setupImageSizeObserver(app);
 
   return app;
 }
