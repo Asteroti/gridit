@@ -199,6 +199,8 @@ type alias Model =
     , showCellLabels : Bool
     , imageDisplayedWidth : Maybe Float
     , imageDisplayedHeight : Maybe Float
+    , canvasWidthCm : Maybe Float
+    , canvasHeightCm : Maybe Float
     }
 
 
@@ -245,6 +247,8 @@ type Msg
     | ToggleDiagonals Bool
     | ToggleCellLabels Bool
     | ImageDisplaySizeReceived { width : Float, height : Float }
+    | CanvasWidthCmChanged String
+    | CanvasHeightCmChanged String
     | ToggleGridView
     | SettingsLoaded Settings
     | ResetProcessing
@@ -271,6 +275,8 @@ type alias Settings =
     , gridOpacity : Float
     , showDiagonals : Bool
     , showCellLabels : Bool
+    , canvasWidthCm : Maybe Float
+    , canvasHeightCm : Maybe Float
     }
 
 
@@ -290,6 +296,8 @@ settingsFromModel model =
     , gridOpacity = model.gridOpacity
     , showDiagonals = model.showDiagonals
     , showCellLabels = model.showCellLabels
+    , canvasWidthCm = model.canvasWidthCm
+    , canvasHeightCm = model.canvasHeightCm
     }
 
 type alias SubdividedCell =
@@ -359,6 +367,21 @@ subdivisionLines config dims cells =
 entropyGridSize : Int
 entropyGridSize =
     16
+
+
+-- Parse a cm-input string into a Maybe Float. Empty string and zero/negative
+-- values become Nothing — the user can clear a value by emptying the input.
+parseCmInput : String -> Maybe Float
+parseCmInput raw =
+    case String.toFloat (String.trim raw) of
+        Just n ->
+            if n > 0 then
+                Just n
+            else
+                Nothing
+
+        Nothing ->
+            Nothing
 
 
 -- Excel-style column letters: 0 → "A", 25 → "Z", 26 → "AA", 51 → "AZ", 52 → "BA".
@@ -566,6 +589,8 @@ init _ =
       , showCellLabels = False
       , imageDisplayedWidth = Nothing
       , imageDisplayedHeight = Nothing
+      , canvasWidthCm = Nothing
+      , canvasHeightCm = Nothing
       }
     , Cmd.none
     )
@@ -939,6 +964,12 @@ update msg model =
         ImageDisplaySizeReceived dims ->
             ( { model | imageDisplayedWidth = Just dims.width, imageDisplayedHeight = Just dims.height }, Cmd.none )
 
+        CanvasWidthCmChanged raw ->
+            withSave { model | canvasWidthCm = parseCmInput raw }
+
+        CanvasHeightCmChanged raw ->
+            withSave { model | canvasHeightCm = parseCmInput raw }
+
         ToggleGridView ->
             ( { model | showGrid = not model.showGrid }, Cmd.none )
 
@@ -952,6 +983,8 @@ update msg model =
                 , gridOpacity = settings.gridOpacity
                 , showDiagonals = settings.showDiagonals
                 , showCellLabels = settings.showCellLabels
+                , canvasWidthCm = settings.canvasWidthCm
+                , canvasHeightCm = settings.canvasHeightCm
                 , gridHue = Maybe.withDefault model.gridHue (hexToHue settings.gridColor)
               }
             , Cmd.none
@@ -1259,6 +1292,7 @@ viewControlsFace model =
                     , viewAdaptiveControl model
                     ]
                 ]
+            , viewMatchCanvasSection model
             ]
         , viewActionButtons model
         , button
@@ -1494,6 +1528,92 @@ viewDiagonalsToggle model =
             , span [ class "light-switch-label" ] [ text (translate model.language I18n.AddDiagonalLines) ]
             ]
         ]
+
+
+viewMatchCanvasSection : Model -> Html Msg
+viewMatchCanvasSection model =
+    let
+        cmInputValue maybe =
+            case maybe of
+                Just n -> String.fromFloat n
+                Nothing -> ""
+
+        bothFilled =
+            case ( model.canvasWidthCm, model.canvasHeightCm ) of
+                ( Just _, Just _ ) -> True
+                _ -> False
+
+        readoutLine =
+            case ( model.canvasWidthCm, model.canvasHeightCm ) of
+                ( Just w, Just h ) ->
+                    let
+                        cellW = w / toFloat model.gridCols
+                        cellH = h / toFloat model.gridRows
+                    in
+                    p [ class "match-canvas-readout" ]
+                        [ text (translate model.language I18n.EachCellApprox ++ " ")
+                        , strong [] [ text (formatCm cellW ++ " × " ++ formatCm cellH) ]
+                        , text " cm."
+                        ]
+
+                _ ->
+                    text ""
+    in
+    Html.details [ class "match-canvas", attribute "data-bothfilled" (if bothFilled then "true" else "false") ]
+        [ Html.summary [ class "match-canvas-summary" ]
+            [ span [ class "group-num" ] [ text "3." ]
+            , text " "
+            , text (translate model.language I18n.GroupMatchCanvas)
+            , span [ class "group-opt" ] [ text (" " ++ translate model.language I18n.GroupOptional) ]
+            ]
+        , div [ class "match-canvas-body" ]
+            [ div [ class "ctrl-label" ] [ text (translate model.language I18n.MyCanvasIs) ]
+            , div [ class "cm-inputs" ]
+                [ input
+                    [ class "cm-input"
+                    , id "canvas-width-cm"
+                    , type_ "number"
+                    , attribute "inputmode" "decimal"
+                    , Html.Attributes.min "1"
+                    , Html.Attributes.step "0.1"
+                    , value (cmInputValue model.canvasWidthCm)
+                    , placeholder "60"
+                    , onInput CanvasWidthCmChanged
+                    , attribute "aria-label" (translate model.language I18n.CmWide)
+                    ]
+                    []
+                , span [ class "cm-x" ] [ text (translate model.language I18n.CmWide ++ "  ×") ]
+                , input
+                    [ class "cm-input"
+                    , id "canvas-height-cm"
+                    , type_ "number"
+                    , attribute "inputmode" "decimal"
+                    , Html.Attributes.min "1"
+                    , Html.Attributes.step "0.1"
+                    , value (cmInputValue model.canvasHeightCm)
+                    , placeholder "40"
+                    , onInput CanvasHeightCmChanged
+                    , attribute "aria-label" (translate model.language I18n.CmTall)
+                    ]
+                    []
+                , span [ class "cm-x" ] [ text (translate model.language I18n.CmTall) ]
+                ]
+            , readoutLine
+            ]
+        ]
+
+
+formatCm : Float -> String
+formatCm n =
+    -- One decimal place, dropping trailing ".0".
+    let
+        rounded = toFloat (round (n * 10)) / 10
+        str = String.fromFloat rounded
+    in
+    if String.endsWith ".0" str then
+        String.dropRight 2 str
+    else
+        str
 
 
 viewCellLabelsToggle : Model -> Html Msg

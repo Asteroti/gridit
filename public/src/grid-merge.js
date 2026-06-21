@@ -361,6 +361,14 @@ function migrateSettings(settings) {
   if (settings.showCellLabels === undefined) {
     settings.showCellLabels = false;
   }
+  // Optional cm canvas dimensions (cluster 3 — bju.11). Backfill as null
+  // so the Maybe Float decoder on the Elm side sees an explicit absence.
+  if (settings.canvasWidthCm === undefined) {
+    settings.canvasWidthCm = null;
+  }
+  if (settings.canvasHeightCm === undefined) {
+    settings.canvasHeightCm = null;
+  }
   return settings;
 }
 if (typeof window !== 'undefined') window.migrateSettings = migrateSettings;
@@ -374,7 +382,9 @@ function isValidV2Settings(s) {
     && typeof s.gridThickness === 'number'
     && typeof s.gridOpacity === 'number'
     && typeof s.showDiagonals === 'boolean'
-    && typeof s.showCellLabels === 'boolean';
+    && typeof s.showCellLabels === 'boolean'
+    && (s.canvasWidthCm === null || typeof s.canvasWidthCm === 'number')
+    && (s.canvasHeightCm === null || typeof s.canvasHeightCm === 'number');
 }
 
 function setupSettingsPersistence(app) {

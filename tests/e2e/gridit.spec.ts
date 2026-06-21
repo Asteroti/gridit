@@ -1088,4 +1088,98 @@ test.describe('Gridit Application', () => {
       }).toPass({ timeout: 3000 });
     });
   });
+
+  // bju.11: cluster 3 — match a canvas (cm inputs + readout).
+  test.describe('Cluster 3: match a canvas (cm inputs)', () => {
+    test.beforeEach(async ({ page }) => {
+      await uploadImage(page);
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+    });
+
+    test('section is present and starts closed', async ({ page }) => {
+      const details = page.locator('.match-canvas');
+      await expect(details).toBeAttached();
+      // <details> starts closed by default.
+      await expect(details).not.toHaveAttribute('open', '');
+      // Summary has the numbered header.
+      await expect(page.locator('.match-canvas-summary')).toContainText('3.');
+      await expect(page.locator('.match-canvas-summary')).toContainText('match a canvas');
+      await expect(page.locator('.match-canvas-summary')).toContainText('(optional)');
+    });
+
+    test('opening reveals two cm inputs', async ({ page }) => {
+      // Open the disclosure.
+      await page.evaluate(() => {
+        (document.querySelector('.match-canvas') as HTMLDetailsElement).open = true;
+      });
+      await expect(page.locator('#canvas-width-cm')).toBeVisible();
+      await expect(page.locator('#canvas-height-cm')).toBeVisible();
+      // Readout absent until both filled.
+      await expect(page.locator('.match-canvas-readout')).toHaveCount(0);
+    });
+
+    test('readout appears when both cm fields are filled, computes cell size', async ({ page }) => {
+      await page.evaluate(() => {
+        (document.querySelector('.match-canvas') as HTMLDetailsElement).open = true;
+      });
+      await page.locator('#canvas-width-cm').fill('60');
+      await page.locator('#canvas-height-cm').fill('40');
+
+      // 10×10 grid (default after fresh upload) → 6×4 cm per cell.
+      await expect(page.locator('.match-canvas-readout')).toContainText(/6.*×.*4.*cm/);
+    });
+
+    test('cm values persist to localStorage', async ({ page }) => {
+      await page.evaluate(() => {
+        (document.querySelector('.match-canvas') as HTMLDetailsElement).open = true;
+      });
+      await page.locator('#canvas-width-cm').fill('50');
+      await page.locator('#canvas-height-cm').fill('70');
+
+      await expect(async () => {
+        const saved = await page.evaluate(() =>
+          JSON.parse(localStorage.getItem('gridit-settings') || '{}')
+        );
+        expect(saved.canvasWidthCm).toBe(50);
+        expect(saved.canvasHeightCm).toBe(70);
+      }).toPass({ timeout: 3000 });
+    });
+
+    test('clearing a cm input removes it (Maybe Nothing → null in storage)', async ({ page }) => {
+      await page.evaluate(() => {
+        (document.querySelector('.match-canvas') as HTMLDetailsElement).open = true;
+      });
+      await page.locator('#canvas-width-cm').fill('40');
+      // Clear it.
+      await page.locator('#canvas-width-cm').fill('');
+
+      await expect(async () => {
+        const saved = await page.evaluate(() =>
+          JSON.parse(localStorage.getItem('gridit-settings') || '{}')
+        );
+        expect(saved.canvasWidthCm).toBeNull();
+      }).toPass({ timeout: 3000 });
+
+      // Readout doesn't render with only one side filled.
+      await expect(page.locator('.match-canvas-readout')).toHaveCount(0);
+    });
+
+    test('migrateSettings backfills canvas cm fields as null when missing', async ({ page }) => {
+      const out = await page.evaluate(() => {
+        // @ts-expect-error migrateSettings is global from grid-merge.js
+        return window.migrateSettings({
+          gridRows: 10,
+          gridCols: 10,
+          gridMode: 'Auto',
+          gridColor: '#80ED99',
+          gridThickness: 1,
+          gridOpacity: 1,
+          showDiagonals: false,
+          showCellLabels: false,
+        });
+      });
+      expect(out.canvasWidthCm).toBeNull();
+      expect(out.canvasHeightCm).toBeNull();
+    });
+  });
 });

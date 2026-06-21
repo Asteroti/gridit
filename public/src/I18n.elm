@@ -71,6 +71,12 @@ type TranslationKey
     | GroupStyle
     | AutoSimplifyExplain
     | ShowCellLabels
+    | GroupMatchCanvas
+    | GroupOptional
+    | MyCanvasIs
+    | CmWide
+    | CmTall
+    | EachCellApprox
 
 
 translate : Language -> TranslationKey -> String
@@ -279,6 +285,24 @@ englishTranslations key =
         ShowCellLabels ->
             "show cell labels (A1, B2…)"
 
+        GroupMatchCanvas ->
+            "match a canvas"
+
+        GroupOptional ->
+            "(optional)"
+
+        MyCanvasIs ->
+            "my canvas is"
+
+        CmWide ->
+            "cm wide"
+
+        CmTall ->
+            "cm tall"
+
+        EachCellApprox ->
+            "each cell ≈"
+
 
 spanishTranslations : TranslationKey -> String
 spanishTranslations key =
@@ -439,6 +463,24 @@ spanishTranslations key =
 
         ShowCellLabels ->
             "mostrar etiquetas (A1, B2…)"
+
+        GroupMatchCanvas ->
+            "ajustá a un lienzo"
+
+        GroupOptional ->
+            "(opcional)"
+
+        MyCanvasIs ->
+            "mi lienzo es"
+
+        CmWide ->
+            "cm de ancho"
+
+        CmTall ->
+            "cm de alto"
+
+        EachCellApprox ->
+            "cada celda ≈"
 
 
 latinTranslations : TranslationKey -> String
@@ -608,6 +650,30 @@ latinTranslations key =
             -- English fallback (translation TODO).
             "show cell labels (A1, B2…)"
 
+        GroupMatchCanvas ->
+            -- English fallback (translation TODO).
+            "match a canvas"
+
+        GroupOptional ->
+            -- English fallback (translation TODO).
+            "(optional)"
+
+        MyCanvasIs ->
+            -- English fallback (translation TODO).
+            "my canvas is"
+
+        CmWide ->
+            -- English fallback (translation TODO).
+            "cm wide"
+
+        CmTall ->
+            -- English fallback (translation TODO).
+            "cm tall"
+
+        EachCellApprox ->
+            -- English fallback (translation TODO).
+            "each cell ≈"
+
 
 italianTranslations : TranslationKey -> String
 italianTranslations key =
@@ -774,6 +840,30 @@ italianTranslations key =
         ShowCellLabels ->
             -- English fallback (translation TODO).
             "show cell labels (A1, B2…)"
+
+        GroupMatchCanvas ->
+            -- English fallback (translation TODO).
+            "match a canvas"
+
+        GroupOptional ->
+            -- English fallback (translation TODO).
+            "(optional)"
+
+        MyCanvasIs ->
+            -- English fallback (translation TODO).
+            "my canvas is"
+
+        CmWide ->
+            -- English fallback (translation TODO).
+            "cm wide"
+
+        CmTall ->
+            -- English fallback (translation TODO).
+            "cm tall"
+
+        EachCellApprox ->
+            -- English fallback (translation TODO).
+            "each cell ≈"
 
 
 portugueseTranslations : TranslationKey -> String
@@ -942,6 +1032,30 @@ portugueseTranslations key =
             -- English fallback (translation TODO).
             "show cell labels (A1, B2…)"
 
+        GroupMatchCanvas ->
+            -- English fallback (translation TODO).
+            "match a canvas"
+
+        GroupOptional ->
+            -- English fallback (translation TODO).
+            "(optional)"
+
+        MyCanvasIs ->
+            -- English fallback (translation TODO).
+            "my canvas is"
+
+        CmWide ->
+            -- English fallback (translation TODO).
+            "cm wide"
+
+        CmTall ->
+            -- English fallback (translation TODO).
+            "cm tall"
+
+        EachCellApprox ->
+            -- English fallback (translation TODO).
+            "each cell ≈"
+
 
 frenchTranslations : TranslationKey -> String
 frenchTranslations key =
@@ -1109,6 +1223,30 @@ frenchTranslations key =
             -- English fallback (translation TODO).
             "show cell labels (A1, B2…)"
 
+        GroupMatchCanvas ->
+            -- English fallback (translation TODO).
+            "match a canvas"
+
+        GroupOptional ->
+            -- English fallback (translation TODO).
+            "(optional)"
+
+        MyCanvasIs ->
+            -- English fallback (translation TODO).
+            "my canvas is"
+
+        CmWide ->
+            -- English fallback (translation TODO).
+            "cm wide"
+
+        CmTall ->
+            -- English fallback (translation TODO).
+            "cm tall"
+
+        EachCellApprox ->
+            -- English fallback (translation TODO).
+            "each cell ≈"
+
 
 asturianoTranslations : TranslationKey -> String
 asturianoTranslations key =
@@ -1275,6 +1413,30 @@ asturianoTranslations key =
         ShowCellLabels ->
             -- English fallback (translation TODO).
             "show cell labels (A1, B2…)"
+
+        GroupMatchCanvas ->
+            -- English fallback (translation TODO).
+            "match a canvas"
+
+        GroupOptional ->
+            -- English fallback (translation TODO).
+            "(optional)"
+
+        MyCanvasIs ->
+            -- English fallback (translation TODO).
+            "my canvas is"
+
+        CmWide ->
+            -- English fallback (translation TODO).
+            "cm wide"
+
+        CmTall ->
+            -- English fallback (translation TODO).
+            "cm tall"
+
+        EachCellApprox ->
+            -- English fallback (translation TODO).
+            "each cell ≈"
 
 
 gaelicTranslations : TranslationKey -> String
@@ -1445,6 +1607,30 @@ gaelicTranslations key =
             -- English fallback (translation TODO).
             "show cell labels (A1, B2…)"
 
+        GroupMatchCanvas ->
+            -- English fallback (translation TODO).
+            "match a canvas"
+
+        GroupOptional ->
+            -- English fallback (translation TODO).
+            "(optional)"
+
+        MyCanvasIs ->
+            -- English fallback (translation TODO).
+            "my canvas is"
+
+        CmWide ->
+            -- English fallback (translation TODO).
+            "cm wide"
+
+        CmTall ->
+            -- English fallback (translation TODO).
+            "cm tall"
+
+        EachCellApprox ->
+            -- English fallback (translation TODO).
+            "each cell ≈"
+
 
 euskaraTranslations : TranslationKey -> String
 euskaraTranslations key =
@@ -1611,6 +1797,30 @@ euskaraTranslations key =
         ShowCellLabels ->
             -- English fallback (translation TODO).
             "show cell labels (A1, B2…)"
+
+        GroupMatchCanvas ->
+            -- English fallback (translation TODO).
+            "match a canvas"
+
+        GroupOptional ->
+            -- English fallback (translation TODO).
+            "(optional)"
+
+        MyCanvasIs ->
+            -- English fallback (translation TODO).
+            "my canvas is"
+
+        CmWide ->
+            -- English fallback (translation TODO).
+            "cm wide"
+
+        CmTall ->
+            -- English fallback (translation TODO).
+            "cm tall"
+
+        EachCellApprox ->
+            -- English fallback (translation TODO).
+            "each cell ≈"
 
 
 japaneseTranslations : TranslationKey -> String
@@ -1779,6 +1989,30 @@ japaneseTranslations key =
             -- English fallback (translation TODO).
             "show cell labels (A1, B2…)"
 
+        GroupMatchCanvas ->
+            -- English fallback (translation TODO).
+            "match a canvas"
+
+        GroupOptional ->
+            -- English fallback (translation TODO).
+            "(optional)"
+
+        MyCanvasIs ->
+            -- English fallback (translation TODO).
+            "my canvas is"
+
+        CmWide ->
+            -- English fallback (translation TODO).
+            "cm wide"
+
+        CmTall ->
+            -- English fallback (translation TODO).
+            "cm tall"
+
+        EachCellApprox ->
+            -- English fallback (translation TODO).
+            "each cell ≈"
+
 
 russianTranslations : TranslationKey -> String
 russianTranslations key =
@@ -1945,6 +2179,30 @@ russianTranslations key =
         ShowCellLabels ->
             -- English fallback (translation TODO).
             "show cell labels (A1, B2…)"
+
+        GroupMatchCanvas ->
+            -- English fallback (translation TODO).
+            "match a canvas"
+
+        GroupOptional ->
+            -- English fallback (translation TODO).
+            "(optional)"
+
+        MyCanvasIs ->
+            -- English fallback (translation TODO).
+            "my canvas is"
+
+        CmWide ->
+            -- English fallback (translation TODO).
+            "cm wide"
+
+        CmTall ->
+            -- English fallback (translation TODO).
+            "cm tall"
+
+        EachCellApprox ->
+            -- English fallback (translation TODO).
+            "each cell ≈"
 
 
 tuvanTranslations : TranslationKey -> String
@@ -2124,6 +2382,30 @@ tuvanTranslations key =
             -- English fallback (no native Tuvan translation).
             "show cell labels (A1, B2…)"
 
+        GroupMatchCanvas ->
+            -- English fallback (no native Tuvan translation).
+            "match a canvas"
+
+        GroupOptional ->
+            -- English fallback (no native Tuvan translation).
+            "(optional)"
+
+        MyCanvasIs ->
+            -- English fallback (no native Tuvan translation).
+            "my canvas is"
+
+        CmWide ->
+            -- English fallback (no native Tuvan translation).
+            "cm wide"
+
+        CmTall ->
+            -- English fallback (no native Tuvan translation).
+            "cm tall"
+
+        EachCellApprox ->
+            -- English fallback (no native Tuvan translation).
+            "each cell ≈"
+
 
 amharicTranslations : TranslationKey -> String
 amharicTranslations key =
@@ -2302,6 +2584,30 @@ amharicTranslations key =
             -- English fallback (no native Amharic translation).
             "show cell labels (A1, B2…)"
 
+        GroupMatchCanvas ->
+            -- English fallback (no native Amharic translation).
+            "match a canvas"
+
+        GroupOptional ->
+            -- English fallback (no native Amharic translation).
+            "(optional)"
+
+        MyCanvasIs ->
+            -- English fallback (no native Amharic translation).
+            "my canvas is"
+
+        CmWide ->
+            -- English fallback (no native Amharic translation).
+            "cm wide"
+
+        CmTall ->
+            -- English fallback (no native Amharic translation).
+            "cm tall"
+
+        EachCellApprox ->
+            -- English fallback (no native Amharic translation).
+            "each cell ≈"
+
 
 hebrewTranslations : TranslationKey -> String
 hebrewTranslations key =
@@ -2468,3 +2774,27 @@ hebrewTranslations key =
         ShowCellLabels ->
             -- English fallback (translation TODO).
             "show cell labels (A1, B2…)"
+
+        GroupMatchCanvas ->
+            -- English fallback (translation TODO).
+            "match a canvas"
+
+        GroupOptional ->
+            -- English fallback (translation TODO).
+            "(optional)"
+
+        MyCanvasIs ->
+            -- English fallback (translation TODO).
+            "my canvas is"
+
+        CmWide ->
+            -- English fallback (translation TODO).
+            "cm wide"
+
+        CmTall ->
+            -- English fallback (translation TODO).
+            "cm tall"
+
+        EachCellApprox ->
+            -- English fallback (translation TODO).
+            "each cell ≈"
