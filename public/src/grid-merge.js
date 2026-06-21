@@ -375,6 +375,16 @@ function migrateSettings(settings) {
   if (settings.sliceMode === undefined) {
     settings.sliceMode = 'none';
   }
+  // bju.14: drag-to-position image transform within the canvas frame.
+  if (typeof settings.imageOffsetX !== 'number') {
+    settings.imageOffsetX = 0;
+  }
+  if (typeof settings.imageOffsetY !== 'number') {
+    settings.imageOffsetY = 0;
+  }
+  if (typeof settings.imageScale !== 'number') {
+    settings.imageScale = 1.0;
+  }
   return settings;
 }
 if (typeof window !== 'undefined') window.migrateSettings = migrateSettings;
@@ -392,7 +402,10 @@ function isValidV2Settings(s) {
     && (s.canvasWidthCm === null || typeof s.canvasWidthCm === 'number')
     && (s.canvasHeightCm === null || typeof s.canvasHeightCm === 'number')
     && typeof s.imageFit === 'string'
-    && typeof s.sliceMode === 'string';
+    && typeof s.sliceMode === 'string'
+    && typeof s.imageOffsetX === 'number'
+    && typeof s.imageOffsetY === 'number'
+    && typeof s.imageScale === 'number';
 }
 
 function setupSettingsPersistence(app) {
@@ -722,29 +735,52 @@ function setupImageSizeObserver(app) {
       })
     : null;
 
+  var observed = new WeakSet();
+
   function attachToImage(el) {
-    if (el.dataset.gridditObserved === '1') return;
-    el.dataset.gridditObserved = '1';
+    if (observed.has(el)) return;
+    observed.add(el);
     if (ro) ro.observe(el);
-    // Initial measurement may be 0×0 if the image hasn't decoded yet
-    // (data: URLs settle asynchronously). Re-report on load + a couple of
-    // animation frames as a safety net for layout settling.
-    if (el.complete) {
-      report(el);
-    }
-    el.addEventListener('load', function() { report(el); });
+    // Initial report (rect may be 0×0 if layout hasn't settled yet).
+    report(el);
+    // Re-report on the next frame to catch settled layout.
     requestAnimationFrame(function() { report(el); });
+    // Re-report on image-load (data: URLs settle async). Only fires for
+    // <img>; for SVG the load event doesn't apply but we already have RO.
+    if (el.tagName === 'IMG') {
+      el.addEventListener('load', function() { report(el); });
+    }
   }
 
   var root = document.getElementById('elm-app');
   if (!root) return;
-  var mo = new MutationObserver(function() {
-    var imgs = document.querySelectorAll('.gridded-base-image');
-    for (var i = 0; i < imgs.length; i++) attachToImage(imgs[i]);
-  });
+  // Watch BOTH the legacy <img> and the new canvas-fit SVG. Whichever is
+  // present in the DOM dictates the on-screen displayed dimensions.
+  var selector = '.gridded-base-image, .canvas-frame';
+
+  function scan() {
+    document.querySelectorAll(selector).forEach(attachToImage);
+  }
+
+  var mo = new MutationObserver(scan);
   mo.observe(root, { childList: true, subtree: true });
 
-  document.querySelectorAll('.gridded-base-image').forEach(attachToImage);
+  // Initial pass + a low-frequency safety net. MutationObserver doesn't
+  // always fire for SVG namespace elements (observed empirically when Elm
+  // swaps the legacy <img> for the new <svg.canvas-frame>); the interval
+  // catches the late arrival within ~250 ms with negligible cost.
+  scan();
+  setInterval(scan, 250);
+
+  // Belt-and-braces: when the user touches/clicks the canvas-frame,
+  // force a fresh report. Elm's drag handler reads imageDisplayedWidth
+  // from the model; if that's stale (e.g., the user just resized the
+  // window between renders), this guarantees a fresh measurement
+  // arrives before the first mousemove.
+  document.addEventListener('pointerdown', function(e) {
+    var el = e.target && e.target.closest && e.target.closest('.canvas-frame, .gridded-base-image');
+    if (el) report(el);
+  }, true);
 }
 
 

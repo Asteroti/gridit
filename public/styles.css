@@ -815,6 +815,43 @@ body::before {
   font-weight: 500;
 }
 
+/* Canvas-fit preview (bju.14). When canvas cm is set, the preview swaps to
+   a canvas-aspect SVG with the image rendered inside as an <image> element.
+   The image is draggable via pointer events; cursor reflects that. */
+.canvas-fit-container {
+  display: block;
+  width: 100%;
+  background:
+    repeating-conic-gradient(
+      hsl(35, 30%, 92%) 0% 25%,
+      hsl(35, 30%, 96%) 0% 50%
+    ) 50% / 16px 16px;
+  border-radius: 8px;
+  padding: 6px;
+  cursor: grab;
+  max-height: 80vh;
+  overflow: hidden;
+}
+
+.canvas-fit-container:active {
+  cursor: grabbing;
+}
+
+.canvas-fit-container .canvas-frame {
+  background: white;
+  border-radius: 4px;
+  width: 100%;
+  height: auto;
+  display: block;
+  max-height: calc(80vh - 12px);
+  touch-action: none;
+}
+
+.canvas-frame-image {
+  pointer-events: none;
+  user-select: none;
+}
+
 .control-group {
   display: flex;
   flex-direction: column;

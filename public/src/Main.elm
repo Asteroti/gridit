@@ -1,6 +1,7 @@
 port module Main exposing (..)
 
 import Browser
+import Browser.Events
 import Html exposing (Html, a, button, div, h1, h2, h3, img, input, label, option, p, select, span, strong, text)
 import Html.Attributes exposing (attribute, class, disabled, for, href, id, max, min, placeholder, rel, selected, src, step, style, target, type_, value)
 import Html.Events exposing (on, onClick, onInput)
@@ -203,6 +204,12 @@ type alias Model =
     , canvasHeightCm : Maybe Float
     , imageFit : String
     , sliceMode : String
+    , imageOffsetX : Float
+    , imageOffsetY : Float
+    , imageScale : Float
+    , isDraggingImage : Bool
+    , dragStartX : Float
+    , dragStartY : Float
     }
 
 
@@ -254,6 +261,11 @@ type Msg
     | SnapToFiveCmCells
     | ImageFitChanged String
     | SliceModeChanged String
+    | ImageDragStart Float Float
+    | ImageDragMove Float Float
+    | ImageDragEnd
+    | ImageScaleChanged Float
+    | ResetImagePosition
     | ToggleGridView
     | SettingsLoaded Settings
     | ResetProcessing
@@ -284,6 +296,9 @@ type alias Settings =
     , canvasHeightCm : Maybe Float
     , imageFit : String
     , sliceMode : String
+    , imageOffsetX : Float
+    , imageOffsetY : Float
+    , imageScale : Float
     }
 
 
@@ -307,6 +322,9 @@ settingsFromModel model =
     , canvasHeightCm = model.canvasHeightCm
     , imageFit = model.imageFit
     , sliceMode = model.sliceMode
+    , imageOffsetX = model.imageOffsetX
+    , imageOffsetY = model.imageOffsetY
+    , imageScale = model.imageScale
     }
 
 type alias SubdividedCell =
@@ -605,6 +623,12 @@ init _ =
       , canvasHeightCm = Nothing
       , imageFit = "fit-inside"
       , sliceMode = "none"
+      , imageOffsetX = 0
+      , imageOffsetY = 0
+      , imageScale = 1.0
+      , isDraggingImage = False
+      , dragStartX = 0
+      , dragStartY = 0
       }
     , Cmd.none
     )
@@ -990,6 +1014,51 @@ update msg model =
         SliceModeChanged mode ->
             withSave { model | sliceMode = mode }
 
+        ImageDragStart x y ->
+            ( { model | isDraggingImage = True, dragStartX = x, dragStartY = y }, Cmd.none )
+
+        ImageDragMove x y ->
+            if model.isDraggingImage then
+                let
+                    -- Delta in screen px; map to canvas cm via displayed dims.
+                    -- canvasPxToCmX = displayedW / canvasWidthCm. delta_cm = delta_px / pxPerCm.
+                    pxPerCmX =
+                        case ( model.imageDisplayedWidth, model.canvasWidthCm ) of
+                            ( Just dw, Just cw ) ->
+                                if cw > 0 then dw / cw else 1.0
+                            _ ->
+                                1.0
+
+                    pxPerCmY =
+                        case ( model.imageDisplayedHeight, model.canvasHeightCm ) of
+                            ( Just dh, Just ch ) ->
+                                if ch > 0 then dh / ch else 1.0
+                            _ ->
+                                1.0
+
+                    deltaX = (x - model.dragStartX) / pxPerCmX
+                    deltaY = (y - model.dragStartY) / pxPerCmY
+
+                    newOffsetX = model.imageOffsetX + deltaX
+                    newOffsetY = model.imageOffsetY + deltaY
+                in
+                ( { model | imageOffsetX = newOffsetX, imageOffsetY = newOffsetY, dragStartX = x, dragStartY = y }, Cmd.none )
+            else
+                ( model, Cmd.none )
+
+        ImageDragEnd ->
+            -- Persist the final position once drag ends (avoids saving on every mousemove).
+            if model.isDraggingImage then
+                withSave { model | isDraggingImage = False }
+            else
+                ( model, Cmd.none )
+
+        ImageScaleChanged value ->
+            withSave { model | imageScale = value }
+
+        ResetImagePosition ->
+            withSave { model | imageOffsetX = 0, imageOffsetY = 0, imageScale = 1.0 }
+
         SnapToFiveCmCells ->
             -- Compute rows/cols so each cell ≈ 5cm on the canvas. Clamps to
             -- the 2..64 range used elsewhere. Flips Auto → Custom so the
@@ -1023,6 +1092,9 @@ update msg model =
                 , canvasHeightCm = settings.canvasHeightCm
                 , imageFit = settings.imageFit
                 , sliceMode = settings.sliceMode
+                , imageOffsetX = settings.imageOffsetX
+                , imageOffsetY = settings.imageOffsetY
+                , imageScale = settings.imageScale
                 , gridHue = Maybe.withDefault model.gridHue (hexToHue settings.gridColor)
               }
             , Cmd.none
@@ -1114,7 +1186,21 @@ update msg model =
 
 
 subscriptions : Model -> Sub Msg
-subscriptions _ =
+subscriptions model =
+    let
+        dragSubs =
+            if model.isDraggingImage then
+                Sub.batch
+                    [ Browser.Events.onMouseMove
+                        (Json.Decode.map2 ImageDragMove
+                            (Json.Decode.field "clientX" Json.Decode.float)
+                            (Json.Decode.field "clientY" Json.Decode.float)
+                        )
+                    , Browser.Events.onMouseUp (Json.Decode.succeed ImageDragEnd)
+                    ]
+            else
+                Sub.none
+    in
     Sub.batch
         [ receivePng GriddedReady
         , loadSettings SettingsLoaded
@@ -1126,6 +1212,7 @@ subscriptions _ =
         , receiveCounters CountersReceived
         , receiveRateLimit (\_ -> RateLimited)
         , receiveImageDisplaySize ImageDisplaySizeReceived
+        , dragSubs
         ]
 
 
@@ -2073,49 +2160,13 @@ viewLanguageSelector currentLanguage =
 viewGriddedImage : Model -> Html Msg
 viewGriddedImage model =
     case ( model.uploadedImage, model.imageWidth, model.imageHeight ) of
-        ( Just url, Just width, Just height ) ->
-            let
-                -- Auto-hide cell labels when the on-screen cell size drops below 18px.
-                -- The natural-pixel SVG renders at any size; the threshold here is in
-                -- screen pixels, computed from JS-measured displayed dimensions.
-                labelsTooSmall =
-                    case ( model.imageDisplayedWidth, model.imageDisplayedHeight ) of
-                        ( Just dw, Just dh ) ->
-                            dw / toFloat model.gridCols < 18 || dh / toFloat model.gridRows < 18
+        ( Just url, Just imgWidth, Just imgHeight ) ->
+            case ( model.canvasWidthCm, model.canvasHeightCm ) of
+                ( Just cw, Just ch ) ->
+                    viewCanvasFitMode model url imgWidth imgHeight cw ch
 
-                        _ ->
-                            False
-
-                baseConfig = settingsFromModel model
-                config =
-                    if labelsTooSmall then
-                        { baseConfig | showCellLabels = False }
-                    else
-                        baseConfig
-                dims = { width = width, height = height }
-                gridLines = allGridLines config dims (currentAdaptiveCells model)
-            in
-            div [ class "gridded-image-container" ]
-                [ img
-                    [ src url
-                    , class "gridded-base-image"
-                    , Html.Attributes.alt "Uploaded image with grid overlay"
-                    ]
-                    []
-                , Svg.svg
-                    [ SvgAttr.width (String.fromInt width)
-                    , SvgAttr.height (String.fromInt height)
-                    , SvgAttr.viewBox ("0 0 " ++ String.fromInt width ++ " " ++ String.fromInt height)
-                    , SvgAttr.class
-                        (if model.showGrid then
-                            "grid-overlay"
-                         else
-                            "grid-overlay grid-overlay--hidden"
-                        )
-                    , attribute "aria-hidden" "true"
-                    ]
-                    gridLines
-                ]
+                _ ->
+                    viewLegacyImageMode model url imgWidth imgHeight
 
         ( Just url, _, _ ) ->
             -- Image is loading, show it to trigger onload and get dimensions
@@ -2139,6 +2190,158 @@ decodeImageSize tagger =
     Json.Decode.map2 tagger
         (Json.Decode.at [ "target", "naturalWidth" ] Json.Decode.int)
         (Json.Decode.at [ "target", "naturalHeight" ] Json.Decode.int)
+
+
+-- Legacy rendering: <img> + SVG overlay, sized to image natural pixels.
+-- Used when no canvas cm is set — the default for casual users.
+viewLegacyImageMode : Model -> String -> Int -> Int -> Html Msg
+viewLegacyImageMode model url width height =
+    let
+        labelsTooSmall =
+            case ( model.imageDisplayedWidth, model.imageDisplayedHeight ) of
+                ( Just dw, Just dh ) ->
+                    dw / toFloat model.gridCols < 18 || dh / toFloat model.gridRows < 18
+
+                _ ->
+                    False
+
+        baseConfig = settingsFromModel model
+        config =
+            if labelsTooSmall then
+                { baseConfig | showCellLabels = False }
+            else
+                baseConfig
+        dims = { width = width, height = height }
+        gridLines = allGridLines config dims (currentAdaptiveCells model)
+    in
+    div [ class "gridded-image-container" ]
+        [ img
+            [ src url
+            , class "gridded-base-image"
+            , Html.Attributes.alt "Uploaded image with grid overlay"
+            ]
+            []
+        , Svg.svg
+            [ SvgAttr.width (String.fromInt width)
+            , SvgAttr.height (String.fromInt height)
+            , SvgAttr.viewBox ("0 0 " ++ String.fromInt width ++ " " ++ String.fromInt height)
+            , SvgAttr.class
+                (if model.showGrid then
+                    "grid-overlay"
+                 else
+                    "grid-overlay grid-overlay--hidden"
+                )
+            , attribute "aria-hidden" "true"
+            ]
+            gridLines
+        ]
+
+
+-- Canvas-fit rendering: SVG sized to canvas cm aspect, image placed inside
+-- via <image> element, transformed by user's drag offset. Grid + labels are
+-- in canvas-cm coordinates. The SVG is also the source of truth for the
+-- downloaded composition (compositeOverlay reads .grid-overlay).
+-- We scale canvas cm by this factor for the SVG viewBox. The choice is
+-- arbitrary but makes 1 unit ≈ 1 screen pixel at typical render sizes,
+-- so existing grid stroke widths (1-5) and label font sizes (6-14) feel
+-- right without needing per-mode tuning.
+canvasFitDrawScale : Float
+canvasFitDrawScale =
+    100
+
+
+viewCanvasFitMode : Model -> String -> Int -> Int -> Float -> Float -> Html Msg
+viewCanvasFitMode model url imgWidth imgHeight cw ch =
+    let
+        s = canvasFitDrawScale
+        vbW = cw * s
+        vbH = ch * s
+
+        imgAspect = toFloat imgWidth / toFloat imgHeight
+        canvasAspect = cw / ch
+
+        ( baseW, baseH ) =
+            case model.imageFit of
+                "fit-width" ->
+                    ( cw, cw / imgAspect )
+
+                "fit-height" ->
+                    ( ch * imgAspect, ch )
+
+                _ ->
+                    if imgAspect > canvasAspect then
+                        ( cw, cw / imgAspect )
+                    else
+                        ( ch * imgAspect, ch )
+
+        finalW = baseW * model.imageScale
+        finalH = baseH * model.imageScale
+
+        finalX = (cw - finalW) / 2 + model.imageOffsetX
+        finalY = (ch - finalH) / 2 + model.imageOffsetY
+
+        labelsTooSmall =
+            case ( model.imageDisplayedWidth, model.imageDisplayedHeight ) of
+                ( Just dw, Just dh ) ->
+                    dw / toFloat model.gridCols < 18 || dh / toFloat model.gridRows < 18
+
+                _ ->
+                    False
+
+        baseConfig = settingsFromModel model
+        config =
+            if labelsTooSmall then
+                { baseConfig | showCellLabels = False }
+            else
+                baseConfig
+
+        -- The grid is laid out in (cm × drawScale) viewBox units.
+        canvasDims = { width = round vbW, height = round vbH }
+        gridLines = allGridLines config canvasDims []
+
+        decodePointer =
+            Json.Decode.map2 Tuple.pair
+                (Json.Decode.field "clientX" Json.Decode.float)
+                (Json.Decode.field "clientY" Json.Decode.float)
+    in
+    div
+        [ class "gridded-image-container canvas-fit-container"
+        , style "aspect-ratio" (String.fromFloat cw ++ " / " ++ String.fromFloat ch)
+        ]
+        [ Svg.svg
+            [ SvgAttr.viewBox ("0 0 " ++ String.fromFloat vbW ++ " " ++ String.fromFloat vbH)
+            , SvgAttr.preserveAspectRatio "xMidYMid meet"
+            , SvgAttr.class
+                (if model.showGrid then
+                    "grid-overlay canvas-frame"
+                 else
+                    "grid-overlay canvas-frame grid-overlay--hidden"
+                )
+            , Html.Events.on "pointerdown"
+                (Json.Decode.map (\( x, y ) -> ImageDragStart x y) decodePointer)
+            ]
+            ([ Svg.rect
+                [ SvgAttr.x "0"
+                , SvgAttr.y "0"
+                , SvgAttr.width (String.fromFloat vbW)
+                , SvgAttr.height (String.fromFloat vbH)
+                , SvgAttr.fill "white"
+                ]
+                []
+             , Svg.image
+                [ SvgAttr.xlinkHref url
+                , SvgAttr.x (String.fromFloat (finalX * s))
+                , SvgAttr.y (String.fromFloat (finalY * s))
+                , SvgAttr.width (String.fromFloat (finalW * s))
+                , SvgAttr.height (String.fromFloat (finalH * s))
+                , SvgAttr.preserveAspectRatio "none"
+                , SvgAttr.class "canvas-frame-image"
+                ]
+                []
+             ]
+                ++ gridLines
+            )
+        ]
 
 
 main : Program () Model Msg
