@@ -787,4 +787,134 @@ test.describe('Gridit Application', () => {
       }).toPass({ timeout: 3000 });
     });
   });
+
+  // Cluster 1: Auto/Custom segmented toggle + two-input rows×cols layout.
+  // Verifies the toggle UI, mode persistence, and that rows × cols can
+  // diverge to produce non-square cells.
+  test.describe('Cluster 1: Auto/Custom mode', () => {
+    test.beforeEach(async ({ page }) => {
+      await uploadImage(page);
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+    });
+
+    test('Auto mode is active by default, slider visible', async ({ page }) => {
+      // Two seg buttons.
+      await expect(page.locator('.seg-btn')).toHaveCount(2);
+      // First (Auto) is active.
+      await expect(page.locator('.seg-btn').first()).toHaveClass(/seg-btn--active/);
+      // Slider visible, number inputs absent.
+      await expect(page.locator('#grid-size-input')).toBeVisible();
+      await expect(page.locator('#grid-rows-input')).toHaveCount(0);
+    });
+
+    test('clicking Custom shows two number inputs, hides slider', async ({ page }) => {
+      await page.locator('.seg-btn').nth(1).click();
+
+      // Slider gone, both number inputs visible.
+      await expect(page.locator('#grid-size-input')).toHaveCount(0);
+      await expect(page.locator('#grid-rows-input')).toBeVisible();
+      await expect(page.locator('#grid-cols-input')).toBeVisible();
+
+      // Custom button active, Auto inactive.
+      await expect(page.locator('.seg-btn').nth(1)).toHaveClass(/seg-btn--active/);
+      await expect(page.locator('.seg-btn').first()).not.toHaveClass(/seg-btn--active/);
+    });
+
+    test('mode change persists to localStorage as "Custom"', async ({ page }) => {
+      await page.locator('.seg-btn').nth(1).click();
+
+      await expect(async () => {
+        const saved = await page.evaluate(() =>
+          JSON.parse(localStorage.getItem('gridit-settings') || '{}')
+        );
+        expect(saved.gridMode).toBe('Custom');
+      }).toPass({ timeout: 3000 });
+    });
+
+    test('rows × cols can diverge — 6×12 produces 20 lines (7 + 13)', async ({ page }) => {
+      await page.locator('.seg-btn').nth(1).click();
+
+      await page.locator('#grid-rows-input').fill('6');
+      await page.locator('#grid-cols-input').fill('12');
+
+      await expect(async () => {
+        expect(await page.locator('.grid-overlay line').count()).toBe(20);
+      }).toPass({ timeout: 5000 });
+
+      // localStorage reflects the asymmetric state.
+      await expect(async () => {
+        const saved = await page.evaluate(() =>
+          JSON.parse(localStorage.getItem('gridit-settings') || '{}')
+        );
+        expect(saved.gridRows).toBe(6);
+        expect(saved.gridCols).toBe(12);
+        expect(saved.gridMode).toBe('Custom');
+      }).toPass({ timeout: 3000 });
+    });
+
+    test('switching Custom → Auto preserves last Custom values until slider moves', async ({ page }) => {
+      // Set Custom rows≠cols.
+      await page.locator('.seg-btn').nth(1).click();
+      await page.locator('#grid-rows-input').fill('5');
+      await page.locator('#grid-cols-input').fill('9');
+
+      // Switch back to Auto — mode flips but rows/cols values aren't reset.
+      await page.locator('.seg-btn').first().click();
+
+      await expect(async () => {
+        const saved = await page.evaluate(() =>
+          JSON.parse(localStorage.getItem('gridit-settings') || '{}')
+        );
+        expect(saved.gridMode).toBe('Auto');
+        expect(saved.gridRows).toBe(5);
+        expect(saved.gridCols).toBe(9);
+      }).toPass({ timeout: 3000 });
+
+      // Slider visible again, shows gridRows (5).
+      await expect(page.locator('#grid-size-input')).toHaveValue('5');
+    });
+
+    test('Auto-mode slider sets both rows and cols equal', async ({ page }) => {
+      const slider = page.locator('#grid-size-input');
+      await slider.fill('11');
+
+      await expect(async () => {
+        const saved = await page.evaluate(() =>
+          JSON.parse(localStorage.getItem('gridit-settings') || '{}')
+        );
+        expect(saved.gridRows).toBe(11);
+        expect(saved.gridCols).toBe(11);
+      }).toPass({ timeout: 3000 });
+
+      // 12 + 12 = 24 lines for 11×11.
+      await expect(async () => {
+        expect(await page.locator('.grid-overlay line').count()).toBe(24);
+      }).toPass({ timeout: 3000 });
+    });
+
+    test('reload restores Custom mode + asymmetric values', async ({ page }) => {
+      // Inject pre-saved Custom state.
+      await page.evaluate(() => {
+        localStorage.setItem('gridit-settings', JSON.stringify({
+          gridRows: 4,
+          gridCols: 15,
+          gridMode: 'Custom',
+          gridColor: '#80ED99',
+          gridThickness: 1,
+          gridOpacity: 1,
+          showDiagonals: false,
+        }));
+      });
+      await page.reload();
+      await page.waitForLoadState('networkidle');
+      await uploadImage(page);
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+
+      // Custom inputs visible with restored values.
+      await expect(page.locator('#grid-rows-input')).toHaveValue('4');
+      await expect(page.locator('#grid-cols-input')).toHaveValue('15');
+      // Custom button active.
+      await expect(page.locator('.seg-btn').nth(1)).toHaveClass(/seg-btn--active/);
+    });
+  });
 });

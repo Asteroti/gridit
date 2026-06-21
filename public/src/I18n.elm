@@ -63,6 +63,10 @@ type TranslationKey
     | HeartLikedIt
     | HeartThanks
     | ShareImage
+    | GridModeAuto
+    | GridModeCustom
+    | GridModeAutoExplain
+    | GridModeCustomExplain
 
 
 translate : Language -> TranslationKey -> String
@@ -247,6 +251,18 @@ englishTranslations key =
         ShareImage ->
             "share image"
 
+        GridModeAuto ->
+            "auto"
+
+        GridModeCustom ->
+            "custom"
+
+        GridModeAutoExplain ->
+            "i pick one number, you get a square-ish grid."
+
+        GridModeCustomExplain ->
+            "you set rows and columns separately."
+
 
 spanishTranslations : TranslationKey -> String
 spanishTranslations key =
@@ -383,6 +399,18 @@ spanishTranslations key =
 
         ShareImage ->
             "compartir imagen"
+
+        GridModeAuto ->
+            "auto"
+
+        GridModeCustom ->
+            "personalizado"
+
+        GridModeAutoExplain ->
+            "yo elijo un número, te doy una grilla cuadrada."
+
+        GridModeCustomExplain ->
+            "elegís filas y columnas por separado."
 
 
 latinTranslations : TranslationKey -> String
@@ -521,6 +549,21 @@ latinTranslations key =
         ShareImage ->
             "imaginem communicare"
 
+        GridModeAuto ->
+            "auto"
+
+        GridModeCustom ->
+            -- English fallback (translation TODO).
+            "custom"
+
+        GridModeAutoExplain ->
+            -- English fallback (translation TODO).
+            "i pick one number, you get a square-ish grid."
+
+        GridModeCustomExplain ->
+            -- English fallback (translation TODO).
+            "you set rows and columns separately."
+
 
 italianTranslations : TranslationKey -> String
 italianTranslations key =
@@ -657,6 +700,20 @@ italianTranslations key =
 
         ShareImage ->
             "condividi immagine"
+
+        GridModeAuto ->
+            "auto"
+
+        GridModeCustom ->
+            "personalizzato"
+
+        GridModeAutoExplain ->
+            -- English fallback (translation TODO).
+            "i pick one number, you get a square-ish grid."
+
+        GridModeCustomExplain ->
+            -- English fallback (translation TODO).
+            "you set rows and columns separately."
 
 
 portugueseTranslations : TranslationKey -> String
@@ -795,6 +852,20 @@ portugueseTranslations key =
         ShareImage ->
             "compartilhar imagem"
 
+        GridModeAuto ->
+            "auto"
+
+        GridModeCustom ->
+            "personalizado"
+
+        GridModeAutoExplain ->
+            -- English fallback (translation TODO).
+            "i pick one number, you get a square-ish grid."
+
+        GridModeCustomExplain ->
+            -- English fallback (translation TODO).
+            "you set rows and columns separately."
+
 
 frenchTranslations : TranslationKey -> String
 frenchTranslations key =
@@ -932,6 +1003,20 @@ frenchTranslations key =
         ShareImage ->
             "partager l'image"
 
+        GridModeAuto ->
+            "auto"
+
+        GridModeCustom ->
+            "perso"
+
+        GridModeAutoExplain ->
+            -- English fallback (translation TODO).
+            "i pick one number, you get a square-ish grid."
+
+        GridModeCustomExplain ->
+            -- English fallback (translation TODO).
+            "you set rows and columns separately."
+
 
 asturianoTranslations : TranslationKey -> String
 asturianoTranslations key =
@@ -1068,6 +1153,20 @@ asturianoTranslations key =
 
         ShareImage ->
             "compartir imaxe"
+
+        GridModeAuto ->
+            "auto"
+
+        GridModeCustom ->
+            "personalizáu"
+
+        GridModeAutoExplain ->
+            -- English fallback (translation TODO).
+            "i pick one number, you get a square-ish grid."
+
+        GridModeCustomExplain ->
+            -- English fallback (translation TODO).
+            "you set rows and columns separately."
 
 
 gaelicTranslations : TranslationKey -> String
@@ -1208,6 +1307,20 @@ gaelicTranslations key =
         ShareImage ->
             "roinn íomhá"
 
+        GridModeAuto ->
+            "auto"
+
+        GridModeCustom ->
+            "saincheaptha"
+
+        GridModeAutoExplain ->
+            -- English fallback (translation TODO).
+            "i pick one number, you get a square-ish grid."
+
+        GridModeCustomExplain ->
+            -- English fallback (translation TODO).
+            "you set rows and columns separately."
+
 
 euskaraTranslations : TranslationKey -> String
 euskaraTranslations key =
@@ -1344,6 +1457,20 @@ euskaraTranslations key =
 
         ShareImage ->
             "partekatu irudia"
+
+        GridModeAuto ->
+            "auto"
+
+        GridModeCustom ->
+            "pertsonalizatua"
+
+        GridModeAutoExplain ->
+            -- English fallback (translation TODO).
+            "i pick one number, you get a square-ish grid."
+
+        GridModeCustomExplain ->
+            -- English fallback (translation TODO).
+            "you set rows and columns separately."
 
 
 japaneseTranslations : TranslationKey -> String
@@ -1482,6 +1609,20 @@ japaneseTranslations key =
         ShareImage ->
             "画像を共有"
 
+        GridModeAuto ->
+            "自動"
+
+        GridModeCustom ->
+            "カスタム"
+
+        GridModeAutoExplain ->
+            -- English fallback (translation TODO).
+            "i pick one number, you get a square-ish grid."
+
+        GridModeCustomExplain ->
+            -- English fallback (translation TODO).
+            "you set rows and columns separately."
+
 
 russianTranslations : TranslationKey -> String
 russianTranslations key =
@@ -1618,6 +1759,20 @@ russianTranslations key =
 
         ShareImage ->
             "поделиться изображением"
+
+        GridModeAuto ->
+            "авто"
+
+        GridModeCustom ->
+            "свой"
+
+        GridModeAutoExplain ->
+            -- English fallback (translation TODO).
+            "i pick one number, you get a square-ish grid."
+
+        GridModeCustomExplain ->
+            -- English fallback (translation TODO).
+            "you set rows and columns separately."
 
 
 tuvanTranslations : TranslationKey -> String
@@ -1766,6 +1921,21 @@ tuvanTranslations key =
             -- English fallback (no native Tuvan translation).
             "share image"
 
+        GridModeAuto ->
+            "auto"
+
+        GridModeCustom ->
+            -- English fallback (no native Tuvan translation).
+            "custom"
+
+        GridModeAutoExplain ->
+            -- English fallback (no native Tuvan translation).
+            "i pick one number, you get a square-ish grid."
+
+        GridModeCustomExplain ->
+            -- English fallback (no native Tuvan translation).
+            "you set rows and columns separately."
+
 
 amharicTranslations : TranslationKey -> String
 amharicTranslations key =
@@ -1913,6 +2083,21 @@ amharicTranslations key =
             -- English fallback (no native Amharic translation).
             "share image"
 
+        GridModeAuto ->
+            "auto"
+
+        GridModeCustom ->
+            -- English fallback (no native Amharic translation).
+            "custom"
+
+        GridModeAutoExplain ->
+            -- English fallback (no native Amharic translation).
+            "i pick one number, you get a square-ish grid."
+
+        GridModeCustomExplain ->
+            -- English fallback (no native Amharic translation).
+            "you set rows and columns separately."
+
 
 hebrewTranslations : TranslationKey -> String
 hebrewTranslations key =
@@ -2049,3 +2234,17 @@ hebrewTranslations key =
 
         ShareImage ->
             "שתף תמונה"
+
+        GridModeAuto ->
+            "אוטומטי"
+
+        GridModeCustom ->
+            "מותאם"
+
+        GridModeAutoExplain ->
+            -- English fallback (translation TODO).
+            "i pick one number, you get a square-ish grid."
+
+        GridModeCustomExplain ->
+            -- English fallback (translation TODO).
+            "you set rows and columns separately."

@@ -1228,22 +1228,82 @@ viewSliderControl c =
 
 viewSizeControl : Model -> Html Msg
 viewSizeControl model =
-    -- Auto-mode slider. Cluster 1 (bju.4/bju.5) will introduce the Auto/Custom
-    -- segmented toggle and two-input layout for Custom mode. For now, only
-    -- Auto is reachable from the UI, so the slider always controls both
-    -- rows and cols equally.
-    viewSliderControl
-        { id = "grid-size-input"
-        , labelContent = [ text (translate model.language I18n.GridSize) ]
-        , value = String.fromInt model.gridRows
-        , min = "2"
-        , max = "32"
-        , maybeStep = Nothing
-        , onChange = \s -> GridSizeChanged (Maybe.withDefault 10 (String.toInt s))
-        , sliderClass = "slider"
-        , valueDisplay = span [ class "control-value" ] [ text (String.fromInt model.gridRows ++ "x" ++ String.fromInt model.gridCols) ]
-        , extra = []
-        }
+    let
+        isCustom = model.gridMode == "Custom"
+
+        modeToggle =
+            div [ class "seg", attribute "role" "tablist", attribute "aria-label" "grid size mode" ]
+                [ button
+                    [ class (if isCustom then "seg-btn" else "seg-btn seg-btn--active")
+                    , attribute "role" "tab"
+                    , attribute "aria-selected" (if isCustom then "false" else "true")
+                    , onClick (GridModeChanged "Auto")
+                    , type_ "button"
+                    ]
+                    [ text (translate model.language I18n.GridModeAuto) ]
+                , button
+                    [ class (if isCustom then "seg-btn seg-btn--active" else "seg-btn")
+                    , attribute "role" "tab"
+                    , attribute "aria-selected" (if isCustom then "true" else "false")
+                    , onClick (GridModeChanged "Custom")
+                    , type_ "button"
+                    ]
+                    [ text (translate model.language I18n.GridModeCustom) ]
+                ]
+
+        bodyContent =
+            if isCustom then
+                [ div [ class "rc-inputs", attribute "aria-label" "rows by columns" ]
+                    [ input
+                        [ class "rc-input"
+                        , id "grid-rows-input"
+                        , type_ "number"
+                        , Html.Attributes.min "2"
+                        , Html.Attributes.max "64"
+                        , value (String.fromInt model.gridRows)
+                        , onInput (\s -> GridRowsChanged (Maybe.withDefault model.gridRows (String.toInt s)))
+                        , attribute "aria-label" "rows"
+                        ]
+                        []
+                    , span [ class "rc-x" ] [ text "rows × cols" ]
+                    , input
+                        [ class "rc-input"
+                        , id "grid-cols-input"
+                        , type_ "number"
+                        , Html.Attributes.min "2"
+                        , Html.Attributes.max "64"
+                        , value (String.fromInt model.gridCols)
+                        , onInput (\s -> GridColsChanged (Maybe.withDefault model.gridCols (String.toInt s)))
+                        , attribute "aria-label" "cols"
+                        ]
+                        []
+                    ]
+                , p [ class "mode-explain" ]
+                    [ text (translate model.language I18n.GridModeCustomExplain) ]
+                ]
+            else
+                [ input
+                    [ type_ "range"
+                    , id "grid-size-input"
+                    , Html.Attributes.min "2"
+                    , Html.Attributes.max "32"
+                    , value (String.fromInt model.gridRows)
+                    , onInput (\s -> GridSizeChanged (Maybe.withDefault 10 (String.toInt s)))
+                    , class "slider"
+                    ]
+                    []
+                , p [ class "mode-explain" ]
+                    [ text (translate model.language I18n.GridModeAutoExplain) ]
+                ]
+    in
+    div [ class "control-group" ]
+        (div [ class "control-header" ]
+            [ label [ class "control-label", for "grid-size-input" ]
+                [ text (translate model.language I18n.GridSize) ]
+            , modeToggle
+            ]
+            :: bodyContent
+        )
 
 
 viewOpacityControl : Model -> Html Msg
