@@ -202,6 +202,7 @@ type alias Model =
     , canvasWidthCm : Maybe Float
     , canvasHeightCm : Maybe Float
     , imageFit : String
+    , sliceMode : String
     }
 
 
@@ -252,6 +253,7 @@ type Msg
     | CanvasHeightCmChanged String
     | SnapToFiveCmCells
     | ImageFitChanged String
+    | SliceModeChanged String
     | ToggleGridView
     | SettingsLoaded Settings
     | ResetProcessing
@@ -281,6 +283,7 @@ type alias Settings =
     , canvasWidthCm : Maybe Float
     , canvasHeightCm : Maybe Float
     , imageFit : String
+    , sliceMode : String
     }
 
 
@@ -303,6 +306,7 @@ settingsFromModel model =
     , canvasWidthCm = model.canvasWidthCm
     , canvasHeightCm = model.canvasHeightCm
     , imageFit = model.imageFit
+    , sliceMode = model.sliceMode
     }
 
 type alias SubdividedCell =
@@ -500,6 +504,9 @@ port receivePng : (String -> msg) -> Sub msg
 port downloadImage : { dataUrl : String, fileName : String } -> Cmd msg
 
 
+port sliceAndDownload : { dataUrl : String, slice : String, baseName : String } -> Cmd msg
+
+
 port setHtmlLang : String -> Cmd msg
 
 
@@ -597,6 +604,7 @@ init _ =
       , canvasWidthCm = Nothing
       , canvasHeightCm = Nothing
       , imageFit = "fit-inside"
+      , sliceMode = "none"
       }
     , Cmd.none
     )
@@ -979,6 +987,9 @@ update msg model =
         ImageFitChanged mode ->
             withSave { model | imageFit = mode }
 
+        SliceModeChanged mode ->
+            withSave { model | sliceMode = mode }
+
         SnapToFiveCmCells ->
             -- Compute rows/cols so each cell ≈ 5cm on the canvas. Clamps to
             -- the 2..64 range used elsewhere. Flips Auto → Custom so the
@@ -1011,6 +1022,7 @@ update msg model =
                 , canvasWidthCm = settings.canvasWidthCm
                 , canvasHeightCm = settings.canvasHeightCm
                 , imageFit = settings.imageFit
+                , sliceMode = settings.sliceMode
                 , gridHue = Maybe.withDefault model.gridHue (hexToHue settings.gridColor)
               }
             , Cmd.none
@@ -1045,8 +1057,14 @@ update msg model =
                 action =
                     if model.shareAfterProcess then
                         shareImageData { dataUrl = dataUrl, fileName = fileName }
-                    else
+                    else if model.sliceMode == "none" then
                         downloadImage { dataUrl = dataUrl, fileName = fileName }
+                    else
+                        sliceAndDownload
+                            { dataUrl = dataUrl
+                            , slice = model.sliceMode
+                            , baseName = model.imageName ++ "-gridded"
+                            }
             in
             ( { model
                 | downloadSuccess = True
@@ -1654,6 +1672,33 @@ viewMatchCanvasSection model =
             , readoutLine
             , snapButton
             , fitSection
+            , viewSliceOptions model
+            ]
+        ]
+
+
+viewSliceOptions : Model -> Html Msg
+viewSliceOptions model =
+    let
+        opt val labelText =
+            label [ class (if model.sliceMode == val then "slice-opt slice-opt--active" else "slice-opt") ]
+                [ input
+                    [ type_ "radio"
+                    , Html.Attributes.name "slice-mode"
+                    , Html.Attributes.checked (model.sliceMode == val)
+                    , Html.Events.onClick (SliceModeChanged val)
+                    ]
+                    []
+                , text labelText
+                ]
+    in
+    div [ class "slice-section" ]
+        [ div [ class "ctrl-label" ] [ text (translate model.language I18n.SplitIntoTiles) ]
+        , div [ class "slice-options", attribute "role" "radiogroup", attribute "aria-label" "slice export" ]
+            [ opt "none" (translate model.language I18n.SliceNone)
+            , opt "2x2" "2×2"
+            , opt "2x3" "2×3"
+            , opt "3x3" "3×3"
             ]
         ]
 

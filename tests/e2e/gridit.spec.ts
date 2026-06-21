@@ -1314,4 +1314,70 @@ test.describe('Gridit Application', () => {
       expect(out.imageFit).toBe('fit-inside');
     });
   });
+
+  // bju.15: slice export — radios for splitting the gridded PNG into tiles.
+  test.describe('Cluster 3: slice export', () => {
+    test.beforeEach(async ({ page }) => {
+      await uploadImage(page);
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+      await page.evaluate(() => {
+        (document.querySelector('.match-canvas') as HTMLDetailsElement).open = true;
+      });
+    });
+
+    test('four slice options, default "none"', async ({ page }) => {
+      await expect(page.locator('.slice-opt')).toHaveCount(4);
+      await expect(page.locator('.slice-opt--active')).toHaveCount(1);
+      await expect(page.locator('.slice-opt--active')).toContainText(/none/i);
+    });
+
+    test('clicking a slice option updates active class + persists', async ({ page }) => {
+      // Click 3×3 (last option).
+      await page.locator('.slice-opt').nth(3).click();
+      await expect(page.locator('.slice-opt').nth(3)).toHaveClass(/slice-opt--active/);
+
+      await expect(async () => {
+        const saved = await page.evaluate(() =>
+          JSON.parse(localStorage.getItem('gridit-settings') || '{}')
+        );
+        expect(saved.sliceMode).toBe('3x3');
+      }).toPass({ timeout: 3000 });
+    });
+
+    test('migrateSettings backfills sliceMode="none" when missing', async ({ page }) => {
+      const out = await page.evaluate(() => {
+        // @ts-expect-error migrateSettings is global from grid-merge.js
+        return window.migrateSettings({
+          gridRows: 10,
+          gridCols: 10,
+          gridMode: 'Auto',
+          gridColor: '#80ED99',
+          gridThickness: 1,
+          gridOpacity: 1,
+          showDiagonals: false,
+          showCellLabels: false,
+          canvasWidthCm: null,
+          canvasHeightCm: null,
+          imageFit: 'fit-inside',
+        });
+      });
+      expect(out.sliceMode).toBe('none');
+    });
+
+    test('with sliceMode set, clicking download fires multiple events', async ({ page }) => {
+      await page.locator('.slice-opt').nth(1).click(); // 2×2 = 4 tiles
+
+      // Listen for downloads — slice mode fires N events.
+      const downloads: string[] = [];
+      page.on('download', dl => downloads.push(dl.suggestedFilename()));
+
+      await page.locator('.button-download').first().click();
+
+      // Wait for 4 downloads (250ms stagger each).
+      await expect.poll(() => downloads.length, { timeout: 8000 }).toBe(4);
+
+      // Filenames follow the pattern.
+      expect(downloads.every(n => /gridit.*-r[1-2]-c[1-2]\.png$/.test(n) || /-r[1-2]-c[1-2]\.png$/.test(n))).toBe(true);
+    });
+  });
 });

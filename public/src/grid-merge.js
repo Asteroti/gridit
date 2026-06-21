@@ -372,6 +372,9 @@ function migrateSettings(settings) {
   if (settings.imageFit === undefined) {
     settings.imageFit = 'fit-inside';
   }
+  if (settings.sliceMode === undefined) {
+    settings.sliceMode = 'none';
+  }
   return settings;
 }
 if (typeof window !== 'undefined') window.migrateSettings = migrateSettings;
@@ -388,7 +391,8 @@ function isValidV2Settings(s) {
     && typeof s.showCellLabels === 'boolean'
     && (s.canvasWidthCm === null || typeof s.canvasWidthCm === 'number')
     && (s.canvasHeightCm === null || typeof s.canvasHeightCm === 'number')
-    && typeof s.imageFit === 'string';
+    && typeof s.imageFit === 'string'
+    && typeof s.sliceMode === 'string';
 }
 
 function setupSettingsPersistence(app) {
@@ -636,6 +640,70 @@ var DEMO_COUNTERS = {
 };
 
 
+// bju.15 — slice the gridded composition into N tiles. Re-load the dataUrl
+// into an Image, draw subregions onto small canvases, fire sequential
+// anchor downloads (no zip dep). Sequential downloads can trigger browser
+// permission prompts on the 2nd+ tile in some browsers; staggered timing
+// helps but the UX is acceptable for v1.
+function setupSliceExportPort(app) {
+  if (!app.ports.sliceAndDownload) return;
+
+  // Parse "2x3" → { cols: 2, rows: 3 }
+  function parseSlice(s) {
+    var m = /^(\d+)x(\d+)$/.exec(s || '');
+    if (!m) return null;
+    return { cols: parseInt(m[1], 10), rows: parseInt(m[2], 10) };
+  }
+
+  app.ports.sliceAndDownload.subscribe(function(params) {
+    var slice = parseSlice(params.slice);
+    if (!slice) return;
+    var baseName = params.baseName || 'gridded';
+
+    var img = new Image();
+    img.onload = function() {
+      var totalW = img.naturalWidth;
+      var totalH = img.naturalHeight;
+      var tileW = Math.floor(totalW / slice.cols);
+      var tileH = Math.floor(totalH / slice.rows);
+
+      var produced = 0;
+      for (var r = 0; r < slice.rows; r++) {
+        for (var c = 0; c < slice.cols; c++) {
+          (function(row, col) {
+            // Last column/row absorbs any rounding remainder so no pixels are lost.
+            var w = (col === slice.cols - 1) ? (totalW - col * tileW) : tileW;
+            var h = (row === slice.rows - 1) ? (totalH - row * tileH) : tileH;
+            var canvas = document.createElement('canvas');
+            canvas.width = w;
+            canvas.height = h;
+            var ctx = canvas.getContext('2d');
+            ctx.drawImage(img, col * tileW, row * tileH, w, h, 0, 0, w, h);
+            canvas.toBlob(function(blob) {
+              if (!blob) return;
+              var name = baseName + '-r' + (row + 1) + '-c' + (col + 1) + '.png';
+              // Stagger downloads slightly so browsers handle the queue.
+              setTimeout(function() {
+                try {
+                  downloadViaAnchor(blob, name);
+                } catch (e) {
+                  downloadViaWindow(blob);
+                }
+              }, produced * 250);
+              produced++;
+            }, 'image/png', 1.0);
+          })(r, c);
+        }
+      }
+    };
+    img.onerror = function() {
+      handleError('Slice Error', 'Could not slice the gridded image. Try downloading without splitting.');
+    };
+    img.src = params.dataUrl;
+  });
+}
+
+
 // Reports the on-screen displayed size of the gridded image to Elm so the
 // view can auto-hide cell labels when cells get too small (bju.8). Uses
 // ResizeObserver on the image element; a MutationObserver wires it up
@@ -698,6 +766,7 @@ function initializeElmApp() {
   setupFilePickerPort(app);
   setupCommunityPort(app);
   setupImageSizeObserver(app);
+  setupSliceExportPort(app);
 
   return app;
 }

@@ -776,6 +776,45 @@ body::before {
   stroke-width: 1;
 }
 
+/* Slice export (bju.15) — radios for splitting the gridded image into tiles. */
+.slice-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  margin-top: var(--spacing-xs);
+  padding-top: var(--spacing-xs);
+  border-top: 1px dashed var(--border);
+}
+
+.slice-options {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+
+.slice-opt {
+  text-align: center;
+  padding: 8px 0;
+  border: 1px solid var(--input);
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--muted-foreground);
+  cursor: pointer;
+  background: var(--card);
+  font-variant-numeric: tabular-nums;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+}
+
+.slice-opt input { display: none; }
+
+.slice-opt--active {
+  border-color: var(--primary);
+  color: var(--primary-dark);
+  background: var(--accent);
+  font-weight: 500;
+}
+
 .control-group {
   display: flex;
   flex-direction: column;

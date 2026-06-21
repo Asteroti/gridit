@@ -82,6 +82,8 @@ type TranslationKey
     | FitToWidth
     | FitToHeight
     | FitInside
+    | SplitIntoTiles
+    | SliceNone
 
 
 translate : Language -> TranslationKey -> String
@@ -323,6 +325,12 @@ englishTranslations key =
         FitInside ->
             "fit inside"
 
+        SplitIntoTiles ->
+            "split into printable tiles"
+
+        SliceNone ->
+            "none"
+
 
 spanishTranslations : TranslationKey -> String
 spanishTranslations key =
@@ -516,6 +524,12 @@ spanishTranslations key =
 
         FitInside ->
             "dentro"
+
+        SplitIntoTiles ->
+            "dividir en hojas para imprimir"
+
+        SliceNone ->
+            "ninguno"
 
 
 latinTranslations : TranslationKey -> String
@@ -729,6 +743,14 @@ latinTranslations key =
             -- English fallback (translation TODO).
             "fit inside"
 
+        SplitIntoTiles ->
+            -- English fallback (translation TODO).
+            "split into printable tiles"
+
+        SliceNone ->
+            -- English fallback (translation TODO).
+            "none"
+
 
 italianTranslations : TranslationKey -> String
 italianTranslations key =
@@ -939,6 +961,14 @@ italianTranslations key =
         FitInside ->
             -- English fallback (translation TODO).
             "fit inside"
+
+        SplitIntoTiles ->
+            -- English fallback (translation TODO).
+            "split into printable tiles"
+
+        SliceNone ->
+            -- English fallback (translation TODO).
+            "none"
 
 
 portugueseTranslations : TranslationKey -> String
@@ -1151,6 +1181,14 @@ portugueseTranslations key =
             -- English fallback (translation TODO).
             "fit inside"
 
+        SplitIntoTiles ->
+            -- English fallback (translation TODO).
+            "split into printable tiles"
+
+        SliceNone ->
+            -- English fallback (translation TODO).
+            "none"
+
 
 frenchTranslations : TranslationKey -> String
 frenchTranslations key =
@@ -1362,6 +1400,14 @@ frenchTranslations key =
             -- English fallback (translation TODO).
             "fit inside"
 
+        SplitIntoTiles ->
+            -- English fallback (translation TODO).
+            "split into printable tiles"
+
+        SliceNone ->
+            -- English fallback (translation TODO).
+            "none"
+
 
 asturianoTranslations : TranslationKey -> String
 asturianoTranslations key =
@@ -1572,6 +1618,14 @@ asturianoTranslations key =
         FitInside ->
             -- English fallback (translation TODO).
             "fit inside"
+
+        SplitIntoTiles ->
+            -- English fallback (translation TODO).
+            "split into printable tiles"
+
+        SliceNone ->
+            -- English fallback (translation TODO).
+            "none"
 
 
 gaelicTranslations : TranslationKey -> String
@@ -1786,6 +1840,14 @@ gaelicTranslations key =
             -- English fallback (translation TODO).
             "fit inside"
 
+        SplitIntoTiles ->
+            -- English fallback (translation TODO).
+            "split into printable tiles"
+
+        SliceNone ->
+            -- English fallback (translation TODO).
+            "none"
+
 
 euskaraTranslations : TranslationKey -> String
 euskaraTranslations key =
@@ -1996,6 +2058,14 @@ euskaraTranslations key =
         FitInside ->
             -- English fallback (translation TODO).
             "fit inside"
+
+        SplitIntoTiles ->
+            -- English fallback (translation TODO).
+            "split into printable tiles"
+
+        SliceNone ->
+            -- English fallback (translation TODO).
+            "none"
 
 
 japaneseTranslations : TranslationKey -> String
@@ -2208,6 +2278,14 @@ japaneseTranslations key =
             -- English fallback (translation TODO).
             "fit inside"
 
+        SplitIntoTiles ->
+            -- English fallback (translation TODO).
+            "split into printable tiles"
+
+        SliceNone ->
+            -- English fallback (translation TODO).
+            "none"
+
 
 russianTranslations : TranslationKey -> String
 russianTranslations key =
@@ -2418,6 +2496,14 @@ russianTranslations key =
         FitInside ->
             -- English fallback (translation TODO).
             "fit inside"
+
+        SplitIntoTiles ->
+            -- English fallback (translation TODO).
+            "split into printable tiles"
+
+        SliceNone ->
+            -- English fallback (translation TODO).
+            "none"
 
 
 tuvanTranslations : TranslationKey -> String
@@ -2641,6 +2727,14 @@ tuvanTranslations key =
             -- English fallback (no native Tuvan translation).
             "fit inside"
 
+        SplitIntoTiles ->
+            -- English fallback (no native Tuvan translation).
+            "split into printable tiles"
+
+        SliceNone ->
+            -- English fallback (no native Tuvan translation).
+            "none"
+
 
 amharicTranslations : TranslationKey -> String
 amharicTranslations key =
@@ -2863,6 +2957,14 @@ amharicTranslations key =
             -- English fallback (no native Amharic translation).
             "fit inside"
 
+        SplitIntoTiles ->
+            -- English fallback (no native Amharic translation).
+            "split into printable tiles"
+
+        SliceNone ->
+            -- English fallback (no native Amharic translation).
+            "none"
+
 
 hebrewTranslations : TranslationKey -> String
 hebrewTranslations key =
@@ -3073,3 +3175,11 @@ hebrewTranslations key =
         FitInside ->
             -- English fallback (translation TODO).
             "fit inside"
+
+        SplitIntoTiles ->
+            -- English fallback (translation TODO).
+            "split into printable tiles"
+
+        SliceNone ->
+            -- English fallback (translation TODO).
+            "none"
