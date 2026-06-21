@@ -917,4 +917,45 @@ test.describe('Gridit Application', () => {
       await expect(page.locator('.seg-btn').nth(1)).toHaveClass(/seg-btn--active/);
     });
   });
+
+  // Cluster 2 prep: numbered section headers ("1. set up the grid", "2. style")
+  // + rename "Adaptive density" → "auto-simplify".
+  test.describe('Cluster 2 prep: groups + rename', () => {
+    test.beforeEach(async ({ page }) => {
+      await uploadImage(page);
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+    });
+
+    test('renders two numbered group headers', async ({ page }) => {
+      const headers = page.locator('.group-header');
+      await expect(headers).toHaveCount(2);
+      await expect(headers.nth(0)).toContainText('1.');
+      await expect(headers.nth(0)).toContainText('set up the grid');
+      await expect(headers.nth(1)).toContainText('2.');
+      await expect(headers.nth(1)).toContainText('style');
+    });
+
+    test('grid-size control sits in group 1', async ({ page }) => {
+      const group1 = page.locator('.group').nth(0);
+      await expect(group1.locator('#grid-size-input, #grid-rows-input').first()).toBeVisible();
+      // The mode toggle is in group 1.
+      await expect(group1.locator('.seg')).toBeVisible();
+    });
+
+    test('style controls (color, thickness, opacity, diagonals, auto-simplify) sit in group 2', async ({ page }) => {
+      const group2 = page.locator('.group').nth(1);
+      await expect(group2.locator('#grid-color-input')).toBeVisible();
+      await expect(group2.locator('#grid-thickness-input')).toBeVisible();
+      await expect(group2.locator('#grid-opacity-input')).toBeVisible();
+      await expect(group2.locator('#diagonals')).toBeAttached();
+      await expect(group2.locator('#adaptive-density-input')).toBeVisible();
+    });
+
+    test('"auto-simplify" label appears (renamed from Adaptive density)', async ({ page }) => {
+      const adaptiveLabel = page.locator('label[for="adaptive-density-input"]');
+      await expect(adaptiveLabel).toContainText('auto-simplify');
+      // The sub-line explanation is rendered.
+      await expect(page.locator('.mode-explain', { hasText: /busy.*flat/ })).toBeVisible();
+    });
+  });
 });

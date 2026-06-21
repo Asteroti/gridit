@@ -1167,12 +1167,29 @@ viewControlsFace model =
     div [ class "card card-face" ]
         [ h3 [ class "card-section-title" ] [ text (translate model.language I18n.GridSettings) ]
         , div [ class "grid-controls-grid" ]
-            [ viewSizeControl model
-            , viewDiagonalsToggle model
-            , viewColorControl model
-            , viewOpacityControl model
-            , viewThicknessControl model
-            , viewAdaptiveControl model
+            [ Html.section [ class "group" ]
+                [ Html.h4 [ class "group-header" ]
+                    [ span [ class "group-num" ] [ text "1." ]
+                    , text " "
+                    , text (translate model.language I18n.GroupSetUpGrid)
+                    ]
+                , div [ class "group-controls group-controls--single" ]
+                    [ viewSizeControl model ]
+                ]
+            , Html.section [ class "group" ]
+                [ Html.h4 [ class "group-header" ]
+                    [ span [ class "group-num" ] [ text "2." ]
+                    , text " "
+                    , text (translate model.language I18n.GroupStyle)
+                    ]
+                , div [ class "group-controls" ]
+                    [ viewColorControl model
+                    , viewThicknessControl model
+                    , viewOpacityControl model
+                    , viewDiagonalsToggle model
+                    , viewAdaptiveControl model
+                    ]
+                ]
             ]
         , viewActionButtons model
         , button
@@ -1428,7 +1445,7 @@ viewAdaptiveControl model =
     in
     viewSliderControl
         { id = "adaptive-density-input"
-        , labelContent = [ text (translate model.language I18n.AdaptiveGridDensity), analyzingIndicator ]
+        , labelContent = [ text (translate model.language I18n.AutoSimplify), analyzingIndicator ]
         , value = String.fromFloat model.adaptiveSensitivity
         , min = "0"
         , max = "1"
@@ -1436,7 +1453,7 @@ viewAdaptiveControl model =
         , onChange = \s -> AdaptiveSensitivityChanged (Maybe.withDefault 0 (String.toFloat s))
         , sliderClass = "slider"
         , valueDisplay = span [ class "control-value" ] [ text valueText ]
-        , extra = []
+        , extra = [ p [ class "mode-explain" ] [ text (translate model.language I18n.AutoSimplifyExplain) ] ]
         }
 
 

@@ -46,7 +46,7 @@ type TranslationKey
     | AddDiagonalLines
     | CuriousAboutGrids
     | ChangeImage
-    | AdaptiveGridDensity
+    | AutoSimplify
     | AnalyzingImage
     | OffLabel
     | FileTooLarge
@@ -67,6 +67,9 @@ type TranslationKey
     | GridModeCustom
     | GridModeAutoExplain
     | GridModeCustomExplain
+    | GroupSetUpGrid
+    | GroupStyle
+    | AutoSimplifyExplain
 
 
 translate : Language -> TranslationKey -> String
@@ -200,8 +203,8 @@ englishTranslations key =
         ChangeImage ->
             "Choose another image"
 
-        AdaptiveGridDensity ->
-            "Adaptive density"
+        AutoSimplify ->
+            "auto-simplify"
 
         AnalyzingImage ->
             "Analyzing..."
@@ -262,6 +265,15 @@ englishTranslations key =
 
         GridModeCustomExplain ->
             "you set rows and columns separately."
+
+        GroupSetUpGrid ->
+            "set up the grid"
+
+        GroupStyle ->
+            "style"
+
+        AutoSimplifyExplain ->
+            "adds extra grid lines where the image is busy (faces, hands), keeps it simple where it's flat."
 
 
 spanishTranslations : TranslationKey -> String
@@ -349,8 +361,8 @@ spanishTranslations key =
         ChangeImage ->
             "Elegir otra imagen"
 
-        AdaptiveGridDensity ->
-            "Densidad adaptativa"
+        AutoSimplify ->
+            "auto-simplificar"
 
         AnalyzingImage ->
             "Analizando..."
@@ -411,6 +423,15 @@ spanishTranslations key =
 
         GridModeCustomExplain ->
             "elegís filas y columnas por separado."
+
+        GroupSetUpGrid ->
+            "armá la grilla"
+
+        GroupStyle ->
+            "estilo"
+
+        AutoSimplifyExplain ->
+            "agrega más líneas donde la imagen es compleja (caras, manos), las deja simples donde es plana."
 
 
 latinTranslations : TranslationKey -> String
@@ -498,7 +519,7 @@ latinTranslations key =
         ChangeImage ->
             "Aliam imaginem eligere"
 
-        AdaptiveGridDensity ->
+        AutoSimplify ->
             "Densitas adaptiva"
 
         AnalyzingImage ->
@@ -563,6 +584,18 @@ latinTranslations key =
         GridModeCustomExplain ->
             -- English fallback (translation TODO).
             "you set rows and columns separately."
+
+        GroupSetUpGrid ->
+            -- English fallback (translation TODO).
+            "set up the grid"
+
+        GroupStyle ->
+            -- English fallback (translation TODO).
+            "style"
+
+        AutoSimplifyExplain ->
+            -- English fallback (translation TODO).
+            "adds extra grid lines where the image is busy (faces, hands), keeps it simple where it's flat."
 
 
 italianTranslations : TranslationKey -> String
@@ -650,7 +683,7 @@ italianTranslations key =
         ChangeImage ->
             "Scegli un'altra immagine"
 
-        AdaptiveGridDensity ->
+        AutoSimplify ->
             "Densit\u{00E0} adattiva"
 
         AnalyzingImage ->
@@ -714,6 +747,18 @@ italianTranslations key =
         GridModeCustomExplain ->
             -- English fallback (translation TODO).
             "you set rows and columns separately."
+
+        GroupSetUpGrid ->
+            -- English fallback (translation TODO).
+            "set up the grid"
+
+        GroupStyle ->
+            -- English fallback (translation TODO).
+            "style"
+
+        AutoSimplifyExplain ->
+            -- English fallback (translation TODO).
+            "adds extra grid lines where the image is busy (faces, hands), keeps it simple where it's flat."
 
 
 portugueseTranslations : TranslationKey -> String
@@ -801,7 +846,7 @@ portugueseTranslations key =
         ChangeImage ->
             "Escolher outra imagem"
 
-        AdaptiveGridDensity ->
+        AutoSimplify ->
             "Densidade adaptativa"
 
         AnalyzingImage ->
@@ -865,6 +910,18 @@ portugueseTranslations key =
         GridModeCustomExplain ->
             -- English fallback (translation TODO).
             "you set rows and columns separately."
+
+        GroupSetUpGrid ->
+            -- English fallback (translation TODO).
+            "set up the grid"
+
+        GroupStyle ->
+            -- English fallback (translation TODO).
+            "style"
+
+        AutoSimplifyExplain ->
+            -- English fallback (translation TODO).
+            "adds extra grid lines where the image is busy (faces, hands), keeps it simple where it's flat."
 
 
 frenchTranslations : TranslationKey -> String
@@ -952,7 +1009,7 @@ frenchTranslations key =
         ChangeImage ->
             "Choisir une autre image"
 
-        AdaptiveGridDensity ->
+        AutoSimplify ->
             "Densit\u{00E9} adaptative"
 
         AnalyzingImage ->
@@ -1016,6 +1073,18 @@ frenchTranslations key =
         GridModeCustomExplain ->
             -- English fallback (translation TODO).
             "you set rows and columns separately."
+
+        GroupSetUpGrid ->
+            -- English fallback (translation TODO).
+            "set up the grid"
+
+        GroupStyle ->
+            -- English fallback (translation TODO).
+            "style"
+
+        AutoSimplifyExplain ->
+            -- English fallback (translation TODO).
+            "adds extra grid lines where the image is busy (faces, hands), keeps it simple where it's flat."
 
 
 asturianoTranslations : TranslationKey -> String
@@ -1103,7 +1172,7 @@ asturianoTranslations key =
         ChangeImage ->
             "Escueyi otra imaxe"
 
-        AdaptiveGridDensity ->
+        AutoSimplify ->
             "Densid\u{00E1} adaptativa"
 
         AnalyzingImage ->
@@ -1167,6 +1236,18 @@ asturianoTranslations key =
         GridModeCustomExplain ->
             -- English fallback (translation TODO).
             "you set rows and columns separately."
+
+        GroupSetUpGrid ->
+            -- English fallback (translation TODO).
+            "set up the grid"
+
+        GroupStyle ->
+            -- English fallback (translation TODO).
+            "style"
+
+        AutoSimplifyExplain ->
+            -- English fallback (translation TODO).
+            "adds extra grid lines where the image is busy (faces, hands), keeps it simple where it's flat."
 
 
 gaelicTranslations : TranslationKey -> String
@@ -1254,7 +1335,7 @@ gaelicTranslations key =
         ChangeImage ->
             "Tagh dealbh eile"
 
-        AdaptiveGridDensity ->
+        AutoSimplify ->
             -- English fallback (no native Gaelic translation).
             "Adaptive density"
 
@@ -1320,6 +1401,18 @@ gaelicTranslations key =
         GridModeCustomExplain ->
             -- English fallback (translation TODO).
             "you set rows and columns separately."
+
+        GroupSetUpGrid ->
+            -- English fallback (translation TODO).
+            "set up the grid"
+
+        GroupStyle ->
+            -- English fallback (translation TODO).
+            "style"
+
+        AutoSimplifyExplain ->
+            -- English fallback (translation TODO).
+            "adds extra grid lines where the image is busy (faces, hands), keeps it simple where it's flat."
 
 
 euskaraTranslations : TranslationKey -> String
@@ -1407,7 +1500,7 @@ euskaraTranslations key =
         ChangeImage ->
             "Beste irudi bat aukeratu"
 
-        AdaptiveGridDensity ->
+        AutoSimplify ->
             "Dentsitate moldagarria"
 
         AnalyzingImage ->
@@ -1471,6 +1564,18 @@ euskaraTranslations key =
         GridModeCustomExplain ->
             -- English fallback (translation TODO).
             "you set rows and columns separately."
+
+        GroupSetUpGrid ->
+            -- English fallback (translation TODO).
+            "set up the grid"
+
+        GroupStyle ->
+            -- English fallback (translation TODO).
+            "style"
+
+        AutoSimplifyExplain ->
+            -- English fallback (translation TODO).
+            "adds extra grid lines where the image is busy (faces, hands), keeps it simple where it's flat."
 
 
 japaneseTranslations : TranslationKey -> String
@@ -1558,7 +1663,7 @@ japaneseTranslations key =
         ChangeImage ->
             "\u{5225}\u{306E}\u{753B}\u{50CF}\u{3092}\u{9078}\u{629E}"
 
-        AdaptiveGridDensity ->
+        AutoSimplify ->
             "\u{9069}\u{5FDC}\u{5BC6}\u{5EA6}"
 
         AnalyzingImage ->
@@ -1622,6 +1727,18 @@ japaneseTranslations key =
         GridModeCustomExplain ->
             -- English fallback (translation TODO).
             "you set rows and columns separately."
+
+        GroupSetUpGrid ->
+            -- English fallback (translation TODO).
+            "set up the grid"
+
+        GroupStyle ->
+            -- English fallback (translation TODO).
+            "style"
+
+        AutoSimplifyExplain ->
+            -- English fallback (translation TODO).
+            "adds extra grid lines where the image is busy (faces, hands), keeps it simple where it's flat."
 
 
 russianTranslations : TranslationKey -> String
@@ -1709,7 +1826,7 @@ russianTranslations key =
         ChangeImage ->
             "\u{0412}\u{044B}\u{0431}\u{0440}\u{0430}\u{0442}\u{044C} \u{0434}\u{0440}\u{0443}\u{0433}\u{043E}\u{0435} \u{0438}\u{0437}\u{043E}\u{0431}\u{0440}\u{0430}\u{0436}\u{0435}\u{043D}\u{0438}\u{0435}"
 
-        AdaptiveGridDensity ->
+        AutoSimplify ->
             "\u{0410}\u{0434}\u{0430}\u{043F}\u{0442}\u{0438}\u{0432}\u{043D}\u{0430}\u{044F} \u{043F}\u{043B}\u{043E}\u{0442}\u{043D}\u{043E}\u{0441}\u{0442}\u{044C}"
 
         AnalyzingImage ->
@@ -1773,6 +1890,18 @@ russianTranslations key =
         GridModeCustomExplain ->
             -- English fallback (translation TODO).
             "you set rows and columns separately."
+
+        GroupSetUpGrid ->
+            -- English fallback (translation TODO).
+            "set up the grid"
+
+        GroupStyle ->
+            -- English fallback (translation TODO).
+            "style"
+
+        AutoSimplifyExplain ->
+            -- English fallback (translation TODO).
+            "adds extra grid lines where the image is busy (faces, hands), keeps it simple where it's flat."
 
 
 tuvanTranslations : TranslationKey -> String
@@ -1860,7 +1989,7 @@ tuvanTranslations key =
         ChangeImage ->
             "\u{04E8}\u{0441}\u{043A}\u{0435} \u{0447}\u{0443}\u{0440}\u{0443}\u{043A}\u{0442}\u{0443} \u{0448}\u{0438}\u{043B}\u{0438}\u{0438}\u{0440}"
 
-        AdaptiveGridDensity ->
+        AutoSimplify ->
             -- English fallback (no native Tuvan translation).
             "Adaptive density"
 
@@ -1935,6 +2064,18 @@ tuvanTranslations key =
         GridModeCustomExplain ->
             -- English fallback (no native Tuvan translation).
             "you set rows and columns separately."
+
+        GroupSetUpGrid ->
+            -- English fallback (no native Tuvan translation).
+            "set up the grid"
+
+        GroupStyle ->
+            -- English fallback (no native Tuvan translation).
+            "style"
+
+        AutoSimplifyExplain ->
+            -- English fallback (no native Tuvan translation).
+            "adds extra grid lines where the image is busy (faces, hands), keeps it simple where it's flat."
 
 
 amharicTranslations : TranslationKey -> String
@@ -2022,7 +2163,7 @@ amharicTranslations key =
         ChangeImage ->
             "\u{120C}\u{120B} \u{121D}\u{1235}\u{120D} \u{12ED}\u{121D}\u{1228}\u{1321}"
 
-        AdaptiveGridDensity ->
+        AutoSimplify ->
             -- English fallback (no native Amharic translation).
             "Adaptive density"
 
@@ -2097,6 +2238,18 @@ amharicTranslations key =
         GridModeCustomExplain ->
             -- English fallback (no native Amharic translation).
             "you set rows and columns separately."
+
+        GroupSetUpGrid ->
+            -- English fallback (no native Amharic translation).
+            "set up the grid"
+
+        GroupStyle ->
+            -- English fallback (no native Amharic translation).
+            "style"
+
+        AutoSimplifyExplain ->
+            -- English fallback (no native Amharic translation).
+            "adds extra grid lines where the image is busy (faces, hands), keeps it simple where it's flat."
 
 
 hebrewTranslations : TranslationKey -> String
@@ -2184,7 +2337,7 @@ hebrewTranslations key =
         ChangeImage ->
             "\u{05D1}\u{05D7}\u{05E8} \u{05EA}\u{05DE}\u{05D5}\u{05E0}\u{05D4} \u{05D0}\u{05D7}\u{05E8}\u{05EA}"
 
-        AdaptiveGridDensity ->
+        AutoSimplify ->
             "\u{05E6}\u{05E4}\u{05D9}\u{05E4}\u{05D5}\u{05EA} \u{05DE}\u{05EA}\u{05D0}\u{05D9}\u{05DE}\u{05D4}"
 
         AnalyzingImage ->
@@ -2248,3 +2401,15 @@ hebrewTranslations key =
         GridModeCustomExplain ->
             -- English fallback (translation TODO).
             "you set rows and columns separately."
+
+        GroupSetUpGrid ->
+            -- English fallback (translation TODO).
+            "set up the grid"
+
+        GroupStyle ->
+            -- English fallback (translation TODO).
+            "style"
+
+        AutoSimplifyExplain ->
+            -- English fallback (translation TODO).
+            "adds extra grid lines where the image is busy (faces, hands), keeps it simple where it's flat."

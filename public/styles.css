@@ -499,9 +499,52 @@ body::before {
 }
 
 .grid-controls-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+/* Cluster 2: numbered section headers above grouped controls. */
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  margin: 0;
+}
+
+.group-header {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--primary-dark);
+  margin: 0 0 var(--spacing-xxs) 0;
+  padding: 0 0 4px 0;
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  border-bottom: 1px solid var(--glass-border-subtle);
+}
+
+.group-num {
+  color: var(--primary);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  font-size: 12px;
+}
+
+.group-controls {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--spacing-sm);
+}
+
+.group-controls--single {
+  display: block;
+}
+
+@media (max-width: 720px) {
+  .group-controls {
+    grid-template-columns: 1fr;
+  }
 }
 
 .control-group {
@@ -1478,7 +1521,7 @@ input[type="checkbox"]:focus-visible {
   }
 
   .grid-controls-grid {
-    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
   }
 
   .app-header {
