@@ -235,6 +235,35 @@ function setupDownloadPort(app) {
 }
 
 
+// Render the canvas-fit SVG (canvas-frame) to a single bitmap. The SVG
+// already contains the user's image (with their drag offset + scale
+// applied), the grid, and labels — it's the source of truth for the
+// composition. Output resolution comes from the SVG's viewBox so the
+// final PNG matches the in-app preview at native scale.
+function renderCanvasFitToBlob(svgEl, callback) {
+  var vb = svgEl.viewBox.baseVal;
+  if (!vb || vb.width <= 0 || vb.height <= 0) {
+    return callback(null);
+  }
+  var w = Math.round(vb.width);
+  var h = Math.round(vb.height);
+
+  var canvas = document.createElement('canvas');
+  canvas.width = w;
+  canvas.height = h;
+  var ctx = canvas.getContext('2d');
+
+  var svgString = new XMLSerializer().serializeToString(svgEl);
+  var svgImage = new Image();
+  svgImage.onload = function() {
+    ctx.drawImage(svgImage, 0, 0, w, h);
+    canvas.toBlob(function(blob) { callback(blob); }, 'image/png', 1.0);
+  };
+  svgImage.onerror = function() { callback(null); };
+  svgImage.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgString)));
+}
+
+
 function setupPngRequestPort(app) {
   if (!app.ports.requestPng) return;
 
@@ -250,6 +279,28 @@ function setupPngRequestPort(app) {
       handleError("Timeout", "Image processing took too long. Please try a smaller image.");
     }, PROCESSING_TIMEOUT_MS);
 
+    // Canvas-fit mode: the canvas-frame SVG already contains everything.
+    var canvasFrame = document.querySelector('.canvas-frame');
+    if (canvasFrame) {
+      updateProgress(null, 30);
+      renderCanvasFitToBlob(canvasFrame, function(blob) {
+        if (!blob) {
+          clearTimeout(processingTimeout);
+          handleError("Download Error", "Failed to render the gridded canvas. Try clearing the canvas dimensions to use the legacy mode.");
+          return;
+        }
+        updateProgress(null, 90);
+        var reader = new FileReader();
+        reader.onloadend = function() {
+          clearTimeout(processingTimeout);
+          sendToElm(app, reader.result);
+        };
+        reader.readAsDataURL(blob);
+      });
+      return;
+    }
+
+    // Legacy mode: <img> + .grid-overlay SVG, composited together.
     var img = new Image();
     img.crossOrigin = "anonymous";
 

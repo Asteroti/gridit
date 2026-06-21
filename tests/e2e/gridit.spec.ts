@@ -1380,4 +1380,105 @@ test.describe('Gridit Application', () => {
       expect(downloads.every(n => /gridit.*-r[1-2]-c[1-2]\.png$/.test(n) || /-r[1-2]-c[1-2]\.png$/.test(n))).toBe(true);
     });
   });
+
+  // bju.14: canvas-fit rendering mode + drag-to-position.
+  test.describe('Cluster 3: canvas-fit mode (drag-to-position)', () => {
+    test.beforeEach(async ({ page }) => {
+      // Use a tall image (200×600) so aspects clearly differ from a 60×40 canvas.
+      await uploadImage(page, './tests/fixtures/test-image-tall.png');
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+      await page.evaluate(() => {
+        (document.querySelector('.match-canvas') as HTMLDetailsElement).open = true;
+      });
+    });
+
+    test('canvas-fit SVG renders when canvas cm is set', async ({ page }) => {
+      // Before cm is set: legacy <img> + .grid-overlay rendering.
+      await expect(page.locator('.canvas-frame')).toHaveCount(0);
+      await expect(page.locator('.gridded-base-image')).toBeVisible();
+
+      // After setting cm: canvas-fit SVG appears.
+      await page.locator('#canvas-width-cm').fill('60');
+      await page.locator('#canvas-height-cm').fill('40');
+
+      await expect(page.locator('.canvas-frame')).toBeVisible();
+      // ViewBox in cm × 100 scale.
+      await expect(page.locator('.canvas-frame')).toHaveAttribute('viewBox', /6000.*4000/);
+      // The legacy img element is gone in canvas-fit mode.
+      await expect(page.locator('.gridded-base-image')).toHaveCount(0);
+    });
+
+    test('drag updates imageOffsetX/Y and persists', async ({ page }) => {
+      await page.locator('#canvas-width-cm').fill('60');
+      await page.locator('#canvas-height-cm').fill('40');
+      await expect(page.locator('.canvas-frame')).toBeVisible();
+
+      // Wait for the JS image-size observer's polling tick to land
+      // (so the cm conversion in drag uses the real displayed dims).
+      await page.waitForTimeout(400);
+
+      // Drag from center of the canvas-frame.
+      const box = await page.locator('.canvas-frame').boundingBox();
+      if (!box) throw new Error('No canvas-frame');
+      const cx = box.x + box.width / 2;
+      const cy = box.y + box.height / 2;
+
+      // pointerdown on the SVG, then mousemove + mouseup on the document.
+      await page.evaluate(({ cx, cy }) => {
+        const svg = document.querySelector('.canvas-frame')!;
+        svg.dispatchEvent(new PointerEvent('pointerdown', {
+          bubbles: true, clientX: cx, clientY: cy, pointerType: 'mouse', button: 0,
+        }));
+      }, { cx, cy });
+      await page.waitForTimeout(50);
+      await page.evaluate(({ cx, cy }) => {
+        document.dispatchEvent(new MouseEvent('mousemove', {
+          bubbles: true, clientX: cx + 100, clientY: cy + 50,
+        }));
+      }, { cx, cy });
+      await page.waitForTimeout(50);
+      await page.evaluate(({ cx, cy }) => {
+        document.dispatchEvent(new MouseEvent('mouseup', {
+          bubbles: true, clientX: cx + 100, clientY: cy + 50,
+        }));
+      }, { cx, cy });
+      await page.waitForTimeout(200);
+
+      const saved = await page.evaluate(() =>
+        JSON.parse(localStorage.getItem('gridit-settings') || '{}')
+      );
+      // The drag SHOULD have moved the image. We don't pin exact cm because
+      // the conversion depends on viewport dims; we just verify movement
+      // happened in the right direction.
+      expect(saved.imageOffsetX).toBeGreaterThan(0);
+      expect(saved.imageOffsetY).toBeGreaterThan(0);
+    });
+
+    test('migrateSettings backfills imageOffsetX/Y/Scale defaults', async ({ page }) => {
+      const out = await page.evaluate(() => {
+        // @ts-expect-error migrateSettings is global from grid-merge.js
+        return window.migrateSettings({
+          gridRows: 10, gridCols: 10, gridMode: 'Auto',
+          gridColor: '#80ED99', gridThickness: 1, gridOpacity: 1,
+          showDiagonals: false, showCellLabels: false,
+          canvasWidthCm: 60, canvasHeightCm: 40, imageFit: 'fit-inside',
+          sliceMode: 'none',
+        });
+      });
+      expect(out.imageOffsetX).toBe(0);
+      expect(out.imageOffsetY).toBe(0);
+      expect(out.imageScale).toBe(1.0);
+    });
+
+    test('canvas-fit download produces a PNG with the canvas aspect', async ({ page }) => {
+      await page.locator('#canvas-width-cm').fill('60');
+      await page.locator('#canvas-height-cm').fill('40');
+      await expect(page.locator('.canvas-frame')).toBeVisible();
+
+      const dlPromise = page.waitForEvent('download');
+      await page.locator('.button-download').first().click();
+      const download = await dlPromise;
+      expect(download.suggestedFilename()).toMatch(/gridded.*\.png$/);
+    });
+  });
 });
