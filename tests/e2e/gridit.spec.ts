@@ -1236,4 +1236,82 @@ test.describe('Gridit Application', () => {
       await expect(page.locator('#grid-cols-input')).toHaveValue('2');
     });
   });
+
+  // bju.13: canvas-fit radios — appear only when image aspect differs from
+  // canvas aspect; default to "fit inside"; persist; live SVG preview reacts.
+  test.describe('Cluster 3: canvas-fit radios', () => {
+    test('not rendered when image+canvas aspects match', async ({ page }) => {
+      // test-image.png is 200×200 (1:1). 60×60 canvas is also 1:1 — should hide.
+      await uploadImage(page);
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+      await page.evaluate(() => {
+        (document.querySelector('.match-canvas') as HTMLDetailsElement).open = true;
+      });
+      await page.locator('#canvas-width-cm').fill('60');
+      await page.locator('#canvas-height-cm').fill('60');
+
+      await expect(page.locator('.fit-section')).toHaveCount(0);
+    });
+
+    test('renders when aspects differ, default is "fit inside"', async ({ page }) => {
+      // test-image-tall.png is 200×600 (1:3). 60×40 canvas is 3:2 — differs.
+      await uploadImage(page, './tests/fixtures/test-image-tall.png');
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+      await page.evaluate(() => {
+        (document.querySelector('.match-canvas') as HTMLDetailsElement).open = true;
+      });
+      await page.locator('#canvas-width-cm').fill('60');
+      await page.locator('#canvas-height-cm').fill('40');
+
+      await expect(page.locator('.fit-section')).toBeVisible();
+      await expect(page.locator('.fit-opt')).toHaveCount(3);
+      // Default fit-inside is the active one.
+      await expect(page.locator('.fit-opt--active')).toContainText('fit inside');
+      // SVG preview renders.
+      await expect(page.locator('.fit-preview-svg')).toBeVisible();
+    });
+
+    test('clicking a fit option updates active class + persists', async ({ page }) => {
+      await uploadImage(page, './tests/fixtures/test-image-tall.png');
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+      await page.evaluate(() => {
+        (document.querySelector('.match-canvas') as HTMLDetailsElement).open = true;
+      });
+      await page.locator('#canvas-width-cm').fill('60');
+      await page.locator('#canvas-height-cm').fill('40');
+
+      // Click "fit to width" (first option).
+      await page.locator('.fit-opt').nth(0).click();
+
+      await expect(page.locator('.fit-opt').nth(0)).toHaveClass(/fit-opt--active/);
+      await expect(page.locator('.fit-opt').nth(2)).not.toHaveClass(/fit-opt--active/);
+
+      await expect(async () => {
+        const saved = await page.evaluate(() =>
+          JSON.parse(localStorage.getItem('gridit-settings') || '{}')
+        );
+        expect(saved.imageFit).toBe('fit-width');
+      }).toPass({ timeout: 3000 });
+    });
+
+    test('migrateSettings backfills imageFit="fit-inside" when missing', async ({ page }) => {
+      await uploadImage(page);
+      const out = await page.evaluate(() => {
+        // @ts-expect-error migrateSettings is global from grid-merge.js
+        return window.migrateSettings({
+          gridRows: 10,
+          gridCols: 10,
+          gridMode: 'Auto',
+          gridColor: '#80ED99',
+          gridThickness: 1,
+          gridOpacity: 1,
+          showDiagonals: false,
+          showCellLabels: false,
+          canvasWidthCm: null,
+          canvasHeightCm: null,
+        });
+      });
+      expect(out.imageFit).toBe('fit-inside');
+    });
+  });
 });

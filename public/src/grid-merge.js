@@ -369,6 +369,9 @@ function migrateSettings(settings) {
   if (settings.canvasHeightCm === undefined) {
     settings.canvasHeightCm = null;
   }
+  if (settings.imageFit === undefined) {
+    settings.imageFit = 'fit-inside';
+  }
   return settings;
 }
 if (typeof window !== 'undefined') window.migrateSettings = migrateSettings;
@@ -384,7 +387,8 @@ function isValidV2Settings(s) {
     && typeof s.showDiagonals === 'boolean'
     && typeof s.showCellLabels === 'boolean'
     && (s.canvasWidthCm === null || typeof s.canvasWidthCm === 'number')
-    && (s.canvasHeightCm === null || typeof s.canvasHeightCm === 'number');
+    && (s.canvasHeightCm === null || typeof s.canvasHeightCm === 'number')
+    && typeof s.imageFit === 'string';
 }
 
 function setupSettingsPersistence(app) {

@@ -201,6 +201,7 @@ type alias Model =
     , imageDisplayedHeight : Maybe Float
     , canvasWidthCm : Maybe Float
     , canvasHeightCm : Maybe Float
+    , imageFit : String
     }
 
 
@@ -250,6 +251,7 @@ type Msg
     | CanvasWidthCmChanged String
     | CanvasHeightCmChanged String
     | SnapToFiveCmCells
+    | ImageFitChanged String
     | ToggleGridView
     | SettingsLoaded Settings
     | ResetProcessing
@@ -278,6 +280,7 @@ type alias Settings =
     , showCellLabels : Bool
     , canvasWidthCm : Maybe Float
     , canvasHeightCm : Maybe Float
+    , imageFit : String
     }
 
 
@@ -299,6 +302,7 @@ settingsFromModel model =
     , showCellLabels = model.showCellLabels
     , canvasWidthCm = model.canvasWidthCm
     , canvasHeightCm = model.canvasHeightCm
+    , imageFit = model.imageFit
     }
 
 type alias SubdividedCell =
@@ -592,6 +596,7 @@ init _ =
       , imageDisplayedHeight = Nothing
       , canvasWidthCm = Nothing
       , canvasHeightCm = Nothing
+      , imageFit = "fit-inside"
       }
     , Cmd.none
     )
@@ -971,6 +976,9 @@ update msg model =
         CanvasHeightCmChanged raw ->
             withSave { model | canvasHeightCm = parseCmInput raw }
 
+        ImageFitChanged mode ->
+            withSave { model | imageFit = mode }
+
         SnapToFiveCmCells ->
             -- Compute rows/cols so each cell ≈ 5cm on the canvas. Clamps to
             -- the 2..64 range used elsewhere. Flips Auto → Custom so the
@@ -1002,6 +1010,7 @@ update msg model =
                 , showCellLabels = settings.showCellLabels
                 , canvasWidthCm = settings.canvasWidthCm
                 , canvasHeightCm = settings.canvasHeightCm
+                , imageFit = settings.imageFit
                 , gridHue = Maybe.withDefault model.gridHue (hexToHue settings.gridColor)
               }
             , Cmd.none
@@ -1584,6 +1593,24 @@ viewMatchCanvasSection model =
                 , disabled (not bothFilled)
                 ]
                 [ text (translate model.language I18n.MakeFiveCmCells) ]
+
+        aspectDiffers =
+            case ( ( model.canvasWidthCm, model.canvasHeightCm ), ( model.imageWidth, model.imageHeight ) ) of
+                ( ( Just cw, Just ch ), ( Just iw, Just ih ) ) ->
+                    let
+                        canvasRatio = cw / ch
+                        imageRatio = toFloat iw / toFloat ih
+                    in
+                    abs (canvasRatio - imageRatio) / canvasRatio > 0.02
+
+                _ ->
+                    False
+
+        fitSection =
+            if aspectDiffers then
+                viewFitOptions model
+            else
+                text ""
     in
     Html.details [ class "match-canvas", attribute "data-bothfilled" (if bothFilled then "true" else "false") ]
         [ Html.summary [ class "match-canvas-summary" ]
@@ -1626,8 +1653,108 @@ viewMatchCanvasSection model =
                 ]
             , readoutLine
             , snapButton
+            , fitSection
             ]
         ]
+
+
+-- The fit options block — radios + small SVG preview. Only rendered when
+-- the image and canvas aspects actually differ (avoids false-positive
+-- "you have a choice to make" when there's nothing to choose).
+viewFitOptions : Model -> Html Msg
+viewFitOptions model =
+    let
+        opt key labelKey =
+            label [ class (if model.imageFit == key then "fit-opt fit-opt--active" else "fit-opt") ]
+                [ input
+                    [ type_ "radio"
+                    , Html.Attributes.name "image-fit"
+                    , Html.Attributes.checked (model.imageFit == key)
+                    , Html.Events.onClick (ImageFitChanged key)
+                    ]
+                    []
+                , span [ class ("fit-glyph fit-glyph--" ++ key) ] []
+                , text (translate model.language labelKey)
+                ]
+    in
+    div [ class "fit-section" ]
+        [ div [ class "ctrl-label" ] [ text (translate model.language I18n.HowShouldImageFit) ]
+        , div [ class "fit-options", attribute "role" "radiogroup", attribute "aria-label" "image fit mode" ]
+            [ opt "fit-width" I18n.FitToWidth
+            , opt "fit-height" I18n.FitToHeight
+            , opt "fit-inside" I18n.FitInside
+            ]
+        , viewFitPreview model
+        ]
+
+
+-- Tiny SVG showing the canvas outline with the image rectangle positioned
+-- inside it per the selected fit mode. 120×80 viewBox, scaled to canvas
+-- aspect for clarity.
+viewFitPreview : Model -> Html Msg
+viewFitPreview model =
+    case ( ( model.canvasWidthCm, model.canvasHeightCm ), ( model.imageWidth, model.imageHeight ) ) of
+        ( ( Just cw, Just ch ), ( Just iw, Just ih ) ) ->
+                    let
+                        -- Normalize canvas to fit a 120×80 viewbox.
+                        canvasAspect = cw / ch
+                        ( cBoxW, cBoxH ) =
+                            if canvasAspect > 1.5 then
+                                ( 120.0, 120.0 / canvasAspect )
+                            else
+                                ( 80.0 * canvasAspect, 80.0 )
+
+                        imageAspect = toFloat iw / toFloat ih
+
+                        -- Compute image rect within canvas based on fit mode.
+                        ( imgW, imgH ) =
+                            case model.imageFit of
+                                "fit-width" ->
+                                    ( cBoxW, cBoxW / imageAspect )
+
+                                "fit-height" ->
+                                    ( cBoxH * imageAspect, cBoxH )
+
+                                _ ->
+                                    -- fit-inside (default): the smaller dimension constrains.
+                                    if imageAspect > canvasAspect then
+                                        ( cBoxW, cBoxW / imageAspect )
+                                    else
+                                        ( cBoxH * imageAspect, cBoxH )
+
+                        imgX = (cBoxW - imgW) / 2
+                        imgY = (cBoxH - imgH) / 2
+
+                        offsetX = (120 - cBoxW) / 2
+                        offsetY = (80 - cBoxH) / 2
+                    in
+            div [ class "fit-preview" ]
+                [ Svg.svg
+                    [ SvgAttr.viewBox "0 0 120 80"
+                    , SvgAttr.class "fit-preview-svg"
+                    , attribute "aria-hidden" "true"
+                    ]
+                    [ Svg.rect
+                        [ SvgAttr.class "fit-preview-canvas"
+                        , SvgAttr.x (String.fromFloat offsetX)
+                        , SvgAttr.y (String.fromFloat offsetY)
+                        , SvgAttr.width (String.fromFloat cBoxW)
+                        , SvgAttr.height (String.fromFloat cBoxH)
+                        ]
+                        []
+                    , Svg.rect
+                        [ SvgAttr.class "fit-preview-image"
+                        , SvgAttr.x (String.fromFloat (offsetX + imgX))
+                        , SvgAttr.y (String.fromFloat (offsetY + imgY))
+                        , SvgAttr.width (String.fromFloat imgW)
+                        , SvgAttr.height (String.fromFloat imgH)
+                        ]
+                        []
+                    ]
+                ]
+
+        _ ->
+            text ""
 
 
 formatCm : Float -> String

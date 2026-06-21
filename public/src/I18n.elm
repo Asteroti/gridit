@@ -78,6 +78,10 @@ type TranslationKey
     | CmTall
     | EachCellApprox
     | MakeFiveCmCells
+    | HowShouldImageFit
+    | FitToWidth
+    | FitToHeight
+    | FitInside
 
 
 translate : Language -> TranslationKey -> String
@@ -307,6 +311,18 @@ englishTranslations key =
         MakeFiveCmCells ->
             "make 5 cm cells"
 
+        HowShouldImageFit ->
+            "how should the image fit?"
+
+        FitToWidth ->
+            "fit to width"
+
+        FitToHeight ->
+            "fit to height"
+
+        FitInside ->
+            "fit inside"
+
 
 spanishTranslations : TranslationKey -> String
 spanishTranslations key =
@@ -488,6 +504,18 @@ spanishTranslations key =
 
         MakeFiveCmCells ->
             "celdas de 5 cm"
+
+        HowShouldImageFit ->
+            "¿cómo encaja la imagen?"
+
+        FitToWidth ->
+            "al ancho"
+
+        FitToHeight ->
+            "al alto"
+
+        FitInside ->
+            "dentro"
 
 
 latinTranslations : TranslationKey -> String
@@ -685,6 +713,22 @@ latinTranslations key =
             -- English fallback (translation TODO).
             "make 5 cm cells"
 
+        HowShouldImageFit ->
+            -- English fallback (translation TODO).
+            "how should the image fit?"
+
+        FitToWidth ->
+            -- English fallback (translation TODO).
+            "fit to width"
+
+        FitToHeight ->
+            -- English fallback (translation TODO).
+            "fit to height"
+
+        FitInside ->
+            -- English fallback (translation TODO).
+            "fit inside"
+
 
 italianTranslations : TranslationKey -> String
 italianTranslations key =
@@ -879,6 +923,22 @@ italianTranslations key =
         MakeFiveCmCells ->
             -- English fallback (translation TODO).
             "make 5 cm cells"
+
+        HowShouldImageFit ->
+            -- English fallback (translation TODO).
+            "how should the image fit?"
+
+        FitToWidth ->
+            -- English fallback (translation TODO).
+            "fit to width"
+
+        FitToHeight ->
+            -- English fallback (translation TODO).
+            "fit to height"
+
+        FitInside ->
+            -- English fallback (translation TODO).
+            "fit inside"
 
 
 portugueseTranslations : TranslationKey -> String
@@ -1075,6 +1135,22 @@ portugueseTranslations key =
             -- English fallback (translation TODO).
             "make 5 cm cells"
 
+        HowShouldImageFit ->
+            -- English fallback (translation TODO).
+            "how should the image fit?"
+
+        FitToWidth ->
+            -- English fallback (translation TODO).
+            "fit to width"
+
+        FitToHeight ->
+            -- English fallback (translation TODO).
+            "fit to height"
+
+        FitInside ->
+            -- English fallback (translation TODO).
+            "fit inside"
+
 
 frenchTranslations : TranslationKey -> String
 frenchTranslations key =
@@ -1270,6 +1346,22 @@ frenchTranslations key =
             -- English fallback (translation TODO).
             "make 5 cm cells"
 
+        HowShouldImageFit ->
+            -- English fallback (translation TODO).
+            "how should the image fit?"
+
+        FitToWidth ->
+            -- English fallback (translation TODO).
+            "fit to width"
+
+        FitToHeight ->
+            -- English fallback (translation TODO).
+            "fit to height"
+
+        FitInside ->
+            -- English fallback (translation TODO).
+            "fit inside"
+
 
 asturianoTranslations : TranslationKey -> String
 asturianoTranslations key =
@@ -1464,6 +1556,22 @@ asturianoTranslations key =
         MakeFiveCmCells ->
             -- English fallback (translation TODO).
             "make 5 cm cells"
+
+        HowShouldImageFit ->
+            -- English fallback (translation TODO).
+            "how should the image fit?"
+
+        FitToWidth ->
+            -- English fallback (translation TODO).
+            "fit to width"
+
+        FitToHeight ->
+            -- English fallback (translation TODO).
+            "fit to height"
+
+        FitInside ->
+            -- English fallback (translation TODO).
+            "fit inside"
 
 
 gaelicTranslations : TranslationKey -> String
@@ -1662,6 +1770,22 @@ gaelicTranslations key =
             -- English fallback (translation TODO).
             "make 5 cm cells"
 
+        HowShouldImageFit ->
+            -- English fallback (translation TODO).
+            "how should the image fit?"
+
+        FitToWidth ->
+            -- English fallback (translation TODO).
+            "fit to width"
+
+        FitToHeight ->
+            -- English fallback (translation TODO).
+            "fit to height"
+
+        FitInside ->
+            -- English fallback (translation TODO).
+            "fit inside"
+
 
 euskaraTranslations : TranslationKey -> String
 euskaraTranslations key =
@@ -1856,6 +1980,22 @@ euskaraTranslations key =
         MakeFiveCmCells ->
             -- English fallback (translation TODO).
             "make 5 cm cells"
+
+        HowShouldImageFit ->
+            -- English fallback (translation TODO).
+            "how should the image fit?"
+
+        FitToWidth ->
+            -- English fallback (translation TODO).
+            "fit to width"
+
+        FitToHeight ->
+            -- English fallback (translation TODO).
+            "fit to height"
+
+        FitInside ->
+            -- English fallback (translation TODO).
+            "fit inside"
 
 
 japaneseTranslations : TranslationKey -> String
@@ -2052,6 +2192,22 @@ japaneseTranslations key =
             -- English fallback (translation TODO).
             "make 5 cm cells"
 
+        HowShouldImageFit ->
+            -- English fallback (translation TODO).
+            "how should the image fit?"
+
+        FitToWidth ->
+            -- English fallback (translation TODO).
+            "fit to width"
+
+        FitToHeight ->
+            -- English fallback (translation TODO).
+            "fit to height"
+
+        FitInside ->
+            -- English fallback (translation TODO).
+            "fit inside"
+
 
 russianTranslations : TranslationKey -> String
 russianTranslations key =
@@ -2246,6 +2402,22 @@ russianTranslations key =
         MakeFiveCmCells ->
             -- English fallback (translation TODO).
             "make 5 cm cells"
+
+        HowShouldImageFit ->
+            -- English fallback (translation TODO).
+            "how should the image fit?"
+
+        FitToWidth ->
+            -- English fallback (translation TODO).
+            "fit to width"
+
+        FitToHeight ->
+            -- English fallback (translation TODO).
+            "fit to height"
+
+        FitInside ->
+            -- English fallback (translation TODO).
+            "fit inside"
 
 
 tuvanTranslations : TranslationKey -> String
@@ -2453,6 +2625,22 @@ tuvanTranslations key =
             -- English fallback (no native Tuvan translation).
             "make 5 cm cells"
 
+        HowShouldImageFit ->
+            -- English fallback (no native Tuvan translation).
+            "how should the image fit?"
+
+        FitToWidth ->
+            -- English fallback (no native Tuvan translation).
+            "fit to width"
+
+        FitToHeight ->
+            -- English fallback (no native Tuvan translation).
+            "fit to height"
+
+        FitInside ->
+            -- English fallback (no native Tuvan translation).
+            "fit inside"
+
 
 amharicTranslations : TranslationKey -> String
 amharicTranslations key =
@@ -2659,6 +2847,22 @@ amharicTranslations key =
             -- English fallback (no native Amharic translation).
             "make 5 cm cells"
 
+        HowShouldImageFit ->
+            -- English fallback (no native Amharic translation).
+            "how should the image fit?"
+
+        FitToWidth ->
+            -- English fallback (no native Amharic translation).
+            "fit to width"
+
+        FitToHeight ->
+            -- English fallback (no native Amharic translation).
+            "fit to height"
+
+        FitInside ->
+            -- English fallback (no native Amharic translation).
+            "fit inside"
+
 
 hebrewTranslations : TranslationKey -> String
 hebrewTranslations key =
@@ -2853,3 +3057,19 @@ hebrewTranslations key =
         MakeFiveCmCells ->
             -- English fallback (translation TODO).
             "make 5 cm cells"
+
+        HowShouldImageFit ->
+            -- English fallback (translation TODO).
+            "how should the image fit?"
+
+        FitToWidth ->
+            -- English fallback (translation TODO).
+            "fit to width"
+
+        FitToHeight ->
+            -- English fallback (translation TODO).
+            "fit to height"
+
+        FitInside ->
+            -- English fallback (translation TODO).
+            "fit inside"
