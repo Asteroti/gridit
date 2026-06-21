@@ -62,6 +62,7 @@ type TranslationKey
     | RateLimitMessage
     | HeartLikedIt
     | HeartThanks
+    | ShareImage
 
 
 translate : Language -> TranslationKey -> String
@@ -243,6 +244,9 @@ englishTranslations key =
         HeartThanks ->
             "thankyouthankyouthankyou!!!!!!"
 
+        ShareImage ->
+            "share image"
+
 
 spanishTranslations : TranslationKey -> String
 spanishTranslations key =
@@ -376,6 +380,9 @@ spanishTranslations key =
 
         HeartThanks ->
             "graciasgraciasgracias!!!!!!"
+
+        ShareImage ->
+            "compartir imagen"
 
 
 latinTranslations : TranslationKey -> String
@@ -511,6 +518,9 @@ latinTranslations key =
         HeartThanks ->
             "gratiasgratiasgratias!!!!!!"
 
+        ShareImage ->
+            "imaginem communicare"
+
 
 italianTranslations : TranslationKey -> String
 italianTranslations key =
@@ -644,6 +654,9 @@ italianTranslations key =
 
         HeartThanks ->
             "graziegraziegrazie!!!!!!"
+
+        ShareImage ->
+            "condividi immagine"
 
 
 portugueseTranslations : TranslationKey -> String
@@ -779,6 +792,9 @@ portugueseTranslations key =
         HeartThanks ->
             "obrigadoobrigadoobrigado!!!!!!"
 
+        ShareImage ->
+            "compartilhar imagem"
+
 
 frenchTranslations : TranslationKey -> String
 frenchTranslations key =
@@ -913,6 +929,9 @@ frenchTranslations key =
         HeartThanks ->
             "mercimercimerci!!!!!!"
 
+        ShareImage ->
+            "partager l'image"
+
 
 asturianoTranslations : TranslationKey -> String
 asturianoTranslations key =
@@ -1046,6 +1065,9 @@ asturianoTranslations key =
 
         HeartThanks ->
             "graciesgraciesgracies!!!!!!"
+
+        ShareImage ->
+            "compartir imaxe"
 
 
 gaelicTranslations : TranslationKey -> String
@@ -1183,6 +1205,9 @@ gaelicTranslations key =
         HeartThanks ->
             "tapaleatapaleatapalea!!!!!!"
 
+        ShareImage ->
+            "roinn íomhá"
+
 
 euskaraTranslations : TranslationKey -> String
 euskaraTranslations key =
@@ -1316,6 +1341,9 @@ euskaraTranslations key =
 
         HeartThanks ->
             "eskerrikaeskerrikaeskerrika!!!!!!"
+
+        ShareImage ->
+            "partekatu irudia"
 
 
 japaneseTranslations : TranslationKey -> String
@@ -1451,6 +1479,9 @@ japaneseTranslations key =
         HeartThanks ->
             "ありがとありがとありがと！！！！！！"
 
+        ShareImage ->
+            "画像を共有"
+
 
 russianTranslations : TranslationKey -> String
 russianTranslations key =
@@ -1584,6 +1615,9 @@ russianTranslations key =
 
         HeartThanks ->
             "спасибоспасибоспасибо!!!!!!"
+
+        ShareImage ->
+            "поделиться изображением"
 
 
 tuvanTranslations : TranslationKey -> String
@@ -1728,6 +1762,10 @@ tuvanTranslations key =
             -- English fallback (no native Tuvan translation).
             "thankyouthankyouthankyou!!!!!!"
 
+        ShareImage ->
+            -- English fallback (no native Tuvan translation).
+            "share image"
+
 
 amharicTranslations : TranslationKey -> String
 amharicTranslations key =
@@ -1871,6 +1909,10 @@ amharicTranslations key =
             -- English fallback (no native Amharic translation).
             "thankyouthankyouthankyou!!!!!!"
 
+        ShareImage ->
+            -- English fallback (no native Amharic translation).
+            "share image"
+
 
 hebrewTranslations : TranslationKey -> String
 hebrewTranslations key =
@@ -2004,3 +2046,6 @@ hebrewTranslations key =
 
         HeartThanks ->
             "תודהתודהתודה!!!!!!"
+
+        ShareImage ->
+            "שתף תמונה"

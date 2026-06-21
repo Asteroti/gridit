@@ -166,9 +166,16 @@ iconGreenHeart =
 -- MODEL
 
 
+-- Grid dimensions are independent (rows × cols) but coupled in Auto mode
+-- where a single slider sets both. Custom mode lets them diverge.
+-- Persisted as a String ("Auto" | "Custom") to cross the Elm/JS port boundary.
+
+
 type alias Model =
     { uploadedImage : Maybe String
-    , gridSize : Int
+    , gridRows : Int
+    , gridCols : Int
+    , gridMode : String
     , niceCounter : Int
     , imageWidth : Maybe Int
     , imageHeight : Maybe Int
@@ -219,6 +226,9 @@ type Msg
     = PickImage
     | ImagePicked PickedImage
     | GridSizeChanged Int
+    | GridRowsChanged Int
+    | GridColsChanged Int
+    | GridModeChanged String
     | NiceButtonClicked
     | ImageSizeLoaded Int Int
     | DownloadClicked
@@ -248,7 +258,9 @@ type Msg
 
 
 type alias Settings =
-    { gridSize : Int
+    { gridRows : Int
+    , gridCols : Int
+    , gridMode : String
     , gridColor : String
     , gridThickness : Int
     , gridOpacity : Float
@@ -264,7 +276,9 @@ type alias Dimensions =
 
 settingsFromModel : Model -> Settings
 settingsFromModel model =
-    { gridSize = model.gridSize
+    { gridRows = model.gridRows
+    , gridCols = model.gridCols
+    , gridMode = model.gridMode
     , gridColor = model.gridColor
     , gridThickness = model.gridThickness
     , gridOpacity = model.gridOpacity
@@ -277,8 +291,13 @@ type alias SubdividedCell =
     }
 
 
+-- Entropy is sampled at a fixed `entropyGridSize × entropyGridSize` resolution
+-- (see the constant below), independent of display rows/cols. This means:
+--   (a) entropy survives grid-size changes — no re-analysis on every slider tick
+--   (b) subdivisions reflect image content, not the user's display choice
+-- The mapping back to (row, col) here uses the same fixed size.
 computeSubdividedCells : Int -> Float -> List Float -> List SubdividedCell
-computeSubdividedCells gridSize sensitivity entropyList =
+computeSubdividedCells eSize sensitivity entropyList =
     let
         minE = List.minimum entropyList |> Maybe.withDefault 0
         maxE = List.maximum entropyList |> Maybe.withDefault 1
@@ -298,17 +317,20 @@ computeSubdividedCells gridSize sensitivity entropyList =
                         normalized = (e - minE) / range
                     in
                     if normalized > threshold then
-                        Just { row = idx // gridSize, col = modBy gridSize idx }
+                        Just { row = idx // eSize, col = modBy eSize idx }
                     else
                         Nothing
                 )
 
 
+-- Subdivision lines are positioned by entropy-grid pixel cells, NOT by display
+-- rows/cols. They mark high-entropy regions of the image; their pixel position
+-- is a property of the image, not of the user's grid choice.
 subdivisionLines : Settings -> Dimensions -> List SubdividedCell -> List (Svg msg)
 subdivisionLines config dims cells =
     let
-        cellWidth = toFloat dims.width / toFloat config.gridSize
-        cellHeight = toFloat dims.height / toFloat config.gridSize
+        cellWidth = toFloat dims.width / toFloat entropyGridSize
+        cellHeight = toFloat dims.height / toFloat entropyGridSize
     in
     List.concatMap
         (\cell ->
@@ -325,6 +347,13 @@ subdivisionLines config dims cells =
         cells
 
 
+-- Fixed resolution at which we analyze image entropy. Decoupled from display
+-- rows/cols so the user can resize the grid without triggering re-analysis.
+entropyGridSize : Int
+entropyGridSize =
+    16
+
+
 svgLine : Settings -> Float -> Float -> Float -> Float -> Svg msg
 svgLine config x1 y1 x2 y2 =
     Svg.line
@@ -338,27 +367,28 @@ svgLine config x1 y1 x2 y2 =
         ]
         []
 
--- Generate all grid lines (vertical, horizontal, and optionally diagonal)
+-- Generate all grid lines (vertical, horizontal, and optionally diagonal).
+-- Rows and cols are independent; cellWidth follows cols, cellHeight follows rows.
 allGridLines : Settings -> Dimensions -> List SubdividedCell -> List (Svg msg)
 allGridLines config dims adaptiveCells =
     let
-        cellWidth = toFloat dims.width / toFloat config.gridSize
-        cellHeight = toFloat dims.height / toFloat config.gridSize
+        cellWidth = toFloat dims.width / toFloat config.gridCols
+        cellHeight = toFloat dims.height / toFloat config.gridRows
 
         verticalLines =
-            List.range 0 config.gridSize
+            List.range 0 config.gridCols
                 |> List.map (\i -> svgLine config (toFloat i * cellWidth) 0 (toFloat i * cellWidth) (toFloat dims.height))
 
         horizontalLines =
-            List.range 0 config.gridSize
+            List.range 0 config.gridRows
                 |> List.map (\i -> svgLine config 0 (toFloat i * cellHeight) (toFloat dims.width) (toFloat i * cellHeight))
 
         diagonals =
             if config.showDiagonals then
-                List.range 0 (config.gridSize - 1)
+                List.range 0 (config.gridRows - 1)
                     |> List.concatMap
                         (\row ->
-                            List.range 0 (config.gridSize - 1)
+                            List.range 0 (config.gridCols - 1)
                                 |> List.concatMap
                                     (\col ->
                                         let
@@ -453,7 +483,9 @@ downloadSuccessHoldMs =
 init : () -> ( Model, Cmd Msg )
 init _ =
     ( { uploadedImage = Nothing
-      , gridSize = 10
+      , gridRows = 10
+      , gridCols = 10
+      , gridMode = "Auto"
       , niceCounter = 0
       , imageWidth = Nothing
       , imageHeight = Nothing
@@ -560,7 +592,7 @@ requestEntropy : Model -> Cmd Msg
 requestEntropy model =
     case ( model.uploadedImage, model.imageWidth, model.imageHeight ) of
         ( Just url, Just w, Just h ) ->
-            requestEntropyAnalysis { url = url, width = w, height = h, grid = model.gridSize }
+            requestEntropyAnalysis { url = url, width = w, height = h, grid = entropyGridSize }
 
         _ ->
             Cmd.none
@@ -738,7 +770,7 @@ currentAdaptiveCells : Model -> List SubdividedCell
 currentAdaptiveCells model =
     if model.adaptiveSensitivity > 0 then
         model.entropyData
-            |> Maybe.map (computeSubdividedCells model.gridSize model.adaptiveSensitivity)
+            |> Maybe.map (computeSubdividedCells entropyGridSize model.adaptiveSensitivity)
             |> Maybe.withDefault []
     else
         []
@@ -774,16 +806,20 @@ update msg model =
                 )
 
         GridSizeChanged size ->
-            let
-                willAnalyze = model.adaptiveSensitivity > 0 && canAnalyze model
-                newModel = { model | gridSize = size, entropyData = Nothing, isAnalyzing = willAnalyze }
-                entropyCmd =
-                    if willAnalyze then
-                        requestEntropy newModel
-                    else
-                        Cmd.none
-            in
-            ( newModel, Cmd.batch [ saveSettings (settingsFromModel newModel), entropyCmd ] )
+            -- Auto-mode slider: one number sets both rows and cols.
+            -- In Custom mode the slider is replaced by GridRowsChanged / GridColsChanged.
+            -- Entropy data persists across grid changes (it's a property of the image,
+            -- not the display grid), so no re-analysis cost.
+            withSave { model | gridRows = size, gridCols = size }
+
+        GridRowsChanged rows ->
+            withSave { model | gridRows = rows }
+
+        GridColsChanged cols ->
+            withSave { model | gridCols = cols }
+
+        GridModeChanged mode ->
+            withSave { model | gridMode = mode }
 
         GridColorChanged color ->
             if isValidHexColor color then
@@ -842,7 +878,9 @@ update msg model =
 
         SettingsLoaded settings ->
             ( { model
-                | gridSize = settings.gridSize
+                | gridRows = settings.gridRows
+                , gridCols = settings.gridCols
+                , gridMode = settings.gridMode
                 , gridColor = settings.gridColor
                 , gridThickness = settings.gridThickness
                 , gridOpacity = settings.gridOpacity
@@ -1190,16 +1228,20 @@ viewSliderControl c =
 
 viewSizeControl : Model -> Html Msg
 viewSizeControl model =
+    -- Auto-mode slider. Cluster 1 (bju.4/bju.5) will introduce the Auto/Custom
+    -- segmented toggle and two-input layout for Custom mode. For now, only
+    -- Auto is reachable from the UI, so the slider always controls both
+    -- rows and cols equally.
     viewSliderControl
         { id = "grid-size-input"
         , labelContent = [ text (translate model.language I18n.GridSize) ]
-        , value = String.fromInt model.gridSize
+        , value = String.fromInt model.gridRows
         , min = "2"
         , max = "32"
         , maybeStep = Nothing
         , onChange = \s -> GridSizeChanged (Maybe.withDefault 10 (String.toInt s))
         , sliderClass = "slider"
-        , valueDisplay = span [ class "control-value" ] [ text (String.fromInt model.gridSize ++ "x" ++ String.fromInt model.gridSize) ]
+        , valueDisplay = span [ class "control-value" ] [ text (String.fromInt model.gridRows ++ "x" ++ String.fromInt model.gridCols) ]
         , extra = []
         }
 
@@ -1362,6 +1404,7 @@ viewActionButtons model =
                     [ class "button button-share"
                     , onClick ShareClicked
                     , disabled (model.uploadedImage == Nothing || model.isProcessing)
+                    , attribute "aria-label" (translate model.language I18n.ShareImage)
                     ]
                     [ span [ class "button-icon" ] [ iconShare ]
                     ]

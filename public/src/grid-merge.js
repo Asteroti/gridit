@@ -345,6 +345,32 @@ function setupSharePort(app) {
 }
 
 
+// Migrates pre-v2 settings (single `gridSize`) to the v2 shape
+// (`gridRows`/`gridCols`/`gridMode`). Mutates and returns the same object.
+// Exposed on `window` for e2e testing.
+function migrateSettings(settings) {
+  if (!settings || typeof settings !== 'object') return settings;
+  if (settings.gridRows === undefined && typeof settings.gridSize === 'number') {
+    settings.gridRows = settings.gridSize;
+    settings.gridCols = settings.gridSize;
+    settings.gridMode = 'Auto';
+    delete settings.gridSize;
+  }
+  return settings;
+}
+if (typeof window !== 'undefined') window.migrateSettings = migrateSettings;
+
+function isValidV2Settings(s) {
+  return s
+    && typeof s.gridRows === 'number'
+    && typeof s.gridCols === 'number'
+    && typeof s.gridMode === 'string'
+    && typeof s.gridColor === 'string'
+    && typeof s.gridThickness === 'number'
+    && typeof s.gridOpacity === 'number'
+    && typeof s.showDiagonals === 'boolean';
+}
+
 function setupSettingsPersistence(app) {
   var SETTINGS_KEY = 'gridit-settings';
 
@@ -361,8 +387,8 @@ function setupSettingsPersistence(app) {
   try {
     var saved = localStorage.getItem(SETTINGS_KEY);
     if (saved && app.ports.loadSettings) {
-      var settings = JSON.parse(saved);
-      if (settings.gridSize && settings.gridColor && settings.gridThickness !== undefined && settings.gridOpacity !== undefined && settings.showDiagonals !== undefined) {
+      var settings = migrateSettings(JSON.parse(saved));
+      if (isValidV2Settings(settings)) {
         app.ports.loadSettings.send(settings);
       }
     }

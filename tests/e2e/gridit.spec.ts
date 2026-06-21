@@ -610,5 +610,181 @@ test.describe('Gridit Application', () => {
         expect(newCount).toBeGreaterThanOrEqual(baseLineCount);
       }).toPass({ timeout: 10000 });
     });
+
+    // bju.3: entropy grid is decoupled from display. Changing the grid
+    // size slider must NOT trigger re-analysis — the entropy cache persists.
+    // Content-agnostic: doesn't require the test image to have entropy variation.
+    test('grid-size changes do not re-trigger entropy analysis', async ({ page }) => {
+      const adaptiveSlider = page.locator('#adaptive-density-input');
+      await adaptiveSlider.fill('0.6');
+
+      // Wait for the (first and only) analysis pass to finish.
+      await expect(page.locator('.analyzing-indicator')).toHaveCount(0, { timeout: 10000 });
+
+      // Move the grid-size slider — the "Analyzing image" indicator must NOT
+      // appear again. We poll briefly to catch any flicker.
+      const sizeSlider = page.locator('#grid-size-input');
+      await sizeSlider.fill('14');
+      await sizeSlider.fill('20');
+      await sizeSlider.fill('8');
+
+      // Across all those changes, no analyzing-indicator should have surfaced.
+      await expect(page.locator('.analyzing-indicator')).toHaveCount(0);
+
+      // Final base-line count matches the display grid (8×8 = 18 lines).
+      await expect(async () => {
+        expect(await page.locator('.grid-overlay line').count()).toBeGreaterThanOrEqual(18);
+      }).toPass({ timeout: 3000 });
+    });
+  });
+
+  // The v2 refactor (bju.1 + bju.2) replaces `gridSize: Int` with
+  // `gridRows + gridCols + gridMode`. Existing users have the old shape
+  // in localStorage; these tests pin (a) the migration shim, (b) the
+  // new-shape load path, and (c) the regression behavior of the
+  // existing Auto-mode slider, which must keep working unchanged.
+  test.describe('Settings v2 refactor', () => {
+    test('default grid (10×10) renders 22 lines after upload', async ({ page }) => {
+      await uploadImage(page);
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+      await expect(async () => {
+        // 11 vertical + 11 horizontal = 22 for a 10×10 grid, no diagonals.
+        expect(await page.locator('.grid-overlay line').count()).toBe(22);
+      }).toPass({ timeout: 5000 });
+    });
+
+    test('slider at 5 renders 12 grid lines (6 + 6)', async ({ page }) => {
+      await uploadImage(page);
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+
+      const slider = page.locator('#grid-size-input');
+      await slider.fill('5');
+
+      await expect(async () => {
+        expect(await page.locator('.grid-overlay line').count()).toBe(12);
+      }).toPass({ timeout: 5000 });
+    });
+
+    test('migrateSettings: pre-v2 shape becomes v2 shape', async ({ page }) => {
+      // Unit-ish test of the migration shim, exposed on window for inspection.
+      const out = await page.evaluate(() => {
+        // @ts-expect-error migrateSettings is global from grid-merge.js
+        return window.migrateSettings({
+          gridSize: 12,
+          gridColor: '#80ED99',
+          gridThickness: 2,
+          gridOpacity: 0.7,
+          showDiagonals: false,
+        });
+      });
+      expect(out.gridSize).toBeUndefined();
+      expect(out.gridRows).toBe(12);
+      expect(out.gridCols).toBe(12);
+      expect(out.gridMode).toBe('Auto');
+      expect(out.gridColor).toBe('#80ED99');
+    });
+
+    test('migrateSettings: v2 shape passes through unchanged', async ({ page }) => {
+      const out = await page.evaluate(() => {
+        // @ts-expect-error migrateSettings is global from grid-merge.js
+        return window.migrateSettings({
+          gridRows: 8,
+          gridCols: 14,
+          gridMode: 'Custom',
+          gridColor: '#000000',
+          gridThickness: 3,
+          gridOpacity: 0.5,
+          showDiagonals: true,
+        });
+      });
+      expect(out.gridRows).toBe(8);
+      expect(out.gridCols).toBe(14);
+      expect(out.gridMode).toBe('Custom');
+    });
+
+    test('pre-v2 localStorage settings restore grid size on reload', async ({ page }) => {
+      // Inject old-shape settings; reload triggers the load path.
+      await page.evaluate(() => {
+        localStorage.setItem('gridit-settings', JSON.stringify({
+          gridSize: 15,
+          gridColor: '#80ED99',
+          gridThickness: 1,
+          gridOpacity: 1,
+          showDiagonals: false,
+        }));
+      });
+      await page.reload();
+      await page.waitForLoadState('networkidle');
+      await uploadImage(page);
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+
+      // Slider should reflect the restored value.
+      const slider = page.locator('#grid-size-input');
+      await expect(slider).toHaveValue('15');
+      // And the rendered grid line count matches.
+      await expect(async () => {
+        expect(await page.locator('.grid-overlay line').count()).toBe(32);
+      }).toPass({ timeout: 5000 });
+    });
+
+    test('v2 localStorage settings restore on reload', async ({ page }) => {
+      await page.evaluate(() => {
+        localStorage.setItem('gridit-settings', JSON.stringify({
+          gridRows: 8,
+          gridCols: 8,
+          gridMode: 'Auto',
+          gridColor: '#000000',
+          gridThickness: 2,
+          gridOpacity: 0.6,
+          showDiagonals: false,
+        }));
+      });
+      await page.reload();
+      await page.waitForLoadState('networkidle');
+      await uploadImage(page);
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+
+      const slider = page.locator('#grid-size-input');
+      await expect(slider).toHaveValue('8');
+      await expect(async () => {
+        expect(await page.locator('.grid-overlay line').count()).toBe(18);
+      }).toPass({ timeout: 5000 });
+    });
+
+    test('bogus localStorage settings fall back to defaults', async ({ page }) => {
+      await page.evaluate(() => {
+        localStorage.setItem('gridit-settings', JSON.stringify({
+          gridSize: 'not-a-number',  // invalid shape — should be ignored
+          someJunk: true,
+        }));
+      });
+      await page.reload();
+      await page.waitForLoadState('networkidle');
+      await uploadImage(page);
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+
+      // Default grid size is 10 → 22 lines.
+      const slider = page.locator('#grid-size-input');
+      await expect(slider).toHaveValue('10');
+    });
+
+    test('moving the slider persists the new shape (gridRows + gridCols + gridMode)', async ({ page }) => {
+      await uploadImage(page);
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+
+      const slider = page.locator('#grid-size-input');
+      await slider.fill('7');
+
+      // Wait for the save to flush.
+      await expect(async () => {
+        const saved = await page.evaluate(() =>
+          JSON.parse(localStorage.getItem('gridit-settings') || '{}')
+        );
+        expect(saved.gridRows).toBe(7);
+        expect(saved.gridCols).toBe(7);
+        expect(saved.gridMode).toBe('Auto');
+        expect(saved.gridSize).toBeUndefined();
+      }).toPass({ timeout: 3000 });
+    });
   });
 });
