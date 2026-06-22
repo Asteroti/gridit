@@ -278,7 +278,7 @@ englishTranslations key =
             "the grid stretches to fill the image."
 
         GridModeSquareExplain ->
-            "cells are perfect squares; more on the longer side."
+            "perfect squares — any leftover strip stays at the bottom-right."
 
         GroupSetUpGrid ->
             "set up the grid"
@@ -478,7 +478,7 @@ spanishTranslations key =
             "la grilla se estira para llenar la imagen."
 
         GridModeSquareExplain ->
-            "las celdas son cuadradas; hay más en el lado más largo."
+            "celdas cuadradas — cualquier sobrante queda abajo a la derecha."
 
         GroupSetUpGrid ->
             "armá la grilla"
@@ -2493,7 +2493,7 @@ tuvanTranslations key =
 
         GridModeSquareExplain ->
             -- English fallback (no native Tuvan translation).
-            "cells are perfect squares; more on the longer side."
+            "perfect squares — any leftover strip stays at the bottom-right."
 
         GroupSetUpGrid ->
             -- English fallback (no native Tuvan translation).
@@ -2723,7 +2723,7 @@ amharicTranslations key =
 
         GridModeSquareExplain ->
             -- English fallback (no native Amharic translation).
-            "cells are perfect squares; more on the longer side."
+            "perfect squares — any leftover strip stays at the bottom-right."
 
         GroupSetUpGrid ->
             -- English fallback (no native Amharic translation).

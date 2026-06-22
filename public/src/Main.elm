@@ -411,10 +411,11 @@ entropyGridSize =
 
 
 -- Derive (rows, cols) from a single "size" value, the chosen grid mode, and
--- the image's natural dimensions. Rectilinear mode: rows = cols = size, the
--- grid stretches to fill the image. Square mode: cells are exact squares in
--- image pixel space; `size` is the count of cells on the SHORTER axis, the
--- longer axis gets proportionally more cells.
+-- the image's natural dimensions. Rectilinear: rows = cols = size, grid
+-- stretches to fill the image. Square: cellSize = shorter/size (exact),
+-- rows/cols are the number of FULL square cells that fit. A trailing
+-- partial cell may exist on the longer axis (rendered with a closing line
+-- at the image edge so the user sees a narrow strip rather than nothing).
 deriveRowsCols : Int -> String -> Maybe Int -> Maybe Int -> { rows : Int, cols : Int }
 deriveRowsCols size mode maybeImgW maybeImgH =
     case ( mode, maybeImgW, maybeImgH ) of
@@ -425,13 +426,33 @@ deriveRowsCols size mode maybeImgW maybeImgH =
                 let
                     shorter = Basics.min w h
                     cellSize = toFloat shorter / toFloat size
-                    derivedRows = Basics.max 1 (round (toFloat h / cellSize))
-                    derivedCols = Basics.max 1 (round (toFloat w / cellSize))
+                    derivedRows = Basics.max 1 (floor (toFloat h / cellSize))
+                    derivedCols = Basics.max 1 (floor (toFloat w / cellSize))
                 in
                 { rows = derivedRows, cols = derivedCols }
 
         _ ->
             { rows = size, cols = size }
+
+
+-- The square cell size in image pixels, if mode is square. Used by renderers
+-- to position grid lines at uniform cellSize spacing (vs. stretching cellW
+-- and cellH separately to fill image dims as in rectilinear mode).
+squareCellSize : { a | gridMode : String, gridRows : Int, gridCols : Int, imageWidth : Maybe Int, imageHeight : Maybe Int } -> Maybe Float
+squareCellSize m =
+    case ( m.gridMode, m.imageWidth, m.imageHeight ) of
+        ( "square", Just w, Just h ) ->
+            let
+                size = if m.gridMode == "square" then Basics.min m.gridRows m.gridCols else m.gridRows
+                shorter = Basics.min w h
+            in
+            if size < 1 || shorter == 0 then
+                Nothing
+            else
+                Just (toFloat shorter / toFloat size)
+
+        _ ->
+            Nothing
 
 
 -- The "size" value for the slider: in rectilinear mode it's rows (or cols,
@@ -527,20 +548,54 @@ svgLine config x1 y1 x2 y2 =
         []
 
 -- Generate all grid lines (vertical, horizontal, and optionally diagonal).
--- Rows and cols are independent; cellWidth follows cols, cellHeight follows rows.
+-- Rows and cols are independent; cellWidth follows cols, cellHeight follows
+-- rows. If `maybeCellSize` is Just, the lines are positioned at uniform
+-- cellSize spacing instead — that's square mode, where a closing line is
+-- also drawn at the image edge if the cell count doesn't divide evenly
+-- (the trailing partial cell).
 allGridLines : Settings -> Dimensions -> List SubdividedCell -> List (Svg msg)
 allGridLines config dims adaptiveCells =
+    allGridLinesWith config dims Nothing adaptiveCells
+
+
+allGridLinesWith : Settings -> Dimensions -> Maybe Float -> List SubdividedCell -> List (Svg msg)
+allGridLinesWith config dims maybeCellSize adaptiveCells =
     let
-        cellWidth = toFloat dims.width / toFloat config.gridCols
-        cellHeight = toFloat dims.height / toFloat config.gridRows
+        cellWidth =
+            case maybeCellSize of
+                Just s -> s
+                Nothing -> toFloat dims.width / toFloat config.gridCols
+
+        cellHeight =
+            case maybeCellSize of
+                Just s -> s
+                Nothing -> toFloat dims.height / toFloat config.gridRows
+
+        verticalXs =
+            let base = List.range 0 config.gridCols |> List.map (\i -> toFloat i * cellWidth)
+            in
+            case maybeCellSize of
+                Just _ ->
+                    let lastFull = toFloat config.gridCols * cellWidth in
+                    if toFloat dims.width - lastFull > 0.5 then base ++ [ toFloat dims.width ] else base
+                Nothing ->
+                    base
+
+        horizontalYs =
+            let base = List.range 0 config.gridRows |> List.map (\i -> toFloat i * cellHeight)
+            in
+            case maybeCellSize of
+                Just _ ->
+                    let lastFull = toFloat config.gridRows * cellHeight in
+                    if toFloat dims.height - lastFull > 0.5 then base ++ [ toFloat dims.height ] else base
+                Nothing ->
+                    base
 
         verticalLines =
-            List.range 0 config.gridCols
-                |> List.map (\i -> svgLine config (toFloat i * cellWidth) 0 (toFloat i * cellWidth) (toFloat dims.height))
+            verticalXs |> List.map (\x -> svgLine config x 0 x (toFloat dims.height))
 
         horizontalLines =
-            List.range 0 config.gridRows
-                |> List.map (\i -> svgLine config 0 (toFloat i * cellHeight) (toFloat dims.width) (toFloat i * cellHeight))
+            horizontalYs |> List.map (\y -> svgLine config 0 y (toFloat dims.width) y)
 
         diagonals =
             if config.showDiagonals then
@@ -2290,7 +2345,7 @@ viewLegacyImageMode model url width height =
             else
                 baseConfig
         dims = { width = width, height = height }
-        gridLines = allGridLines config dims (currentAdaptiveCells model)
+        gridLines = allGridLinesWith config dims (squareCellSize model) (currentAdaptiveCells model)
     in
     div [ class "gridded-image-container" ]
         [ img

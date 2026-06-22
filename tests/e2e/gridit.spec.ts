@@ -1475,9 +1475,8 @@ test.describe('Gridit Application', () => {
       // Switch to square mode.
       await page.locator('.seg-btn').nth(1).click();
 
-      // Now set slider to 4 — that's 4 cells on the SHORTER axis (200 wide).
-      // cellSize = 200/4 = 50px. Longer axis (600) gets 600/50 = 12 cells.
-      // So: cols=4, rows=12. (Or the inverse if image is wider than tall.)
+      // Slider=4 → cellSize = 200/4 = 50px square. 600/50 = 12 rows exactly.
+      // Here it divides evenly, so no partial cells.
       await page.locator('#grid-size-input').fill('4');
 
       await expect.poll(async () => {
@@ -1488,6 +1487,56 @@ test.describe('Gridit Application', () => {
       // The two-number-input UI from the old Custom mode should be gone.
       await expect(page.locator('#grid-rows-input')).toHaveCount(0);
       await expect(page.locator('#grid-cols-input')).toHaveCount(0);
+
+      // In square mode, the grid lines should be uniformly spaced by cellSize.
+      // Verify all cell widths (gaps between consecutive vertical line x positions)
+      // are equal — that's the "perfect squares" guarantee.
+      const xPositions = await page.locator('.grid-overlay line').evaluateAll((els: SVGLineElement[]) => {
+        const verticals = els.filter(l => l.getAttribute('x1') === l.getAttribute('x2'));
+        return [...new Set(verticals.map(l => parseFloat(l.getAttribute('x1') || '0')))].sort((a, b) => a - b);
+      });
+      // Differences between consecutive x positions should all be equal (cellSize=50).
+      const xGaps = xPositions.slice(1).map((x, i) => x - xPositions[i]);
+      const allEqual = xGaps.every(g => Math.abs(g - xGaps[0]) < 0.5);
+      expect(allEqual).toBe(true);
+    });
+
+    test('square mode: image where size does NOT divide evenly produces uniform cells + partial closing', async ({ page }) => {
+      // Synthesize a 200×550 image — slider=5 with cellSize=40 leaves 30px
+      // of trailing height (13 full rows + a partial row).
+      const dataUrl = await page.evaluate(() => {
+        const c = document.createElement('canvas');
+        c.width = 200; c.height = 550;
+        const x = c.getContext('2d')!;
+        x.fillStyle = '#ddd'; x.fillRect(0, 0, 200, 550);
+        return c.toDataURL('image/png');
+      });
+      await page.evaluate((du) => {
+        // @ts-expect-error elm app global
+        window._elmApp.ports.receivePickedImage.send({ name: 'odd.png', size: du.length, dataUrl: du });
+      }, dataUrl);
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+
+      // Switch to square mode + slider 5.
+      await page.locator('.seg-btn').nth(1).click();
+      await page.locator('#grid-size-input').fill('5');
+      await page.waitForTimeout(300);
+
+      // Read all distinct horizontal line Y positions (in image natural pixels).
+      const yPositions = await page.locator('.grid-overlay line').evaluateAll((els: SVGLineElement[]) => {
+        const horizontals = els.filter(l => l.getAttribute('y1') === l.getAttribute('y2'));
+        return [...new Set(horizontals.map(l => parseFloat(l.getAttribute('y1') || '0')))].sort((a, b) => a - b);
+      });
+
+      // First N-1 gaps should all be 40 (the cellSize). The last gap may
+      // be smaller — it's the partial row from the last full cell to imgH=550.
+      const gaps = yPositions.slice(1).map((y, i) => y - yPositions[i]);
+      const fullGaps = gaps.slice(0, -1);  // all but the last
+      expect(fullGaps.length).toBeGreaterThan(0);
+      const allFortyish = fullGaps.every(g => Math.abs(g - 40) < 0.5);
+      expect(allFortyish).toBe(true);
+      // Last position is the image height (closing line for the partial row).
+      expect(yPositions[yPositions.length - 1]).toBeCloseTo(550, 0);
     });
 
     test('slice export UI is removed (not present in match-a-canvas)', async ({ page }) => {
