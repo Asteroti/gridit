@@ -63,10 +63,10 @@ type TranslationKey
     | HeartLikedIt
     | HeartThanks
     | ShareImage
-    | GridModeAuto
-    | GridModeCustom
-    | GridModeAutoExplain
-    | GridModeCustomExplain
+    | GridModeRectilinear
+    | GridModeSquare
+    | GridModeRectilinearExplain
+    | GridModeSquareExplain
     | GroupSetUpGrid
     | GroupStyle
     | AdaptiveGridDensityExplain
@@ -268,17 +268,17 @@ englishTranslations key =
         ShareImage ->
             "share image"
 
-        GridModeAuto ->
-            "auto"
+        GridModeRectilinear ->
+            "rectilinear"
 
-        GridModeCustom ->
-            "custom"
+        GridModeSquare ->
+            "square"
 
-        GridModeAutoExplain ->
-            "i pick one number, you get a square-ish grid."
+        GridModeRectilinearExplain ->
+            "the grid stretches to fill the image."
 
-        GridModeCustomExplain ->
-            "you set rows and columns separately."
+        GridModeSquareExplain ->
+            "cells are perfect squares; more on the longer side."
 
         GroupSetUpGrid ->
             "set up the grid"
@@ -468,17 +468,17 @@ spanishTranslations key =
         ShareImage ->
             "compartir imagen"
 
-        GridModeAuto ->
-            "auto"
+        GridModeRectilinear ->
+            "rectilinear"
 
-        GridModeCustom ->
-            "personalizado"
+        GridModeSquare ->
+            "cuadrada"
 
-        GridModeAutoExplain ->
-            "yo elijo un número, te doy una grilla cuadrada."
+        GridModeRectilinearExplain ->
+            "la grilla se estira para llenar la imagen."
 
-        GridModeCustomExplain ->
-            "elegís filas y columnas por separado."
+        GridModeSquareExplain ->
+            "las celdas son cuadradas; hay más en el lado más largo."
 
         GroupSetUpGrid ->
             "armá la grilla"
@@ -668,16 +668,16 @@ latinTranslations key =
         ShareImage ->
             "imaginem communicare"
 
-        GridModeAuto ->
-            "auto"
+        GridModeRectilinear ->
+            "rectilinear"
 
-        GridModeCustom ->
-            "personalizatum"
+        GridModeSquare ->
+            "quadrata"
 
-        GridModeAutoExplain ->
-            "unum numerum eligo, craticulam quadratam fere accipis."
+        GridModeRectilinearExplain ->
+            "craticula imaginem implet."
 
-        GridModeCustomExplain ->
+        GridModeSquareExplain ->
             "ordines columnasque seorsum statuis."
 
         GroupSetUpGrid ->
@@ -868,16 +868,16 @@ italianTranslations key =
         ShareImage ->
             "condividi immagine"
 
-        GridModeAuto ->
-            "auto"
+        GridModeRectilinear ->
+            "rectilinear"
 
-        GridModeCustom ->
-            "personalizzato"
+        GridModeSquare ->
+            "quadrata"
 
-        GridModeAutoExplain ->
-            "scelgo io un numero, ottieni una griglia quadrata."
+        GridModeRectilinearExplain ->
+            "la griglia si estende per riempire l'immagine."
 
-        GridModeCustomExplain ->
+        GridModeSquareExplain ->
             "imposti righe e colonne separatamente."
 
         GroupSetUpGrid ->
@@ -1068,16 +1068,16 @@ portugueseTranslations key =
         ShareImage ->
             "compartilhar imagem"
 
-        GridModeAuto ->
-            "auto"
+        GridModeRectilinear ->
+            "rectilinear"
 
-        GridModeCustom ->
-            "personalizado"
+        GridModeSquare ->
+            "quadrada"
 
-        GridModeAutoExplain ->
-            "escolho um número, você obtém uma grade quadrada."
+        GridModeRectilinearExplain ->
+            "a grade se estende para preencher a imagem."
 
-        GridModeCustomExplain ->
+        GridModeSquareExplain ->
             "você define linhas e colunas separadamente."
 
         GroupSetUpGrid ->
@@ -1268,16 +1268,16 @@ frenchTranslations key =
         ShareImage ->
             "partager l'image"
 
-        GridModeAuto ->
-            "auto"
+        GridModeRectilinear ->
+            "rectilinear"
 
-        GridModeCustom ->
-            "perso"
+        GridModeSquare ->
+            "carrée"
 
-        GridModeAutoExplain ->
-            "je choisis un nombre, tu obtiens une grille carrée."
+        GridModeRectilinearExplain ->
+            "la grille s'étire pour remplir l'image."
 
-        GridModeCustomExplain ->
+        GridModeSquareExplain ->
             "tu choisis lignes et colonnes séparément."
 
         GroupSetUpGrid ->
@@ -1468,16 +1468,16 @@ asturianoTranslations key =
         ShareImage ->
             "compartir imaxe"
 
-        GridModeAuto ->
-            "auto"
+        GridModeRectilinear ->
+            "rectilinear"
 
-        GridModeCustom ->
-            "personalizáu"
+        GridModeSquare ->
+            "cuadrada"
 
-        GridModeAutoExplain ->
-            "yo eslixo un númberu, tu llogres una rexilla cuadrada."
+        GridModeRectilinearExplain ->
+            "la rexilla estírase pa enllenar la imaxe."
 
-        GridModeCustomExplain ->
+        GridModeSquareExplain ->
             "tu pones les fileres y columnes per separáu."
 
         GroupSetUpGrid ->
@@ -1670,16 +1670,16 @@ gaelicTranslations key =
         ShareImage ->
             "roinn íomhá"
 
-        GridModeAuto ->
-            "uathoibríoch"
+        GridModeRectilinear ->
+            "rectilinear"
 
-        GridModeCustom ->
-            "saincheaptha"
+        GridModeSquare ->
+            "cearnach"
 
-        GridModeAutoExplain ->
-            "roghnaím uimhir amháin, faigheann tú greille chearnach."
+        GridModeRectilinearExplain ->
+            "síneann an ghreille chun an íomhá a líonadh."
 
-        GridModeCustomExplain ->
+        GridModeSquareExplain ->
             "socraíonn tú sraitheanna agus colúin ar leithligh."
 
         GroupSetUpGrid ->
@@ -1870,16 +1870,16 @@ euskaraTranslations key =
         ShareImage ->
             "partekatu irudia"
 
-        GridModeAuto ->
-            "auto"
+        GridModeRectilinear ->
+            "rectilinear"
 
-        GridModeCustom ->
-            "pertsonalizatua"
+        GridModeSquare ->
+            "karratua"
 
-        GridModeAutoExplain ->
-            "nik zenbaki bat aukeratzen dut, zuk sareta karratua jasotzen duzu."
+        GridModeRectilinearExplain ->
+            "saretak irudia betetzen du."
 
-        GridModeCustomExplain ->
+        GridModeSquareExplain ->
             "errenkadak eta zutabeak bereiz ezartzen dituzu."
 
         GroupSetUpGrid ->
@@ -2070,16 +2070,16 @@ japaneseTranslations key =
         ShareImage ->
             "画像を共有"
 
-        GridModeAuto ->
-            "自動"
+        GridModeRectilinear ->
+            "矩形"
 
-        GridModeCustom ->
-            "カスタム"
+        GridModeSquare ->
+            "正方形"
 
-        GridModeAutoExplain ->
-            "数字を一つ選ぶと、正方形に近いグリッドができます。"
+        GridModeRectilinearExplain ->
+            "グリッドは画像いっぱいに広がります。"
 
-        GridModeCustomExplain ->
+        GridModeSquareExplain ->
             "行と列を別々に設定します。"
 
         GroupSetUpGrid ->
@@ -2270,16 +2270,16 @@ russianTranslations key =
         ShareImage ->
             "поделиться изображением"
 
-        GridModeAuto ->
-            "авто"
+        GridModeRectilinear ->
+            "прямоугольная"
 
-        GridModeCustom ->
-            "ручной"
+        GridModeSquare ->
+            "квадратная"
 
-        GridModeAutoExplain ->
-            "я выбираю одно число, ты получаешь почти квадратную сетку."
+        GridModeRectilinearExplain ->
+            "сетка растягивается, чтобы заполнить изображение."
 
-        GridModeCustomExplain ->
+        GridModeSquareExplain ->
             "ты задаёшь строки и столбцы отдельно."
 
         GroupSetUpGrid ->
@@ -2480,20 +2480,20 @@ tuvanTranslations key =
             -- English fallback (no native Tuvan translation).
             "share image"
 
-        GridModeAuto ->
-            "auto"
+        GridModeRectilinear ->
+            "rectilinear"
 
-        GridModeCustom ->
+        GridModeSquare ->
             -- English fallback (no native Tuvan translation).
             "custom"
 
-        GridModeAutoExplain ->
+        GridModeRectilinearExplain ->
             -- English fallback (no native Tuvan translation).
-            "i pick one number, you get a square-ish grid."
+            "the grid stretches to fill the image."
 
-        GridModeCustomExplain ->
+        GridModeSquareExplain ->
             -- English fallback (no native Tuvan translation).
-            "you set rows and columns separately."
+            "cells are perfect squares; more on the longer side."
 
         GroupSetUpGrid ->
             -- English fallback (no native Tuvan translation).
@@ -2710,20 +2710,20 @@ amharicTranslations key =
             -- English fallback (no native Amharic translation).
             "share image"
 
-        GridModeAuto ->
-            "auto"
+        GridModeRectilinear ->
+            "rectilinear"
 
-        GridModeCustom ->
+        GridModeSquare ->
             -- English fallback (no native Amharic translation).
             "custom"
 
-        GridModeAutoExplain ->
+        GridModeRectilinearExplain ->
             -- English fallback (no native Amharic translation).
-            "i pick one number, you get a square-ish grid."
+            "the grid stretches to fill the image."
 
-        GridModeCustomExplain ->
+        GridModeSquareExplain ->
             -- English fallback (no native Amharic translation).
-            "you set rows and columns separately."
+            "cells are perfect squares; more on the longer side."
 
         GroupSetUpGrid ->
             -- English fallback (no native Amharic translation).
@@ -2930,16 +2930,16 @@ hebrewTranslations key =
         ShareImage ->
             "שתף תמונה"
 
-        GridModeAuto ->
-            "אוטומטי"
+        GridModeRectilinear ->
+            "מלבני"
 
-        GridModeCustom ->
-            "מותאם"
+        GridModeSquare ->
+            "ריבועי"
 
-        GridModeAutoExplain ->
-            "אני בוחר מספר אחד, אתה מקבל סריג מרובע בערך."
+        GridModeRectilinearExplain ->
+            "הסריג נמתח כדי למלא את התמונה."
 
-        GridModeCustomExplain ->
+        GridModeSquareExplain ->
             "אתה קובע שורות ועמודות בנפרד."
 
         GroupSetUpGrid ->

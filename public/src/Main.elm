@@ -410,6 +410,40 @@ entropyGridSize =
     16
 
 
+-- Derive (rows, cols) from a single "size" value, the chosen grid mode, and
+-- the image's natural dimensions. Rectilinear mode: rows = cols = size, the
+-- grid stretches to fill the image. Square mode: cells are exact squares in
+-- image pixel space; `size` is the count of cells on the SHORTER axis, the
+-- longer axis gets proportionally more cells.
+deriveRowsCols : Int -> String -> Maybe Int -> Maybe Int -> { rows : Int, cols : Int }
+deriveRowsCols size mode maybeImgW maybeImgH =
+    case ( mode, maybeImgW, maybeImgH ) of
+        ( "square", Just w, Just h ) ->
+            if w == 0 || h == 0 || size < 1 then
+                { rows = size, cols = size }
+            else
+                let
+                    shorter = Basics.min w h
+                    cellSize = toFloat shorter / toFloat size
+                    derivedRows = Basics.max 1 (round (toFloat h / cellSize))
+                    derivedCols = Basics.max 1 (round (toFloat w / cellSize))
+                in
+                { rows = derivedRows, cols = derivedCols }
+
+        _ ->
+            { rows = size, cols = size }
+
+
+-- The "size" value for the slider: in rectilinear mode it's rows (or cols,
+-- they're equal); in square mode it's the count of cells on the shorter axis.
+currentGridSize : { a | gridRows : Int, gridCols : Int, gridMode : String } -> Int
+currentGridSize m =
+    if m.gridMode == "square" then
+        Basics.min m.gridRows m.gridCols
+    else
+        m.gridRows
+
+
 -- Parse a cm-input string into a Maybe Float. Empty string and zero/negative
 -- values become Nothing — the user can clear a value by emptying the input.
 parseCmInput : String -> Maybe Float
@@ -616,7 +650,7 @@ init _ =
     ( { uploadedImage = Nothing
       , gridRows = 10
       , gridCols = 10
-      , gridMode = "Auto"
+      , gridMode = "rectilinear"
       , niceCounter = 0
       , imageWidth = Nothing
       , imageHeight = Nothing
@@ -952,20 +986,30 @@ update msg model =
                 )
 
         GridSizeChanged size ->
-            -- Auto-mode slider: one number sets both rows and cols.
-            -- In Custom mode the slider is replaced by GridRowsChanged / GridColsChanged.
-            -- Entropy data persists across grid changes (it's a property of the image,
-            -- not the display grid), so no re-analysis cost.
-            withSave { model | gridRows = size, gridCols = size }
+            -- Single slider for both modes:
+            --   rectilinear → rows = cols = size (grid stretches to fill)
+            --   square      → cells exact-square; size = cells on shorter axis
+            let
+                d = deriveRowsCols size model.gridMode model.imageWidth model.imageHeight
+            in
+            withSave { model | gridRows = d.rows, gridCols = d.cols }
 
-        GridRowsChanged rows ->
-            withSave { model | gridRows = rows }
+        GridRowsChanged _ ->
+            -- Deprecated: the two-input UI was removed when Custom → Square.
+            ( model, Cmd.none )
 
-        GridColsChanged cols ->
-            withSave { model | gridCols = cols }
+        GridColsChanged _ ->
+            -- Deprecated: see GridRowsChanged.
+            ( model, Cmd.none )
 
-        GridModeChanged mode ->
-            withSave { model | gridMode = mode }
+        GridModeChanged newMode ->
+            -- Mode change: re-derive rows/cols based on the current "size"
+            -- (shorter axis in square, rows in rectilinear) and the new mode.
+            let
+                size = currentGridSize model
+                d = deriveRowsCols size newMode model.imageWidth model.imageHeight
+            in
+            withSave { model | gridMode = newMode, gridRows = d.rows, gridCols = d.cols }
 
         GridColorChanged color ->
             if isValidHexColor color then
@@ -995,15 +1039,26 @@ update msg model =
 
         ImageSizeLoaded width height ->
             let
-                newModel = { model | imageWidth = Just width, imageHeight = Just height }
-                willAnalyze = model.adaptiveSensitivity > 0 && canAnalyze newModel
+                withDims = { model | imageWidth = Just width, imageHeight = Just height }
+                -- In square mode, the new image's aspect ratio changes which
+                -- (rows, cols) produce square cells. Re-derive.
+                reshaped =
+                    if model.gridMode == "square" then
+                        let
+                            size = currentGridSize model
+                            d = deriveRowsCols size "square" (Just width) (Just height)
+                        in
+                        { withDims | gridRows = d.rows, gridCols = d.cols }
+                    else
+                        withDims
+                willAnalyze = model.adaptiveSensitivity > 0 && canAnalyze reshaped
                 entropyCmd =
                     if willAnalyze then
-                        requestEntropy newModel
+                        requestEntropy reshaped
                     else
                         Cmd.none
             in
-            ( { newModel | isAnalyzing = willAnalyze }, entropyCmd )
+            ( { reshaped | isAnalyzing = willAnalyze }, entropyCmd )
 
         LanguageChanged newLanguage ->
             let
@@ -1510,81 +1565,54 @@ viewSliderControl c =
 viewSizeControl : Model -> Html Msg
 viewSizeControl model =
     let
-        isCustom = model.gridMode == "Custom"
+        isSquare = model.gridMode == "square"
+        sliderValue = currentGridSize model
 
         modeToggle =
-            div [ class "seg", attribute "role" "tablist", attribute "aria-label" "grid size mode" ]
+            div [ class "seg", attribute "role" "tablist", attribute "aria-label" "grid mode" ]
                 [ button
-                    [ class (if isCustom then "seg-btn" else "seg-btn seg-btn--active")
+                    [ class (if isSquare then "seg-btn" else "seg-btn seg-btn--active")
                     , attribute "role" "tab"
-                    , attribute "aria-selected" (if isCustom then "false" else "true")
-                    , onClick (GridModeChanged "Auto")
+                    , attribute "aria-selected" (if isSquare then "false" else "true")
+                    , onClick (GridModeChanged "rectilinear")
                     , type_ "button"
                     ]
-                    [ text (translate model.language I18n.GridModeAuto) ]
+                    [ text (translate model.language I18n.GridModeRectilinear) ]
                 , button
-                    [ class (if isCustom then "seg-btn seg-btn--active" else "seg-btn")
+                    [ class (if isSquare then "seg-btn seg-btn--active" else "seg-btn")
                     , attribute "role" "tab"
-                    , attribute "aria-selected" (if isCustom then "true" else "false")
-                    , onClick (GridModeChanged "Custom")
+                    , attribute "aria-selected" (if isSquare then "true" else "false")
+                    , onClick (GridModeChanged "square")
                     , type_ "button"
                     ]
-                    [ text (translate model.language I18n.GridModeCustom) ]
+                    [ text (translate model.language I18n.GridModeSquare) ]
                 ]
 
-        bodyContent =
-            if isCustom then
-                [ div [ class "rc-inputs", attribute "aria-label" "rows by columns" ]
-                    [ input
-                        [ class "rc-input"
-                        , id "grid-rows-input"
-                        , type_ "number"
-                        , Html.Attributes.min "2"
-                        , Html.Attributes.max "64"
-                        , value (String.fromInt model.gridRows)
-                        , onInput (\s -> GridRowsChanged (Maybe.withDefault model.gridRows (String.toInt s)))
-                        , attribute "aria-label" "rows"
-                        ]
-                        []
-                    , span [ class "rc-x" ] [ text "rows × cols" ]
-                    , input
-                        [ class "rc-input"
-                        , id "grid-cols-input"
-                        , type_ "number"
-                        , Html.Attributes.min "2"
-                        , Html.Attributes.max "64"
-                        , value (String.fromInt model.gridCols)
-                        , onInput (\s -> GridColsChanged (Maybe.withDefault model.gridCols (String.toInt s)))
-                        , attribute "aria-label" "cols"
-                        ]
-                        []
-                    ]
-                , p [ class "mode-explain" ]
-                    [ text (translate model.language I18n.GridModeCustomExplain) ]
-                ]
+        explainKey =
+            if isSquare then
+                I18n.GridModeSquareExplain
             else
-                [ input
-                    [ type_ "range"
-                    , id "grid-size-input"
-                    , Html.Attributes.min "2"
-                    , Html.Attributes.max "32"
-                    , value (String.fromInt model.gridRows)
-                    , onInput (\s -> GridSizeChanged (Maybe.withDefault 10 (String.toInt s)))
-                    , class "slider"
-                    ]
-                    []
-                , p [ class "mode-explain" ]
-                    [ text (translate model.language I18n.GridModeAutoExplain) ]
-                ]
+                I18n.GridModeRectilinearExplain
     in
     div [ class "control-group" ]
-        (div [ class "control-header" ]
+        [ div [ class "control-header" ]
             [ label [ class "control-label", for "grid-size-input" ]
                 [ text (translate model.language I18n.GridSize) ]
             , modeToggle
             ]
-            :: bodyContent
-        )
+        , input
+            [ type_ "range"
+            , id "grid-size-input"
+            , Html.Attributes.min "2"
+            , Html.Attributes.max "32"
+            , value (String.fromInt sliderValue)
+            , onInput (\s -> GridSizeChanged (Maybe.withDefault 10 (String.toInt s)))
+            , class "slider"
+            ]
+            []
+        , p [ class "mode-explain" ]
+            [ text (translate model.language explainKey) ]
+        ]
 
 
 viewOpacityControl : Model -> Html Msg
@@ -1789,7 +1817,9 @@ viewMatchCanvasSection model =
             , readoutLine
             , snapButton
             , fitSection
-            , viewSliceOptions model
+            -- Slice export UI removed per QA feedback ("not sure we need
+            -- that"). The SliceMode field + JS port stay dormant; can
+            -- re-surface later if multi-sheet printing demand materializes.
             ]
         ]
 

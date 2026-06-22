@@ -669,26 +669,33 @@ test.describe('Gridit Application', () => {
       expect(out.gridSize).toBeUndefined();
       expect(out.gridRows).toBe(12);
       expect(out.gridCols).toBe(12);
-      expect(out.gridMode).toBe('Auto');
+      expect(out.gridMode).toBe('rectilinear');
       expect(out.gridColor).toBe('#80ED99');
     });
 
-    test('migrateSettings: v2 shape passes through unchanged', async ({ page }) => {
-      const out = await page.evaluate(() => {
+    test('migrateSettings: old Auto/Custom values map to rectilinear', async ({ page }) => {
+      // Custom mode is gone. Anything that used to be "Custom" now becomes
+      // rectilinear (the user keeps their rows/cols, just the mode label moves).
+      const auto = await page.evaluate(() => {
         // @ts-expect-error migrateSettings is global from grid-merge.js
         return window.migrateSettings({
-          gridRows: 8,
-          gridCols: 14,
-          gridMode: 'Custom',
-          gridColor: '#000000',
-          gridThickness: 3,
-          gridOpacity: 0.5,
-          showDiagonals: true,
+          gridRows: 8, gridCols: 8, gridMode: 'Auto',
+          gridColor: '#000', gridThickness: 1, gridOpacity: 1, showDiagonals: false,
         });
       });
-      expect(out.gridRows).toBe(8);
-      expect(out.gridCols).toBe(14);
-      expect(out.gridMode).toBe('Custom');
+      expect(auto.gridMode).toBe('rectilinear');
+
+      const custom = await page.evaluate(() => {
+        // @ts-expect-error migrateSettings is global from grid-merge.js
+        return window.migrateSettings({
+          gridRows: 8, gridCols: 14, gridMode: 'Custom',
+          gridColor: '#000', gridThickness: 1, gridOpacity: 1, showDiagonals: false,
+        });
+      });
+      expect(custom.gridMode).toBe('rectilinear');
+      // Their custom rows/cols are preserved (just the mode label changes).
+      expect(custom.gridRows).toBe(8);
+      expect(custom.gridCols).toBe(14);
     });
 
     test('pre-v2 localStorage settings restore grid size on reload', async ({ page }) => {
@@ -771,99 +778,43 @@ test.describe('Gridit Application', () => {
         );
         expect(saved.gridRows).toBe(7);
         expect(saved.gridCols).toBe(7);
-        expect(saved.gridMode).toBe('Auto');
+        expect(saved.gridMode).toBe('rectilinear');
         expect(saved.gridSize).toBeUndefined();
       }).toPass({ timeout: 3000 });
     });
   });
 
-  // Cluster 1: Auto/Custom segmented toggle + two-input rows×cols layout.
-  // Verifies the toggle UI, mode persistence, and that rows × cols can
-  // diverge to produce non-square cells.
-  test.describe('Cluster 1: Auto/Custom mode', () => {
+  // Cluster 1: rectilinear/square segmented toggle.
+  // Replaced the old Auto/Custom + two-input UI in the v2.1 refactor.
+  test.describe('Cluster 1: rectilinear/square mode', () => {
     test.beforeEach(async ({ page }) => {
       await uploadImage(page);
       await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
     });
 
-    test('Auto mode is active by default, slider visible', async ({ page }) => {
-      // Two seg buttons.
+    test('rectilinear is the default, slider always visible', async ({ page }) => {
       await expect(page.locator('.seg-btn')).toHaveCount(2);
-      // First (Auto) is active.
       await expect(page.locator('.seg-btn').first()).toHaveClass(/seg-btn--active/);
-      // Slider visible, number inputs absent.
       await expect(page.locator('#grid-size-input')).toBeVisible();
+      // The two-input UI from the old Custom mode is gone.
       await expect(page.locator('#grid-rows-input')).toHaveCount(0);
+      await expect(page.locator('#grid-cols-input')).toHaveCount(0);
     });
 
-    test('clicking Custom shows two number inputs, hides slider', async ({ page }) => {
+    test('clicking square keeps the slider; mode persists as "square"', async ({ page }) => {
       await page.locator('.seg-btn').nth(1).click();
-
-      // Slider gone, both number inputs visible.
-      await expect(page.locator('#grid-size-input')).toHaveCount(0);
-      await expect(page.locator('#grid-rows-input')).toBeVisible();
-      await expect(page.locator('#grid-cols-input')).toBeVisible();
-
-      // Custom button active, Auto inactive.
+      await expect(page.locator('#grid-size-input')).toBeVisible();
       await expect(page.locator('.seg-btn').nth(1)).toHaveClass(/seg-btn--active/);
-      await expect(page.locator('.seg-btn').first()).not.toHaveClass(/seg-btn--active/);
-    });
-
-    test('mode change persists to localStorage as "Custom"', async ({ page }) => {
-      await page.locator('.seg-btn').nth(1).click();
 
       await expect(async () => {
         const saved = await page.evaluate(() =>
           JSON.parse(localStorage.getItem('gridit-settings') || '{}')
         );
-        expect(saved.gridMode).toBe('Custom');
+        expect(saved.gridMode).toBe('square');
       }).toPass({ timeout: 3000 });
     });
 
-    test('rows × cols can diverge — 6×12 produces 20 lines (7 + 13)', async ({ page }) => {
-      await page.locator('.seg-btn').nth(1).click();
-
-      await page.locator('#grid-rows-input').fill('6');
-      await page.locator('#grid-cols-input').fill('12');
-
-      await expect(async () => {
-        expect(await page.locator('.grid-overlay line').count()).toBe(20);
-      }).toPass({ timeout: 5000 });
-
-      // localStorage reflects the asymmetric state.
-      await expect(async () => {
-        const saved = await page.evaluate(() =>
-          JSON.parse(localStorage.getItem('gridit-settings') || '{}')
-        );
-        expect(saved.gridRows).toBe(6);
-        expect(saved.gridCols).toBe(12);
-        expect(saved.gridMode).toBe('Custom');
-      }).toPass({ timeout: 3000 });
-    });
-
-    test('switching Custom → Auto preserves last Custom values until slider moves', async ({ page }) => {
-      // Set Custom rows≠cols.
-      await page.locator('.seg-btn').nth(1).click();
-      await page.locator('#grid-rows-input').fill('5');
-      await page.locator('#grid-cols-input').fill('9');
-
-      // Switch back to Auto — mode flips but rows/cols values aren't reset.
-      await page.locator('.seg-btn').first().click();
-
-      await expect(async () => {
-        const saved = await page.evaluate(() =>
-          JSON.parse(localStorage.getItem('gridit-settings') || '{}')
-        );
-        expect(saved.gridMode).toBe('Auto');
-        expect(saved.gridRows).toBe(5);
-        expect(saved.gridCols).toBe(9);
-      }).toPass({ timeout: 3000 });
-
-      // Slider visible again, shows gridRows (5).
-      await expect(page.locator('#grid-size-input')).toHaveValue('5');
-    });
-
-    test('Auto-mode slider sets both rows and cols equal', async ({ page }) => {
+    test('rectilinear: slider sets both rows and cols equal', async ({ page }) => {
       const slider = page.locator('#grid-size-input');
       await slider.fill('11');
 
@@ -881,29 +832,23 @@ test.describe('Gridit Application', () => {
       }).toPass({ timeout: 3000 });
     });
 
-    test('reload restores Custom mode + asymmetric values', async ({ page }) => {
-      // Inject pre-saved Custom state.
+    test('reload restores square mode + derived rows/cols', async ({ page }) => {
+      // Inject pre-saved square mode state.
       await page.evaluate(() => {
         localStorage.setItem('gridit-settings', JSON.stringify({
-          gridRows: 4,
-          gridCols: 15,
-          gridMode: 'Custom',
-          gridColor: '#80ED99',
-          gridThickness: 1,
-          gridOpacity: 1,
-          showDiagonals: false,
+          gridRows: 12, gridCols: 4, gridMode: 'square',
+          gridColor: '#80ED99', gridThickness: 1, gridOpacity: 1, showDiagonals: false,
         }));
       });
       await page.reload();
       await page.waitForLoadState('networkidle');
-      await uploadImage(page);
+      await uploadImage(page, './tests/fixtures/test-image-tall.png');
       await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
 
-      // Custom inputs visible with restored values.
-      await expect(page.locator('#grid-rows-input')).toHaveValue('4');
-      await expect(page.locator('#grid-cols-input')).toHaveValue('15');
-      // Custom button active.
+      // Square button should be active.
       await expect(page.locator('.seg-btn').nth(1)).toHaveClass(/seg-btn--active/);
+      // Slider should show 4 (the cells on the shorter axis).
+      await expect(page.locator('#grid-size-input')).toHaveValue('4');
     });
   });
 
@@ -1187,7 +1132,7 @@ test.describe('Gridit Application', () => {
       await expect(page.locator('.snap-btn')).toBeEnabled();
     });
 
-    test('clicking snap button sets rows/cols + flips to Custom mode', async ({ page }) => {
+    test('clicking snap button sets rows/cols from canvas cm', async ({ page }) => {
       await page.evaluate(() => {
         (document.querySelector('.match-canvas') as HTMLDetailsElement).open = true;
       });
@@ -1195,19 +1140,14 @@ test.describe('Gridit Application', () => {
       await page.locator('#canvas-height-cm').fill('40');
       await page.locator('.snap-btn').click();
 
-      // 60/5 = 12 cols, 40/5 = 8 rows. Mode = Custom (visible by two number inputs).
-      await expect(page.locator('#grid-rows-input')).toHaveValue('8');
-      await expect(page.locator('#grid-cols-input')).toHaveValue('12');
-      await expect(page.locator('.seg-btn').nth(1)).toHaveClass(/seg-btn--active/);
-
-      // Persisted.
+      // 60/5 = 12 cols, 40/5 = 8 rows. The two-input UI is gone in v2.1;
+      // we verify via localStorage state instead.
       await expect(async () => {
         const saved = await page.evaluate(() =>
           JSON.parse(localStorage.getItem('gridit-settings') || '{}')
         );
         expect(saved.gridRows).toBe(8);
         expect(saved.gridCols).toBe(12);
-        expect(saved.gridMode).toBe('Custom');
       }).toPass({ timeout: 3000 });
     });
 
@@ -1220,8 +1160,13 @@ test.describe('Gridit Application', () => {
       await page.locator('#canvas-height-cm').fill('5');
       await page.locator('.snap-btn').click();
 
-      await expect(page.locator('#grid-rows-input')).toHaveValue('2');
-      await expect(page.locator('#grid-cols-input')).toHaveValue('2');
+      await expect(async () => {
+        const saved = await page.evaluate(() =>
+          JSON.parse(localStorage.getItem('gridit-settings') || '{}')
+        );
+        expect(saved.gridRows).toBe(2);
+        expect(saved.gridCols).toBe(2);
+      }).toPass({ timeout: 3000 });
     });
   });
 
@@ -1303,69 +1248,22 @@ test.describe('Gridit Application', () => {
     });
   });
 
-  // bju.15: slice export — radios for splitting the gridded PNG into tiles.
-  test.describe('Cluster 3: slice export', () => {
-    test.beforeEach(async ({ page }) => {
+  // Slice export was removed in v2.1 ("not sure we need that"). The model
+  // field + JS port remain dormant; only the UI is gone. The single
+  // migration-backfill check stays — code still backfills sliceMode='none'.
+  test.describe('Cluster 3: slice export (dormant)', () => {
+    test('migrateSettings still backfills sliceMode="none"', async ({ page }) => {
       await uploadImage(page);
-      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
-      await page.evaluate(() => {
-        (document.querySelector('.match-canvas') as HTMLDetailsElement).open = true;
-      });
-    });
-
-    test('four slice options, default "none"', async ({ page }) => {
-      await expect(page.locator('.slice-opt')).toHaveCount(4);
-      await expect(page.locator('.slice-opt--active')).toHaveCount(1);
-      await expect(page.locator('.slice-opt--active')).toContainText(/none/i);
-    });
-
-    test('clicking a slice option updates active class + persists', async ({ page }) => {
-      // Click 3×3 (last option).
-      await page.locator('.slice-opt').nth(3).click();
-      await expect(page.locator('.slice-opt').nth(3)).toHaveClass(/slice-opt--active/);
-
-      await expect(async () => {
-        const saved = await page.evaluate(() =>
-          JSON.parse(localStorage.getItem('gridit-settings') || '{}')
-        );
-        expect(saved.sliceMode).toBe('3x3');
-      }).toPass({ timeout: 3000 });
-    });
-
-    test('migrateSettings backfills sliceMode="none" when missing', async ({ page }) => {
       const out = await page.evaluate(() => {
         // @ts-expect-error migrateSettings is global from grid-merge.js
         return window.migrateSettings({
-          gridRows: 10,
-          gridCols: 10,
-          gridMode: 'Auto',
-          gridColor: '#80ED99',
-          gridThickness: 1,
-          gridOpacity: 1,
-          showDiagonals: false,
-          showCellLabels: false,
-          canvasWidthCm: null,
-          canvasHeightCm: null,
-          imageFit: 'fit-inside',
+          gridRows: 10, gridCols: 10, gridMode: 'rectilinear',
+          gridColor: '#80ED99', gridThickness: 1, gridOpacity: 1,
+          showDiagonals: false, showCellLabels: false,
+          canvasWidthCm: null, canvasHeightCm: null, imageFit: 'fit-inside',
         });
       });
       expect(out.sliceMode).toBe('none');
-    });
-
-    test('with sliceMode set, clicking download fires multiple events', async ({ page }) => {
-      await page.locator('.slice-opt').nth(1).click(); // 2×2 = 4 tiles
-
-      // Listen for downloads — slice mode fires N events.
-      const downloads: string[] = [];
-      page.on('download', dl => downloads.push(dl.suggestedFilename()));
-
-      await page.locator('.button-download').first().click();
-
-      // Wait for 4 downloads (250ms stagger each).
-      await expect.poll(() => downloads.length, { timeout: 8000 }).toBe(4);
-
-      // Filenames follow the pattern.
-      expect(downloads.every(n => /gridit.*-r[1-2]-c[1-2]\.png$/.test(n) || /-r[1-2]-c[1-2]\.png$/.test(n))).toBe(true);
     });
   });
 
@@ -1547,6 +1445,59 @@ test.describe('Gridit Application', () => {
       await expect(sub).toBeVisible();
       const subText = (await sub.first().textContent()) || '';
       expect(subText).not.toMatch(/flat/i);  // shortened — no "keeps it simple where it's flat"
+    });
+
+    test('rectilinear mode: copy + slider sets both rows & cols equal', async ({ page }) => {
+      await uploadImage(page);
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+
+      // The mode toggle now reads "rectilinear" / "square" instead of Auto/Custom.
+      const segButtons = page.locator('.seg-btn');
+      await expect(segButtons.first()).toContainText(/rectilinear/i);
+      await expect(segButtons.nth(1)).toContainText(/square/i);
+
+      // Rectilinear is the default; its explain line matches the new copy.
+      await expect(page.locator('.mode-explain', { hasText: /grid stretches to fill the image/i })).toBeVisible();
+
+      // Slider sets both rows and cols equal in rectilinear mode.
+      await page.locator('#grid-size-input').fill('7');
+      await expect.poll(async () => {
+        const saved = await page.evaluate(() => JSON.parse(localStorage.getItem('gridit-settings') || '{}'));
+        return [saved.gridRows, saved.gridCols, saved.gridMode];
+      }).toEqual([7, 7, 'rectilinear']);
+    });
+
+    test('square mode: cells become square in image pixel space', async ({ page }) => {
+      // Use a tall image (200×600 = 1:3 aspect) so rows/cols differ noticeably.
+      await uploadImage(page, './tests/fixtures/test-image-tall.png');
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+
+      // Switch to square mode.
+      await page.locator('.seg-btn').nth(1).click();
+
+      // Now set slider to 4 — that's 4 cells on the SHORTER axis (200 wide).
+      // cellSize = 200/4 = 50px. Longer axis (600) gets 600/50 = 12 cells.
+      // So: cols=4, rows=12. (Or the inverse if image is wider than tall.)
+      await page.locator('#grid-size-input').fill('4');
+
+      await expect.poll(async () => {
+        const saved = await page.evaluate(() => JSON.parse(localStorage.getItem('gridit-settings') || '{}'));
+        return { rows: saved.gridRows, cols: saved.gridCols, mode: saved.gridMode };
+      }).toEqual({ rows: 12, cols: 4, mode: 'square' });
+
+      // The two-number-input UI from the old Custom mode should be gone.
+      await expect(page.locator('#grid-rows-input')).toHaveCount(0);
+      await expect(page.locator('#grid-cols-input')).toHaveCount(0);
+    });
+
+    test('slice export UI is removed (not present in match-a-canvas)', async ({ page }) => {
+      await uploadImage(page);
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+      await page.evaluate(() => {
+        (document.querySelector('.match-canvas') as HTMLDetailsElement).open = true;
+      });
+      await expect(page.locator('.slice-section')).toHaveCount(0);
+      await expect(page.locator('.slice-opt')).toHaveCount(0);
     });
 
     test('community ticker: disclaimer body stays within container bounds when open', async ({ page }) => {

@@ -406,8 +406,14 @@ function migrateSettings(settings) {
   if (settings.gridRows === undefined && typeof settings.gridSize === 'number') {
     settings.gridRows = settings.gridSize;
     settings.gridCols = settings.gridSize;
-    settings.gridMode = 'Auto';
+    settings.gridMode = 'rectilinear';
     delete settings.gridSize;
+  }
+  // Map pre-rectilinear-refactor mode names. Old "Custom" (independent
+  // rows × cols) is gone; we fold it back into rectilinear so the user
+  // still sees a sensible grid on next load.
+  if (settings.gridMode === 'Auto' || settings.gridMode === 'Custom') {
+    settings.gridMode = 'rectilinear';
   }
   if (settings.showCellLabels === undefined) {
     settings.showCellLabels = false;
