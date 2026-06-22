@@ -1250,9 +1250,8 @@ input[type="range"]::-moz-range-thumb:hover {
    Replaces the older multi-row community-card. */
 .community-ticker {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 14px;
+  flex-direction: column;
+  gap: var(--spacing-xs);
   max-width: 900px;
   margin: var(--spacing-lg) auto var(--spacing-sm) auto;
   padding: 10px 14px;
@@ -1262,11 +1261,12 @@ input[type="range"]::-moz-range-thumb:hover {
   box-shadow: var(--shadow-subtle);
 }
 
-/* When the "?" details is open, its body flows to a new row inside the
-   ticker flex container, spanning full width. */
-.community-ticker .community-disclaimer[open] ~ * + .community-disclaimer-body,
-.community-ticker .community-disclaimer-body {
-  flex-basis: 100%;
+/* Inner row holds the frog + line + ? toggle horizontally. */
+.community-ticker__row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
 }
 
 .community-ticker__frog {

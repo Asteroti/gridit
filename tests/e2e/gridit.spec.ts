@@ -330,11 +330,8 @@ test.describe('Gridit Application', () => {
     test('disclaimer expands on click', async ({ page }) => {
       await sendCounters(page, sampleCounters());
       const body = page.locator('.community-disclaimer-body');
-      await expect(body).not.toBeVisible();
-      // Use evaluate-click — the disclaimer can wrap to a 2nd row on narrow
-      // mobile viewports inside the flex ticker, which sometimes makes
-      // Playwright's actionability check time out though the click works.
-      await page.locator('.community-disclaimer summary').evaluate((el: HTMLElement) => el.click());
+      await expect(body).toHaveCount(0);
+      await page.locator('.community-disclaimer-toggle').evaluate((el: HTMLElement) => el.click());
       await expect(body).toBeVisible();
     });
 
@@ -943,11 +940,10 @@ test.describe('Gridit Application', () => {
       await expect(group2.locator('#adaptive-density-input')).toBeVisible();
     });
 
-    test('"auto-simplify" label appears (renamed from Adaptive density)', async ({ page }) => {
+    test('"Adaptive density" label is shown with short sub-line', async ({ page }) => {
       const adaptiveLabel = page.locator('label[for="adaptive-density-input"]');
-      await expect(adaptiveLabel).toContainText('auto-simplify');
-      // The sub-line explanation is rendered.
-      await expect(page.locator('.mode-explain', { hasText: /busy.*flat/ })).toBeVisible();
+      await expect(adaptiveLabel).toContainText(/adaptive density/i);
+      await expect(page.locator('.mode-explain', { hasText: /busy/i })).toBeVisible();
     });
   });
 
@@ -1471,6 +1467,123 @@ test.describe('Gridit Application', () => {
       await page.locator('.button-download').first().click();
       const download = await dlPromise;
       expect(download.suggestedFilename()).toMatch(/gridded.*\.png$/);
+    });
+  });
+
+  // ============================================================
+  // Bug fixes + change requests (written test-first, failing initially)
+  // ============================================================
+  test.describe('Bug fixes: entropy, ticker layout, labels, naming', () => {
+    test('entropy: adaptive density actually adds subdivision lines on contrasty images', async ({ page }) => {
+      // Synthesize a half-flat / half-noisy image so entropy varies wildly.
+      const dataUrl = await page.evaluate(() => {
+        const c = document.createElement('canvas');
+        c.width = 400; c.height = 400;
+        const x = c.getContext('2d')!;
+        x.fillStyle = '#eee'; x.fillRect(0, 0, 200, 400);
+        for (let yy = 0; yy < 400; yy++) for (let xx = 200; xx < 400; xx++) {
+          const v = Math.floor(Math.random() * 256);
+          x.fillStyle = `rgb(${v},${v},${v})`; x.fillRect(xx, yy, 1, 1);
+        }
+        return c.toDataURL('image/png');
+      });
+
+      await page.evaluate((du) => {
+        // @ts-expect-error elm app global
+        window._elmApp.ports.receivePickedImage.send({ name: 'noise.png', size: du.length, dataUrl: du });
+      }, dataUrl);
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+
+      // Baseline line count with no adaptive density.
+      const baseCount = await page.locator('.grid-overlay line').count();
+
+      // Crank adaptive density.
+      await page.locator('#adaptive-density-input').fill('0.6');
+
+      // After entropy analysis lands, subdivision lines appear — the count
+      // must STRICTLY INCREASE. (Pre-fix this stayed equal to baseline.)
+      await expect.poll(
+        async () => await page.locator('.grid-overlay line').count(),
+        { timeout: 8000 }
+      ).toBeGreaterThan(baseCount);
+    });
+
+    test('cell labels font size is user-controllable via slider', async ({ page }) => {
+      await uploadImage(page);
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+
+      // Turn labels on.
+      await page.locator('#cell-labels').evaluate((el: HTMLInputElement) => el.click());
+      await expect(page.locator('.grid-overlay text').first()).toBeVisible();
+
+      // A new slider must exist to adjust label font size.
+      const slider = page.locator('#cell-label-size-input');
+      await expect(slider).toBeVisible();
+
+      const fontAt = async () => {
+        const v = await page.locator('.grid-overlay text').first().getAttribute('font-size');
+        return parseFloat(v || '0');
+      };
+
+      const small = 10;
+      const large = 28;
+      await slider.fill(String(small));
+      const fontSmall = await fontAt();
+      await slider.fill(String(large));
+      const fontLarge = await fontAt();
+
+      expect(fontSmall).toBeLessThan(fontLarge);
+      expect(Math.round(fontSmall)).toBe(small);
+      expect(Math.round(fontLarge)).toBe(large);
+    });
+
+    test('"Adaptive density" label is restored (auto-simplify reverted)', async ({ page }) => {
+      await uploadImage(page);
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+      const label = page.locator('label[for="adaptive-density-input"]');
+      await expect(label).toContainText(/adaptive density/i);
+      // The sub-line should be short: ends at "busy".
+      const sub = page.locator('.mode-explain', { hasText: /busy/i });
+      await expect(sub).toBeVisible();
+      const subText = (await sub.first().textContent()) || '';
+      expect(subText).not.toMatch(/flat/i);  // shortened — no "keeps it simple where it's flat"
+    });
+
+    test('community ticker: disclaimer body stays within container bounds when open', async ({ page }) => {
+      // Need counters loaded — use demo URL.
+      await page.goto('http://localhost:8000/public/index.html?demo');
+      await page.evaluate(() => localStorage.clear());
+      await expect(page.locator('.community-ticker')).toBeVisible({ timeout: 5000 });
+
+      // Open the disclaimer.
+      await page.locator('.community-disclaimer-toggle, .community-ticker__q').first().evaluate((el: HTMLElement) => el.click());
+
+      // The body must be visible and inside the ticker's left edge.
+      const body = page.locator('.community-disclaimer-body');
+      await expect(body).toBeVisible();
+      const tickerBox = await page.locator('.community-ticker').boundingBox();
+      const bodyBox = await body.boundingBox();
+      expect(tickerBox).not.toBeNull();
+      expect(bodyBox).not.toBeNull();
+      if (tickerBox && bodyBox) {
+        // Body left edge must be >= ticker left edge (within 1px tolerance).
+        expect(bodyBox.x).toBeGreaterThanOrEqual(tickerBox.x - 1);
+        // Body right edge must be <= ticker right edge.
+        expect(bodyBox.x + bodyBox.width).toBeLessThanOrEqual(tickerBox.x + tickerBox.width + 1);
+      }
+
+      // And the "?" toggle should stay in line with the frog (same Y),
+      // not wrapped onto a separate row.
+      const frogBox = await page.locator('.community-ticker__frog').boundingBox();
+      const toggleBox = await page.locator('.community-disclaimer-toggle, .community-ticker__q').first().boundingBox();
+      expect(frogBox).not.toBeNull();
+      expect(toggleBox).not.toBeNull();
+      if (frogBox && toggleBox) {
+        // Centers within ~30 px vertically (allow some padding wiggle).
+        const frogCenter = frogBox.y + frogBox.height / 2;
+        const toggleCenter = toggleBox.y + toggleBox.height / 2;
+        expect(Math.abs(frogCenter - toggleCenter)).toBeLessThan(30);
+      }
     });
   });
 });

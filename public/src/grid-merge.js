@@ -436,6 +436,9 @@ function migrateSettings(settings) {
   if (typeof settings.imageScale !== 'number') {
     settings.imageScale = 1.0;
   }
+  if (typeof settings.cellLabelSize !== 'number') {
+    settings.cellLabelSize = 14;
+  }
   return settings;
 }
 if (typeof window !== 'undefined') window.migrateSettings = migrateSettings;
@@ -456,7 +459,8 @@ function isValidV2Settings(s) {
     && typeof s.sliceMode === 'string'
     && typeof s.imageOffsetX === 'number'
     && typeof s.imageOffsetY === 'number'
-    && typeof s.imageScale === 'number';
+    && typeof s.imageScale === 'number'
+    && typeof s.cellLabelSize === 'number';
 }
 
 function setupSettingsPersistence(app) {

@@ -210,6 +210,8 @@ type alias Model =
     , isDraggingImage : Bool
     , dragStartX : Float
     , dragStartY : Float
+    , cellLabelSize : Int
+    , showCommunityDisclaimer : Bool
     }
 
 
@@ -255,6 +257,8 @@ type Msg
     | ResetDownloadSuccess
     | ToggleDiagonals Bool
     | ToggleCellLabels Bool
+    | CellLabelSizeChanged Int
+    | ToggleCommunityDisclaimer
     | ImageDisplaySizeReceived { width : Float, height : Float }
     | CanvasWidthCmChanged String
     | CanvasHeightCmChanged String
@@ -299,6 +303,7 @@ type alias Settings =
     , imageOffsetX : Float
     , imageOffsetY : Float
     , imageScale : Float
+    , cellLabelSize : Int
     }
 
 
@@ -325,6 +330,7 @@ settingsFromModel model =
     , imageOffsetX = model.imageOffsetX
     , imageOffsetY = model.imageOffsetY
     , imageScale = model.imageScale
+    , cellLabelSize = model.cellLabelSize
     }
 
 type alias SubdividedCell =
@@ -370,15 +376,23 @@ computeSubdividedCells eSize sensitivity entropyList =
 -- is a property of the image, not of the user's grid choice.
 subdivisionLines : Settings -> Dimensions -> List SubdividedCell -> List (Svg msg)
 subdivisionLines config dims cells =
+    subdivisionLinesAt config { x = 0, y = 0, w = toFloat dims.width, h = toFloat dims.height } cells
+
+
+-- Same as subdivisionLines but parameterized by the image's bounding rect in
+-- the SVG coordinate space. Used by the canvas-fit preview, where the image
+-- doesn't fill the full SVG viewBox.
+subdivisionLinesAt : Settings -> { x : Float, y : Float, w : Float, h : Float } -> List SubdividedCell -> List (Svg msg)
+subdivisionLinesAt config rect cells =
     let
-        cellWidth = toFloat dims.width / toFloat entropyGridSize
-        cellHeight = toFloat dims.height / toFloat entropyGridSize
+        cellWidth = rect.w / toFloat entropyGridSize
+        cellHeight = rect.h / toFloat entropyGridSize
     in
     List.concatMap
         (\cell ->
             let
-                x0 = toFloat cell.col * cellWidth
-                y0 = toFloat cell.row * cellHeight
+                x0 = rect.x + toFloat cell.col * cellWidth
+                y0 = rect.y + toFloat cell.row * cellHeight
                 midX = x0 + cellWidth / 2
                 midY = y0 + cellHeight / 2
             in
@@ -425,13 +439,20 @@ columnLetter i =
 -- bju.8 will auto-hide entirely below ~18px on-screen cell size.
 cellLabelsSvg : Settings -> Dimensions -> List (Svg msg)
 cellLabelsSvg config dims =
+    cellLabelsSvgAt config { x = 0, y = 0, w = toFloat dims.width, h = toFloat dims.height }
+
+
+-- Like cellLabelsSvg but parameterized by image rect in SVG coordinate space.
+-- Used by the canvas-fit preview where the image doesn't fill the viewBox.
+cellLabelsSvgAt : Settings -> { x : Float, y : Float, w : Float, h : Float } -> List (Svg msg)
+cellLabelsSvgAt config rect =
     if not config.showCellLabels then
         []
     else
         let
-            cellWidth = toFloat dims.width / toFloat config.gridCols
-            cellHeight = toFloat dims.height / toFloat config.gridRows
-            fontSize = clamp 6 14 (round (Basics.min cellWidth cellHeight * 0.18))
+            cellWidth = rect.w / toFloat config.gridCols
+            cellHeight = rect.h / toFloat config.gridRows
+            fontSize = config.cellLabelSize
             padding = toFloat fontSize * 0.4
         in
         List.concatMap
@@ -439,8 +460,8 @@ cellLabelsSvg config dims =
                 List.map
                     (\col ->
                         let
-                            x = toFloat col * cellWidth + padding
-                            y = toFloat row * cellHeight + padding + toFloat fontSize
+                            x = rect.x + toFloat col * cellWidth + padding
+                            y = rect.y + toFloat row * cellHeight + padding + toFloat fontSize
                             labelText = columnLetter col ++ String.fromInt (row + 1)
                         in
                         Svg.text_
@@ -629,6 +650,8 @@ init _ =
       , isDraggingImage = False
       , dragStartX = 0
       , dragStartY = 0
+      , cellLabelSize = 14
+      , showCommunityDisclaimer = False
       }
     , Cmd.none
     )
@@ -999,6 +1022,12 @@ update msg model =
         ToggleCellLabels value ->
             withSave { model | showCellLabels = value }
 
+        CellLabelSizeChanged value ->
+            withSave { model | cellLabelSize = value }
+
+        ToggleCommunityDisclaimer ->
+            ( { model | showCommunityDisclaimer = not model.showCommunityDisclaimer }, Cmd.none )
+
         ImageDisplaySizeReceived dims ->
             ( { model | imageDisplayedWidth = Just dims.width, imageDisplayedHeight = Just dims.height }, Cmd.none )
 
@@ -1095,6 +1124,7 @@ update msg model =
                 , imageOffsetX = settings.imageOffsetX
                 , imageOffsetY = settings.imageOffsetY
                 , imageScale = settings.imageScale
+                , cellLabelSize = settings.cellLabelSize
                 , gridHue = Maybe.withDefault model.gridHue (hexToHue settings.gridColor)
               }
             , Cmd.none
@@ -1904,7 +1934,7 @@ formatCm n =
 
 viewCellLabelsToggle : Model -> Html Msg
 viewCellLabelsToggle model =
-    div [ class "control-group" ]
+    div [ class "control-group cell-labels-group" ]
         [ label [ class "light-switch" ]
             [ input
                 [ type_ "checkbox"
@@ -1918,6 +1948,22 @@ viewCellLabelsToggle model =
                 [ span [ class "light-switch-thumb" ] [ text "A1" ] ]
             , span [ class "light-switch-label" ] [ text (translate model.language I18n.ShowCellLabels) ]
             ]
+        , if model.showCellLabels then
+            div [ class "cell-labels-size" ]
+                [ span [ class "control-value" ] [ text (String.fromInt model.cellLabelSize ++ "px") ]
+                , input
+                    [ type_ "range"
+                    , id "cell-label-size-input"
+                    , Html.Attributes.min "8"
+                    , Html.Attributes.max "40"
+                    , value (String.fromInt model.cellLabelSize)
+                    , onInput (\s -> CellLabelSizeChanged (Maybe.withDefault 14 (String.toInt s)))
+                    , class "slider"
+                    ]
+                    []
+                ]
+          else
+            text ""
         ]
 
 
@@ -1939,7 +1985,7 @@ viewAdaptiveControl model =
     in
     viewSliderControl
         { id = "adaptive-density-input"
-        , labelContent = [ text (translate model.language I18n.AutoSimplify), analyzingIndicator ]
+        , labelContent = [ text (translate model.language I18n.AdaptiveGridDensity), analyzingIndicator ]
         , value = String.fromFloat model.adaptiveSensitivity
         , min = "0"
         , max = "1"
@@ -1947,7 +1993,7 @@ viewAdaptiveControl model =
         , onChange = \s -> AdaptiveSensitivityChanged (Maybe.withDefault 0 (String.toFloat s))
         , sliderClass = "slider"
         , valueDisplay = span [ class "control-value" ] [ text valueText ]
-        , extra = [ p [ class "mode-explain" ] [ text (translate model.language I18n.AutoSimplifyExplain) ] ]
+        , extra = [ p [ class "mode-explain" ] [ text (translate model.language I18n.AdaptiveGridDensityExplain) ] ]
         }
 
 
@@ -2028,21 +2074,36 @@ viewCommunityCard model =
 
         Just c ->
             div [ class "community-ticker", attribute "role" "region", attribute "aria-label" "community activity" ]
-                [ span [ class "community-ticker__frog", attribute "aria-hidden" "true" ] [ iconFrogSized "32" ]
-                , p [ class "community-ticker__line" ]
-                    [ strong [] [ text (String.fromInt c.totalDownloaded) ]
-                    , text (" " ++ translate model.language I18n.CommunityImagesGridded ++ " · ")
-                    , strong [] [ text (String.fromInt c.totalCountries) ]
-                    , text (" " ++ translate model.language I18n.CommunityCountriesWith ++ " · ")
-                    , strong [] [ text (String.fromInt c.totalHearted) ]
-                    , text (" " ++ translate model.language I18n.CommunityHearts ++ " ")
-                    , span [ class "heart-warm" ] [ iconHeart ]
-                    , text " "
-                    , span [ class "community-ticker__sep" ] [ text "·" ]
-                    , text " "
-                    , viewFlagList c.griddersByCountry
+                [ div [ class "community-ticker__row" ]
+                    [ span [ class "community-ticker__frog", attribute "aria-hidden" "true" ] [ iconFrogSized "32" ]
+                    , p [ class "community-ticker__line" ]
+                        [ strong [] [ text (String.fromInt c.totalDownloaded) ]
+                        , text (" " ++ translate model.language I18n.CommunityImagesGridded ++ " · ")
+                        , strong [] [ text (String.fromInt c.totalCountries) ]
+                        , text (" " ++ translate model.language I18n.CommunityCountriesWith ++ " · ")
+                        , strong [] [ text (String.fromInt c.totalHearted) ]
+                        , text (" " ++ translate model.language I18n.CommunityHearts ++ " ")
+                        , span [ class "heart-warm" ] [ iconHeart ]
+                        , text " "
+                        , span [ class "community-ticker__sep" ] [ text "·" ]
+                        , text " "
+                        , viewFlagList c.griddersByCountry
+                        ]
+                    , button
+                        [ class "community-disclaimer-toggle"
+                        , attribute "aria-label" (translate model.language I18n.CommunityWhatsThis)
+                        , attribute "title" (translate model.language I18n.CommunityWhatsThis)
+                        , attribute "aria-expanded" (if model.showCommunityDisclaimer then "true" else "false")
+                        , Html.Events.onClick ToggleCommunityDisclaimer
+                        , type_ "button"
+                        ]
+                        [ text "?" ]
                     ]
-                , viewCommunityDisclaimer model
+                , if model.showCommunityDisclaimer then
+                    p [ class "community-disclaimer-body" ]
+                        [ text (translate model.language I18n.CommunityDisclaimerBody) ]
+                  else
+                    text ""
                 ]
 
 
@@ -2064,6 +2125,7 @@ renderFlagCount cc =
         ]
 
 
+-- Old disclaimer kept for compatibility; replaced inline in viewCommunityCard.
 viewCommunityDisclaimer : Model -> Html Msg
 viewCommunityDisclaimer model =
     Html.details [ class "community-disclaimer" ]
@@ -2283,7 +2345,19 @@ viewCanvasFitMode model url imgWidth imgHeight cw ch =
 
         -- The grid is laid out in (cm × drawScale) viewBox units.
         canvasDims = { width = round vbW, height = round vbH }
-        gridLines = allGridLines config canvasDims []
+        -- Subdivisions track the image's content, so position them within
+        -- the image's rect in canvas-cm scaled space (not the whole canvas).
+        imageRectInSvg =
+            { x = finalX * s
+            , y = finalY * s
+            , w = finalW * s
+            , h = finalH * s
+            }
+        adaptiveSubs = subdivisionLinesAt config imageRectInSvg (currentAdaptiveCells model)
+        -- Labels follow the canvas grid (not the image rect), so they're
+        -- positioned relative to the full canvas viewBox.
+        labelsForCanvas = cellLabelsSvg config canvasDims
+        gridLines = allGridLines { config | showCellLabels = False } canvasDims [] ++ adaptiveSubs ++ labelsForCanvas
 
         decodePointer =
             Json.Decode.map2 Tuple.pair

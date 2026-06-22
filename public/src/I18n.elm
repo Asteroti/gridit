@@ -46,7 +46,7 @@ type TranslationKey
     | AddDiagonalLines
     | CuriousAboutGrids
     | ChangeImage
-    | AutoSimplify
+    | AdaptiveGridDensity
     | AnalyzingImage
     | OffLabel
     | FileTooLarge
@@ -69,7 +69,7 @@ type TranslationKey
     | GridModeCustomExplain
     | GroupSetUpGrid
     | GroupStyle
-    | AutoSimplifyExplain
+    | AdaptiveGridDensityExplain
     | ShowCellLabels
     | GroupMatchCanvas
     | GroupOptional
@@ -217,8 +217,8 @@ englishTranslations key =
         ChangeImage ->
             "Choose another image"
 
-        AutoSimplify ->
-            "auto-simplify"
+        AdaptiveGridDensity ->
+            "Adaptive density"
 
         AnalyzingImage ->
             "Analyzing..."
@@ -286,8 +286,8 @@ englishTranslations key =
         GroupStyle ->
             "style"
 
-        AutoSimplifyExplain ->
-            "adds extra grid lines where the image is busy (faces, hands), keeps it simple where it's flat."
+        AdaptiveGridDensityExplain ->
+            "adds extra grid lines where the image is busy"
 
         ShowCellLabels ->
             "show cell labels (A1, B2…)"
@@ -417,8 +417,8 @@ spanishTranslations key =
         ChangeImage ->
             "Elegir otra imagen"
 
-        AutoSimplify ->
-            "auto-simplificar"
+        AdaptiveGridDensity ->
+            "Densidad adaptativa"
 
         AnalyzingImage ->
             "Analizando..."
@@ -486,8 +486,8 @@ spanishTranslations key =
         GroupStyle ->
             "estilo"
 
-        AutoSimplifyExplain ->
-            "agrega más líneas donde la imagen es compleja (caras, manos), las deja simples donde es plana."
+        AdaptiveGridDensityExplain ->
+            "agrega más líneas donde la imagen es compleja"
 
         ShowCellLabels ->
             "mostrar etiquetas (A1, B2…)"
@@ -617,7 +617,7 @@ latinTranslations key =
         ChangeImage ->
             "Aliam imaginem eligere"
 
-        AutoSimplify ->
+        AdaptiveGridDensity ->
             "Densitas adaptiva"
 
         AnalyzingImage ->
@@ -686,8 +686,8 @@ latinTranslations key =
         GroupStyle ->
             "ornatus"
 
-        AutoSimplifyExplain ->
-            "lineas adicit ubi imago turbulenta est (vultus, manus), simplices retinet ubi plana est."
+        AdaptiveGridDensityExplain ->
+            "lineas adicit ubi imago turbulenta est."
 
         ShowCellLabels ->
             "monstra notas cellulae (A1, B2…)"
@@ -817,7 +817,7 @@ italianTranslations key =
         ChangeImage ->
             "Scegli un'altra immagine"
 
-        AutoSimplify ->
+        AdaptiveGridDensity ->
             "Densit\u{00E0} adattiva"
 
         AnalyzingImage ->
@@ -886,8 +886,8 @@ italianTranslations key =
         GroupStyle ->
             "stile"
 
-        AutoSimplifyExplain ->
-            "aggiunge linee dove l'immagine è ricca (volti, mani), le lascia semplici dove è piatta."
+        AdaptiveGridDensityExplain ->
+            "aggiunge linee dove l'immagine è ricca."
 
         ShowCellLabels ->
             "mostra etichette (A1, B2…)"
@@ -1017,7 +1017,7 @@ portugueseTranslations key =
         ChangeImage ->
             "Escolher outra imagem"
 
-        AutoSimplify ->
+        AdaptiveGridDensity ->
             "Densidade adaptativa"
 
         AnalyzingImage ->
@@ -1086,8 +1086,8 @@ portugueseTranslations key =
         GroupStyle ->
             "estilo"
 
-        AutoSimplifyExplain ->
-            "adiciona linhas onde a imagem é complexa (rostos, mãos), deixa simples onde é plana."
+        AdaptiveGridDensityExplain ->
+            "adiciona linhas onde a imagem é complexa."
 
         ShowCellLabels ->
             "mostrar etiquetas (A1, B2…)"
@@ -1217,7 +1217,7 @@ frenchTranslations key =
         ChangeImage ->
             "Choisir une autre image"
 
-        AutoSimplify ->
+        AdaptiveGridDensity ->
             "Densit\u{00E9} adaptative"
 
         AnalyzingImage ->
@@ -1286,8 +1286,8 @@ frenchTranslations key =
         GroupStyle ->
             "style"
 
-        AutoSimplifyExplain ->
-            "ajoute des lignes où l'image est complexe (visages, mains), reste simple où elle est plate."
+        AdaptiveGridDensityExplain ->
+            "ajoute des lignes où l'image est complexe."
 
         ShowCellLabels ->
             "afficher les étiquettes (A1, B2…)"
@@ -1417,7 +1417,7 @@ asturianoTranslations key =
         ChangeImage ->
             "Escueyi otra imaxe"
 
-        AutoSimplify ->
+        AdaptiveGridDensity ->
             "Densid\u{00E1} adaptativa"
 
         AnalyzingImage ->
@@ -1486,8 +1486,8 @@ asturianoTranslations key =
         GroupStyle ->
             "estilu"
 
-        AutoSimplifyExplain ->
-            "amiesta llinies onde la imaxe ye complicada (cares, manes), déxala simple onde ye plana."
+        AdaptiveGridDensityExplain ->
+            "amiesta llinies onde la imaxe ye complicada."
 
         ShowCellLabels ->
             "amosar etiquetes (A1, B2…)"
@@ -1617,7 +1617,7 @@ gaelicTranslations key =
         ChangeImage ->
             "Tagh dealbh eile"
 
-        AutoSimplify ->
+        AdaptiveGridDensity ->
             -- English fallback (no native Gaelic translation).
             "Adaptive density"
 
@@ -1688,8 +1688,8 @@ gaelicTranslations key =
         GroupStyle ->
             "stíl"
 
-        AutoSimplifyExplain ->
-            "cuireann sé línte breise nuair a bhíonn an íomhá gnóthach (aghaidheanna, lámha), coinníonn é simplí nuair atá sé cothrom."
+        AdaptiveGridDensityExplain ->
+            "cuireann sé línte breise nuair a bhíonn an íomhá gnóthach."
 
         ShowCellLabels ->
             "taispeáin lipéid (A1, B2…)"
@@ -1819,7 +1819,7 @@ euskaraTranslations key =
         ChangeImage ->
             "Beste irudi bat aukeratu"
 
-        AutoSimplify ->
+        AdaptiveGridDensity ->
             "Dentsitate moldagarria"
 
         AnalyzingImage ->
@@ -1888,8 +1888,8 @@ euskaraTranslations key =
         GroupStyle ->
             "estiloa"
 
-        AutoSimplifyExplain ->
-            "lerro gehiago gehitzen ditu irudia korapilatsua denean (aurpegiak, eskuak), sinple uzten du laua denean."
+        AdaptiveGridDensityExplain ->
+            "lerro gehiago gehitzen ditu irudia korapilatsua denean."
 
         ShowCellLabels ->
             "erakutsi etiketak (A1, B2…)"
@@ -2019,7 +2019,7 @@ japaneseTranslations key =
         ChangeImage ->
             "\u{5225}\u{306E}\u{753B}\u{50CF}\u{3092}\u{9078}\u{629E}"
 
-        AutoSimplify ->
+        AdaptiveGridDensity ->
             "\u{9069}\u{5FDC}\u{5BC6}\u{5EA6}"
 
         AnalyzingImage ->
@@ -2088,8 +2088,8 @@ japaneseTranslations key =
         GroupStyle ->
             "スタイル"
 
-        AutoSimplifyExplain ->
-            "画像が複雑な部分（顔、手）にはグリッド線を増やし、平らな部分はシンプルに保ちます。"
+        AdaptiveGridDensityExplain ->
+            "画像が複雑な部分にグリッド線を増やします。"
 
         ShowCellLabels ->
             "セルラベルを表示 (A1, B2…)"
@@ -2219,7 +2219,7 @@ russianTranslations key =
         ChangeImage ->
             "\u{0412}\u{044B}\u{0431}\u{0440}\u{0430}\u{0442}\u{044C} \u{0434}\u{0440}\u{0443}\u{0433}\u{043E}\u{0435} \u{0438}\u{0437}\u{043E}\u{0431}\u{0440}\u{0430}\u{0436}\u{0435}\u{043D}\u{0438}\u{0435}"
 
-        AutoSimplify ->
+        AdaptiveGridDensity ->
             "\u{0410}\u{0434}\u{0430}\u{043F}\u{0442}\u{0438}\u{0432}\u{043D}\u{0430}\u{044F} \u{043F}\u{043B}\u{043E}\u{0442}\u{043D}\u{043E}\u{0441}\u{0442}\u{044C}"
 
         AnalyzingImage ->
@@ -2288,8 +2288,8 @@ russianTranslations key =
         GroupStyle ->
             "стиль"
 
-        AutoSimplifyExplain ->
-            "добавляет линии там, где изображение сложное (лица, руки), упрощает там, где плоско."
+        AdaptiveGridDensityExplain ->
+            "добавляет линии там, где изображение сложное."
 
         ShowCellLabels ->
             "показать метки (A1, B2…)"
@@ -2419,7 +2419,7 @@ tuvanTranslations key =
         ChangeImage ->
             "\u{04E8}\u{0441}\u{043A}\u{0435} \u{0447}\u{0443}\u{0440}\u{0443}\u{043A}\u{0442}\u{0443} \u{0448}\u{0438}\u{043B}\u{0438}\u{0438}\u{0440}"
 
-        AutoSimplify ->
+        AdaptiveGridDensity ->
             -- English fallback (no native Tuvan translation).
             "Adaptive density"
 
@@ -2503,9 +2503,9 @@ tuvanTranslations key =
             -- English fallback (no native Tuvan translation).
             "style"
 
-        AutoSimplifyExplain ->
+        AdaptiveGridDensityExplain ->
             -- English fallback (no native Tuvan translation).
-            "adds extra grid lines where the image is busy (faces, hands), keeps it simple where it's flat."
+            "adds extra grid lines where the image is busy"
 
         ShowCellLabels ->
             -- English fallback (no native Tuvan translation).
@@ -2649,7 +2649,7 @@ amharicTranslations key =
         ChangeImage ->
             "\u{120C}\u{120B} \u{121D}\u{1235}\u{120D} \u{12ED}\u{121D}\u{1228}\u{1321}"
 
-        AutoSimplify ->
+        AdaptiveGridDensity ->
             -- English fallback (no native Amharic translation).
             "Adaptive density"
 
@@ -2733,9 +2733,9 @@ amharicTranslations key =
             -- English fallback (no native Amharic translation).
             "style"
 
-        AutoSimplifyExplain ->
+        AdaptiveGridDensityExplain ->
             -- English fallback (no native Amharic translation).
-            "adds extra grid lines where the image is busy (faces, hands), keeps it simple where it's flat."
+            "adds extra grid lines where the image is busy"
 
         ShowCellLabels ->
             -- English fallback (no native Amharic translation).
@@ -2879,7 +2879,7 @@ hebrewTranslations key =
         ChangeImage ->
             "\u{05D1}\u{05D7}\u{05E8} \u{05EA}\u{05DE}\u{05D5}\u{05E0}\u{05D4} \u{05D0}\u{05D7}\u{05E8}\u{05EA}"
 
-        AutoSimplify ->
+        AdaptiveGridDensity ->
             "\u{05E6}\u{05E4}\u{05D9}\u{05E4}\u{05D5}\u{05EA} \u{05DE}\u{05EA}\u{05D0}\u{05D9}\u{05DE}\u{05D4}"
 
         AnalyzingImage ->
@@ -2948,8 +2948,8 @@ hebrewTranslations key =
         GroupStyle ->
             "סגנון"
 
-        AutoSimplifyExplain ->
-            "מוסיף קווי סריג היכן שהתמונה צפופה (פנים, ידיים), משאיר פשוט היכן שהיא שטוחה."
+        AdaptiveGridDensityExplain ->
+            "מוסיף קווי סריג היכן שהתמונה צפופה."
 
         ShowCellLabels ->
             "הצג תוויות (A1, B2…)"
