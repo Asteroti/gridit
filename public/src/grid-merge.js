@@ -89,19 +89,28 @@ function dataUrlToBlob(dataUrl) {
   return fetch(dataUrl).then(function(res) { return res.blob(); });
 }
 
+// Cap for the entropy-analysis canvas. Entropy is a per-cell statistic, so
+// relative ordering survives downscaling — and full-size photos would blow
+// past mobile canvas limits (iOS Safari ~16.7M px → silent blank canvas →
+// all-zero entropy → the slider looks dead).
+var MAX_ANALYSIS_DIM = 1024;
+
 function computeEntropyGrid(imageUrl, gridSize, width, height, callback) {
   var img = new Image();
   img.crossOrigin = "anonymous";
 
   img.onload = function() {
+    var scale = Math.min(1, MAX_ANALYSIS_DIM / Math.max(width, height));
+    var aw = Math.max(gridSize, Math.round(width * scale));
+    var ah = Math.max(gridSize, Math.round(height * scale));
     var canvas = document.createElement("canvas");
-    canvas.width = width;
-    canvas.height = height;
-    var ctx = canvas.getContext("2d");
-    ctx.drawImage(img, 0, 0, width, height);
+    canvas.width = aw;
+    canvas.height = ah;
+    var ctx = canvas.getContext("2d", { willReadFrequently: true });
+    ctx.drawImage(img, 0, 0, aw, ah);
 
-    var cellW = width / gridSize;
-    var cellH = height / gridSize;
+    var cellW = aw / gridSize;
+    var cellH = ah / gridSize;
     var entropyList = [];
 
     for (var row = 0; row < gridSize; row++) {
@@ -111,8 +120,8 @@ function computeEntropyGrid(imageUrl, gridSize, width, height, callback) {
         var w = Math.ceil(cellW);
         var h = Math.ceil(cellH);
 
-        if (x + w > width) w = width - x;
-        if (y + h > height) h = height - y;
+        if (x + w > aw) w = aw - x;
+        if (y + h > ah) h = ah - y;
 
         var imageData = ctx.getImageData(x, y, w, h);
         var pixels = imageData.data;
@@ -787,6 +796,10 @@ function setupImageSizeObserver(app) {
 
   function report(el) {
     var rect = el.getBoundingClientRect();
+    // Hidden/not-yet-laid-out elements measure 0×0; reporting that would
+    // clobber the real measurement (both the legacy <img> and the canvas
+    // SVG are observed, and a hidden one can report after a visible one).
+    if (rect.width < 1 || rect.height < 1) return;
     app.ports.receiveImageDisplaySize.send({ width: rect.width, height: rect.height });
   }
 
@@ -813,14 +826,24 @@ function setupImageSizeObserver(app) {
     }
   }
 
-  var root = document.getElementById('elm-app');
+  // NOT #elm-app: Elm's Browser.element init REPLACES that node, so by the
+  // time this runs the id no longer exists and the whole observer was
+  // silently dead in every browser. Watch the body instead.
+  var root = document.body;
   if (!root) return;
   // Watch BOTH the legacy <img> and the new canvas-fit SVG. Whichever is
   // present in the DOM dictates the on-screen displayed dimensions.
   var selector = '.gridded-base-image, .canvas-frame';
 
   function scan() {
-    document.querySelectorAll(selector).forEach(attachToImage);
+    document.querySelectorAll(selector).forEach(function(el) {
+      attachToImage(el);
+      // Also re-report on every scan tick: ResizeObserver does not fire for
+      // SVG elements in WebKit/Safari, so without this the canvas-fit SVG's
+      // size never reaches Elm there (report() drops unchanged-size spam at
+      // the Elm boundary cheaply, and skips 0×0).
+      report(el);
+    });
   }
 
   var mo = new MutationObserver(scan);

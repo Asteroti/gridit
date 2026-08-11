@@ -815,41 +815,85 @@ body::before {
   font-weight: 500;
 }
 
-/* Canvas-fit preview (bju.14). When canvas cm is set, the preview swaps to
-   a canvas-aspect SVG with the image rendered inside as an <image> element.
-   The image is draggable via pointer events; cursor reflects that. */
+/* Canvas-fit preview. When canvas cm is set, the preview swaps to a
+   canvas-aspect SVG with the image rendered inside as an <image>. The
+   wrapper holds:
+     - top:    .canvas-side-label--width (e.g. "60 cm")
+     - middle: .canvas-fit-row holding the .canvas-stage and the right label
+     - inside: SVG with a warm-toned border and soft drop shadow that reads
+               as a physical canvas sitting on a soft background. */
 .canvas-fit-container {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   width: 100%;
-  background:
-    repeating-conic-gradient(
-      hsl(35, 30%, 92%) 0% 25%,
-      hsl(35, 30%, 96%) 0% 50%
-    ) 50% / 16px 16px;
-  border-radius: 8px;
-  padding: 6px;
-  cursor: grab;
-  max-height: 80vh;
-  overflow: hidden;
+  gap: 4px;
+  padding: 8px 4px 4px 4px;
 }
 
-.canvas-fit-container:active {
+.canvas-side-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: hsl(28, 30%, 35%);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.canvas-side-label--height {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+}
+
+.canvas-fit-row {
+  display: flex;
+  flex-direction: row;
+  /* flex-start, not stretch: the stage sizes itself from its inline
+     aspect-ratio + width; stretching lets the row's height win and the
+     ratio collapses (engine-dependent — WebKit squashed it to a sliver). */
+  align-items: flex-start;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+}
+
+.canvas-stage {
+  flex: 0 1 auto;
+  min-width: 0;
+  display: block;
+  /* Dotted terracotta outline: signals "this is your canvas" without
+     looking like a heavy picture frame. Soft drop shadow lifts it just
+     enough off the page that the dotted edge stays legible. */
+  border: 2px dotted hsl(14, 60%, 50%);
+  border-radius: 2px;
+  box-shadow: 0 3px 10px hsla(14, 40%, 25%, 0.12);
+  background: white;
+  cursor: grab;
+}
+
+.canvas-stage:active {
   cursor: grabbing;
 }
 
 .canvas-fit-container .canvas-frame {
   background: white;
-  border-radius: 4px;
   width: 100%;
-  height: auto;
+  height: 100%;
   display: block;
-  max-height: calc(80vh - 12px);
   touch-action: none;
 }
 
 .canvas-frame-image {
   pointer-events: none;
   user-select: none;
+}
+
+/* "fill both to see your canvas" hint shown under the cm inputs while
+   either field is empty. */
+.cm-hint {
+  font-size: 12px;
+  color: hsl(28, 20%, 45%);
+  font-style: italic;
+  margin: 4px 0 0 0;
 }
 
 .control-group {
@@ -924,6 +968,48 @@ body::before {
   font-style: italic;
   margin: 0;
   line-height: 1.4;
+}
+
+.adaptive-empty-hint {
+  font-size: 12px;
+  color: hsl(28, 20%, 45%);
+  font-style: italic;
+  margin: 4px 0 0 0;
+  line-height: 1.4;
+}
+
+.cell-labels-size {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.cell-labels-size-label {
+  font-size: 12px;
+  color: var(--muted-foreground);
+  white-space: nowrap;
+}
+
+.canvas-btn-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.canvas-clear-btn {
+  background: none;
+  border: 1px solid hsl(28, 20%, 75%);
+  border-radius: 6px;
+  color: hsl(28, 20%, 45%);
+  font-size: 12px;
+  padding: 4px 10px;
+  cursor: pointer;
+}
+
+.canvas-clear-btn:hover {
+  border-color: hsl(28, 20%, 55%);
+  color: hsl(28, 20%, 30%);
 }
 
 /* Cluster 1: two-input rows × cols layout for Custom mode. */

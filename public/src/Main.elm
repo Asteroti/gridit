@@ -2,8 +2,9 @@ port module Main exposing (..)
 
 import Browser
 import Browser.Events
+import Dict
 import Html exposing (Html, a, button, div, h1, h2, h3, img, input, label, option, p, select, span, strong, text)
-import Html.Attributes exposing (attribute, class, disabled, for, href, id, max, min, placeholder, rel, selected, src, step, style, target, type_, value)
+import Html.Attributes exposing (attribute, class, disabled, for, href, id, max, min, rel, selected, src, step, style, target, type_, value)
 import Html.Events exposing (on, onClick, onInput)
 import I18n exposing (Language(..), TranslationKey, translate)
 import Json.Decode
@@ -210,6 +211,8 @@ type alias Model =
     , isDraggingImage : Bool
     , dragStartX : Float
     , dragStartY : Float
+    , dragSvgWidthPx : Float
+    , dragSvgHeightPx : Float
     , cellLabelSize : Int
     , showCommunityDisclaimer : Bool
     }
@@ -262,10 +265,11 @@ type Msg
     | ImageDisplaySizeReceived { width : Float, height : Float }
     | CanvasWidthCmChanged String
     | CanvasHeightCmChanged String
+    | ClearCanvasCm
     | SnapToFiveCmCells
     | ImageFitChanged String
     | SliceModeChanged String
-    | ImageDragStart Float Float
+    | ImageDragStart Float Float Float Float
     | ImageDragMove Float Float
     | ImageDragEnd
     | ImageScaleChanged Float
@@ -336,44 +340,98 @@ settingsFromModel model =
 type alias SubdividedCell =
     { row : Int
     , col : Int
+    , depth : Int -- 1 = split the cell 2×2, 2 = split it 4×4
     }
 
 
--- Entropy is sampled at a fixed `entropyGridSize × entropyGridSize` resolution
--- (see the constant below), independent of display rows/cols. This means:
---   (a) entropy survives grid-size changes — no re-analysis on every slider tick
---   (b) subdivisions reflect image content, not the user's display choice
--- The mapping back to (row, col) here uses the same fixed size.
-computeSubdividedCells : Int -> Float -> List Float -> List SubdividedCell
-computeSubdividedCells eSize sensitivity entropyList =
+-- How an artist grids a reference: flat background gets nothing, a detailed
+-- face gets subdivided — and its busiest parts subdivided AGAIN. This is
+-- quadtree decomposition (split where detail is high, recurse into the
+-- busiest quarters), done to a fixed max depth of 2 so the preview stays
+-- readable.
+--
+-- Entropy is sampled at a fixed `entropyGridSize × entropyGridSize`
+-- resolution (see the constant below), independent of display rows/cols, so
+-- the analysis survives grid-size changes without re-running. Samples are
+-- aggregated onto the user's MAIN grid and cells are RANKED by average
+-- entropy:
+--   * cells below a floor (calm background) are never subdivided
+--   * sensitivity picks what fraction of the busy cells get split 2×2
+--   * past 50%, the busiest of those get split again (4×4)
+-- Rank-based so every slider step adds lines; a near-uniform image yields
+-- nothing (there is no "busiest" spot worth marking).
+computeMainGridCells : Int -> { rows : Int, cols : Int } -> Float -> List Float -> List SubdividedCell
+computeMainGridCells eSize grid sensitivity entropyList =
     let
         minE = List.minimum entropyList |> Maybe.withDefault 0
         maxE = List.maximum entropyList |> Maybe.withDefault 1
-        range = maxE - minE
-        threshold = 1.0 - sensitivity
-
-        indexedEntropy =
-            List.indexedMap Tuple.pair entropyList
     in
-    if range < 0.01 then
+    if maxE - minE < 0.01 then
         []
     else
-        indexedEntropy
-            |> List.filterMap
-                (\( idx, e ) ->
-                    let
-                        normalized = (e - minE) / range
-                    in
-                    if normalized > threshold then
-                        Just { row = idx // eSize, col = modBy eSize idx }
-                    else
-                        Nothing
+        let
+            rows = Basics.max 1 grid.rows
+            cols = Basics.max 1 grid.cols
+
+            toMainCell idx =
+                ( Basics.min (rows - 1) (floor (toFloat (idx // eSize) / toFloat eSize * toFloat rows))
+                , Basics.min (cols - 1) (floor (toFloat (modBy eSize idx) / toFloat eSize * toFloat cols))
+                )
+
+            cellAverages =
+                entropyList
+                    |> List.indexedMap (\idx e -> ( toMainCell idx, e ))
+                    |> List.foldl
+                        (\( key, e ) acc ->
+                            Dict.update key
+                                (\existing ->
+                                    case existing of
+                                        Just ( n, total ) -> Just ( n + 1, total + e )
+                                        Nothing -> Just ( 1, e )
+                                )
+                                acc
+                        )
+                        Dict.empty
+                    |> Dict.toList
+                    |> List.map (\( ( r, c ), ( n, total ) ) -> ( total / toFloat n, ( r, c ) ))
+
+            cellMin = cellAverages |> List.map Tuple.first |> List.minimum |> Maybe.withDefault 0
+            cellMax = cellAverages |> List.map Tuple.first |> List.maximum |> Maybe.withDefault 1
+            cellRange = Basics.max 0.000001 (cellMax - cellMin)
+
+            candidates =
+                cellAverages
+                    |> List.filter (\( avg, _ ) -> (avg - cellMin) / cellRange >= calmFloor)
+                    |> List.sortBy (\( avg, _ ) -> negate avg)
+
+            candidateCount = List.length candidates
+
+            splitCount =
+                ceiling (sensitivity * toFloat candidateCount)
+
+            deepCount =
+                ceiling (Basics.max 0 (sensitivity - 0.5) * 2 * toFloat candidateCount)
+        in
+        candidates
+            |> List.take splitCount
+            |> List.indexedMap
+                (\i ( _, ( r, c ) ) ->
+                    { row = r, col = c, depth = if i < deepCount then 2 else 1 }
                 )
 
 
--- Subdivision lines are positioned by entropy-grid pixel cells, NOT by display
--- rows/cols. They mark high-entropy regions of the image; their pixel position
--- is a property of the image, not of the user's grid choice.
+-- Cells whose normalized entropy sits below this are "calm background" and
+-- are never subdivided, no matter the sensitivity — gridding a flat wall
+-- helps nobody.
+calmFloor : Float
+calmFloor =
+    0.2
+
+
+-- Subdivision lines mark high-entropy regions, snapped to the user's MAIN
+-- grid: `cells` arrive in main-grid (row, col) space, so the extra lines sit
+-- on the same lattice as the visible grid instead of floating at off-grid
+-- 1/16-positions.
 subdivisionLines : Settings -> Dimensions -> List SubdividedCell -> List (Svg msg)
 subdivisionLines config dims cells =
     subdivisionLinesAt config { x = 0, y = 0, w = toFloat dims.width, h = toFloat dims.height } cells
@@ -385,20 +443,33 @@ subdivisionLines config dims cells =
 subdivisionLinesAt : Settings -> { x : Float, y : Float, w : Float, h : Float } -> List SubdividedCell -> List (Svg msg)
 subdivisionLinesAt config rect cells =
     let
-        cellWidth = rect.w / toFloat entropyGridSize
-        cellHeight = rect.h / toFloat entropyGridSize
+        rows = Basics.max 1 config.gridRows
+        cols = Basics.max 1 config.gridCols
+        cellWidth = rect.w / toFloat cols
+        cellHeight = rect.h / toFloat rows
     in
     List.concatMap
         (\cell ->
             let
                 x0 = rect.x + toFloat cell.col * cellWidth
                 y0 = rect.y + toFloat cell.row * cellHeight
-                midX = x0 + cellWidth / 2
-                midY = y0 + cellHeight / 2
+
+                -- depth 1 → one inner line each way (2×2); depth 2 → three
+                -- inner lines each way (4×4).
+                splits =
+                    if cell.depth >= 2 then
+                        [ 0.25, 0.5, 0.75 ]
+
+                    else
+                        [ 0.5 ]
             in
-            [ svgLine config midX y0 midX (y0 + cellHeight)
-            , svgLine config x0 midY (x0 + cellWidth) midY
-            ]
+            List.concatMap
+                (\f ->
+                    [ svgLine config (x0 + cellWidth * f) y0 (x0 + cellWidth * f) (y0 + cellHeight)
+                    , svgLine config x0 (y0 + cellHeight * f) (x0 + cellWidth) (y0 + cellHeight * f)
+                    ]
+                )
+                splits
         )
         cells
 
@@ -492,21 +563,35 @@ columnLetter i =
 -- SVG <text> labels at the top-left of each cell when showCellLabels is on.
 -- Font size scales with the smaller cell dimension, clamped to a readable range.
 -- bju.8 will auto-hide entirely below ~18px on-screen cell size.
-cellLabelsSvg : Settings -> Dimensions -> List (Svg msg)
-cellLabelsSvg config dims =
-    cellLabelsSvgAt config { x = 0, y = 0, w = toFloat dims.width, h = toFloat dims.height }
+cellLabelsSvg : Settings -> Maybe Float -> Dimensions -> List (Svg msg)
+cellLabelsSvg config maybeCellSize dims =
+    cellLabelsSvgAt config maybeCellSize { x = 0, y = 0, w = toFloat dims.width, h = toFloat dims.height }
 
 
 -- Like cellLabelsSvg but parameterized by image rect in SVG coordinate space.
 -- Used by the canvas-fit preview where the image doesn't fill the viewBox.
-cellLabelsSvgAt : Settings -> { x : Float, y : Float, w : Float, h : Float } -> List (Svg msg)
-cellLabelsSvgAt config rect =
+-- In square mode (maybeCellSize = Just), labels sit on the uniform cellSize
+-- lattice the lines use — spacing by rows ÷ cols would drift right/down on
+-- images that don't divide evenly. Only full cells get labels; the trailing
+-- partial strip is skipped.
+cellLabelsSvgAt : Settings -> Maybe Float -> { x : Float, y : Float, w : Float, h : Float } -> List (Svg msg)
+cellLabelsSvgAt config maybeCellSize rect =
     if not config.showCellLabels then
         []
     else
         let
-            cellWidth = rect.w / toFloat config.gridCols
-            cellHeight = rect.h / toFloat config.gridRows
+            ( ( cellWidth, cellHeight ), ( nCols, nRows ) ) =
+                case maybeCellSize of
+                    Just cs ->
+                        ( ( cs, cs )
+                        , ( Basics.max 1 (floor (rect.w / cs)), Basics.max 1 (floor (rect.h / cs)) )
+                        )
+
+                    Nothing ->
+                        ( ( rect.w / toFloat config.gridCols, rect.h / toFloat config.gridRows )
+                        , ( config.gridCols, config.gridRows )
+                        )
+
             fontSize = config.cellLabelSize
             padding = toFloat fontSize * 0.4
         in
@@ -529,9 +614,9 @@ cellLabelsSvgAt config rect =
                             ]
                             [ Svg.text labelText ]
                     )
-                    (List.range 0 (config.gridCols - 1))
+                    (List.range 0 (nCols - 1))
             )
-            (List.range 0 (config.gridRows - 1))
+            (List.range 0 (nRows - 1))
 
 
 svgLine : Settings -> Float -> Float -> Float -> Float -> Svg msg
@@ -619,7 +704,7 @@ allGridLinesWith config dims maybeCellSize adaptiveCells =
             else
                 []
     in
-    verticalLines ++ horizontalLines ++ diagonals ++ subdivisionLines config dims adaptiveCells ++ cellLabelsSvg config dims
+    verticalLines ++ horizontalLines ++ diagonals ++ subdivisionLines config dims adaptiveCells ++ cellLabelsSvg config maybeCellSize dims
 
 
 
@@ -739,6 +824,8 @@ init _ =
       , isDraggingImage = False
       , dragStartX = 0
       , dragStartY = 0
+      , dragSvgWidthPx = 0
+      , dragSvgHeightPx = 0
       , cellLabelSize = 14
       , showCommunityDisclaimer = False
       }
@@ -1003,9 +1090,16 @@ hslToHex hue =
 
 currentAdaptiveCells : Model -> List SubdividedCell
 currentAdaptiveCells model =
-    if model.adaptiveSensitivity > 0 then
+    -- Rectilinear only: square mode's lattice (fixed cell size + partial
+    -- trailing strip) has no clean rows × cols to aggregate entropy onto,
+    -- so the control is hidden there and no cells are produced.
+    if model.adaptiveSensitivity > 0 && model.gridMode /= "square" then
         model.entropyData
-            |> Maybe.map (computeSubdividedCells entropyGridSize model.adaptiveSensitivity)
+            |> Maybe.map
+                (computeMainGridCells entropyGridSize
+                    { rows = model.gridRows, cols = model.gridCols }
+                    model.adaptiveSensitivity
+                )
             |> Maybe.withDefault []
     else
         []
@@ -1147,33 +1241,59 @@ update msg model =
         CanvasHeightCmChanged raw ->
             withSave { model | canvasHeightCm = parseCmInput raw }
 
+        ClearCanvasCm ->
+            withSave { model | canvasWidthCm = Nothing, canvasHeightCm = Nothing }
+
         ImageFitChanged mode ->
             withSave { model | imageFit = mode }
 
         SliceModeChanged mode ->
             withSave { model | sliceMode = mode }
 
-        ImageDragStart x y ->
-            ( { model | isDraggingImage = True, dragStartX = x, dragStartY = y }, Cmd.none )
+        ImageDragStart x y svgW svgH ->
+            -- Capture the SVG's pixel size from the event itself so the
+            -- pointer-px ↔ canvas-cm conversion uses a fresh measurement.
+            -- Previously this relied on imageDisplayedWidth from the JS
+            -- ResizeObserver, which raced the first mousemove and could
+            -- fall back to 1 px = 1 cm (image flying off-screen).
+            ( { model
+                | isDraggingImage = True
+                , dragStartX = x
+                , dragStartY = y
+                , dragSvgWidthPx = svgW
+                , dragSvgHeightPx = svgH
+              }
+            , Cmd.none
+            )
 
         ImageDragMove x y ->
             if model.isDraggingImage then
                 let
-                    -- Delta in screen px; map to canvas cm via displayed dims.
-                    -- canvasPxToCmX = displayedW / canvasWidthCm. delta_cm = delta_px / pxPerCm.
+                    -- Prefer the SVG dims captured at pointerdown; fall back
+                    -- to the ResizeObserver-tracked image dims only if the
+                    -- capture missed (legacy event sources without
+                    -- currentTarget.clientWidth).
+                    captureOrFallback captured maybeFallback =
+                        if captured > 0 then
+                            captured
+
+                        else
+                            case maybeFallback of
+                                Just v -> v
+                                Nothing -> 0
+
+                    svgW = captureOrFallback model.dragSvgWidthPx model.imageDisplayedWidth
+                    svgH = captureOrFallback model.dragSvgHeightPx model.imageDisplayedHeight
+
                     pxPerCmX =
-                        case ( model.imageDisplayedWidth, model.canvasWidthCm ) of
-                            ( Just dw, Just cw ) ->
-                                if cw > 0 then dw / cw else 1.0
-                            _ ->
-                                1.0
+                        case model.canvasWidthCm of
+                            Just cw -> if cw > 0 && svgW > 0 then svgW / cw else 1.0
+                            Nothing -> 1.0
 
                     pxPerCmY =
-                        case ( model.imageDisplayedHeight, model.canvasHeightCm ) of
-                            ( Just dh, Just ch ) ->
-                                if ch > 0 then dh / ch else 1.0
-                            _ ->
-                                1.0
+                        case model.canvasHeightCm of
+                            Just ch -> if ch > 0 && svgH > 0 then svgH / ch else 1.0
+                            Nothing -> 1.0
 
                     deltaX = (x - model.dragStartX) / pxPerCmX
                     deltaY = (y - model.dragStartY) / pxPerCmY
@@ -1227,8 +1347,13 @@ update msg model =
                 , gridOpacity = settings.gridOpacity
                 , showDiagonals = settings.showDiagonals
                 , showCellLabels = settings.showCellLabels
-                , canvasWidthCm = settings.canvasWidthCm
-                , canvasHeightCm = settings.canvasHeightCm
+                -- Deliberately NOT restored: preview-on-canvas is a
+                -- per-session tool. Restoring it dropped returning users
+                -- into a confusing canvas view ("weird grid already there")
+                -- before they had even picked an image. Values are still
+                -- SAVED (schema unchanged); only the load path skips them.
+                , canvasWidthCm = Nothing
+                , canvasHeightCm = Nothing
                 , imageFit = settings.imageFit
                 , sliceMode = settings.sliceMode
                 , imageOffsetX = settings.imageOffsetX
@@ -1560,10 +1685,20 @@ viewControlsFace model =
                     , viewThicknessControl model
                     , viewOpacityControl model
                     , viewDiagonalsToggle model
-                    , viewAdaptiveControl model
+                    , if model.gridMode == "square" then
+                        -- Adaptive density is rectilinear-only: square mode's
+                        -- lattice has no clean rows × cols to subdivide.
+                        text ""
+                      else
+                        viewAdaptiveControl model
                     ]
                 ]
-            , viewMatchCanvasSection model
+
+            -- Match-a-canvas (preview on canvas) is DORMANT pending its
+            -- redesign — the artist model is "place a fixed canvas, drag the
+            -- image over it", and the current fit-buttons version confused
+            -- QA. Code + settings schema stay; only this render is removed.
+            -- Re-enable by restoring: viewMatchCanvasSection model
             ]
         , viewActionButtons model
         , button
@@ -1812,6 +1947,23 @@ viewMatchCanvasSection model =
                 ]
                 [ text (translate model.language I18n.MakeFiveCmCells) ]
 
+        clearButton =
+            if model.canvasWidthCm == Nothing && model.canvasHeightCm == Nothing then
+                text ""
+            else
+                button
+                    [ class "canvas-clear-btn"
+                    , type_ "button"
+                    , onClick ClearCanvasCm
+                    ]
+                    [ text (translate model.language I18n.ClearCanvas) ]
+
+        cmHint =
+            if bothFilled then
+                text ""
+            else
+                p [ class "cm-hint" ] [ text (translate model.language I18n.FillBothToSeeCanvas) ]
+
         aspectDiffers =
             case ( ( model.canvasWidthCm, model.canvasHeightCm ), ( model.imageWidth, model.imageHeight ) ) of
                 ( ( Just cw, Just ch ), ( Just iw, Just ih ) ) ->
@@ -1848,7 +2000,6 @@ viewMatchCanvasSection model =
                     , Html.Attributes.min "1"
                     , Html.Attributes.step "0.1"
                     , value (cmInputValue model.canvasWidthCm)
-                    , placeholder "60"
                     , onInput CanvasWidthCmChanged
                     , attribute "aria-label" (translate model.language I18n.CmWide)
                     ]
@@ -1862,15 +2013,15 @@ viewMatchCanvasSection model =
                     , Html.Attributes.min "1"
                     , Html.Attributes.step "0.1"
                     , value (cmInputValue model.canvasHeightCm)
-                    , placeholder "40"
                     , onInput CanvasHeightCmChanged
                     , attribute "aria-label" (translate model.language I18n.CmTall)
                     ]
                     []
                 , span [ class "cm-x" ] [ text (translate model.language I18n.CmTall) ]
                 ]
+            , cmHint
             , readoutLine
-            , snapButton
+            , div [ class "canvas-btn-row" ] [ snapButton, clearButton ]
             , fitSection
             -- Slice export UI removed per QA feedback ("not sure we need
             -- that"). The SliceMode field + JS port stay dormant; can
@@ -2035,7 +2186,8 @@ viewCellLabelsToggle model =
             ]
         , if model.showCellLabels then
             div [ class "cell-labels-size" ]
-                [ span [ class "control-value" ] [ text (String.fromInt model.cellLabelSize ++ "px") ]
+                [ label [ class "cell-labels-size-label", for "cell-label-size-input" ]
+                    [ text (translate model.language I18n.LabelSize) ]
                 , input
                     [ type_ "range"
                     , id "cell-label-size-input"
@@ -2046,6 +2198,7 @@ viewCellLabelsToggle model =
                     , class "slider"
                     ]
                     []
+                , span [ class "control-value" ] [ text (String.fromInt model.cellLabelSize ++ "px") ]
                 ]
           else
             text ""
@@ -2067,6 +2220,20 @@ viewAdaptiveControl model =
                 translate model.language I18n.OffLabel
             else
                 String.fromInt (round (model.adaptiveSensitivity * 100)) ++ "%"
+
+        -- Slider is on, analysis finished, but zero cells qualified (near-uniform
+        -- entropy). Say so instead of silently drawing nothing.
+        noDetailHint =
+            if
+                model.adaptiveSensitivity > 0
+                    && not model.isAnalyzing
+                    && model.entropyData /= Nothing
+                    && List.isEmpty (currentAdaptiveCells model)
+            then
+                p [ class "adaptive-empty-hint" ] [ text (translate model.language I18n.AdaptiveNoDetail) ]
+
+            else
+                text ""
     in
     viewSliderControl
         { id = "adaptive-density-input"
@@ -2078,7 +2245,10 @@ viewAdaptiveControl model =
         , onChange = \s -> AdaptiveSensitivityChanged (Maybe.withDefault 0 (String.toFloat s))
         , sliderClass = "slider"
         , valueDisplay = span [ class "control-value" ] [ text valueText ]
-        , extra = [ p [ class "mode-explain" ] [ text (translate model.language I18n.AdaptiveGridDensityExplain) ] ]
+        , extra =
+            [ p [ class "mode-explain" ] [ text (translate model.language I18n.AdaptiveGridDensityExplain) ]
+            , noDetailHint
+            ]
         }
 
 
@@ -2421,12 +2591,39 @@ viewCanvasFitMode model url imgWidth imgHeight cw ch =
                 _ ->
                     False
 
+        -- The viewBox is in cm × drawScale units, so the user's px-based
+        -- label size renders microscopically on large canvases (a 50 cm
+        -- canvas is a 5000-unit viewBox squeezed into ~900 screen px).
+        -- Convert the on-screen px preference into viewBox units via the
+        -- SVG's displayed width; fall back to a third of a cell.
+        labelSizeFallbackVb =
+            round (Basics.min (vbW / toFloat (Basics.max 1 model.gridCols)) (vbH / toFloat (Basics.max 1 model.gridRows)) / 3)
+
+        labelSizeVb =
+            case ( model.imageDisplayedWidth, model.imageDisplayedHeight ) of
+                ( Just dw, Just dh ) ->
+                    let
+                        -- preserveAspectRatio "meet": when the element's
+                        -- aspect differs from the viewBox (letterboxing, as
+                        -- on narrow phone layouts), the effective scale is
+                        -- the SMALLER of the two ratios — width alone
+                        -- overestimates it and shrinks the labels.
+                        vbScale = Basics.min (dw / vbW) (dh / vbH)
+                    in
+                    if vbScale > 0 then
+                        round (toFloat model.cellLabelSize / vbScale)
+                    else
+                        labelSizeFallbackVb
+
+                _ ->
+                    labelSizeFallbackVb
+
         baseConfig = settingsFromModel model
         config =
             if labelsTooSmall then
-                { baseConfig | showCellLabels = False }
+                { baseConfig | showCellLabels = False, cellLabelSize = labelSizeVb }
             else
-                baseConfig
+                { baseConfig | cellLabelSize = labelSizeVb }
 
         -- The grid is laid out in (cm × drawScale) viewBox units.
         canvasDims = { width = round vbW, height = round vbH }
@@ -2441,51 +2638,75 @@ viewCanvasFitMode model url imgWidth imgHeight cw ch =
         adaptiveSubs = subdivisionLinesAt config imageRectInSvg (currentAdaptiveCells model)
         -- Labels follow the canvas grid (not the image rect), so they're
         -- positioned relative to the full canvas viewBox.
-        labelsForCanvas = cellLabelsSvg config canvasDims
+        labelsForCanvas = cellLabelsSvg config Nothing canvasDims
         gridLines = allGridLines { config | showCellLabels = False } canvasDims [] ++ adaptiveSubs ++ labelsForCanvas
 
-        decodePointer =
-            Json.Decode.map2 Tuple.pair
+        decodeDragStart =
+            -- Capture the SVG's current pixel dimensions at pointerdown so
+            -- the drag conversion has fresh, race-free measurements.
+            -- clientWidth/clientHeight are integers; map to Float.
+            Json.Decode.map4 ImageDragStart
                 (Json.Decode.field "clientX" Json.Decode.float)
                 (Json.Decode.field "clientY" Json.Decode.float)
-    in
-    div
-        [ class "gridded-image-container canvas-fit-container"
-        , style "aspect-ratio" (String.fromFloat cw ++ " / " ++ String.fromFloat ch)
-        ]
-        [ Svg.svg
-            [ SvgAttr.viewBox ("0 0 " ++ String.fromFloat vbW ++ " " ++ String.fromFloat vbH)
-            , SvgAttr.preserveAspectRatio "xMidYMid meet"
-            , SvgAttr.class
-                (if model.showGrid then
-                    "grid-overlay canvas-frame"
-                 else
-                    "grid-overlay canvas-frame grid-overlay--hidden"
+                (Json.Decode.at [ "currentTarget", "clientWidth" ]
+                    (Json.Decode.map toFloat Json.Decode.int)
                 )
-            , Html.Events.on "pointerdown"
-                (Json.Decode.map (\( x, y ) -> ImageDragStart x y) decodePointer)
+                (Json.Decode.at [ "currentTarget", "clientHeight" ]
+                    (Json.Decode.map toFloat Json.Decode.int)
+                )
+    in
+    div [ class "gridded-image-container canvas-fit-container" ]
+        [ div [ class "canvas-side-label canvas-side-label--width" ]
+            [ text (formatCm cw ++ " cm") ]
+        , div [ class "canvas-fit-row" ]
+            [ div
+                [ class "canvas-stage"
+                , style "aspect-ratio" (String.fromFloat cw ++ " / " ++ String.fromFloat ch)
+
+                -- Explicit width = "largest box of this ratio fitting the row
+                -- width AND the 80vh height cap". Leaving it to flex +
+                -- aspect-ratio is engine-dependent: WebKit collapsed the
+                -- stage to a sliver, Chromium squashed the ratio against the
+                -- row's max-height.
+                , style "width"
+                    ("min(100%, calc((80vh - 24px) * " ++ String.fromFloat (cw / ch) ++ "))")
+                ]
+                [ Svg.svg
+                    [ SvgAttr.viewBox ("0 0 " ++ String.fromFloat vbW ++ " " ++ String.fromFloat vbH)
+                    , SvgAttr.preserveAspectRatio "xMidYMid meet"
+                    , SvgAttr.class
+                        (if model.showGrid then
+                            "grid-overlay canvas-frame"
+                         else
+                            "grid-overlay canvas-frame grid-overlay--hidden"
+                        )
+                    , Html.Events.on "pointerdown" decodeDragStart
+                    ]
+                    ([ Svg.rect
+                        [ SvgAttr.x "0"
+                        , SvgAttr.y "0"
+                        , SvgAttr.width (String.fromFloat vbW)
+                        , SvgAttr.height (String.fromFloat vbH)
+                        , SvgAttr.fill "white"
+                        ]
+                        []
+                     , Svg.image
+                        [ SvgAttr.xlinkHref url
+                        , SvgAttr.x (String.fromFloat (finalX * s))
+                        , SvgAttr.y (String.fromFloat (finalY * s))
+                        , SvgAttr.width (String.fromFloat (finalW * s))
+                        , SvgAttr.height (String.fromFloat (finalH * s))
+                        , SvgAttr.preserveAspectRatio "none"
+                        , SvgAttr.class "canvas-frame-image"
+                        ]
+                        []
+                     ]
+                        ++ gridLines
+                    )
+                ]
+            , div [ class "canvas-side-label canvas-side-label--height" ]
+                [ text (formatCm ch ++ " cm") ]
             ]
-            ([ Svg.rect
-                [ SvgAttr.x "0"
-                , SvgAttr.y "0"
-                , SvgAttr.width (String.fromFloat vbW)
-                , SvgAttr.height (String.fromFloat vbH)
-                , SvgAttr.fill "white"
-                ]
-                []
-             , Svg.image
-                [ SvgAttr.xlinkHref url
-                , SvgAttr.x (String.fromFloat (finalX * s))
-                , SvgAttr.y (String.fromFloat (finalY * s))
-                , SvgAttr.width (String.fromFloat (finalW * s))
-                , SvgAttr.height (String.fromFloat (finalH * s))
-                , SvgAttr.preserveAspectRatio "none"
-                , SvgAttr.class "canvas-frame-image"
-                ]
-                []
-             ]
-                ++ gridLines
-            )
         ]
 
 

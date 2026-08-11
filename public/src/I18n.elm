@@ -70,6 +70,9 @@ type TranslationKey
     | GroupSetUpGrid
     | GroupStyle
     | AdaptiveGridDensityExplain
+    | AdaptiveNoDetail
+    | LabelSize
+    | ClearCanvas
     | ShowCellLabels
     | GroupMatchCanvas
     | GroupOptional
@@ -84,6 +87,7 @@ type TranslationKey
     | FitInside
     | SplitIntoTiles
     | SliceNone
+    | FillBothToSeeCanvas
 
 
 translate : Language -> TranslationKey -> String
@@ -161,7 +165,7 @@ englishTranslations key =
             "Language:"
 
         AppSubtitle ->
-            "Hi. This helps you create a rectilinear grid over an image of your choice"
+            "Hi. This helps you create a rectilinear or square grid over an image of your choice"
 
         UploadPlaceholder ->
             "Upload an image to begin"
@@ -222,6 +226,15 @@ englishTranslations key =
 
         AnalyzingImage ->
             "Analyzing..."
+
+        AdaptiveNoDetail ->
+            "No busy spots found — this image is pretty even all over."
+
+        LabelSize ->
+            "Label size"
+
+        ClearCanvas ->
+            "Clear"
 
         OffLabel ->
             "Off"
@@ -293,7 +306,7 @@ englishTranslations key =
             "show cell labels (A1, B2…)"
 
         GroupMatchCanvas ->
-            "match a canvas"
+            "preview on canvas"
 
         GroupOptional ->
             "(optional)"
@@ -331,6 +344,9 @@ englishTranslations key =
         SliceNone ->
             "none"
 
+        FillBothToSeeCanvas ->
+            "fill both to see your canvas"
+
 
 spanishTranslations : TranslationKey -> String
 spanishTranslations key =
@@ -361,7 +377,7 @@ spanishTranslations key =
             "Idioma:"
 
         AppSubtitle ->
-            "Buenas. Agregale una grilla rectilinear a una imagen que elijas"
+            "Buenas. Agregale una grilla rectilinear o cuadrada a una imagen que elijas"
 
         UploadPlaceholder ->
             "Sub\u{00ED} una imagen para empezar"
@@ -422,6 +438,15 @@ spanishTranslations key =
 
         AnalyzingImage ->
             "Analizando..."
+
+        AdaptiveNoDetail ->
+            "No encontré zonas con mucho detalle: la imagen es bastante uniforme."
+
+        LabelSize ->
+            "Tamaño de etiqueta"
+
+        ClearCanvas ->
+            "Borrar"
 
         OffLabel ->
             "Apagado"
@@ -493,7 +518,7 @@ spanishTranslations key =
             "mostrar etiquetas (A1, B2…)"
 
         GroupMatchCanvas ->
-            "ajustá a un lienzo"
+            "vista previa en lienzo"
 
         GroupOptional ->
             "(opcional)"
@@ -531,6 +556,9 @@ spanishTranslations key =
         SliceNone ->
             "ninguno"
 
+        FillBothToSeeCanvas ->
+            "completá ambos para ver tu lienzo"
+
 
 latinTranslations : TranslationKey -> String
 latinTranslations key =
@@ -561,7 +589,7 @@ latinTranslations key =
             "Lingua:"
 
         AppSubtitle ->
-            "Salve. Hoc te adiuvat creare reticulum rectilineare super imaginem tuam electam"
+            "Salve. Hoc te adiuvat creare reticulum rectilineare aut quadratum super imaginem tuam electam"
 
         UploadPlaceholder ->
             "Submitte imaginem ut incipias"
@@ -622,6 +650,15 @@ latinTranslations key =
 
         AnalyzingImage ->
             "Analysi..."
+
+        AdaptiveNoDetail ->
+            "Nullae partes valde variae inventae sunt — imago fere aequabilis est."
+
+        LabelSize ->
+            "Magnitudo notarum"
+
+        ClearCanvas ->
+            "Delere"
 
         OffLabel ->
             "Inactivum"
@@ -693,7 +730,7 @@ latinTranslations key =
             "monstra notas cellulae (A1, B2…)"
 
         GroupMatchCanvas ->
-            "telam aequa"
+            "in tela praevidere"
 
         GroupOptional ->
             "(per arbitrium)"
@@ -731,6 +768,9 @@ latinTranslations key =
         SliceNone ->
             "nulla"
 
+        FillBothToSeeCanvas ->
+            "imple utrumque ut telam tuam videas"
+
 
 italianTranslations : TranslationKey -> String
 italianTranslations key =
@@ -761,7 +801,7 @@ italianTranslations key =
             "Lingua:"
 
         AppSubtitle ->
-            "Ciao. Questo ti aiuta a creare una griglia rettilinea su un'immagine di tua scelta"
+            "Ciao. Questo ti aiuta a creare una griglia rettilinea o quadrata su un'immagine di tua scelta"
 
         UploadPlaceholder ->
             "Carica un'immagine per iniziare"
@@ -822,6 +862,15 @@ italianTranslations key =
 
         AnalyzingImage ->
             "Analisi..."
+
+        AdaptiveNoDetail ->
+            "Nessuna zona ricca di dettagli: l'immagine è piuttosto uniforme."
+
+        LabelSize ->
+            "Dimensione etichette"
+
+        ClearCanvas ->
+            "Cancella"
 
         OffLabel ->
             "Disattivo"
@@ -893,7 +942,7 @@ italianTranslations key =
             "mostra etichette (A1, B2…)"
 
         GroupMatchCanvas ->
-            "adatta a una tela"
+            "anteprima su tela"
 
         GroupOptional ->
             "(opzionale)"
@@ -931,6 +980,9 @@ italianTranslations key =
         SliceNone ->
             "nessuno"
 
+        FillBothToSeeCanvas ->
+            "compila entrambi per vedere la tua tela"
+
 
 portugueseTranslations : TranslationKey -> String
 portugueseTranslations key =
@@ -961,7 +1013,7 @@ portugueseTranslations key =
             "Idioma:"
 
         AppSubtitle ->
-            "Ola. Isto ajuda-te a criar uma grelha retilinea sobre uma imagem a tua escolha"
+            "Ola. Isto ajuda-te a criar uma grelha retilinea ou quadrada sobre uma imagem a tua escolha"
 
         UploadPlaceholder ->
             "Carregue uma imagem para comecar"
@@ -1022,6 +1074,15 @@ portugueseTranslations key =
 
         AnalyzingImage ->
             "Analisando..."
+
+        AdaptiveNoDetail ->
+            "Não encontrei áreas com muito detalhe: a imagem é bem uniforme."
+
+        LabelSize ->
+            "Tamanho do rótulo"
+
+        ClearCanvas ->
+            "Limpar"
 
         OffLabel ->
             "Desligado"
@@ -1093,7 +1154,7 @@ portugueseTranslations key =
             "mostrar etiquetas (A1, B2…)"
 
         GroupMatchCanvas ->
-            "ajustar a uma tela"
+            "prévia em tela"
 
         GroupOptional ->
             "(opcional)"
@@ -1131,6 +1192,9 @@ portugueseTranslations key =
         SliceNone ->
             "nenhum"
 
+        FillBothToSeeCanvas ->
+            "preenche os dois para veres a tua tela"
+
 
 frenchTranslations : TranslationKey -> String
 frenchTranslations key =
@@ -1161,7 +1225,7 @@ frenchTranslations key =
             "Langue:"
 
         AppSubtitle ->
-            "Bonjour. Ceci vous aide a creer une grille rectiligne sur une image de votre choix"
+            "Bonjour. Ceci vous aide a creer une grille rectiligne ou carree sur une image de votre choix"
 
         UploadPlaceholder ->
             "Telechargez une image pour commencer"
@@ -1222,6 +1286,15 @@ frenchTranslations key =
 
         AnalyzingImage ->
             "Analyse..."
+
+        AdaptiveNoDetail ->
+            "Aucune zone très détaillée trouvée : l'image est plutôt uniforme."
+
+        LabelSize ->
+            "Taille des étiquettes"
+
+        ClearCanvas ->
+            "Effacer"
 
         OffLabel ->
             "Désactivé"
@@ -1293,7 +1366,7 @@ frenchTranslations key =
             "afficher les étiquettes (A1, B2…)"
 
         GroupMatchCanvas ->
-            "ajuster à une toile"
+            "aperçu sur toile"
 
         GroupOptional ->
             "(optionnel)"
@@ -1331,6 +1404,9 @@ frenchTranslations key =
         SliceNone ->
             "aucun"
 
+        FillBothToSeeCanvas ->
+            "remplis les deux pour voir ta toile"
+
 
 asturianoTranslations : TranslationKey -> String
 asturianoTranslations key =
@@ -1361,7 +1437,7 @@ asturianoTranslations key =
             "Llingua:"
 
         AppSubtitle ->
-            "Hola. Esto ayudate a crear una cuadricula retilinia sobro una imaxen de la to eleicion"
+            "Hola. Esto ayudate a crear una cuadricula retilinia o cuadrada sobro una imaxen de la to eleicion"
 
         UploadPlaceholder ->
             "Xube una imaxe pa entamar"
@@ -1422,6 +1498,15 @@ asturianoTranslations key =
 
         AnalyzingImage ->
             "Analizando..."
+
+        AdaptiveNoDetail ->
+            "Nun atopé zones con munchu detalle: la imaxe ye abondo uniforme."
+
+        LabelSize ->
+            "Tamañu de la etiqueta"
+
+        ClearCanvas ->
+            "Llimpiar"
 
         OffLabel ->
             "Apagáu"
@@ -1493,7 +1578,7 @@ asturianoTranslations key =
             "amosar etiquetes (A1, B2…)"
 
         GroupMatchCanvas ->
-            "axustar a un llenzu"
+            "vista previa en llenzu"
 
         GroupOptional ->
             "(opcional)"
@@ -1531,6 +1616,9 @@ asturianoTranslations key =
         SliceNone ->
             "dengún"
 
+        FillBothToSeeCanvas ->
+            "completa los dos pa ver el to llenzu"
+
 
 gaelicTranslations : TranslationKey -> String
 gaelicTranslations key =
@@ -1561,7 +1649,7 @@ gaelicTranslations key =
             "Canan:"
 
         AppSubtitle ->
-            "Halo. Bidh seo a' cuideachadh thu le bhith a' cruthachadh griod direach air iomhaigh de do roghainn"
+            "Halo. Bidh seo a' cuideachadh thu le bhith a' cruthachadh griod direach no ceithir-cheaarnach air iomhaigh de do roghainn"
 
         UploadPlaceholder ->
             "Luchdaich dealbh gus toiseachadh"
@@ -1624,6 +1712,18 @@ gaelicTranslations key =
         AnalyzingImage ->
             -- English fallback (no native Gaelic translation).
             "Analyzing..."
+
+        AdaptiveNoDetail ->
+            -- English fallback (no native Gaelic translation).
+            "No busy spots found — this image is pretty even all over."
+
+        LabelSize ->
+            -- English fallback (no native Gaelic translation).
+            "Label size"
+
+        ClearCanvas ->
+            -- English fallback (no native Gaelic translation).
+            "Clear"
 
         OffLabel ->
             "Dheth"
@@ -1695,7 +1795,7 @@ gaelicTranslations key =
             "taispeáin lipéid (A1, B2…)"
 
         GroupMatchCanvas ->
-            "oiriúnaigh do chanbhás"
+            "réamhamharc ar chanbhás"
 
         GroupOptional ->
             "(roghnach)"
@@ -1733,6 +1833,9 @@ gaelicTranslations key =
         SliceNone ->
             "ceann ar bith"
 
+        FillBothToSeeCanvas ->
+            "líon an dá cheann chun do chanbhás a fheiceáil"
+
 
 euskaraTranslations : TranslationKey -> String
 euskaraTranslations key =
@@ -1763,7 +1866,7 @@ euskaraTranslations key =
             "Hizkuntza:"
 
         AppSubtitle ->
-            "Kaixo. Honek hautatutako irudi baten gainean sareta zuzen bat sortzen laguntzen dizu"
+            "Kaixo. Honek hautatutako irudi baten gainean sareta zuzen edo karratu bat sortzen laguntzen dizu"
 
         UploadPlaceholder ->
             "Igo irudi bat hasteko"
@@ -1824,6 +1927,15 @@ euskaraTranslations key =
 
         AnalyzingImage ->
             "Aztertzen..."
+
+        AdaptiveNoDetail ->
+            "Ez dut xehetasun handiko eremurik aurkitu: irudia nahiko uniformea da."
+
+        LabelSize ->
+            "Etiketaren tamaina"
+
+        ClearCanvas ->
+            "Garbitu"
 
         OffLabel ->
             "Itzalita"
@@ -1895,7 +2007,7 @@ euskaraTranslations key =
             "erakutsi etiketak (A1, B2…)"
 
         GroupMatchCanvas ->
-            "mihise batera egokitu"
+            "mihisean aurrebista"
 
         GroupOptional ->
             "(aukerakoa)"
@@ -1933,6 +2045,9 @@ euskaraTranslations key =
         SliceNone ->
             "bat ere ez"
 
+        FillBothToSeeCanvas ->
+            "bete biak zure mihisea ikusteko"
+
 
 japaneseTranslations : TranslationKey -> String
 japaneseTranslations key =
@@ -1963,7 +2078,7 @@ japaneseTranslations key =
             "言語:"
 
         AppSubtitle ->
-            "こんにちは。これはあなたが選んだ画像上に直線グリッドを作成するのに役立ちます"
+            "こんにちは。これはあなたが選んだ画像上に直線または正方形のグリッドを作成するのに役立ちます"
 
         UploadPlaceholder ->
             "画像をアップロードして始めましょう"
@@ -2024,6 +2139,15 @@ japaneseTranslations key =
 
         AnalyzingImage ->
             "\u{5206}\u{6790}\u{4E2D}..."
+
+        AdaptiveNoDetail ->
+            "\u{7D30}\u{304B}\u{3044}\u{90E8}\u{5206}\u{306F}\u{898B}\u{3064}\u{304B}\u{308A}\u{307E}\u{305B}\u{3093}\u{3067}\u{3057}\u{305F}\u{3002}\u{753B}\u{50CF}\u{306F}\u{308F}\u{308A}\u{3068}\u{5747}\u{4E00}\u{3067}\u{3059}\u{3002}"
+
+        LabelSize ->
+            "\u{30E9}\u{30D9}\u{30EB}\u{306E}\u{5927}\u{304D}\u{3055}"
+
+        ClearCanvas ->
+            "\u{30AF}\u{30EA}\u{30A2}"
 
         OffLabel ->
             "\u{30AA}\u{30D5}"
@@ -2095,7 +2219,7 @@ japaneseTranslations key =
             "セルラベルを表示 (A1, B2…)"
 
         GroupMatchCanvas ->
-            "キャンバスに合わせる"
+            "キャンバスでプレビュー"
 
         GroupOptional ->
             "(任意)"
@@ -2133,6 +2257,9 @@ japaneseTranslations key =
         SliceNone ->
             "なし"
 
+        FillBothToSeeCanvas ->
+            "両方入力するとキャンバスが見えます"
+
 
 russianTranslations : TranslationKey -> String
 russianTranslations key =
@@ -2163,7 +2290,7 @@ russianTranslations key =
             "Язык:"
 
         AppSubtitle ->
-            "Здравствуйте. Это поможет вам создать прямоугольную сетку поверх выбранного вами изображения"
+            "Здравствуйте. Это поможет вам создать прямоугольную или квадратную сетку поверх выбранного вами изображения"
 
         UploadPlaceholder ->
             "Загрузите изображение, чтобы начать"
@@ -2224,6 +2351,15 @@ russianTranslations key =
 
         AnalyzingImage ->
             "\u{0410}\u{043D}\u{0430}\u{043B}\u{0438}\u{0437}..."
+
+        AdaptiveNoDetail ->
+            "\u{041D}\u{0435} \u{043D}\u{0430}\u{0448}\u{043B}\u{043E}\u{0441}\u{044C} \u{0443}\u{0447}\u{0430}\u{0441}\u{0442}\u{043A}\u{043E}\u{0432} \u{0441} \u{0432}\u{044B}\u{0441}\u{043E}\u{043A}\u{043E}\u{0439} \u{0434}\u{0435}\u{0442}\u{0430}\u{043B}\u{0438}\u{0437}\u{0430}\u{0446}\u{0438}\u{0435}\u{0439} \u{2014} \u{0438}\u{0437}\u{043E}\u{0431}\u{0440}\u{0430}\u{0436}\u{0435}\u{043D}\u{0438}\u{0435} \u{0434}\u{043E}\u{0432}\u{043E}\u{043B}\u{044C}\u{043D}\u{043E} \u{043E}\u{0434}\u{043D}\u{043E}\u{0440}\u{043E}\u{0434}\u{043D}\u{043E}\u{0435}."
+
+        LabelSize ->
+            "\u{0420}\u{0430}\u{0437}\u{043C}\u{0435}\u{0440} \u{043F}\u{043E}\u{0434}\u{043F}\u{0438}\u{0441}\u{0435}\u{0439}"
+
+        ClearCanvas ->
+            "\u{041E}\u{0447}\u{0438}\u{0441}\u{0442}\u{0438}\u{0442}\u{044C}"
 
         OffLabel ->
             "\u{0412}\u{044B}\u{043A}\u{043B}."
@@ -2295,7 +2431,7 @@ russianTranslations key =
             "показать метки (A1, B2…)"
 
         GroupMatchCanvas ->
-            "подогнать к холсту"
+            "просмотр на холсте"
 
         GroupOptional ->
             "(необязательно)"
@@ -2333,6 +2469,9 @@ russianTranslations key =
         SliceNone ->
             "никак"
 
+        FillBothToSeeCanvas ->
+            "заполните оба, чтобы увидеть холст"
+
 
 tuvanTranslations : TranslationKey -> String
 tuvanTranslations key =
@@ -2363,7 +2502,7 @@ tuvanTranslations key =
             "Дыл:"
 
         AppSubtitle ->
-            "Экии. Бо дээрге силерниин шилип алган чуруунарга дорт шыйыглар кылырынга дузалаар"
+            "Экии. Бо дээрге силерниин шилип алган чуруунарга дорт азы дорт булуннуг шыйыглар кылырынга дузалаар"
 
         UploadPlaceholder ->
             "Эгелээр дээш чурукту киирингер"
@@ -2426,6 +2565,18 @@ tuvanTranslations key =
         AnalyzingImage ->
             -- English fallback (no native Tuvan translation).
             "Analyzing..."
+
+        AdaptiveNoDetail ->
+            -- English fallback (no native Tuvan translation).
+            "No busy spots found — this image is pretty even all over."
+
+        LabelSize ->
+            -- English fallback (no native Tuvan translation).
+            "Label size"
+
+        ClearCanvas ->
+            -- English fallback (no native Tuvan translation).
+            "Clear"
 
         OffLabel ->
             -- English fallback (no native Tuvan translation).
@@ -2513,7 +2664,7 @@ tuvanTranslations key =
 
         GroupMatchCanvas ->
             -- English fallback (no native Tuvan translation).
-            "match a canvas"
+            "preview on canvas"
 
         GroupOptional ->
             -- English fallback (no native Tuvan translation).
@@ -2563,6 +2714,10 @@ tuvanTranslations key =
             -- English fallback (no native Tuvan translation).
             "none"
 
+        FillBothToSeeCanvas ->
+            -- English fallback (no native Tuvan translation).
+            "fill both to see your canvas"
+
 
 amharicTranslations : TranslationKey -> String
 amharicTranslations key =
@@ -2593,7 +2748,7 @@ amharicTranslations key =
             "ቋንቋ:"
 
         AppSubtitle ->
-            "ሰላም። ይህ በእርስዎ ምርጫ ምስል ላይ አራት ማዕዘናዊ ፍርግርግ እንዲፈጥሩ ይረዳዎታል"
+            "ሰላም። ይህ በእርስዎ ምርጫ ምስል ላይ አራት ማዕዘናዊ ወይም ስኩዌር ፍርግርግ እንዲፈጥሩ ይረዳዎታል"
 
         UploadPlaceholder ->
             "ለመጀመር ምስል ይጫኑ"
@@ -2656,6 +2811,18 @@ amharicTranslations key =
         AnalyzingImage ->
             -- English fallback (no native Amharic translation).
             "Analyzing..."
+
+        AdaptiveNoDetail ->
+            -- English fallback (no native Amharic translation).
+            "No busy spots found — this image is pretty even all over."
+
+        LabelSize ->
+            -- English fallback (no native Amharic translation).
+            "Label size"
+
+        ClearCanvas ->
+            -- English fallback (no native Amharic translation).
+            "Clear"
 
         OffLabel ->
             -- English fallback (no native Amharic translation).
@@ -2743,7 +2910,7 @@ amharicTranslations key =
 
         GroupMatchCanvas ->
             -- English fallback (no native Amharic translation).
-            "match a canvas"
+            "preview on canvas"
 
         GroupOptional ->
             -- English fallback (no native Amharic translation).
@@ -2793,6 +2960,10 @@ amharicTranslations key =
             -- English fallback (no native Amharic translation).
             "none"
 
+        FillBothToSeeCanvas ->
+            -- English fallback (no native Amharic translation).
+            "fill both to see your canvas"
+
 
 hebrewTranslations : TranslationKey -> String
 hebrewTranslations key =
@@ -2823,7 +2994,7 @@ hebrewTranslations key =
             "שפה:"
 
         AppSubtitle ->
-            "שלום. זה עוזר לך ליצור רשת מלבנית על תמונה לבחירתך"
+            "שלום. זה עוזר לך ליצור רשת מלבנית או ריבועית על תמונה לבחירתך"
 
         UploadPlaceholder ->
             "העלה תמונה כדי להתחיל"
@@ -2884,6 +3055,15 @@ hebrewTranslations key =
 
         AnalyzingImage ->
             "\u{05DE}\u{05E0}\u{05EA}\u{05D7}..."
+
+        AdaptiveNoDetail ->
+            "\u{05DC}\u{05D0} \u{05E0}\u{05DE}\u{05E6}\u{05D0}\u{05D5} \u{05D0}\u{05D6}\u{05D5}\u{05E8}\u{05D9}\u{05DD} \u{05E2}\u{05DE}\u{05D5}\u{05E1}\u{05D9}\u{05DD} \u{05D1}\u{05E4}\u{05E8}\u{05D8}\u{05D9}\u{05DD} \u{2014} \u{05D4}\u{05EA}\u{05DE}\u{05D5}\u{05E0}\u{05D4} \u{05D3}\u{05D9} \u{05D0}\u{05D7}\u{05D9}\u{05D3}\u{05D4}."
+
+        LabelSize ->
+            "\u{05D2}\u{05D5}\u{05D3}\u{05DC} \u{05D4}\u{05EA}\u{05D5}\u{05D5}\u{05D9}\u{05D5}\u{05EA}"
+
+        ClearCanvas ->
+            "\u{05E0}\u{05E7}\u{05D4}"
 
         OffLabel ->
             "\u{05DB}\u{05D1}\u{05D5}\u{05D9}"
@@ -2955,7 +3135,7 @@ hebrewTranslations key =
             "הצג תוויות (A1, B2…)"
 
         GroupMatchCanvas ->
-            "התאם לבד"
+            "תצוגה מקדימה על בד"
 
         GroupOptional ->
             "(אופציונלי)"
@@ -2992,3 +3172,6 @@ hebrewTranslations key =
 
         SliceNone ->
             "ללא"
+
+        FillBothToSeeCanvas ->
+            "מלא את שניהם כדי לראות את הבד שלך"
