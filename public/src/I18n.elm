@@ -62,6 +62,32 @@ type TranslationKey
     | RateLimitMessage
     | HeartLikedIt
     | HeartThanks
+    | ShareImage
+    | GridModeRectilinear
+    | GridModeSquare
+    | GridModeRectilinearExplain
+    | GridModeSquareExplain
+    | GroupSetUpGrid
+    | GroupStyle
+    | AdaptiveGridDensityExplain
+    | AdaptiveNoDetail
+    | LabelSize
+    | ClearCanvas
+    | ShowCellLabels
+    | GroupMatchCanvas
+    | GroupOptional
+    | MyCanvasIs
+    | CmWide
+    | CmTall
+    | EachCellApprox
+    | MakeFiveCmCells
+    | HowShouldImageFit
+    | FitToWidth
+    | FitToHeight
+    | FitInside
+    | SplitIntoTiles
+    | SliceNone
+    | FillBothToSeeCanvas
 
 
 translate : Language -> TranslationKey -> String
@@ -139,7 +165,7 @@ englishTranslations key =
             "Language:"
 
         AppSubtitle ->
-            "Hi. This helps you create a rectilinear grid over an image of your choice"
+            "Hi. This helps you create a rectilinear or square grid over an image of your choice"
 
         UploadPlaceholder ->
             "Upload an image to begin"
@@ -201,6 +227,15 @@ englishTranslations key =
         AnalyzingImage ->
             "Analyzing..."
 
+        AdaptiveNoDetail ->
+            "No busy spots found — this image is pretty even all over."
+
+        LabelSize ->
+            "Label size"
+
+        ClearCanvas ->
+            "Clear"
+
         OffLabel ->
             "Off"
 
@@ -243,6 +278,75 @@ englishTranslations key =
         HeartThanks ->
             "thankyouthankyouthankyou!!!!!!"
 
+        ShareImage ->
+            "share image"
+
+        GridModeRectilinear ->
+            "rectilinear"
+
+        GridModeSquare ->
+            "square"
+
+        GridModeRectilinearExplain ->
+            "the grid stretches to fill the image."
+
+        GridModeSquareExplain ->
+            "perfect squares — any leftover strip stays at the bottom-right."
+
+        GroupSetUpGrid ->
+            "set up the grid"
+
+        GroupStyle ->
+            "style"
+
+        AdaptiveGridDensityExplain ->
+            "adds extra grid lines where the image is busy"
+
+        ShowCellLabels ->
+            "show cell labels (A1, B2…)"
+
+        GroupMatchCanvas ->
+            "preview on canvas"
+
+        GroupOptional ->
+            "(optional)"
+
+        MyCanvasIs ->
+            "my canvas is"
+
+        CmWide ->
+            "cm wide"
+
+        CmTall ->
+            "cm tall"
+
+        EachCellApprox ->
+            "each cell ≈"
+
+        MakeFiveCmCells ->
+            "make 5 cm cells"
+
+        HowShouldImageFit ->
+            "how should the image fit?"
+
+        FitToWidth ->
+            "fit to width"
+
+        FitToHeight ->
+            "fit to height"
+
+        FitInside ->
+            "fit inside"
+
+        SplitIntoTiles ->
+            "split into printable tiles"
+
+        SliceNone ->
+            "none"
+
+        FillBothToSeeCanvas ->
+            "fill both to see your canvas"
+
 
 spanishTranslations : TranslationKey -> String
 spanishTranslations key =
@@ -273,7 +377,7 @@ spanishTranslations key =
             "Idioma:"
 
         AppSubtitle ->
-            "Buenas. Agregale una grilla rectilinear a una imagen que elijas"
+            "Buenas. Agregale una grilla rectilinear o cuadrada a una imagen que elijas"
 
         UploadPlaceholder ->
             "Sub\u{00ED} una imagen para empezar"
@@ -335,6 +439,15 @@ spanishTranslations key =
         AnalyzingImage ->
             "Analizando..."
 
+        AdaptiveNoDetail ->
+            "No encontré zonas con mucho detalle: la imagen es bastante uniforme."
+
+        LabelSize ->
+            "Tamaño de etiqueta"
+
+        ClearCanvas ->
+            "Borrar"
+
         OffLabel ->
             "Apagado"
 
@@ -377,6 +490,75 @@ spanishTranslations key =
         HeartThanks ->
             "graciasgraciasgracias!!!!!!"
 
+        ShareImage ->
+            "compartir imagen"
+
+        GridModeRectilinear ->
+            "rectilinear"
+
+        GridModeSquare ->
+            "cuadrada"
+
+        GridModeRectilinearExplain ->
+            "la grilla se estira para llenar la imagen."
+
+        GridModeSquareExplain ->
+            "celdas cuadradas — cualquier sobrante queda abajo a la derecha."
+
+        GroupSetUpGrid ->
+            "armá la grilla"
+
+        GroupStyle ->
+            "estilo"
+
+        AdaptiveGridDensityExplain ->
+            "agrega más líneas donde la imagen es compleja"
+
+        ShowCellLabels ->
+            "mostrar etiquetas (A1, B2…)"
+
+        GroupMatchCanvas ->
+            "vista previa en lienzo"
+
+        GroupOptional ->
+            "(opcional)"
+
+        MyCanvasIs ->
+            "mi lienzo es"
+
+        CmWide ->
+            "cm de ancho"
+
+        CmTall ->
+            "cm de alto"
+
+        EachCellApprox ->
+            "cada celda ≈"
+
+        MakeFiveCmCells ->
+            "celdas de 5 cm"
+
+        HowShouldImageFit ->
+            "¿cómo encaja la imagen?"
+
+        FitToWidth ->
+            "al ancho"
+
+        FitToHeight ->
+            "al alto"
+
+        FitInside ->
+            "dentro"
+
+        SplitIntoTiles ->
+            "dividir en hojas para imprimir"
+
+        SliceNone ->
+            "ninguno"
+
+        FillBothToSeeCanvas ->
+            "completá ambos para ver tu lienzo"
+
 
 latinTranslations : TranslationKey -> String
 latinTranslations key =
@@ -407,7 +589,7 @@ latinTranslations key =
             "Lingua:"
 
         AppSubtitle ->
-            "Salve. Hoc te adiuvat creare reticulum rectilineare super imaginem tuam electam"
+            "Salve. Hoc te adiuvat creare reticulum rectilineare aut quadratum super imaginem tuam electam"
 
         UploadPlaceholder ->
             "Submitte imaginem ut incipias"
@@ -469,6 +651,15 @@ latinTranslations key =
         AnalyzingImage ->
             "Analysi..."
 
+        AdaptiveNoDetail ->
+            "Nullae partes valde variae inventae sunt — imago fere aequabilis est."
+
+        LabelSize ->
+            "Magnitudo notarum"
+
+        ClearCanvas ->
+            "Delere"
+
         OffLabel ->
             "Inactivum"
 
@@ -511,6 +702,75 @@ latinTranslations key =
         HeartThanks ->
             "gratiasgratiasgratias!!!!!!"
 
+        ShareImage ->
+            "imaginem communicare"
+
+        GridModeRectilinear ->
+            "rectilinear"
+
+        GridModeSquare ->
+            "quadrata"
+
+        GridModeRectilinearExplain ->
+            "craticula imaginem implet."
+
+        GridModeSquareExplain ->
+            "ordines columnasque seorsum statuis."
+
+        GroupSetUpGrid ->
+            "craticulam constitue"
+
+        GroupStyle ->
+            "ornatus"
+
+        AdaptiveGridDensityExplain ->
+            "lineas adicit ubi imago turbulenta est."
+
+        ShowCellLabels ->
+            "monstra notas cellulae (A1, B2…)"
+
+        GroupMatchCanvas ->
+            "in tela praevidere"
+
+        GroupOptional ->
+            "(per arbitrium)"
+
+        MyCanvasIs ->
+            "tela mea est"
+
+        CmWide ->
+            "cm lata"
+
+        CmTall ->
+            "cm alta"
+
+        EachCellApprox ->
+            "cellula quaeque ≈"
+
+        MakeFiveCmCells ->
+            "cellulas V cm"
+
+        HowShouldImageFit ->
+            "quomodo imago apta est?"
+
+        FitToWidth ->
+            "ad latitudinem"
+
+        FitToHeight ->
+            "ad altitudinem"
+
+        FitInside ->
+            "intra"
+
+        SplitIntoTiles ->
+            "in lateres divide"
+
+        SliceNone ->
+            "nulla"
+
+        FillBothToSeeCanvas ->
+            "imple utrumque ut telam tuam videas"
+
 
 italianTranslations : TranslationKey -> String
 italianTranslations key =
@@ -541,7 +801,7 @@ italianTranslations key =
             "Lingua:"
 
         AppSubtitle ->
-            "Ciao. Questo ti aiuta a creare una griglia rettilinea su un'immagine di tua scelta"
+            "Ciao. Questo ti aiuta a creare una griglia rettilinea o quadrata su un'immagine di tua scelta"
 
         UploadPlaceholder ->
             "Carica un'immagine per iniziare"
@@ -603,6 +863,15 @@ italianTranslations key =
         AnalyzingImage ->
             "Analisi..."
 
+        AdaptiveNoDetail ->
+            "Nessuna zona ricca di dettagli: l'immagine è piuttosto uniforme."
+
+        LabelSize ->
+            "Dimensione etichette"
+
+        ClearCanvas ->
+            "Cancella"
+
         OffLabel ->
             "Disattivo"
 
@@ -645,6 +914,75 @@ italianTranslations key =
         HeartThanks ->
             "graziegraziegrazie!!!!!!"
 
+        ShareImage ->
+            "condividi immagine"
+
+        GridModeRectilinear ->
+            "rectilinear"
+
+        GridModeSquare ->
+            "quadrata"
+
+        GridModeRectilinearExplain ->
+            "la griglia si estende per riempire l'immagine."
+
+        GridModeSquareExplain ->
+            "imposti righe e colonne separatamente."
+
+        GroupSetUpGrid ->
+            "imposta la griglia"
+
+        GroupStyle ->
+            "stile"
+
+        AdaptiveGridDensityExplain ->
+            "aggiunge linee dove l'immagine è ricca."
+
+        ShowCellLabels ->
+            "mostra etichette (A1, B2…)"
+
+        GroupMatchCanvas ->
+            "anteprima su tela"
+
+        GroupOptional ->
+            "(opzionale)"
+
+        MyCanvasIs ->
+            "la mia tela è"
+
+        CmWide ->
+            "cm di larghezza"
+
+        CmTall ->
+            "cm di altezza"
+
+        EachCellApprox ->
+            "ogni cella ≈"
+
+        MakeFiveCmCells ->
+            "celle da 5 cm"
+
+        HowShouldImageFit ->
+            "come deve adattarsi l'immagine?"
+
+        FitToWidth ->
+            "alla larghezza"
+
+        FitToHeight ->
+            "all'altezza"
+
+        FitInside ->
+            "all'interno"
+
+        SplitIntoTiles ->
+            "dividi in fogli per stampa"
+
+        SliceNone ->
+            "nessuno"
+
+        FillBothToSeeCanvas ->
+            "compila entrambi per vedere la tua tela"
+
 
 portugueseTranslations : TranslationKey -> String
 portugueseTranslations key =
@@ -675,7 +1013,7 @@ portugueseTranslations key =
             "Idioma:"
 
         AppSubtitle ->
-            "Ola. Isto ajuda-te a criar uma grelha retilinea sobre uma imagem a tua escolha"
+            "Ola. Isto ajuda-te a criar uma grelha retilinea ou quadrada sobre uma imagem a tua escolha"
 
         UploadPlaceholder ->
             "Carregue uma imagem para comecar"
@@ -737,6 +1075,15 @@ portugueseTranslations key =
         AnalyzingImage ->
             "Analisando..."
 
+        AdaptiveNoDetail ->
+            "Não encontrei áreas com muito detalhe: a imagem é bem uniforme."
+
+        LabelSize ->
+            "Tamanho do rótulo"
+
+        ClearCanvas ->
+            "Limpar"
+
         OffLabel ->
             "Desligado"
 
@@ -779,6 +1126,75 @@ portugueseTranslations key =
         HeartThanks ->
             "obrigadoobrigadoobrigado!!!!!!"
 
+        ShareImage ->
+            "compartilhar imagem"
+
+        GridModeRectilinear ->
+            "rectilinear"
+
+        GridModeSquare ->
+            "quadrada"
+
+        GridModeRectilinearExplain ->
+            "a grade se estende para preencher a imagem."
+
+        GridModeSquareExplain ->
+            "você define linhas e colunas separadamente."
+
+        GroupSetUpGrid ->
+            "configure a grade"
+
+        GroupStyle ->
+            "estilo"
+
+        AdaptiveGridDensityExplain ->
+            "adiciona linhas onde a imagem é complexa."
+
+        ShowCellLabels ->
+            "mostrar etiquetas (A1, B2…)"
+
+        GroupMatchCanvas ->
+            "prévia em tela"
+
+        GroupOptional ->
+            "(opcional)"
+
+        MyCanvasIs ->
+            "minha tela é"
+
+        CmWide ->
+            "cm de largura"
+
+        CmTall ->
+            "cm de altura"
+
+        EachCellApprox ->
+            "cada célula ≈"
+
+        MakeFiveCmCells ->
+            "células de 5 cm"
+
+        HowShouldImageFit ->
+            "como a imagem deve caber?"
+
+        FitToWidth ->
+            "à largura"
+
+        FitToHeight ->
+            "à altura"
+
+        FitInside ->
+            "dentro"
+
+        SplitIntoTiles ->
+            "dividir em folhas para impressão"
+
+        SliceNone ->
+            "nenhum"
+
+        FillBothToSeeCanvas ->
+            "preenche os dois para veres a tua tela"
+
 
 frenchTranslations : TranslationKey -> String
 frenchTranslations key =
@@ -809,7 +1225,7 @@ frenchTranslations key =
             "Langue:"
 
         AppSubtitle ->
-            "Bonjour. Ceci vous aide a creer une grille rectiligne sur une image de votre choix"
+            "Bonjour. Ceci vous aide a creer une grille rectiligne ou carree sur une image de votre choix"
 
         UploadPlaceholder ->
             "Telechargez une image pour commencer"
@@ -871,6 +1287,15 @@ frenchTranslations key =
         AnalyzingImage ->
             "Analyse..."
 
+        AdaptiveNoDetail ->
+            "Aucune zone très détaillée trouvée : l'image est plutôt uniforme."
+
+        LabelSize ->
+            "Taille des étiquettes"
+
+        ClearCanvas ->
+            "Effacer"
+
         OffLabel ->
             "Désactivé"
 
@@ -913,6 +1338,75 @@ frenchTranslations key =
         HeartThanks ->
             "mercimercimerci!!!!!!"
 
+        ShareImage ->
+            "partager l'image"
+
+        GridModeRectilinear ->
+            "rectilinear"
+
+        GridModeSquare ->
+            "carrée"
+
+        GridModeRectilinearExplain ->
+            "la grille s'étire pour remplir l'image."
+
+        GridModeSquareExplain ->
+            "tu choisis lignes et colonnes séparément."
+
+        GroupSetUpGrid ->
+            "configure la grille"
+
+        GroupStyle ->
+            "style"
+
+        AdaptiveGridDensityExplain ->
+            "ajoute des lignes où l'image est complexe."
+
+        ShowCellLabels ->
+            "afficher les étiquettes (A1, B2…)"
+
+        GroupMatchCanvas ->
+            "aperçu sur toile"
+
+        GroupOptional ->
+            "(optionnel)"
+
+        MyCanvasIs ->
+            "ma toile est"
+
+        CmWide ->
+            "cm de large"
+
+        CmTall ->
+            "cm de haut"
+
+        EachCellApprox ->
+            "chaque cellule ≈"
+
+        MakeFiveCmCells ->
+            "cellules de 5 cm"
+
+        HowShouldImageFit ->
+            "comment adapter l'image ?"
+
+        FitToWidth ->
+            "à la largeur"
+
+        FitToHeight ->
+            "à la hauteur"
+
+        FitInside ->
+            "à l'intérieur"
+
+        SplitIntoTiles ->
+            "découper en feuilles imprimables"
+
+        SliceNone ->
+            "aucun"
+
+        FillBothToSeeCanvas ->
+            "remplis les deux pour voir ta toile"
+
 
 asturianoTranslations : TranslationKey -> String
 asturianoTranslations key =
@@ -943,7 +1437,7 @@ asturianoTranslations key =
             "Llingua:"
 
         AppSubtitle ->
-            "Hola. Esto ayudate a crear una cuadricula retilinia sobro una imaxen de la to eleicion"
+            "Hola. Esto ayudate a crear una cuadricula retilinia o cuadrada sobro una imaxen de la to eleicion"
 
         UploadPlaceholder ->
             "Xube una imaxe pa entamar"
@@ -1005,6 +1499,15 @@ asturianoTranslations key =
         AnalyzingImage ->
             "Analizando..."
 
+        AdaptiveNoDetail ->
+            "Nun atopé zones con munchu detalle: la imaxe ye abondo uniforme."
+
+        LabelSize ->
+            "Tamañu de la etiqueta"
+
+        ClearCanvas ->
+            "Llimpiar"
+
         OffLabel ->
             "Apagáu"
 
@@ -1047,6 +1550,75 @@ asturianoTranslations key =
         HeartThanks ->
             "graciesgraciesgracies!!!!!!"
 
+        ShareImage ->
+            "compartir imaxe"
+
+        GridModeRectilinear ->
+            "rectilinear"
+
+        GridModeSquare ->
+            "cuadrada"
+
+        GridModeRectilinearExplain ->
+            "la rexilla estírase pa enllenar la imaxe."
+
+        GridModeSquareExplain ->
+            "tu pones les fileres y columnes per separáu."
+
+        GroupSetUpGrid ->
+            "configura la rexilla"
+
+        GroupStyle ->
+            "estilu"
+
+        AdaptiveGridDensityExplain ->
+            "amiesta llinies onde la imaxe ye complicada."
+
+        ShowCellLabels ->
+            "amosar etiquetes (A1, B2…)"
+
+        GroupMatchCanvas ->
+            "vista previa en llenzu"
+
+        GroupOptional ->
+            "(opcional)"
+
+        MyCanvasIs ->
+            "el mio llenzu ye"
+
+        CmWide ->
+            "cm d'anchu"
+
+        CmTall ->
+            "cm d'altu"
+
+        EachCellApprox ->
+            "cada caxellu ≈"
+
+        MakeFiveCmCells ->
+            "caxellos de 5 cm"
+
+        HowShouldImageFit ->
+            "cómo tien d'axustase la imaxe?"
+
+        FitToWidth ->
+            "al anchu"
+
+        FitToHeight ->
+            "al altu"
+
+        FitInside ->
+            "dientro"
+
+        SplitIntoTiles ->
+            "partir en fueyes imprenties"
+
+        SliceNone ->
+            "dengún"
+
+        FillBothToSeeCanvas ->
+            "completa los dos pa ver el to llenzu"
+
 
 gaelicTranslations : TranslationKey -> String
 gaelicTranslations key =
@@ -1077,7 +1649,7 @@ gaelicTranslations key =
             "Canan:"
 
         AppSubtitle ->
-            "Halo. Bidh seo a' cuideachadh thu le bhith a' cruthachadh griod direach air iomhaigh de do roghainn"
+            "Halo. Bidh seo a' cuideachadh thu le bhith a' cruthachadh griod direach no ceithir-cheaarnach air iomhaigh de do roghainn"
 
         UploadPlaceholder ->
             "Luchdaich dealbh gus toiseachadh"
@@ -1141,6 +1713,18 @@ gaelicTranslations key =
             -- English fallback (no native Gaelic translation).
             "Analyzing..."
 
+        AdaptiveNoDetail ->
+            -- English fallback (no native Gaelic translation).
+            "No busy spots found — this image is pretty even all over."
+
+        LabelSize ->
+            -- English fallback (no native Gaelic translation).
+            "Label size"
+
+        ClearCanvas ->
+            -- English fallback (no native Gaelic translation).
+            "Clear"
+
         OffLabel ->
             "Dheth"
 
@@ -1183,6 +1767,75 @@ gaelicTranslations key =
         HeartThanks ->
             "tapaleatapaleatapalea!!!!!!"
 
+        ShareImage ->
+            "roinn íomhá"
+
+        GridModeRectilinear ->
+            "rectilinear"
+
+        GridModeSquare ->
+            "cearnach"
+
+        GridModeRectilinearExplain ->
+            "síneann an ghreille chun an íomhá a líonadh."
+
+        GridModeSquareExplain ->
+            "socraíonn tú sraitheanna agus colúin ar leithligh."
+
+        GroupSetUpGrid ->
+            "socraigh an ghreille"
+
+        GroupStyle ->
+            "stíl"
+
+        AdaptiveGridDensityExplain ->
+            "cuireann sé línte breise nuair a bhíonn an íomhá gnóthach."
+
+        ShowCellLabels ->
+            "taispeáin lipéid (A1, B2…)"
+
+        GroupMatchCanvas ->
+            "réamhamharc ar chanbhás"
+
+        GroupOptional ->
+            "(roghnach)"
+
+        MyCanvasIs ->
+            "tá mo chanbhás"
+
+        CmWide ->
+            "cm ar leithead"
+
+        CmTall ->
+            "cm ar airde"
+
+        EachCellApprox ->
+            "gach cill ≈"
+
+        MakeFiveCmCells ->
+            "cealla 5 cm"
+
+        HowShouldImageFit ->
+            "conas a oirfidh an íomhá?"
+
+        FitToWidth ->
+            "leis an leithead"
+
+        FitToHeight ->
+            "leis an airde"
+
+        FitInside ->
+            "istigh"
+
+        SplitIntoTiles ->
+            "roinn ina leatháin chló"
+
+        SliceNone ->
+            "ceann ar bith"
+
+        FillBothToSeeCanvas ->
+            "líon an dá cheann chun do chanbhás a fheiceáil"
+
 
 euskaraTranslations : TranslationKey -> String
 euskaraTranslations key =
@@ -1213,7 +1866,7 @@ euskaraTranslations key =
             "Hizkuntza:"
 
         AppSubtitle ->
-            "Kaixo. Honek hautatutako irudi baten gainean sareta zuzen bat sortzen laguntzen dizu"
+            "Kaixo. Honek hautatutako irudi baten gainean sareta zuzen edo karratu bat sortzen laguntzen dizu"
 
         UploadPlaceholder ->
             "Igo irudi bat hasteko"
@@ -1275,6 +1928,15 @@ euskaraTranslations key =
         AnalyzingImage ->
             "Aztertzen..."
 
+        AdaptiveNoDetail ->
+            "Ez dut xehetasun handiko eremurik aurkitu: irudia nahiko uniformea da."
+
+        LabelSize ->
+            "Etiketaren tamaina"
+
+        ClearCanvas ->
+            "Garbitu"
+
         OffLabel ->
             "Itzalita"
 
@@ -1317,6 +1979,75 @@ euskaraTranslations key =
         HeartThanks ->
             "eskerrikaeskerrikaeskerrika!!!!!!"
 
+        ShareImage ->
+            "partekatu irudia"
+
+        GridModeRectilinear ->
+            "rectilinear"
+
+        GridModeSquare ->
+            "karratua"
+
+        GridModeRectilinearExplain ->
+            "saretak irudia betetzen du."
+
+        GridModeSquareExplain ->
+            "errenkadak eta zutabeak bereiz ezartzen dituzu."
+
+        GroupSetUpGrid ->
+            "sareta ezarri"
+
+        GroupStyle ->
+            "estiloa"
+
+        AdaptiveGridDensityExplain ->
+            "lerro gehiago gehitzen ditu irudia korapilatsua denean."
+
+        ShowCellLabels ->
+            "erakutsi etiketak (A1, B2…)"
+
+        GroupMatchCanvas ->
+            "mihisean aurrebista"
+
+        GroupOptional ->
+            "(aukerakoa)"
+
+        MyCanvasIs ->
+            "nire mihisea da"
+
+        CmWide ->
+            "cm zabal"
+
+        CmTall ->
+            "cm garai"
+
+        EachCellApprox ->
+            "gelaxka bakoitza ≈"
+
+        MakeFiveCmCells ->
+            "5 cm-ko gelaxkak"
+
+        HowShouldImageFit ->
+            "nola egokitu behar da irudia?"
+
+        FitToWidth ->
+            "zabalerara"
+
+        FitToHeight ->
+            "altuerara"
+
+        FitInside ->
+            "barruan"
+
+        SplitIntoTiles ->
+            "orri inprimagarriak banatu"
+
+        SliceNone ->
+            "bat ere ez"
+
+        FillBothToSeeCanvas ->
+            "bete biak zure mihisea ikusteko"
+
 
 japaneseTranslations : TranslationKey -> String
 japaneseTranslations key =
@@ -1347,7 +2078,7 @@ japaneseTranslations key =
             "言語:"
 
         AppSubtitle ->
-            "こんにちは。これはあなたが選んだ画像上に直線グリッドを作成するのに役立ちます"
+            "こんにちは。これはあなたが選んだ画像上に直線または正方形のグリッドを作成するのに役立ちます"
 
         UploadPlaceholder ->
             "画像をアップロードして始めましょう"
@@ -1409,6 +2140,15 @@ japaneseTranslations key =
         AnalyzingImage ->
             "\u{5206}\u{6790}\u{4E2D}..."
 
+        AdaptiveNoDetail ->
+            "\u{7D30}\u{304B}\u{3044}\u{90E8}\u{5206}\u{306F}\u{898B}\u{3064}\u{304B}\u{308A}\u{307E}\u{305B}\u{3093}\u{3067}\u{3057}\u{305F}\u{3002}\u{753B}\u{50CF}\u{306F}\u{308F}\u{308A}\u{3068}\u{5747}\u{4E00}\u{3067}\u{3059}\u{3002}"
+
+        LabelSize ->
+            "\u{30E9}\u{30D9}\u{30EB}\u{306E}\u{5927}\u{304D}\u{3055}"
+
+        ClearCanvas ->
+            "\u{30AF}\u{30EA}\u{30A2}"
+
         OffLabel ->
             "\u{30AA}\u{30D5}"
 
@@ -1451,6 +2191,75 @@ japaneseTranslations key =
         HeartThanks ->
             "ありがとありがとありがと！！！！！！"
 
+        ShareImage ->
+            "画像を共有"
+
+        GridModeRectilinear ->
+            "矩形"
+
+        GridModeSquare ->
+            "正方形"
+
+        GridModeRectilinearExplain ->
+            "グリッドは画像いっぱいに広がります。"
+
+        GridModeSquareExplain ->
+            "行と列を別々に設定します。"
+
+        GroupSetUpGrid ->
+            "グリッドを設定"
+
+        GroupStyle ->
+            "スタイル"
+
+        AdaptiveGridDensityExplain ->
+            "画像が複雑な部分にグリッド線を増やします。"
+
+        ShowCellLabels ->
+            "セルラベルを表示 (A1, B2…)"
+
+        GroupMatchCanvas ->
+            "キャンバスでプレビュー"
+
+        GroupOptional ->
+            "(任意)"
+
+        MyCanvasIs ->
+            "私のキャンバスは"
+
+        CmWide ->
+            "cm 幅"
+
+        CmTall ->
+            "cm 高さ"
+
+        EachCellApprox ->
+            "各セル ≈"
+
+        MakeFiveCmCells ->
+            "5cm のセルを作る"
+
+        HowShouldImageFit ->
+            "画像をどう収める?"
+
+        FitToWidth ->
+            "幅に合わせる"
+
+        FitToHeight ->
+            "高さに合わせる"
+
+        FitInside ->
+            "枠内に収める"
+
+        SplitIntoTiles ->
+            "印刷用に分割"
+
+        SliceNone ->
+            "なし"
+
+        FillBothToSeeCanvas ->
+            "両方入力するとキャンバスが見えます"
+
 
 russianTranslations : TranslationKey -> String
 russianTranslations key =
@@ -1481,7 +2290,7 @@ russianTranslations key =
             "Язык:"
 
         AppSubtitle ->
-            "Здравствуйте. Это поможет вам создать прямоугольную сетку поверх выбранного вами изображения"
+            "Здравствуйте. Это поможет вам создать прямоугольную или квадратную сетку поверх выбранного вами изображения"
 
         UploadPlaceholder ->
             "Загрузите изображение, чтобы начать"
@@ -1543,6 +2352,15 @@ russianTranslations key =
         AnalyzingImage ->
             "\u{0410}\u{043D}\u{0430}\u{043B}\u{0438}\u{0437}..."
 
+        AdaptiveNoDetail ->
+            "\u{041D}\u{0435} \u{043D}\u{0430}\u{0448}\u{043B}\u{043E}\u{0441}\u{044C} \u{0443}\u{0447}\u{0430}\u{0441}\u{0442}\u{043A}\u{043E}\u{0432} \u{0441} \u{0432}\u{044B}\u{0441}\u{043E}\u{043A}\u{043E}\u{0439} \u{0434}\u{0435}\u{0442}\u{0430}\u{043B}\u{0438}\u{0437}\u{0430}\u{0446}\u{0438}\u{0435}\u{0439} \u{2014} \u{0438}\u{0437}\u{043E}\u{0431}\u{0440}\u{0430}\u{0436}\u{0435}\u{043D}\u{0438}\u{0435} \u{0434}\u{043E}\u{0432}\u{043E}\u{043B}\u{044C}\u{043D}\u{043E} \u{043E}\u{0434}\u{043D}\u{043E}\u{0440}\u{043E}\u{0434}\u{043D}\u{043E}\u{0435}."
+
+        LabelSize ->
+            "\u{0420}\u{0430}\u{0437}\u{043C}\u{0435}\u{0440} \u{043F}\u{043E}\u{0434}\u{043F}\u{0438}\u{0441}\u{0435}\u{0439}"
+
+        ClearCanvas ->
+            "\u{041E}\u{0447}\u{0438}\u{0441}\u{0442}\u{0438}\u{0442}\u{044C}"
+
         OffLabel ->
             "\u{0412}\u{044B}\u{043A}\u{043B}."
 
@@ -1585,6 +2403,75 @@ russianTranslations key =
         HeartThanks ->
             "спасибоспасибоспасибо!!!!!!"
 
+        ShareImage ->
+            "поделиться изображением"
+
+        GridModeRectilinear ->
+            "прямоугольная"
+
+        GridModeSquare ->
+            "квадратная"
+
+        GridModeRectilinearExplain ->
+            "сетка растягивается, чтобы заполнить изображение."
+
+        GridModeSquareExplain ->
+            "ты задаёшь строки и столбцы отдельно."
+
+        GroupSetUpGrid ->
+            "настройте сетку"
+
+        GroupStyle ->
+            "стиль"
+
+        AdaptiveGridDensityExplain ->
+            "добавляет линии там, где изображение сложное."
+
+        ShowCellLabels ->
+            "показать метки (A1, B2…)"
+
+        GroupMatchCanvas ->
+            "просмотр на холсте"
+
+        GroupOptional ->
+            "(необязательно)"
+
+        MyCanvasIs ->
+            "мой холст"
+
+        CmWide ->
+            "см в ширину"
+
+        CmTall ->
+            "см в высоту"
+
+        EachCellApprox ->
+            "каждая ячейка ≈"
+
+        MakeFiveCmCells ->
+            "ячейки по 5 см"
+
+        HowShouldImageFit ->
+            "как вписать изображение?"
+
+        FitToWidth ->
+            "по ширине"
+
+        FitToHeight ->
+            "по высоте"
+
+        FitInside ->
+            "вписать"
+
+        SplitIntoTiles ->
+            "разделить на листы для печати"
+
+        SliceNone ->
+            "никак"
+
+        FillBothToSeeCanvas ->
+            "заполните оба, чтобы увидеть холст"
+
 
 tuvanTranslations : TranslationKey -> String
 tuvanTranslations key =
@@ -1615,7 +2502,7 @@ tuvanTranslations key =
             "Дыл:"
 
         AppSubtitle ->
-            "Экии. Бо дээрге силерниин шилип алган чуруунарга дорт шыйыглар кылырынга дузалаар"
+            "Экии. Бо дээрге силерниин шилип алган чуруунарга дорт азы дорт булуннуг шыйыглар кылырынга дузалаар"
 
         UploadPlaceholder ->
             "Эгелээр дээш чурукту киирингер"
@@ -1679,6 +2566,18 @@ tuvanTranslations key =
             -- English fallback (no native Tuvan translation).
             "Analyzing..."
 
+        AdaptiveNoDetail ->
+            -- English fallback (no native Tuvan translation).
+            "No busy spots found — this image is pretty even all over."
+
+        LabelSize ->
+            -- English fallback (no native Tuvan translation).
+            "Label size"
+
+        ClearCanvas ->
+            -- English fallback (no native Tuvan translation).
+            "Clear"
+
         OffLabel ->
             -- English fallback (no native Tuvan translation).
             "Off"
@@ -1728,6 +2627,97 @@ tuvanTranslations key =
             -- English fallback (no native Tuvan translation).
             "thankyouthankyouthankyou!!!!!!"
 
+        ShareImage ->
+            -- English fallback (no native Tuvan translation).
+            "share image"
+
+        GridModeRectilinear ->
+            "rectilinear"
+
+        GridModeSquare ->
+            -- English fallback (no native Tuvan translation).
+            "custom"
+
+        GridModeRectilinearExplain ->
+            -- English fallback (no native Tuvan translation).
+            "the grid stretches to fill the image."
+
+        GridModeSquareExplain ->
+            -- English fallback (no native Tuvan translation).
+            "perfect squares — any leftover strip stays at the bottom-right."
+
+        GroupSetUpGrid ->
+            -- English fallback (no native Tuvan translation).
+            "set up the grid"
+
+        GroupStyle ->
+            -- English fallback (no native Tuvan translation).
+            "style"
+
+        AdaptiveGridDensityExplain ->
+            -- English fallback (no native Tuvan translation).
+            "adds extra grid lines where the image is busy"
+
+        ShowCellLabels ->
+            -- English fallback (no native Tuvan translation).
+            "show cell labels (A1, B2…)"
+
+        GroupMatchCanvas ->
+            -- English fallback (no native Tuvan translation).
+            "preview on canvas"
+
+        GroupOptional ->
+            -- English fallback (no native Tuvan translation).
+            "(optional)"
+
+        MyCanvasIs ->
+            -- English fallback (no native Tuvan translation).
+            "my canvas is"
+
+        CmWide ->
+            -- English fallback (no native Tuvan translation).
+            "cm wide"
+
+        CmTall ->
+            -- English fallback (no native Tuvan translation).
+            "cm tall"
+
+        EachCellApprox ->
+            -- English fallback (no native Tuvan translation).
+            "each cell ≈"
+
+        MakeFiveCmCells ->
+            -- English fallback (no native Tuvan translation).
+            "make 5 cm cells"
+
+        HowShouldImageFit ->
+            -- English fallback (no native Tuvan translation).
+            "how should the image fit?"
+
+        FitToWidth ->
+            -- English fallback (no native Tuvan translation).
+            "fit to width"
+
+        FitToHeight ->
+            -- English fallback (no native Tuvan translation).
+            "fit to height"
+
+        FitInside ->
+            -- English fallback (no native Tuvan translation).
+            "fit inside"
+
+        SplitIntoTiles ->
+            -- English fallback (no native Tuvan translation).
+            "split into printable tiles"
+
+        SliceNone ->
+            -- English fallback (no native Tuvan translation).
+            "none"
+
+        FillBothToSeeCanvas ->
+            -- English fallback (no native Tuvan translation).
+            "fill both to see your canvas"
+
 
 amharicTranslations : TranslationKey -> String
 amharicTranslations key =
@@ -1758,7 +2748,7 @@ amharicTranslations key =
             "ቋንቋ:"
 
         AppSubtitle ->
-            "ሰላም። ይህ በእርስዎ ምርጫ ምስል ላይ አራት ማዕዘናዊ ፍርግርግ እንዲፈጥሩ ይረዳዎታል"
+            "ሰላም። ይህ በእርስዎ ምርጫ ምስል ላይ አራት ማዕዘናዊ ወይም ስኩዌር ፍርግርግ እንዲፈጥሩ ይረዳዎታል"
 
         UploadPlaceholder ->
             "ለመጀመር ምስል ይጫኑ"
@@ -1822,6 +2812,18 @@ amharicTranslations key =
             -- English fallback (no native Amharic translation).
             "Analyzing..."
 
+        AdaptiveNoDetail ->
+            -- English fallback (no native Amharic translation).
+            "No busy spots found — this image is pretty even all over."
+
+        LabelSize ->
+            -- English fallback (no native Amharic translation).
+            "Label size"
+
+        ClearCanvas ->
+            -- English fallback (no native Amharic translation).
+            "Clear"
+
         OffLabel ->
             -- English fallback (no native Amharic translation).
             "Off"
@@ -1871,6 +2873,97 @@ amharicTranslations key =
             -- English fallback (no native Amharic translation).
             "thankyouthankyouthankyou!!!!!!"
 
+        ShareImage ->
+            -- English fallback (no native Amharic translation).
+            "share image"
+
+        GridModeRectilinear ->
+            "rectilinear"
+
+        GridModeSquare ->
+            -- English fallback (no native Amharic translation).
+            "custom"
+
+        GridModeRectilinearExplain ->
+            -- English fallback (no native Amharic translation).
+            "the grid stretches to fill the image."
+
+        GridModeSquareExplain ->
+            -- English fallback (no native Amharic translation).
+            "perfect squares — any leftover strip stays at the bottom-right."
+
+        GroupSetUpGrid ->
+            -- English fallback (no native Amharic translation).
+            "set up the grid"
+
+        GroupStyle ->
+            -- English fallback (no native Amharic translation).
+            "style"
+
+        AdaptiveGridDensityExplain ->
+            -- English fallback (no native Amharic translation).
+            "adds extra grid lines where the image is busy"
+
+        ShowCellLabels ->
+            -- English fallback (no native Amharic translation).
+            "show cell labels (A1, B2…)"
+
+        GroupMatchCanvas ->
+            -- English fallback (no native Amharic translation).
+            "preview on canvas"
+
+        GroupOptional ->
+            -- English fallback (no native Amharic translation).
+            "(optional)"
+
+        MyCanvasIs ->
+            -- English fallback (no native Amharic translation).
+            "my canvas is"
+
+        CmWide ->
+            -- English fallback (no native Amharic translation).
+            "cm wide"
+
+        CmTall ->
+            -- English fallback (no native Amharic translation).
+            "cm tall"
+
+        EachCellApprox ->
+            -- English fallback (no native Amharic translation).
+            "each cell ≈"
+
+        MakeFiveCmCells ->
+            -- English fallback (no native Amharic translation).
+            "make 5 cm cells"
+
+        HowShouldImageFit ->
+            -- English fallback (no native Amharic translation).
+            "how should the image fit?"
+
+        FitToWidth ->
+            -- English fallback (no native Amharic translation).
+            "fit to width"
+
+        FitToHeight ->
+            -- English fallback (no native Amharic translation).
+            "fit to height"
+
+        FitInside ->
+            -- English fallback (no native Amharic translation).
+            "fit inside"
+
+        SplitIntoTiles ->
+            -- English fallback (no native Amharic translation).
+            "split into printable tiles"
+
+        SliceNone ->
+            -- English fallback (no native Amharic translation).
+            "none"
+
+        FillBothToSeeCanvas ->
+            -- English fallback (no native Amharic translation).
+            "fill both to see your canvas"
+
 
 hebrewTranslations : TranslationKey -> String
 hebrewTranslations key =
@@ -1901,7 +2994,7 @@ hebrewTranslations key =
             "שפה:"
 
         AppSubtitle ->
-            "שלום. זה עוזר לך ליצור רשת מלבנית על תמונה לבחירתך"
+            "שלום. זה עוזר לך ליצור רשת מלבנית או ריבועית על תמונה לבחירתך"
 
         UploadPlaceholder ->
             "העלה תמונה כדי להתחיל"
@@ -1963,6 +3056,15 @@ hebrewTranslations key =
         AnalyzingImage ->
             "\u{05DE}\u{05E0}\u{05EA}\u{05D7}..."
 
+        AdaptiveNoDetail ->
+            "\u{05DC}\u{05D0} \u{05E0}\u{05DE}\u{05E6}\u{05D0}\u{05D5} \u{05D0}\u{05D6}\u{05D5}\u{05E8}\u{05D9}\u{05DD} \u{05E2}\u{05DE}\u{05D5}\u{05E1}\u{05D9}\u{05DD} \u{05D1}\u{05E4}\u{05E8}\u{05D8}\u{05D9}\u{05DD} \u{2014} \u{05D4}\u{05EA}\u{05DE}\u{05D5}\u{05E0}\u{05D4} \u{05D3}\u{05D9} \u{05D0}\u{05D7}\u{05D9}\u{05D3}\u{05D4}."
+
+        LabelSize ->
+            "\u{05D2}\u{05D5}\u{05D3}\u{05DC} \u{05D4}\u{05EA}\u{05D5}\u{05D5}\u{05D9}\u{05D5}\u{05EA}"
+
+        ClearCanvas ->
+            "\u{05E0}\u{05E7}\u{05D4}"
+
         OffLabel ->
             "\u{05DB}\u{05D1}\u{05D5}\u{05D9}"
 
@@ -2004,3 +3106,72 @@ hebrewTranslations key =
 
         HeartThanks ->
             "תודהתודהתודה!!!!!!"
+
+        ShareImage ->
+            "שתף תמונה"
+
+        GridModeRectilinear ->
+            "מלבני"
+
+        GridModeSquare ->
+            "ריבועי"
+
+        GridModeRectilinearExplain ->
+            "הסריג נמתח כדי למלא את התמונה."
+
+        GridModeSquareExplain ->
+            "אתה קובע שורות ועמודות בנפרד."
+
+        GroupSetUpGrid ->
+            "הגדר את הסריג"
+
+        GroupStyle ->
+            "סגנון"
+
+        AdaptiveGridDensityExplain ->
+            "מוסיף קווי סריג היכן שהתמונה צפופה."
+
+        ShowCellLabels ->
+            "הצג תוויות (A1, B2…)"
+
+        GroupMatchCanvas ->
+            "תצוגה מקדימה על בד"
+
+        GroupOptional ->
+            "(אופציונלי)"
+
+        MyCanvasIs ->
+            "הבד שלי"
+
+        CmWide ->
+            "ס\"מ רוחב"
+
+        CmTall ->
+            "ס\"מ גובה"
+
+        EachCellApprox ->
+            "כל תא ≈"
+
+        MakeFiveCmCells ->
+            "תאים של 5 ס\"מ"
+
+        HowShouldImageFit ->
+            "איך להתאים את התמונה?"
+
+        FitToWidth ->
+            "לרוחב"
+
+        FitToHeight ->
+            "לגובה"
+
+        FitInside ->
+            "בתוך"
+
+        SplitIntoTiles ->
+            "חלק לדפי הדפסה"
+
+        SliceNone ->
+            "ללא"
+
+        FillBothToSeeCanvas ->
+            "מלא את שניהם כדי לראות את הבד שלך"

@@ -19,6 +19,9 @@ test.describe('Gridit Application', () => {
     await page.evaluate(() => localStorage.clear());
     await page.reload();
     await page.waitForLoadState('networkidle');
+    // Smoke check: if the app didn't boot (wrong server root, elm.js crash),
+    // fail here with a clear message instead of timing out on the first click.
+    await expect(page.locator('h1'), 'app did not render — check the dev server root').toBeVisible();
   });
 
   test.afterEach(async () => {
@@ -40,6 +43,25 @@ test.describe('Gridit Application', () => {
 
     test('shows language selector', async ({ page }) => {
       await expect(page.locator('#language-select')).toBeVisible();
+    });
+
+    // bju.subtitle-v2.2: subtitle must reflect BOTH grid modes now that we
+    // have rectilinear and square. The original copy only mentioned
+    // rectilinear, which now under-sells the tool.
+    test('subtitle mentions both rectilinear and square modes', async ({ page }) => {
+      await expect(page.locator('.app-subtitle')).toContainText(/rectilinear or square/i);
+    });
+
+    // SEO description should reflect both modes + canvas preview, not the
+    // pre-v2 single-mode line.
+    test('meta description reflects current functionality', async ({ page }) => {
+      const desc = await page.locator('meta[name="description"]').getAttribute('content');
+      expect(desc).toMatch(/rectilinear or square/i);
+      expect(desc).toMatch(/canvas/i);
+      const ogDesc = await page.locator('meta[property="og:description"]').getAttribute('content');
+      expect(ogDesc).toEqual(desc);
+      const twDesc = await page.locator('meta[name="twitter:description"]').getAttribute('content');
+      expect(twDesc).toEqual(desc);
     });
   });
 
@@ -266,55 +288,43 @@ test.describe('Gridit Application', () => {
       }, counters);
     }
 
-    test('community card is absent before counters load', async ({ page }) => {
-      await expect(page.locator('.community-card')).toHaveCount(0);
+    test('community ticker is absent before counters load', async ({ page }) => {
+      await expect(page.locator('.community-ticker')).toHaveCount(0);
     });
 
-    test('community card renders when counters arrive', async ({ page }) => {
+    test('community ticker renders when counters arrive', async ({ page }) => {
       await sendCounters(page, sampleCounters());
-      await expect(page.locator('.community-card')).toBeVisible();
-      const totals = await page.locator('.community-total strong').allTextContents();
+      await expect(page.locator('.community-ticker')).toBeVisible();
+      const totals = await page.locator('.community-ticker__line strong').allTextContents();
       expect(totals).toEqual(['100', '5', '200']);
     });
 
-    test('heart click ticks total and your-country row optimistically', async ({ page }) => {
+    test('heart click ticks the total hearts counter optimistically', async ({ page }) => {
+      // Note: post v2 ticker rework, only the totals line shows hearts —
+      // the per-country hearts strip was removed (leaderboard-shaped).
+      // The model still updates heartsByCountry; just not displayed.
       await uploadImage(page);
       await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
       await sendCounters(page, sampleCounters('AR'));
 
       await page.locator('.heart-pill').click();
 
-      const totals = await page.locator('.community-total strong').allTextContents();
+      const totals = await page.locator('.community-ticker__line strong').allTextContents();
       expect(totals[2]).toBe('201');
-      const arRow = await page.locator('.community-strip--hearts .community-flag').first().innerText();
-      expect(arRow).toMatch(/51$/);
     });
 
-    test('heart from a country not in the strip appends it at rank-last', async ({ page }) => {
-      await uploadImage(page);
-      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
-      await sendCounters(page, sampleCounters('WS'));
-
-      await page.locator('.heart-pill').click();
-
-      const lastFlag = await page.locator('.community-strip--hearts .community-flag').last().innerText();
-      expect(lastFlag).toMatch(/1$/);
-    });
-
-    test('heart with empty yourCountry does not corrupt the strip', async ({ page }) => {
+    test('heart with empty yourCountry still ticks the total', async ({ page }) => {
       await uploadImage(page);
       await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
       await sendCounters(page, sampleCounters(''));
-      await expect(page.locator('.community-strip--hearts .community-flag')).toHaveCount(3);
 
       await page.locator('.heart-pill').click();
 
-      await expect(page.locator('.community-strip--hearts .community-flag')).toHaveCount(3);
-      const totals = await page.locator('.community-total strong').allTextContents();
+      const totals = await page.locator('.community-ticker__line strong').allTextContents();
       expect(totals[2]).toBe('201');
     });
 
-    test('download click ticks the download total and gridders row', async ({ page }) => {
+    test('download click ticks the download total and gridders flag', async ({ page }) => {
       await uploadImage(page);
       await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
       await sendCounters(page, sampleCounters('AR'));
@@ -322,27 +332,28 @@ test.describe('Gridit Application', () => {
       await page.locator('.button-download').click();
       await page.waitForTimeout(800);
 
-      const totals = await page.locator('.community-total strong').allTextContents();
+      const totals = await page.locator('.community-ticker__line strong').allTextContents();
       expect(totals[0]).toBe('101');
-      const arGridderRow = await page.locator('.community-strip--gridders .community-flag').first().innerText();
+      // The first flag in the ticker is the user's country (AR), now 41.
+      const arGridderRow = await page.locator('.community-ticker__flags .community-flag').first().innerText();
       expect(arGridderRow).toMatch(/41$/);
     });
 
-    test('gridders strip is independent of hearts strip', async ({ page }) => {
+    test('ticker shows up to 6 country flags from griddersByCountry', async ({ page }) => {
       await sendCounters(page, sampleCounters());
-      await expect(page.locator('.community-strip--gridders .community-flag')).toHaveCount(3);
-      await expect(page.locator('.community-strip--hearts .community-flag')).toHaveCount(3);
-      const gridderTitles = await page.locator('.community-strip--gridders .community-flag').evaluateAll(
+      // Sample has 3 gridders countries; expect exactly 3 flags rendered.
+      await expect(page.locator('.community-ticker__flags .community-flag')).toHaveCount(3);
+      const titles = await page.locator('.community-ticker__flags .community-flag').evaluateAll(
         els => els.map((el: HTMLElement) => el.getAttribute('title'))
       );
-      expect(gridderTitles).toEqual(['AR', 'HK', 'US']);
+      expect(titles).toEqual(['AR', 'HK', 'US']);
     });
 
     test('disclaimer expands on click', async ({ page }) => {
       await sendCounters(page, sampleCounters());
       const body = page.locator('.community-disclaimer-body');
-      await expect(body).not.toBeVisible();
-      await page.locator('.community-disclaimer summary').click();
+      await expect(body).toHaveCount(0);
+      await page.locator('.community-disclaimer-toggle').evaluate((el: HTMLElement) => el.click());
       await expect(body).toBeVisible();
     });
 
@@ -369,7 +380,7 @@ test.describe('Gridit Application', () => {
           el.dispatchEvent(new Event('change', { bubbles: true }));
         }, lang);
         await expect(page.locator('html')).toHaveAttribute('lang', code, { timeout: 2000 });
-        await expect(page.locator('.community-card')).toBeVisible();
+        await expect(page.locator('.community-ticker')).toBeVisible();
       }
     });
   });
@@ -609,6 +620,1400 @@ test.describe('Gridit Application', () => {
         const newCount = await page.locator('.grid-overlay line').count();
         expect(newCount).toBeGreaterThanOrEqual(baseLineCount);
       }).toPass({ timeout: 10000 });
+    });
+
+    // bju.3: entropy grid is decoupled from display. Changing the grid
+    // size slider must NOT trigger re-analysis — the entropy cache persists.
+    // Content-agnostic: doesn't require the test image to have entropy variation.
+    test('grid-size changes do not re-trigger entropy analysis', async ({ page }) => {
+      const adaptiveSlider = page.locator('#adaptive-density-input');
+      await adaptiveSlider.fill('0.6');
+
+      // Wait for the (first and only) analysis pass to finish.
+      await expect(page.locator('.analyzing-indicator')).toHaveCount(0, { timeout: 10000 });
+
+      // Move the grid-size slider — the "Analyzing image" indicator must NOT
+      // appear again. We poll briefly to catch any flicker.
+      const sizeSlider = page.locator('#grid-size-input');
+      await sizeSlider.fill('14');
+      await sizeSlider.fill('20');
+      await sizeSlider.fill('8');
+
+      // Across all those changes, no analyzing-indicator should have surfaced.
+      await expect(page.locator('.analyzing-indicator')).toHaveCount(0);
+
+      // Final base-line count matches the display grid (8×8 = 18 lines).
+      await expect(async () => {
+        expect(await page.locator('.grid-overlay line').count()).toBeGreaterThanOrEqual(18);
+      }).toPass({ timeout: 3000 });
+    });
+
+    // The flat test fixture has near-uniform entropy, so the slider legitimately
+    // adds zero lines. That must be SAID, not silent — otherwise the slider
+    // feels broken on low-contrast images.
+    test('uniform image: slider shows "no busy spots" hint instead of silence', async ({ page }) => {
+      const hint = page.locator('.adaptive-empty-hint');
+      await expect(hint).toHaveCount(0);
+
+      await page.locator('#adaptive-density-input').fill('0.6');
+      await expect(page.locator('.analyzing-indicator')).toHaveCount(0, { timeout: 10000 });
+      await expect(hint).toBeVisible();
+
+      // Turning the slider off hides the hint again.
+      await page.locator('#adaptive-density-input').fill('0');
+      await expect(hint).toHaveCount(0);
+    });
+  });
+
+  // The v2 refactor (bju.1 + bju.2) replaces `gridSize: Int` with
+  // `gridRows + gridCols + gridMode`. Existing users have the old shape
+  // in localStorage; these tests pin (a) the migration shim, (b) the
+  // new-shape load path, and (c) the regression behavior of the
+  // existing Auto-mode slider, which must keep working unchanged.
+  test.describe('Settings v2 refactor', () => {
+    test('default grid (10×10) renders 22 lines after upload', async ({ page }) => {
+      await uploadImage(page);
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+      await expect(async () => {
+        // 11 vertical + 11 horizontal = 22 for a 10×10 grid, no diagonals.
+        expect(await page.locator('.grid-overlay line').count()).toBe(22);
+      }).toPass({ timeout: 5000 });
+    });
+
+    test('slider at 5 renders 12 grid lines (6 + 6)', async ({ page }) => {
+      await uploadImage(page);
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+
+      const slider = page.locator('#grid-size-input');
+      await slider.fill('5');
+
+      await expect(async () => {
+        expect(await page.locator('.grid-overlay line').count()).toBe(12);
+      }).toPass({ timeout: 5000 });
+    });
+
+    test('migrateSettings: pre-v2 shape becomes v2 shape', async ({ page }) => {
+      // Unit-ish test of the migration shim, exposed on window for inspection.
+      const out = await page.evaluate(() => {
+        // @ts-expect-error migrateSettings is global from grid-merge.js
+        return window.migrateSettings({
+          gridSize: 12,
+          gridColor: '#80ED99',
+          gridThickness: 2,
+          gridOpacity: 0.7,
+          showDiagonals: false,
+        });
+      });
+      expect(out.gridSize).toBeUndefined();
+      expect(out.gridRows).toBe(12);
+      expect(out.gridCols).toBe(12);
+      expect(out.gridMode).toBe('rectilinear');
+      expect(out.gridColor).toBe('#80ED99');
+    });
+
+    test('migrateSettings: old Auto/Custom values map to rectilinear', async ({ page }) => {
+      // Custom mode is gone. Anything that used to be "Custom" now becomes
+      // rectilinear (the user keeps their rows/cols, just the mode label moves).
+      const auto = await page.evaluate(() => {
+        // @ts-expect-error migrateSettings is global from grid-merge.js
+        return window.migrateSettings({
+          gridRows: 8, gridCols: 8, gridMode: 'Auto',
+          gridColor: '#000', gridThickness: 1, gridOpacity: 1, showDiagonals: false,
+        });
+      });
+      expect(auto.gridMode).toBe('rectilinear');
+
+      const custom = await page.evaluate(() => {
+        // @ts-expect-error migrateSettings is global from grid-merge.js
+        return window.migrateSettings({
+          gridRows: 8, gridCols: 14, gridMode: 'Custom',
+          gridColor: '#000', gridThickness: 1, gridOpacity: 1, showDiagonals: false,
+        });
+      });
+      expect(custom.gridMode).toBe('rectilinear');
+      // Their custom rows/cols are preserved (just the mode label changes).
+      expect(custom.gridRows).toBe(8);
+      expect(custom.gridCols).toBe(14);
+    });
+
+    test('pre-v2 localStorage settings restore grid size on reload', async ({ page }) => {
+      // Inject old-shape settings; reload triggers the load path.
+      await page.evaluate(() => {
+        localStorage.setItem('gridit-settings', JSON.stringify({
+          gridSize: 15,
+          gridColor: '#80ED99',
+          gridThickness: 1,
+          gridOpacity: 1,
+          showDiagonals: false,
+        }));
+      });
+      await page.reload();
+      await page.waitForLoadState('networkidle');
+      await uploadImage(page);
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+
+      // Slider should reflect the restored value.
+      const slider = page.locator('#grid-size-input');
+      await expect(slider).toHaveValue('15');
+      // And the rendered grid line count matches.
+      await expect(async () => {
+        expect(await page.locator('.grid-overlay line').count()).toBe(32);
+      }).toPass({ timeout: 5000 });
+    });
+
+    test('v2 localStorage settings restore on reload', async ({ page }) => {
+      await page.evaluate(() => {
+        localStorage.setItem('gridit-settings', JSON.stringify({
+          gridRows: 8,
+          gridCols: 8,
+          gridMode: 'Auto',
+          gridColor: '#000000',
+          gridThickness: 2,
+          gridOpacity: 0.6,
+          showDiagonals: false,
+        }));
+      });
+      await page.reload();
+      await page.waitForLoadState('networkidle');
+      await uploadImage(page);
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+
+      const slider = page.locator('#grid-size-input');
+      await expect(slider).toHaveValue('8');
+      await expect(async () => {
+        expect(await page.locator('.grid-overlay line').count()).toBe(18);
+      }).toPass({ timeout: 5000 });
+    });
+
+    test('bogus localStorage settings fall back to defaults', async ({ page }) => {
+      await page.evaluate(() => {
+        localStorage.setItem('gridit-settings', JSON.stringify({
+          gridSize: 'not-a-number',  // invalid shape — should be ignored
+          someJunk: true,
+        }));
+      });
+      await page.reload();
+      await page.waitForLoadState('networkidle');
+      await uploadImage(page);
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+
+      // Default grid size is 10 → 22 lines.
+      const slider = page.locator('#grid-size-input');
+      await expect(slider).toHaveValue('10');
+    });
+
+    test('moving the slider persists the new shape (gridRows + gridCols + gridMode)', async ({ page }) => {
+      await uploadImage(page);
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+
+      const slider = page.locator('#grid-size-input');
+      await slider.fill('7');
+
+      // Wait for the save to flush.
+      await expect(async () => {
+        const saved = await page.evaluate(() =>
+          JSON.parse(localStorage.getItem('gridit-settings') || '{}')
+        );
+        expect(saved.gridRows).toBe(7);
+        expect(saved.gridCols).toBe(7);
+        expect(saved.gridMode).toBe('rectilinear');
+        expect(saved.gridSize).toBeUndefined();
+      }).toPass({ timeout: 3000 });
+    });
+  });
+
+  // Cluster 1: rectilinear/square segmented toggle.
+  // Replaced the old Auto/Custom + two-input UI in the v2.1 refactor.
+  test.describe('Cluster 1: rectilinear/square mode', () => {
+    test.beforeEach(async ({ page }) => {
+      await uploadImage(page);
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+    });
+
+    test('rectilinear is the default, slider always visible', async ({ page }) => {
+      await expect(page.locator('.seg-btn')).toHaveCount(2);
+      await expect(page.locator('.seg-btn').first()).toHaveClass(/seg-btn--active/);
+      await expect(page.locator('#grid-size-input')).toBeVisible();
+      // The two-input UI from the old Custom mode is gone.
+      await expect(page.locator('#grid-rows-input')).toHaveCount(0);
+      await expect(page.locator('#grid-cols-input')).toHaveCount(0);
+    });
+
+    test('clicking square keeps the slider; mode persists as "square"', async ({ page }) => {
+      await page.locator('.seg-btn').nth(1).click();
+      await expect(page.locator('#grid-size-input')).toBeVisible();
+      await expect(page.locator('.seg-btn').nth(1)).toHaveClass(/seg-btn--active/);
+
+      await expect(async () => {
+        const saved = await page.evaluate(() =>
+          JSON.parse(localStorage.getItem('gridit-settings') || '{}')
+        );
+        expect(saved.gridMode).toBe('square');
+      }).toPass({ timeout: 3000 });
+    });
+
+    test('rectilinear: slider sets both rows and cols equal', async ({ page }) => {
+      const slider = page.locator('#grid-size-input');
+      await slider.fill('11');
+
+      await expect(async () => {
+        const saved = await page.evaluate(() =>
+          JSON.parse(localStorage.getItem('gridit-settings') || '{}')
+        );
+        expect(saved.gridRows).toBe(11);
+        expect(saved.gridCols).toBe(11);
+      }).toPass({ timeout: 3000 });
+
+      // 12 + 12 = 24 lines for 11×11.
+      await expect(async () => {
+        expect(await page.locator('.grid-overlay line').count()).toBe(24);
+      }).toPass({ timeout: 3000 });
+    });
+
+    test('reload restores square mode + derived rows/cols', async ({ page }) => {
+      // Inject pre-saved square mode state.
+      await page.evaluate(() => {
+        localStorage.setItem('gridit-settings', JSON.stringify({
+          gridRows: 12, gridCols: 4, gridMode: 'square',
+          gridColor: '#80ED99', gridThickness: 1, gridOpacity: 1, showDiagonals: false,
+        }));
+      });
+      await page.reload();
+      await page.waitForLoadState('networkidle');
+      await uploadImage(page, './tests/fixtures/test-image-tall.png');
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+
+      // Square button should be active.
+      await expect(page.locator('.seg-btn').nth(1)).toHaveClass(/seg-btn--active/);
+      // Slider should show 4 (the cells on the shorter axis).
+      await expect(page.locator('#grid-size-input')).toHaveValue('4');
+    });
+  });
+
+  // Cluster 2 prep: numbered section headers ("1. set up the grid", "2. style")
+  // + rename "Adaptive density" → "auto-simplify".
+  test.describe('Cluster 2 prep: groups + rename', () => {
+    test.beforeEach(async ({ page }) => {
+      await uploadImage(page);
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+    });
+
+    test('renders two numbered group headers', async ({ page }) => {
+      const headers = page.locator('.group-header');
+      await expect(headers).toHaveCount(2);
+      await expect(headers.nth(0)).toContainText('1.');
+      await expect(headers.nth(0)).toContainText('set up the grid');
+      await expect(headers.nth(1)).toContainText('2.');
+      await expect(headers.nth(1)).toContainText('style');
+    });
+
+    test('grid-size control sits in group 1', async ({ page }) => {
+      const group1 = page.locator('.group').nth(0);
+      await expect(group1.locator('#grid-size-input, #grid-rows-input').first()).toBeVisible();
+      // The mode toggle is in group 1.
+      await expect(group1.locator('.seg')).toBeVisible();
+    });
+
+    test('style controls (color, thickness, opacity, diagonals, auto-simplify) sit in group 2', async ({ page }) => {
+      const group2 = page.locator('.group').nth(1);
+      await expect(group2.locator('#grid-color-input')).toBeVisible();
+      await expect(group2.locator('#grid-thickness-input')).toBeVisible();
+      await expect(group2.locator('#grid-opacity-input')).toBeVisible();
+      await expect(group2.locator('#diagonals')).toBeAttached();
+      await expect(group2.locator('#adaptive-density-input')).toBeVisible();
+    });
+
+    test('"Adaptive density" label is shown with short sub-line', async ({ page }) => {
+      const adaptiveLabel = page.locator('label[for="adaptive-density-input"]');
+      await expect(adaptiveLabel).toContainText(/adaptive density/i);
+      await expect(page.locator('.mode-explain', { hasText: /busy/i })).toBeVisible();
+    });
+  });
+
+  // bju.6 + bju.7: cell labels feature.
+  test.describe('Cluster 2: cell labels', () => {
+    test.beforeEach(async ({ page }) => {
+      await uploadImage(page);
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+    });
+
+    test('toggle exists in group 2 (style) and is off by default', async ({ page }) => {
+      const toggle = page.locator('#cell-labels');
+      await expect(toggle).toBeAttached();
+      await expect(toggle).not.toBeChecked();
+      // No <text> labels in the overlay until toggled on.
+      await expect(page.locator('.grid-overlay text')).toHaveCount(0);
+    });
+
+    test('toggling on renders one label per cell (10×10 = 100 labels)', async ({ page }) => {
+      await page.locator('#cell-labels').evaluate((el: HTMLInputElement) => el.click());
+
+      await expect(async () => {
+        expect(await page.locator('.grid-overlay text').count()).toBe(100);
+      }).toPass({ timeout: 3000 });
+    });
+
+    test('labels use chess-style coordinates (first is A1, last is J10 for 10×10)', async ({ page }) => {
+      await page.locator('#cell-labels').evaluate((el: HTMLInputElement) => el.click());
+
+      await expect(async () => {
+        const labels = await page.locator('.grid-overlay text').allTextContents();
+        expect(labels[0]).toBe('A1');
+        expect(labels[labels.length - 1]).toBe('J10');
+      }).toPass({ timeout: 3000 });
+    });
+
+    test('changing grid size changes label count correspondingly', async ({ page }) => {
+      await page.locator('#cell-labels').evaluate((el: HTMLInputElement) => el.click());
+
+      const sizeSlider = page.locator('#grid-size-input');
+      await sizeSlider.fill('5');
+
+      // 5x5 = 25 labels
+      await expect(async () => {
+        expect(await page.locator('.grid-overlay text').count()).toBe(25);
+      }).toPass({ timeout: 3000 });
+    });
+
+    test('persists showCellLabels in localStorage', async ({ page }) => {
+      await page.locator('#cell-labels').evaluate((el: HTMLInputElement) => el.click());
+
+      await expect(async () => {
+        const saved = await page.evaluate(() =>
+          JSON.parse(localStorage.getItem('gridit-settings') || '{}')
+        );
+        expect(saved.showCellLabels).toBe(true);
+      }).toPass({ timeout: 3000 });
+    });
+
+    test('migration backfills showCellLabels=false for pre-cluster-2 v2 shape', async ({ page }) => {
+      // Inject a v2 shape WITHOUT showCellLabels (as if saved by an earlier
+      // version of this same branch).
+      await page.evaluate(() => {
+        localStorage.setItem('gridit-settings', JSON.stringify({
+          gridRows: 10,
+          gridCols: 10,
+          gridMode: 'Auto',
+          gridColor: '#80ED99',
+          gridThickness: 1,
+          gridOpacity: 1,
+          showDiagonals: false,
+        }));
+      });
+      await page.reload();
+      await page.waitForLoadState('networkidle');
+      await uploadImage(page);
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+
+      // Toggle should exist and be off (backfilled default).
+      await expect(page.locator('#cell-labels')).not.toBeChecked();
+      await expect(page.locator('.grid-overlay text')).toHaveCount(0);
+    });
+
+    test('migrateSettings backfills showCellLabels=false when missing', async ({ page }) => {
+      const out = await page.evaluate(() => {
+        // @ts-expect-error migrateSettings is global from grid-merge.js
+        return window.migrateSettings({
+          gridRows: 10,
+          gridCols: 10,
+          gridMode: 'Auto',
+          gridColor: '#80ED99',
+          gridThickness: 1,
+          gridOpacity: 1,
+          showDiagonals: false,
+        });
+      });
+      expect(out.showCellLabels).toBe(false);
+    });
+
+    // bju.8: auto-hide labels when on-screen cell size drops below 18px.
+    // The 200×200 test image renders at 200px wide on desktop, so cells
+    // are 200/N pixels. The threshold falls between 11×11 (18.18 px) and
+    // 12×12 (16.67 px). We test on both sides of the boundary.
+    test('labels auto-hide when on-screen cell drops below 18px', async ({ page }) => {
+      // Force a fresh image-size report into Elm (the auto-attach can race
+      // with image decode under headless; force-feed the settled rect).
+      await page.evaluate(() => {
+        const img = document.querySelector('.gridded-base-image') as HTMLImageElement;
+        const r = img.getBoundingClientRect();
+        // @ts-expect-error port exists on _elmApp
+        window._elmApp.ports.receiveImageDisplaySize.send({ width: r.width, height: r.height });
+      });
+
+      // Turn labels on at 10×10 — should render.
+      await page.locator('#cell-labels').evaluate((el: HTMLInputElement) => el.click());
+      await expect(async () => {
+        expect(await page.locator('.grid-overlay text').count()).toBe(100);
+      }).toPass({ timeout: 3000 });
+
+      // Bump to 32×32 — 200/32 = 6.25 px, well below 18 — should hide.
+      await page.locator('#grid-size-input').fill('32');
+      await expect(async () => {
+        expect(await page.locator('.grid-overlay text').count()).toBe(0);
+      }).toPass({ timeout: 3000 });
+
+      // Drop back to 8×8 — 200/8 = 25 px, above 18 — should re-show.
+      await page.locator('#grid-size-input').fill('8');
+      await expect(async () => {
+        expect(await page.locator('.grid-overlay text').count()).toBe(64);
+      }).toPass({ timeout: 3000 });
+    });
+  });
+
+  // bju.11: cluster 3 — match a canvas (cm inputs + readout).
+  // DORMANT: match-a-canvas UI is not rendered pending the canvas-preview
+  // redesign (artist model: fixed canvas, draggable image). Un-skip these
+  // when viewMatchCanvasSection is restored in Main.elm.
+  test.describe.skip('Cluster 3: match a canvas (cm inputs)', () => {
+    test.beforeEach(async ({ page }) => {
+      await uploadImage(page);
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+    });
+
+    test('section is present and starts closed', async ({ page }) => {
+      const details = page.locator('.match-canvas');
+      await expect(details).toBeAttached();
+      // <details> starts closed by default.
+      await expect(details).not.toHaveAttribute('open', '');
+      // Summary has the numbered header.
+      await expect(page.locator('.match-canvas-summary')).toContainText('3.');
+      await expect(page.locator('.match-canvas-summary')).toContainText('preview on canvas');
+      await expect(page.locator('.match-canvas-summary')).toContainText('(optional)');
+    });
+
+    test('opening reveals two cm inputs', async ({ page }) => {
+      // Open the disclosure.
+      await page.evaluate(() => {
+        (document.querySelector('.match-canvas') as HTMLDetailsElement).open = true;
+      });
+      await expect(page.locator('#canvas-width-cm')).toBeVisible();
+      await expect(page.locator('#canvas-height-cm')).toBeVisible();
+      // Readout absent until both filled.
+      await expect(page.locator('.match-canvas-readout')).toHaveCount(0);
+    });
+
+    // bju.preview-v2.2: cm inputs no longer carry placeholder='60'/'40'
+    // because users read those as actual values. A small hint takes their
+    // place while either field is empty.
+    test('cm inputs have no placeholder; hint appears until both filled', async ({ page }) => {
+      await page.evaluate(() => {
+        (document.querySelector('.match-canvas') as HTMLDetailsElement).open = true;
+      });
+      const widthPh = await page.locator('#canvas-width-cm').getAttribute('placeholder');
+      const heightPh = await page.locator('#canvas-height-cm').getAttribute('placeholder');
+      // Either attribute absent or empty string — both count as "no placeholder".
+      expect(widthPh || '').toBe('');
+      expect(heightPh || '').toBe('');
+
+      // Hint visible while empty.
+      await expect(page.locator('.cm-hint')).toBeVisible();
+      await expect(page.locator('.cm-hint')).toContainText(/fill both/i);
+
+      // Hint disappears once both fields are filled.
+      await page.locator('#canvas-width-cm').fill('60');
+      await page.locator('#canvas-height-cm').fill('40');
+      await expect(page.locator('.cm-hint')).toHaveCount(0);
+    });
+
+    test('readout appears when both cm fields are filled, computes cell size', async ({ page }) => {
+      await page.evaluate(() => {
+        (document.querySelector('.match-canvas') as HTMLDetailsElement).open = true;
+      });
+      await page.locator('#canvas-width-cm').fill('60');
+      await page.locator('#canvas-height-cm').fill('40');
+
+      // 10×10 grid (default after fresh upload) → 6×4 cm per cell.
+      await expect(page.locator('.match-canvas-readout')).toContainText(/6.*×.*4.*cm/);
+    });
+
+    test('cm values persist to localStorage', async ({ page }) => {
+      await page.evaluate(() => {
+        (document.querySelector('.match-canvas') as HTMLDetailsElement).open = true;
+      });
+      await page.locator('#canvas-width-cm').fill('50');
+      await page.locator('#canvas-height-cm').fill('70');
+
+      await expect(async () => {
+        const saved = await page.evaluate(() =>
+          JSON.parse(localStorage.getItem('gridit-settings') || '{}')
+        );
+        expect(saved.canvasWidthCm).toBe(50);
+        expect(saved.canvasHeightCm).toBe(70);
+      }).toPass({ timeout: 3000 });
+    });
+
+    test('clearing a cm input removes it (Maybe Nothing → null in storage)', async ({ page }) => {
+      await page.evaluate(() => {
+        (document.querySelector('.match-canvas') as HTMLDetailsElement).open = true;
+      });
+      await page.locator('#canvas-width-cm').fill('40');
+      // Clear it.
+      await page.locator('#canvas-width-cm').fill('');
+
+      await expect(async () => {
+        const saved = await page.evaluate(() =>
+          JSON.parse(localStorage.getItem('gridit-settings') || '{}')
+        );
+        expect(saved.canvasWidthCm).toBeNull();
+      }).toPass({ timeout: 3000 });
+
+      // Readout doesn't render with only one side filled.
+      await expect(page.locator('.match-canvas-readout')).toHaveCount(0);
+    });
+
+    test('migrateSettings backfills canvas cm fields as null when missing', async ({ page }) => {
+      const out = await page.evaluate(() => {
+        // @ts-expect-error migrateSettings is global from grid-merge.js
+        return window.migrateSettings({
+          gridRows: 10,
+          gridCols: 10,
+          gridMode: 'Auto',
+          gridColor: '#80ED99',
+          gridThickness: 1,
+          gridOpacity: 1,
+          showDiagonals: false,
+          showCellLabels: false,
+        });
+      });
+      expect(out.canvasWidthCm).toBeNull();
+      expect(out.canvasHeightCm).toBeNull();
+    });
+
+    // bju.12: "make 5 cm cells" button — writes rows/cols based on cm dims,
+    // flips Auto → Custom.
+    test('snap button is disabled until both cm fields filled', async ({ page }) => {
+      await page.evaluate(() => {
+        (document.querySelector('.match-canvas') as HTMLDetailsElement).open = true;
+      });
+      await expect(page.locator('.snap-btn')).toBeDisabled();
+
+      // Only width filled — still disabled.
+      await page.locator('#canvas-width-cm').fill('60');
+      await expect(page.locator('.snap-btn')).toBeDisabled();
+
+      // Both filled — enabled.
+      await page.locator('#canvas-height-cm').fill('40');
+      await expect(page.locator('.snap-btn')).toBeEnabled();
+    });
+
+    test('clicking snap button sets rows/cols from canvas cm', async ({ page }) => {
+      await page.evaluate(() => {
+        (document.querySelector('.match-canvas') as HTMLDetailsElement).open = true;
+      });
+      await page.locator('#canvas-width-cm').fill('60');
+      await page.locator('#canvas-height-cm').fill('40');
+      await page.locator('.snap-btn').click();
+
+      // 60/5 = 12 cols, 40/5 = 8 rows. The two-input UI is gone in v2.1;
+      // we verify via localStorage state instead.
+      await expect(async () => {
+        const saved = await page.evaluate(() =>
+          JSON.parse(localStorage.getItem('gridit-settings') || '{}')
+        );
+        expect(saved.gridRows).toBe(8);
+        expect(saved.gridCols).toBe(12);
+      }).toPass({ timeout: 3000 });
+    });
+
+    test('snap clamps to grid range (very small canvas)', async ({ page }) => {
+      await page.evaluate(() => {
+        (document.querySelector('.match-canvas') as HTMLDetailsElement).open = true;
+      });
+      // 5cm × 5cm canvas → 1 col × 1 row, but min is 2.
+      await page.locator('#canvas-width-cm').fill('5');
+      await page.locator('#canvas-height-cm').fill('5');
+      await page.locator('.snap-btn').click();
+
+      await expect(async () => {
+        const saved = await page.evaluate(() =>
+          JSON.parse(localStorage.getItem('gridit-settings') || '{}')
+        );
+        expect(saved.gridRows).toBe(2);
+        expect(saved.gridCols).toBe(2);
+      }).toPass({ timeout: 3000 });
+    });
+  });
+
+  // bju.13: canvas-fit radios — appear only when image aspect differs from
+  // canvas aspect; default to "fit inside"; persist; live SVG preview reacts.
+  // DORMANT: see the match-a-canvas skip note above.
+  test.describe.skip('Cluster 3: canvas-fit radios', () => {
+    test('not rendered when image+canvas aspects match', async ({ page }) => {
+      // test-image.png is 200×200 (1:1). 60×60 canvas is also 1:1 — should hide.
+      await uploadImage(page);
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+      await page.evaluate(() => {
+        (document.querySelector('.match-canvas') as HTMLDetailsElement).open = true;
+      });
+      await page.locator('#canvas-width-cm').fill('60');
+      await page.locator('#canvas-height-cm').fill('60');
+
+      await expect(page.locator('.fit-section')).toHaveCount(0);
+    });
+
+    test('renders when aspects differ, default is "fit inside"', async ({ page }) => {
+      // test-image-tall.png is 200×600 (1:3). 60×40 canvas is 3:2 — differs.
+      await uploadImage(page, './tests/fixtures/test-image-tall.png');
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+      await page.evaluate(() => {
+        (document.querySelector('.match-canvas') as HTMLDetailsElement).open = true;
+      });
+      await page.locator('#canvas-width-cm').fill('60');
+      await page.locator('#canvas-height-cm').fill('40');
+
+      await expect(page.locator('.fit-section')).toBeVisible();
+      await expect(page.locator('.fit-opt')).toHaveCount(3);
+      // Default fit-inside is the active one.
+      await expect(page.locator('.fit-opt--active')).toContainText('fit inside');
+      // SVG preview renders.
+      await expect(page.locator('.fit-preview-svg')).toBeVisible();
+    });
+
+    test('clicking a fit option updates active class + persists', async ({ page }) => {
+      await uploadImage(page, './tests/fixtures/test-image-tall.png');
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+      await page.evaluate(() => {
+        (document.querySelector('.match-canvas') as HTMLDetailsElement).open = true;
+      });
+      await page.locator('#canvas-width-cm').fill('60');
+      await page.locator('#canvas-height-cm').fill('40');
+
+      // Click "fit to width" (first option).
+      await page.locator('.fit-opt').nth(0).click();
+
+      await expect(page.locator('.fit-opt').nth(0)).toHaveClass(/fit-opt--active/);
+      await expect(page.locator('.fit-opt').nth(2)).not.toHaveClass(/fit-opt--active/);
+
+      await expect(async () => {
+        const saved = await page.evaluate(() =>
+          JSON.parse(localStorage.getItem('gridit-settings') || '{}')
+        );
+        expect(saved.imageFit).toBe('fit-width');
+      }).toPass({ timeout: 3000 });
+    });
+
+    test('migrateSettings backfills imageFit="fit-inside" when missing', async ({ page }) => {
+      await uploadImage(page);
+      const out = await page.evaluate(() => {
+        // @ts-expect-error migrateSettings is global from grid-merge.js
+        return window.migrateSettings({
+          gridRows: 10,
+          gridCols: 10,
+          gridMode: 'Auto',
+          gridColor: '#80ED99',
+          gridThickness: 1,
+          gridOpacity: 1,
+          showDiagonals: false,
+          showCellLabels: false,
+          canvasWidthCm: null,
+          canvasHeightCm: null,
+        });
+      });
+      expect(out.imageFit).toBe('fit-inside');
+    });
+  });
+
+  // Slice export was removed in v2.1 ("not sure we need that"). The model
+  // field + JS port remain dormant; only the UI is gone. The single
+  // migration-backfill check stays — code still backfills sliceMode='none'.
+  test.describe('Cluster 3: slice export (dormant)', () => {
+    test('migrateSettings still backfills sliceMode="none"', async ({ page }) => {
+      await uploadImage(page);
+      const out = await page.evaluate(() => {
+        // @ts-expect-error migrateSettings is global from grid-merge.js
+        return window.migrateSettings({
+          gridRows: 10, gridCols: 10, gridMode: 'rectilinear',
+          gridColor: '#80ED99', gridThickness: 1, gridOpacity: 1,
+          showDiagonals: false, showCellLabels: false,
+          canvasWidthCm: null, canvasHeightCm: null, imageFit: 'fit-inside',
+        });
+      });
+      expect(out.sliceMode).toBe('none');
+    });
+  });
+
+  // bju.14: canvas-fit rendering mode + drag-to-position.
+  // DORMANT: see the match-a-canvas skip note above.
+  test.describe.skip('Cluster 3: canvas-fit mode (drag-to-position)', () => {
+    test.beforeEach(async ({ page }) => {
+      // Use a tall image (200×600) so aspects clearly differ from a 60×40 canvas.
+      await uploadImage(page, './tests/fixtures/test-image-tall.png');
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+      await page.evaluate(() => {
+        (document.querySelector('.match-canvas') as HTMLDetailsElement).open = true;
+      });
+    });
+
+    test('canvas-fit SVG renders when canvas cm is set', async ({ page }) => {
+      // Before cm is set: legacy <img> + .grid-overlay rendering.
+      await expect(page.locator('.canvas-frame')).toHaveCount(0);
+      await expect(page.locator('.gridded-base-image')).toBeVisible();
+
+      // After setting cm: canvas-fit SVG appears.
+      await page.locator('#canvas-width-cm').fill('60');
+      await page.locator('#canvas-height-cm').fill('40');
+
+      await expect(page.locator('.canvas-frame')).toBeVisible();
+      // ViewBox in cm × 100 scale.
+      await expect(page.locator('.canvas-frame')).toHaveAttribute('viewBox', /6000.*4000/);
+      // The legacy img element is gone in canvas-fit mode.
+      await expect(page.locator('.gridded-base-image')).toHaveCount(0);
+    });
+
+    test('drag updates imageOffsetX/Y and persists', async ({ page }) => {
+      await page.locator('#canvas-width-cm').fill('60');
+      await page.locator('#canvas-height-cm').fill('40');
+      await expect(page.locator('.canvas-frame')).toBeVisible();
+
+      // Wait for the JS image-size observer's polling tick to land
+      // (so the cm conversion in drag uses the real displayed dims).
+      await page.waitForTimeout(400);
+
+      // Drag from center of the canvas-frame.
+      const box = await page.locator('.canvas-frame').boundingBox();
+      if (!box) throw new Error('No canvas-frame');
+      const cx = box.x + box.width / 2;
+      const cy = box.y + box.height / 2;
+
+      // pointerdown on the SVG, then mousemove + mouseup on the document.
+      await page.evaluate(({ cx, cy }) => {
+        const svg = document.querySelector('.canvas-frame')!;
+        svg.dispatchEvent(new PointerEvent('pointerdown', {
+          bubbles: true, clientX: cx, clientY: cy, pointerType: 'mouse', button: 0,
+        }));
+      }, { cx, cy });
+      await page.waitForTimeout(50);
+      await page.evaluate(({ cx, cy }) => {
+        document.dispatchEvent(new MouseEvent('mousemove', {
+          bubbles: true, clientX: cx + 100, clientY: cy + 50,
+        }));
+      }, { cx, cy });
+      await page.waitForTimeout(50);
+      await page.evaluate(({ cx, cy }) => {
+        document.dispatchEvent(new MouseEvent('mouseup', {
+          bubbles: true, clientX: cx + 100, clientY: cy + 50,
+        }));
+      }, { cx, cy });
+      await page.waitForTimeout(200);
+
+      const saved = await page.evaluate(() =>
+        JSON.parse(localStorage.getItem('gridit-settings') || '{}')
+      );
+      // The drag SHOULD have moved the image. We don't pin exact cm because
+      // the conversion depends on viewport dims; we just verify movement
+      // happened in the right direction.
+      expect(saved.imageOffsetX).toBeGreaterThan(0);
+      expect(saved.imageOffsetY).toBeGreaterThan(0);
+    });
+
+    test('migrateSettings backfills imageOffsetX/Y/Scale defaults', async ({ page }) => {
+      const out = await page.evaluate(() => {
+        // @ts-expect-error migrateSettings is global from grid-merge.js
+        return window.migrateSettings({
+          gridRows: 10, gridCols: 10, gridMode: 'Auto',
+          gridColor: '#80ED99', gridThickness: 1, gridOpacity: 1,
+          showDiagonals: false, showCellLabels: false,
+          canvasWidthCm: 60, canvasHeightCm: 40, imageFit: 'fit-inside',
+          sliceMode: 'none',
+        });
+      });
+      expect(out.imageOffsetX).toBe(0);
+      expect(out.imageOffsetY).toBe(0);
+      expect(out.imageScale).toBe(1.0);
+    });
+
+    test('canvas-fit download produces a PNG with the canvas aspect', async ({ page }) => {
+      await page.locator('#canvas-width-cm').fill('60');
+      await page.locator('#canvas-height-cm').fill('40');
+      await expect(page.locator('.canvas-frame')).toBeVisible();
+
+      const dlPromise = page.waitForEvent('download');
+      await page.locator('.button-download').first().click();
+      const download = await dlPromise;
+      expect(download.suggestedFilename()).toMatch(/gridded.*\.png$/);
+    });
+
+    // bju.canvas-border-v2.2: the canvas preview is outlined with a dotted
+    // terracotta line — so it visually reads as "this is the canvas",
+    // not as a chunky picture frame.
+    test('canvas stage has a dotted terracotta border', async ({ page }) => {
+      await page.locator('#canvas-width-cm').fill('60');
+      await page.locator('#canvas-height-cm').fill('40');
+      await expect(page.locator('.canvas-frame')).toBeVisible();
+
+      const style = await page.locator('.canvas-stage').evaluate((el) => {
+        const s = getComputedStyle(el);
+        return { borderStyle: s.borderTopStyle, borderColor: s.borderTopColor };
+      });
+      expect(style.borderStyle).toBe('dotted');
+      const m = style.borderColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+      expect(m).not.toBeNull();
+      const [r, g, b] = m!.slice(1).map(Number);
+      // Terracotta sits warm: red dominates, blue is much lower.
+      expect(r).toBeGreaterThan(g);
+      expect(g).toBeGreaterThan(b);
+      expect(r - b).toBeGreaterThan(40);
+    });
+
+    // bju.preview-v2.2: side labels make it obvious which dimension is which.
+    test('canvas frame shows side labels with cm values', async ({ page }) => {
+      await page.locator('#canvas-width-cm').fill('60');
+      await page.locator('#canvas-height-cm').fill('40');
+      await expect(page.locator('.canvas-frame')).toBeVisible();
+
+      const wLabel = page.locator('.canvas-side-label--width');
+      const hLabel = page.locator('.canvas-side-label--height');
+      await expect(wLabel).toBeVisible();
+      await expect(hLabel).toBeVisible();
+      await expect(wLabel).toContainText('60');
+      await expect(wLabel).toContainText('cm');
+      await expect(hLabel).toContainText('40');
+      await expect(hLabel).toContainText('cm');
+    });
+
+    // bju.preview-v2.2: drag must VISUALLY move the SVG image element, not
+    // just bump localStorage. The previous test only checked offsetX > 0,
+    // which passed even when pxPerCm fell back to 1.0 (image flying off
+    // screen). This pins down the on-screen movement in viewBox units.
+    test('drag visibly moves the image inside the canvas frame', async ({ page }) => {
+      await page.locator('#canvas-width-cm').fill('60');
+      await page.locator('#canvas-height-cm').fill('40');
+      await expect(page.locator('.canvas-frame')).toBeVisible();
+
+      // Give the displayed-size observer time to settle.
+      await page.waitForTimeout(400);
+
+      const initialX = parseFloat(
+        (await page.locator('.canvas-frame-image').getAttribute('x')) || '0'
+      );
+
+      const box = await page.locator('.canvas-frame').boundingBox();
+      if (!box) throw new Error('No canvas-frame');
+      const cx = box.x + box.width / 2;
+      const cy = box.y + box.height / 2;
+      const dragPx = 80;
+
+      await page.evaluate(({ cx, cy }) => {
+        const svg = document.querySelector('.canvas-frame')!;
+        svg.dispatchEvent(new PointerEvent('pointerdown', {
+          bubbles: true, clientX: cx, clientY: cy, pointerType: 'mouse', button: 0,
+        }));
+      }, { cx, cy });
+      await page.waitForTimeout(50);
+      await page.evaluate(({ cx, cy, dragPx }) => {
+        document.dispatchEvent(new MouseEvent('mousemove', {
+          bubbles: true, clientX: cx + dragPx, clientY: cy,
+        }));
+      }, { cx, cy, dragPx });
+      await page.waitForTimeout(50);
+      await page.evaluate(({ cx, cy, dragPx }) => {
+        document.dispatchEvent(new MouseEvent('mouseup', {
+          bubbles: true, clientX: cx + dragPx, clientY: cy,
+        }));
+      }, { cx, cy, dragPx });
+      await page.waitForTimeout(200);
+
+      const finalX = parseFloat(
+        (await page.locator('.canvas-frame-image').getAttribute('x')) || '0'
+      );
+
+      // The image moved horizontally to the right. Expected shift in
+      // viewBox units (cm × 100): dragPx px * (1 cm / pxPerCm) * 100.
+      // With the canvas SVG laid out at ~box.width px = 60 cm of canvas,
+      // pxPerCm ≈ box.width / 60. So expectedDelta ≈ dragPx / (box.width/60) * 100
+      // = dragPx * 100 * 60 / box.width.
+      const expectedDelta = (dragPx * 100 * 60) / box.width;
+      const actualDelta = finalX - initialX;
+      // Allow 30% tolerance for layout settling + sub-pixel rounding.
+      expect(actualDelta).toBeGreaterThan(expectedDelta * 0.7);
+      expect(actualDelta).toBeLessThan(expectedDelta * 1.3);
+    });
+  });
+
+  // ============================================================
+  // Bug fixes + change requests (written test-first, failing initially)
+  // ============================================================
+  test.describe('Bug fixes: entropy, ticker layout, labels, naming', () => {
+    test('entropy: adaptive density actually adds subdivision lines on contrasty images', async ({ page }) => {
+      // Synthesize a half-flat / half-noisy image so entropy varies wildly.
+      const dataUrl = await page.evaluate(() => {
+        const c = document.createElement('canvas');
+        c.width = 400; c.height = 400;
+        const x = c.getContext('2d')!;
+        x.fillStyle = '#eee'; x.fillRect(0, 0, 200, 400);
+        for (let yy = 0; yy < 400; yy++) for (let xx = 200; xx < 400; xx++) {
+          const v = Math.floor(Math.random() * 256);
+          x.fillStyle = `rgb(${v},${v},${v})`; x.fillRect(xx, yy, 1, 1);
+        }
+        return c.toDataURL('image/png');
+      });
+
+      await page.evaluate((du) => {
+        // @ts-expect-error elm app global
+        window._elmApp.ports.receivePickedImage.send({ name: 'noise.png', size: du.length, dataUrl: du });
+      }, dataUrl);
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+
+      // Baseline line count with no adaptive density.
+      const baseCount = await page.locator('.grid-overlay line').count();
+
+      // Crank adaptive density.
+      await page.locator('#adaptive-density-input').fill('0.6');
+
+      // After entropy analysis lands, subdivision lines appear — the count
+      // must STRICTLY INCREASE. (Pre-fix this stayed equal to baseline.)
+      await expect.poll(
+        async () => await page.locator('.grid-overlay line').count(),
+        { timeout: 8000 }
+      ).toBeGreaterThan(baseCount);
+    });
+
+    // bju.adaptive-align-v2.2: subdivisions must snap to the main grid.
+    // Pre-fix they were positioned on a fixed 16×16 entropy grid, so with
+    // a 10×10 main grid the extra lines landed at off-grid x/y values
+    // (multiples of 25 instead of 20 for a 400-pixel image).
+    test('adaptive density: subdivisions snap to main-grid half-cells', async ({ page }) => {
+      // 400×400 image with the right half noisy → predictable entropy split.
+      const dataUrl = await page.evaluate(() => {
+        const c = document.createElement('canvas');
+        c.width = 400; c.height = 400;
+        const x = c.getContext('2d')!;
+        x.fillStyle = '#eee'; x.fillRect(0, 0, 200, 400);
+        for (let yy = 0; yy < 400; yy++) for (let xx = 200; xx < 400; xx++) {
+          const v = Math.floor(Math.random() * 256);
+          x.fillStyle = `rgb(${v},${v},${v})`; x.fillRect(xx, yy, 1, 1);
+        }
+        return c.toDataURL('image/png');
+      });
+
+      await page.evaluate((du) => {
+        // @ts-expect-error elm app global
+        window._elmApp.ports.receivePickedImage.send({ name: 'noise.png', size: du.length, dataUrl: du });
+      }, dataUrl);
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+
+      // 10×10 main grid → cellSize = 40 px. Depth-1 subdivisions sit on
+      // half-cells (multiples of 20), depth-2 on quarter-cells (multiples
+      // of 10). Main lines are multiples of 40. So every legal endpoint
+      // lands on a multiple of 10 — anything else is off-lattice.
+      await page.locator('#grid-size-input').fill('10');
+      await page.locator('#adaptive-density-input').fill('0.6');
+
+      // Wait until the count rises past the bare grid (subdivisions arrived).
+      await expect.poll(
+        async () => await page.locator('.grid-overlay line').count(),
+        { timeout: 8000 }
+      ).toBeGreaterThan(22); // 11 vertical + 11 horizontal main lines = 22 min
+
+      const lines = await page.locator('.grid-overlay line').evaluateAll(
+        (els) => els.map((el) => ({
+          x1: parseFloat(el.getAttribute('x1') || '0'),
+          y1: parseFloat(el.getAttribute('y1') || '0'),
+          x2: parseFloat(el.getAttribute('x2') || '0'),
+          y2: parseFloat(el.getAttribute('y2') || '0'),
+        }))
+      );
+
+      const isLatticeAligned = (v: number) => Math.abs((v / 10) - Math.round(v / 10)) < 0.01;
+      for (const ln of lines) {
+        expect(isLatticeAligned(ln.x1), `x1=${ln.x1} not on 10-grid`).toBe(true);
+        expect(isLatticeAligned(ln.y1), `y1=${ln.y1} not on 10-grid`).toBe(true);
+        expect(isLatticeAligned(ln.x2), `x2=${ln.x2} not on 10-grid`).toBe(true);
+        expect(isLatticeAligned(ln.y2), `y2=${ln.y2} not on 10-grid`).toBe(true);
+      }
+    });
+
+    // Adaptive density is rectilinear-only: square mode's lattice (fixed
+    // cell size + partial trailing strip) has no clean rows × cols mapping.
+    test('adaptive density: control hidden and inactive in square mode', async ({ page }) => {
+      await uploadImage(page);
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+
+      await expect(page.locator('#adaptive-density-input')).toBeVisible();
+      await page.locator('.seg-btn').nth(1).click();
+      await expect(page.locator('#adaptive-density-input')).toHaveCount(0);
+      await page.locator('.seg-btn').nth(0).click();
+      await expect(page.locator('#adaptive-density-input')).toBeVisible();
+    });
+
+    // Square mode positions lines on a uniform cellSize lattice, but labels
+    // used rows ÷ cols spacing — on images that don't divide evenly the
+    // labels drifted right/down relative to their cells, one cell at a time.
+    test('square mode: cell labels sit on the square lattice (no drift)', async ({ page }) => {
+      // 500×350: cs = 350/8 = 43.75 → 11 full columns spanning 481.25 of
+      // 500 px, so rows÷cols spacing (500/11 ≈ 45.45) visibly drifts.
+      const dataUrl = await page.evaluate(() => {
+        const c = document.createElement('canvas');
+        c.width = 500; c.height = 350;
+        const x = c.getContext('2d')!;
+        x.fillStyle = '#8ab'; x.fillRect(0, 0, 500, 350);
+        return c.toDataURL('image/png');
+      });
+      await page.evaluate((du) => {
+        // @ts-expect-error elm app global
+        window._elmApp.ports.receivePickedImage.send({ name: 'wide.png', size: du.length, dataUrl: du });
+      }, dataUrl);
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+
+      await page.locator('.seg-btn').nth(1).click();
+      await page.locator('#grid-size-input').fill('8');
+      await page.locator('#cell-labels').check({ force: true });
+
+      await expect.poll(async () =>
+        await page.locator('.grid-overlay text').count(),
+        { timeout: 5000 }
+      ).toBeGreaterThan(0);
+
+      const xs = await page.locator('.grid-overlay text').evaluateAll(
+        (els) => [...new Set(els.map((el) => parseFloat(el.getAttribute('x') || '0')))].sort((a, b) => a - b)
+      );
+      // 11 distinct columns, spaced exactly one square cell (43.75) apart.
+      expect(xs.length).toBe(11);
+      for (let i = 1; i < xs.length; i++) {
+        expect(Math.abs(xs[i] - xs[i - 1] - 43.75), `col ${i} spacing ${xs[i] - xs[i - 1]}`).toBeLessThan(0.01);
+      }
+    });
+
+    // Preview-on-canvas cm values are saved but deliberately NOT restored on
+    // load — returning users kept landing in a confusing canvas view.
+    // DORMANT: match-a-canvas UI is not rendered pending its redesign.
+    test.skip('reload does not resurrect the canvas-fit preview', async ({ page }) => {
+      await uploadImage(page);
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+      await page.evaluate(() => {
+        (document.querySelector('.match-canvas') as HTMLDetailsElement).open = true;
+      });
+      await page.locator('#canvas-width-cm').fill('20');
+      await page.locator('#canvas-height-cm').fill('50');
+      await expect(page.locator('.canvas-frame')).toBeVisible({ timeout: 5000 });
+
+      await page.reload();
+      await page.waitForLoadState('networkidle');
+      await uploadImage(page);
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+      await expect(page.locator('.canvas-frame')).toHaveCount(0);
+      await expect(page.locator('#canvas-width-cm')).toHaveValue('');
+    });
+
+    // Canvas-fit viewBox is in cm × drawScale units; label font size must be
+    // converted from screen px, or a 16px label renders ~3px on a 50 cm
+    // canvas (looked like the labels silently vanished).
+    // DORMANT: match-a-canvas UI is not rendered pending its redesign.
+    test.skip('canvas-fit: cell labels are legible on a large canvas', async ({ page }) => {
+      await uploadImage(page);
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+
+      // labels on
+      await page.locator('#cell-labels').check({ force: true });
+      // 20 × 50 cm canvas
+      await page.evaluate(() => {
+        (document.querySelector('.match-canvas') as HTMLDetailsElement).open = true;
+      });
+      await page.locator('#canvas-width-cm').fill('20');
+      await page.locator('#canvas-height-cm').fill('50');
+      await expect(page.locator('.canvas-frame')).toBeVisible({ timeout: 5000 });
+
+      await expect.poll(async () => {
+        const boxes = await page.locator('.canvas-frame text').evaluateAll(
+          (els) => els.map((el) => el.getBoundingClientRect().height)
+        );
+        return boxes.length > 0 ? Math.min(...boxes) : 0;
+      }, { timeout: 5000 }).toBeGreaterThan(8);
+    });
+
+    // DORMANT: match-a-canvas UI is not rendered pending its redesign.
+    test.skip('match-a-canvas: clear button empties both cm fields and leaves canvas-fit', async ({ page }) => {
+      await uploadImage(page);
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+
+      await page.evaluate(() => {
+        (document.querySelector('.match-canvas') as HTMLDetailsElement).open = true;
+      });
+      // no values → no clear button
+      await expect(page.locator('.canvas-clear-btn')).toHaveCount(0);
+
+      await page.locator('#canvas-width-cm').fill('20');
+      await page.locator('#canvas-height-cm').fill('50');
+      await expect(page.locator('.canvas-frame')).toBeVisible({ timeout: 5000 });
+
+      await page.locator('.canvas-clear-btn').click();
+      await expect(page.locator('#canvas-width-cm')).toHaveValue('');
+      await expect(page.locator('#canvas-height-cm')).toHaveValue('');
+      await expect(page.locator('.canvas-frame')).toHaveCount(0);
+      await expect(page.locator('.canvas-clear-btn')).toHaveCount(0);
+    });
+
+    // Rank-based subdivision: the slider picks what FRACTION of main-grid
+    // cells get subdivided, so every step must add lines. The previous
+    // threshold+dedupe approach saturated at ~10% on contrasty images and
+    // the rest of the slider range did nothing.
+    test('adaptive density: line count keeps growing across the slider range', async ({ page }) => {
+      const dataUrl = await page.evaluate(() => {
+        const c = document.createElement('canvas');
+        c.width = 400; c.height = 400;
+        const x = c.getContext('2d')!;
+        x.fillStyle = '#eee'; x.fillRect(0, 0, 200, 400);
+        for (let yy = 0; yy < 400; yy++) for (let xx = 200; xx < 400; xx++) {
+          const v = Math.floor(Math.random() * 256);
+          x.fillStyle = `rgb(${v},${v},${v})`; x.fillRect(xx, yy, 1, 1);
+        }
+        return c.toDataURL('image/png');
+      });
+      await page.evaluate((du) => {
+        // @ts-expect-error elm app global
+        window._elmApp.ports.receivePickedImage.send({ name: 'noise.png', size: du.length, dataUrl: du });
+      }, dataUrl);
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+
+      const countAt = async (v: string) => {
+        await page.locator('#adaptive-density-input').fill(v);
+        await expect(page.locator('.analyzing-indicator')).toHaveCount(0, { timeout: 10000 });
+        return await page.locator('.grid-overlay line').count();
+      };
+
+      const at20 = await countAt('0.2');
+      const at50 = await countAt('0.5');
+      const at90 = await countAt('0.9');
+      expect(at50, `20%→50% must add lines (${at20} vs ${at50})`).toBeGreaterThan(at20);
+      expect(at90, `50%→90% must add lines (${at50} vs ${at90})`).toBeGreaterThan(at50);
+    });
+
+    test('adaptive density: contrasty image does NOT show the "no busy spots" hint', async ({ page }) => {
+      const dataUrl = await page.evaluate(() => {
+        const c = document.createElement('canvas');
+        c.width = 400; c.height = 400;
+        const x = c.getContext('2d')!;
+        x.fillStyle = '#eee'; x.fillRect(0, 0, 200, 400);
+        for (let yy = 0; yy < 400; yy++) for (let xx = 200; xx < 400; xx++) {
+          const v = Math.floor(Math.random() * 256);
+          x.fillStyle = `rgb(${v},${v},${v})`; x.fillRect(xx, yy, 1, 1);
+        }
+        return c.toDataURL('image/png');
+      });
+      await page.evaluate((du) => {
+        // @ts-expect-error elm app global
+        window._elmApp.ports.receivePickedImage.send({ name: 'noise.png', size: du.length, dataUrl: du });
+      }, dataUrl);
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+
+      const baseCount = await page.locator('.grid-overlay line').count();
+      await page.locator('#adaptive-density-input').fill('0.6');
+      await expect.poll(
+        async () => await page.locator('.grid-overlay line').count(),
+        { timeout: 8000 }
+      ).toBeGreaterThan(baseCount);
+
+      await expect(page.locator('.adaptive-empty-hint')).toHaveCount(0);
+    });
+
+    // Entropy analysis downscales to MAX_ANALYSIS_DIM before sampling (mobile
+    // canvas limits). Detection must still work on images larger than the cap.
+    test('adaptive density: still detects busy regions on images larger than the analysis cap', async ({ page }) => {
+      const dataUrl = await page.evaluate(() => {
+        const c = document.createElement('canvas');
+        c.width = 2600; c.height = 2600;
+        const x = c.getContext('2d')!;
+        x.fillStyle = '#eee'; x.fillRect(0, 0, 1300, 2600);
+        // Coarse noise blocks are enough entropy contrast and much faster
+        // to generate than per-pixel noise at this size.
+        for (let yy = 0; yy < 2600; yy += 8) for (let xx = 1300; xx < 2600; xx += 8) {
+          const v = Math.floor(Math.random() * 256);
+          x.fillStyle = `rgb(${v},${v},${v})`; x.fillRect(xx, yy, 8, 8);
+        }
+        return c.toDataURL('image/png');
+      });
+      await page.evaluate((du) => {
+        // @ts-expect-error elm app global
+        window._elmApp.ports.receivePickedImage.send({ name: 'big-noise.png', size: du.length, dataUrl: du });
+      }, dataUrl);
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 10000 });
+
+      const baseCount = await page.locator('.grid-overlay line').count();
+      await page.locator('#adaptive-density-input').fill('0.6');
+      await expect.poll(
+        async () => await page.locator('.grid-overlay line').count(),
+        { timeout: 10000 }
+      ).toBeGreaterThan(baseCount);
+    });
+
+    test('cell labels font size is user-controllable via slider', async ({ page }) => {
+      await uploadImage(page);
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+
+      // Turn labels on.
+      await page.locator('#cell-labels').evaluate((el: HTMLInputElement) => el.click());
+      await expect(page.locator('.grid-overlay text').first()).toBeVisible();
+
+      // A new slider must exist to adjust label font size.
+      const slider = page.locator('#cell-label-size-input');
+      await expect(slider).toBeVisible();
+
+      const fontAt = async () => {
+        const v = await page.locator('.grid-overlay text').first().getAttribute('font-size');
+        return parseFloat(v || '0');
+      };
+
+      const small = 10;
+      const large = 28;
+      await slider.fill(String(small));
+      const fontSmall = await fontAt();
+      await slider.fill(String(large));
+      const fontLarge = await fontAt();
+
+      expect(fontSmall).toBeLessThan(fontLarge);
+      expect(Math.round(fontSmall)).toBe(small);
+      expect(Math.round(fontLarge)).toBe(large);
+    });
+
+    test('"Adaptive density" label is restored (auto-simplify reverted)', async ({ page }) => {
+      await uploadImage(page);
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+      const label = page.locator('label[for="adaptive-density-input"]');
+      await expect(label).toContainText(/adaptive density/i);
+      // The sub-line should be short: ends at "busy".
+      const sub = page.locator('.mode-explain', { hasText: /busy/i });
+      await expect(sub).toBeVisible();
+      const subText = (await sub.first().textContent()) || '';
+      expect(subText).not.toMatch(/flat/i);  // shortened — no "keeps it simple where it's flat"
+    });
+
+    test('rectilinear mode: copy + slider sets both rows & cols equal', async ({ page }) => {
+      await uploadImage(page);
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+
+      // The mode toggle now reads "rectilinear" / "square" instead of Auto/Custom.
+      const segButtons = page.locator('.seg-btn');
+      await expect(segButtons.first()).toContainText(/rectilinear/i);
+      await expect(segButtons.nth(1)).toContainText(/square/i);
+
+      // Rectilinear is the default; its explain line matches the new copy.
+      await expect(page.locator('.mode-explain', { hasText: /grid stretches to fill the image/i })).toBeVisible();
+
+      // Slider sets both rows and cols equal in rectilinear mode.
+      await page.locator('#grid-size-input').fill('7');
+      await expect.poll(async () => {
+        const saved = await page.evaluate(() => JSON.parse(localStorage.getItem('gridit-settings') || '{}'));
+        return [saved.gridRows, saved.gridCols, saved.gridMode];
+      }).toEqual([7, 7, 'rectilinear']);
+    });
+
+    test('square mode: cells become square in image pixel space', async ({ page }) => {
+      // Use a tall image (200×600 = 1:3 aspect) so rows/cols differ noticeably.
+      await uploadImage(page, './tests/fixtures/test-image-tall.png');
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+
+      // Switch to square mode.
+      await page.locator('.seg-btn').nth(1).click();
+
+      // Slider=4 → cellSize = 200/4 = 50px square. 600/50 = 12 rows exactly.
+      // Here it divides evenly, so no partial cells.
+      await page.locator('#grid-size-input').fill('4');
+
+      await expect.poll(async () => {
+        const saved = await page.evaluate(() => JSON.parse(localStorage.getItem('gridit-settings') || '{}'));
+        return { rows: saved.gridRows, cols: saved.gridCols, mode: saved.gridMode };
+      }).toEqual({ rows: 12, cols: 4, mode: 'square' });
+
+      // The two-number-input UI from the old Custom mode should be gone.
+      await expect(page.locator('#grid-rows-input')).toHaveCount(0);
+      await expect(page.locator('#grid-cols-input')).toHaveCount(0);
+
+      // In square mode, the grid lines should be uniformly spaced by cellSize.
+      // Verify all cell widths (gaps between consecutive vertical line x positions)
+      // are equal — that's the "perfect squares" guarantee.
+      const xPositions = await page.locator('.grid-overlay line').evaluateAll((els: SVGLineElement[]) => {
+        const verticals = els.filter(l => l.getAttribute('x1') === l.getAttribute('x2'));
+        return [...new Set(verticals.map(l => parseFloat(l.getAttribute('x1') || '0')))].sort((a, b) => a - b);
+      });
+      // Differences between consecutive x positions should all be equal (cellSize=50).
+      const xGaps = xPositions.slice(1).map((x, i) => x - xPositions[i]);
+      const allEqual = xGaps.every(g => Math.abs(g - xGaps[0]) < 0.5);
+      expect(allEqual).toBe(true);
+    });
+
+    test('square mode: image where size does NOT divide evenly produces uniform cells + partial closing', async ({ page }) => {
+      // Synthesize a 200×550 image — slider=5 with cellSize=40 leaves 30px
+      // of trailing height (13 full rows + a partial row).
+      const dataUrl = await page.evaluate(() => {
+        const c = document.createElement('canvas');
+        c.width = 200; c.height = 550;
+        const x = c.getContext('2d')!;
+        x.fillStyle = '#ddd'; x.fillRect(0, 0, 200, 550);
+        return c.toDataURL('image/png');
+      });
+      await page.evaluate((du) => {
+        // @ts-expect-error elm app global
+        window._elmApp.ports.receivePickedImage.send({ name: 'odd.png', size: du.length, dataUrl: du });
+      }, dataUrl);
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+
+      // Switch to square mode + slider 5.
+      await page.locator('.seg-btn').nth(1).click();
+      await page.locator('#grid-size-input').fill('5');
+      await page.waitForTimeout(300);
+
+      // Read all distinct horizontal line Y positions (in image natural pixels).
+      const yPositions = await page.locator('.grid-overlay line').evaluateAll((els: SVGLineElement[]) => {
+        const horizontals = els.filter(l => l.getAttribute('y1') === l.getAttribute('y2'));
+        return [...new Set(horizontals.map(l => parseFloat(l.getAttribute('y1') || '0')))].sort((a, b) => a - b);
+      });
+
+      // First N-1 gaps should all be 40 (the cellSize). The last gap may
+      // be smaller — it's the partial row from the last full cell to imgH=550.
+      const gaps = yPositions.slice(1).map((y, i) => y - yPositions[i]);
+      const fullGaps = gaps.slice(0, -1);  // all but the last
+      expect(fullGaps.length).toBeGreaterThan(0);
+      const allFortyish = fullGaps.every(g => Math.abs(g - 40) < 0.5);
+      expect(allFortyish).toBe(true);
+      // Last position is the image height (closing line for the partial row).
+      expect(yPositions[yPositions.length - 1]).toBeCloseTo(550, 0);
+    });
+
+    // Match-a-canvas (and the slice-export UI inside it) is dormant pending
+    // the canvas-preview redesign: nothing canvas-related may render.
+    test('match-a-canvas UI is dormant (not rendered)', async ({ page }) => {
+      await uploadImage(page);
+      await expect(page.locator('.gridded-base-image')).toBeVisible({ timeout: 5000 });
+      await expect(page.locator('.match-canvas')).toHaveCount(0);
+      await expect(page.locator('.canvas-frame')).toHaveCount(0);
+      await expect(page.locator('.slice-section')).toHaveCount(0);
+    });
+
+    test('community ticker: disclaimer body stays within container bounds when open', async ({ page }) => {
+      // Need counters loaded — use demo URL.
+      await page.goto('http://localhost:8000/public/index.html?demo');
+      await page.evaluate(() => localStorage.clear());
+      await expect(page.locator('.community-ticker')).toBeVisible({ timeout: 5000 });
+
+      // Open the disclaimer.
+      await page.locator('.community-disclaimer-toggle, .community-ticker__q').first().evaluate((el: HTMLElement) => el.click());
+
+      // The body must be visible and inside the ticker's left edge.
+      const body = page.locator('.community-disclaimer-body');
+      await expect(body).toBeVisible();
+      const tickerBox = await page.locator('.community-ticker').boundingBox();
+      const bodyBox = await body.boundingBox();
+      expect(tickerBox).not.toBeNull();
+      expect(bodyBox).not.toBeNull();
+      if (tickerBox && bodyBox) {
+        // Body left edge must be >= ticker left edge (within 1px tolerance).
+        expect(bodyBox.x).toBeGreaterThanOrEqual(tickerBox.x - 1);
+        // Body right edge must be <= ticker right edge.
+        expect(bodyBox.x + bodyBox.width).toBeLessThanOrEqual(tickerBox.x + tickerBox.width + 1);
+      }
+
+      // And the "?" toggle should stay in line with the frog (same Y),
+      // not wrapped onto a separate row.
+      const frogBox = await page.locator('.community-ticker__frog').boundingBox();
+      const toggleBox = await page.locator('.community-disclaimer-toggle, .community-ticker__q').first().boundingBox();
+      expect(frogBox).not.toBeNull();
+      expect(toggleBox).not.toBeNull();
+      if (frogBox && toggleBox) {
+        // Centers within ~30 px vertically (allow some padding wiggle).
+        const frogCenter = frogBox.y + frogBox.height / 2;
+        const toggleCenter = toggleBox.y + toggleBox.height / 2;
+        expect(Math.abs(frogCenter - toggleCenter)).toBeLessThan(30);
+      }
     });
   });
 });

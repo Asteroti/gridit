@@ -89,19 +89,28 @@ function dataUrlToBlob(dataUrl) {
   return fetch(dataUrl).then(function(res) { return res.blob(); });
 }
 
+// Cap for the entropy-analysis canvas. Entropy is a per-cell statistic, so
+// relative ordering survives downscaling — and full-size photos would blow
+// past mobile canvas limits (iOS Safari ~16.7M px → silent blank canvas →
+// all-zero entropy → the slider looks dead).
+var MAX_ANALYSIS_DIM = 1024;
+
 function computeEntropyGrid(imageUrl, gridSize, width, height, callback) {
   var img = new Image();
   img.crossOrigin = "anonymous";
 
   img.onload = function() {
+    var scale = Math.min(1, MAX_ANALYSIS_DIM / Math.max(width, height));
+    var aw = Math.max(gridSize, Math.round(width * scale));
+    var ah = Math.max(gridSize, Math.round(height * scale));
     var canvas = document.createElement("canvas");
-    canvas.width = width;
-    canvas.height = height;
-    var ctx = canvas.getContext("2d");
-    ctx.drawImage(img, 0, 0, width, height);
+    canvas.width = aw;
+    canvas.height = ah;
+    var ctx = canvas.getContext("2d", { willReadFrequently: true });
+    ctx.drawImage(img, 0, 0, aw, ah);
 
-    var cellW = width / gridSize;
-    var cellH = height / gridSize;
+    var cellW = aw / gridSize;
+    var cellH = ah / gridSize;
     var entropyList = [];
 
     for (var row = 0; row < gridSize; row++) {
@@ -111,8 +120,8 @@ function computeEntropyGrid(imageUrl, gridSize, width, height, callback) {
         var w = Math.ceil(cellW);
         var h = Math.ceil(cellH);
 
-        if (x + w > width) w = width - x;
-        if (y + h > height) h = height - y;
+        if (x + w > aw) w = aw - x;
+        if (y + h > ah) h = ah - y;
 
         var imageData = ctx.getImageData(x, y, w, h);
         var pixels = imageData.data;
@@ -235,6 +244,35 @@ function setupDownloadPort(app) {
 }
 
 
+// Render the canvas-fit SVG (canvas-frame) to a single bitmap. The SVG
+// already contains the user's image (with their drag offset + scale
+// applied), the grid, and labels — it's the source of truth for the
+// composition. Output resolution comes from the SVG's viewBox so the
+// final PNG matches the in-app preview at native scale.
+function renderCanvasFitToBlob(svgEl, callback) {
+  var vb = svgEl.viewBox.baseVal;
+  if (!vb || vb.width <= 0 || vb.height <= 0) {
+    return callback(null);
+  }
+  var w = Math.round(vb.width);
+  var h = Math.round(vb.height);
+
+  var canvas = document.createElement('canvas');
+  canvas.width = w;
+  canvas.height = h;
+  var ctx = canvas.getContext('2d');
+
+  var svgString = new XMLSerializer().serializeToString(svgEl);
+  var svgImage = new Image();
+  svgImage.onload = function() {
+    ctx.drawImage(svgImage, 0, 0, w, h);
+    canvas.toBlob(function(blob) { callback(blob); }, 'image/png', 1.0);
+  };
+  svgImage.onerror = function() { callback(null); };
+  svgImage.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgString)));
+}
+
+
 function setupPngRequestPort(app) {
   if (!app.ports.requestPng) return;
 
@@ -250,6 +288,28 @@ function setupPngRequestPort(app) {
       handleError("Timeout", "Image processing took too long. Please try a smaller image.");
     }, PROCESSING_TIMEOUT_MS);
 
+    // Canvas-fit mode: the canvas-frame SVG already contains everything.
+    var canvasFrame = document.querySelector('.canvas-frame');
+    if (canvasFrame) {
+      updateProgress(null, 30);
+      renderCanvasFitToBlob(canvasFrame, function(blob) {
+        if (!blob) {
+          clearTimeout(processingTimeout);
+          handleError("Download Error", "Failed to render the gridded canvas. Try clearing the canvas dimensions to use the legacy mode.");
+          return;
+        }
+        updateProgress(null, 90);
+        var reader = new FileReader();
+        reader.onloadend = function() {
+          clearTimeout(processingTimeout);
+          sendToElm(app, reader.result);
+        };
+        reader.readAsDataURL(blob);
+      });
+      return;
+    }
+
+    // Legacy mode: <img> + .grid-overlay SVG, composited together.
     var img = new Image();
     img.crossOrigin = "anonymous";
 
@@ -345,6 +405,79 @@ function setupSharePort(app) {
 }
 
 
+// Migrates pre-v2 settings (single `gridSize`) to the v2 shape
+// (`gridRows`/`gridCols`/`gridMode`). Mutates and returns the same object.
+// Also backfills new optional fields with safe defaults (showCellLabels)
+// so older saved payloads decode cleanly into the current Settings record.
+// Exposed on `window` for e2e testing.
+function migrateSettings(settings) {
+  if (!settings || typeof settings !== 'object') return settings;
+  if (settings.gridRows === undefined && typeof settings.gridSize === 'number') {
+    settings.gridRows = settings.gridSize;
+    settings.gridCols = settings.gridSize;
+    settings.gridMode = 'rectilinear';
+    delete settings.gridSize;
+  }
+  // Map pre-rectilinear-refactor mode names. Old "Custom" (independent
+  // rows × cols) is gone; we fold it back into rectilinear so the user
+  // still sees a sensible grid on next load.
+  if (settings.gridMode === 'Auto' || settings.gridMode === 'Custom') {
+    settings.gridMode = 'rectilinear';
+  }
+  if (settings.showCellLabels === undefined) {
+    settings.showCellLabels = false;
+  }
+  // Optional cm canvas dimensions (cluster 3 — bju.11). Backfill as null
+  // so the Maybe Float decoder on the Elm side sees an explicit absence.
+  if (settings.canvasWidthCm === undefined) {
+    settings.canvasWidthCm = null;
+  }
+  if (settings.canvasHeightCm === undefined) {
+    settings.canvasHeightCm = null;
+  }
+  if (settings.imageFit === undefined) {
+    settings.imageFit = 'fit-inside';
+  }
+  if (settings.sliceMode === undefined) {
+    settings.sliceMode = 'none';
+  }
+  // bju.14: drag-to-position image transform within the canvas frame.
+  if (typeof settings.imageOffsetX !== 'number') {
+    settings.imageOffsetX = 0;
+  }
+  if (typeof settings.imageOffsetY !== 'number') {
+    settings.imageOffsetY = 0;
+  }
+  if (typeof settings.imageScale !== 'number') {
+    settings.imageScale = 1.0;
+  }
+  if (typeof settings.cellLabelSize !== 'number') {
+    settings.cellLabelSize = 14;
+  }
+  return settings;
+}
+if (typeof window !== 'undefined') window.migrateSettings = migrateSettings;
+
+function isValidV2Settings(s) {
+  return s
+    && typeof s.gridRows === 'number'
+    && typeof s.gridCols === 'number'
+    && typeof s.gridMode === 'string'
+    && typeof s.gridColor === 'string'
+    && typeof s.gridThickness === 'number'
+    && typeof s.gridOpacity === 'number'
+    && typeof s.showDiagonals === 'boolean'
+    && typeof s.showCellLabels === 'boolean'
+    && (s.canvasWidthCm === null || typeof s.canvasWidthCm === 'number')
+    && (s.canvasHeightCm === null || typeof s.canvasHeightCm === 'number')
+    && typeof s.imageFit === 'string'
+    && typeof s.sliceMode === 'string'
+    && typeof s.imageOffsetX === 'number'
+    && typeof s.imageOffsetY === 'number'
+    && typeof s.imageScale === 'number'
+    && typeof s.cellLabelSize === 'number';
+}
+
 function setupSettingsPersistence(app) {
   var SETTINGS_KEY = 'gridit-settings';
 
@@ -361,8 +494,8 @@ function setupSettingsPersistence(app) {
   try {
     var saved = localStorage.getItem(SETTINGS_KEY);
     if (saved && app.ports.loadSettings) {
-      var settings = JSON.parse(saved);
-      if (settings.gridSize && settings.gridColor && settings.gridThickness !== undefined && settings.gridOpacity !== undefined && settings.showDiagonals !== undefined) {
+      var settings = migrateSettings(JSON.parse(saved));
+      if (isValidV2Settings(settings)) {
         app.ports.loadSettings.send(settings);
       }
     }
@@ -590,6 +723,151 @@ var DEMO_COUNTERS = {
 };
 
 
+// bju.15 — slice the gridded composition into N tiles. Re-load the dataUrl
+// into an Image, draw subregions onto small canvases, fire sequential
+// anchor downloads (no zip dep). Sequential downloads can trigger browser
+// permission prompts on the 2nd+ tile in some browsers; staggered timing
+// helps but the UX is acceptable for v1.
+function setupSliceExportPort(app) {
+  if (!app.ports.sliceAndDownload) return;
+
+  // Parse "2x3" → { cols: 2, rows: 3 }
+  function parseSlice(s) {
+    var m = /^(\d+)x(\d+)$/.exec(s || '');
+    if (!m) return null;
+    return { cols: parseInt(m[1], 10), rows: parseInt(m[2], 10) };
+  }
+
+  app.ports.sliceAndDownload.subscribe(function(params) {
+    var slice = parseSlice(params.slice);
+    if (!slice) return;
+    var baseName = params.baseName || 'gridded';
+
+    var img = new Image();
+    img.onload = function() {
+      var totalW = img.naturalWidth;
+      var totalH = img.naturalHeight;
+      var tileW = Math.floor(totalW / slice.cols);
+      var tileH = Math.floor(totalH / slice.rows);
+
+      var produced = 0;
+      for (var r = 0; r < slice.rows; r++) {
+        for (var c = 0; c < slice.cols; c++) {
+          (function(row, col) {
+            // Last column/row absorbs any rounding remainder so no pixels are lost.
+            var w = (col === slice.cols - 1) ? (totalW - col * tileW) : tileW;
+            var h = (row === slice.rows - 1) ? (totalH - row * tileH) : tileH;
+            var canvas = document.createElement('canvas');
+            canvas.width = w;
+            canvas.height = h;
+            var ctx = canvas.getContext('2d');
+            ctx.drawImage(img, col * tileW, row * tileH, w, h, 0, 0, w, h);
+            canvas.toBlob(function(blob) {
+              if (!blob) return;
+              var name = baseName + '-r' + (row + 1) + '-c' + (col + 1) + '.png';
+              // Stagger downloads slightly so browsers handle the queue.
+              setTimeout(function() {
+                try {
+                  downloadViaAnchor(blob, name);
+                } catch (e) {
+                  downloadViaWindow(blob);
+                }
+              }, produced * 250);
+              produced++;
+            }, 'image/png', 1.0);
+          })(r, c);
+        }
+      }
+    };
+    img.onerror = function() {
+      handleError('Slice Error', 'Could not slice the gridded image. Try downloading without splitting.');
+    };
+    img.src = params.dataUrl;
+  });
+}
+
+
+// Reports the on-screen displayed size of the gridded image to Elm so the
+// view can auto-hide cell labels when cells get too small (bju.8). Uses
+// ResizeObserver on the image element; a MutationObserver wires it up
+// after the image first appears (post-upload).
+function setupImageSizeObserver(app) {
+  if (!app.ports.receiveImageDisplaySize) return;
+
+  function report(el) {
+    var rect = el.getBoundingClientRect();
+    // Hidden/not-yet-laid-out elements measure 0×0; reporting that would
+    // clobber the real measurement (both the legacy <img> and the canvas
+    // SVG are observed, and a hidden one can report after a visible one).
+    if (rect.width < 1 || rect.height < 1) return;
+    app.ports.receiveImageDisplaySize.send({ width: rect.width, height: rect.height });
+  }
+
+  var ro = (typeof ResizeObserver !== 'undefined')
+    ? new ResizeObserver(function(entries) {
+        for (var i = 0; i < entries.length; i++) report(entries[i].target);
+      })
+    : null;
+
+  var observed = new WeakSet();
+
+  function attachToImage(el) {
+    if (observed.has(el)) return;
+    observed.add(el);
+    if (ro) ro.observe(el);
+    // Initial report (rect may be 0×0 if layout hasn't settled yet).
+    report(el);
+    // Re-report on the next frame to catch settled layout.
+    requestAnimationFrame(function() { report(el); });
+    // Re-report on image-load (data: URLs settle async). Only fires for
+    // <img>; for SVG the load event doesn't apply but we already have RO.
+    if (el.tagName === 'IMG') {
+      el.addEventListener('load', function() { report(el); });
+    }
+  }
+
+  // NOT #elm-app: Elm's Browser.element init REPLACES that node, so by the
+  // time this runs the id no longer exists and the whole observer was
+  // silently dead in every browser. Watch the body instead.
+  var root = document.body;
+  if (!root) return;
+  // Watch BOTH the legacy <img> and the new canvas-fit SVG. Whichever is
+  // present in the DOM dictates the on-screen displayed dimensions.
+  var selector = '.gridded-base-image, .canvas-frame';
+
+  function scan() {
+    document.querySelectorAll(selector).forEach(function(el) {
+      attachToImage(el);
+      // Also re-report on every scan tick: ResizeObserver does not fire for
+      // SVG elements in WebKit/Safari, so without this the canvas-fit SVG's
+      // size never reaches Elm there (report() drops unchanged-size spam at
+      // the Elm boundary cheaply, and skips 0×0).
+      report(el);
+    });
+  }
+
+  var mo = new MutationObserver(scan);
+  mo.observe(root, { childList: true, subtree: true });
+
+  // Initial pass + a low-frequency safety net. MutationObserver doesn't
+  // always fire for SVG namespace elements (observed empirically when Elm
+  // swaps the legacy <img> for the new <svg.canvas-frame>); the interval
+  // catches the late arrival within ~250 ms with negligible cost.
+  scan();
+  setInterval(scan, 250);
+
+  // Belt-and-braces: when the user touches/clicks the canvas-frame,
+  // force a fresh report. Elm's drag handler reads imageDisplayedWidth
+  // from the model; if that's stale (e.g., the user just resized the
+  // window between renders), this guarantees a fresh measurement
+  // arrives before the first mousemove.
+  document.addEventListener('pointerdown', function(e) {
+    var el = e.target && e.target.closest && e.target.closest('.canvas-frame, .gridded-base-image');
+    if (el) report(el);
+  }, true);
+}
+
+
 function initializeElmApp() {
   var app = Elm.Main.init({
     node: document.getElementById('elm-app')
@@ -607,6 +885,8 @@ function initializeElmApp() {
   setupErrorPort(app);
   setupFilePickerPort(app);
   setupCommunityPort(app);
+  setupImageSizeObserver(app);
+  setupSliceExportPort(app);
 
   return app;
 }
