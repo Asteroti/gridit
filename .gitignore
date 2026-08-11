@@ -14,3 +14,17 @@ node_modules/
 .auto-claude-status
 .claude_settings.json
 .claude/
+
+# Agent worktrees & local task-tracker data
+.worktrees/
+.beads/
+.kiro/
+
+# Playwright artifacts
+test-results/
+playwright-report/
+.playwright-mcp/
+.surface/
+
+# Loose QA screenshots at the repo root (keep real assets inside public/)
+/*.png

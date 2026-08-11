@@ -30,7 +30,9 @@ export default defineConfig({
   ],
 
   webServer: {
-    command: 'npx http-server -p 8000 -c-1',
+    // Explicit root: without it http-server silently serves ./public when
+    // that folder exists, and the tests' /public/index.html URL 404s.
+    command: 'npx http-server . -p 8000 -c-1',
     url: 'http://localhost:8000',
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000,
